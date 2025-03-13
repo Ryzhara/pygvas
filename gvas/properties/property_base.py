@@ -9,55 +9,93 @@ Key differences from Rust version:
 """
 
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
+from dataclasses import dataclass, asdict
 from typing import Optional, Dict, Any, BinaryIO
 from ..error import DeserializeError
+
 
 @dataclass
 class PropertyOptions:
     """Options for property reading/writing"""
+
     hints: Dict[str, str] = None
     property_path: str = ""
-    
+
     def get_hint(self, path: str) -> Optional[str]:
         """Get a type hint for a property path"""
         if not self.hints:
             return None
         return self.hints.get(path)
 
+
 class PropertyTrait(ABC):
     """Base trait/interface for all property types"""
-    
+
     @abstractmethod
-    def read(self, stream: BinaryIO, include_header: bool = True, options: Optional[PropertyOptions] = None) -> None:
+    def read(
+        self,
+        stream: BinaryIO,
+        include_header: bool = True,
+        options: Optional[PropertyOptions] = None,
+    ) -> None:
         """Read property data from a binary stream"""
         pass
-    
+
     @abstractmethod
-    def write(self, stream: BinaryIO, include_header: bool = True, options: Optional[PropertyOptions] = None) -> int:
+    def write(
+        self,
+        stream: BinaryIO,
+        include_header: bool = True,
+        options: Optional[PropertyOptions] = None,
+    ) -> int:
         """Write property data to a binary stream"""
         pass
+
 
 class Property:
     """
     Base property class that holds a property value
     Python equivalent of the Property enum in Rust
     """
-    
+
     def __init__(self, type_name: str, value: Any):
         self.type = type_name
         self.value = value
-        
+
     @classmethod
-    def new(cls, stream: BinaryIO, property_type: str, include_header: bool = True,
-            options: Optional[PropertyOptions] = None, suggested_length: Optional[int] = None) -> 'Property':
+    def new(
+        cls,
+        stream: BinaryIO,
+        property_type: str,
+        include_header: bool = True,
+        options: Optional[PropertyOptions] = None,
+        suggested_length: Optional[int] = None,
+    ) -> "Property":
         """Create a new property instance from a binary stream"""
-        from . import (ArrayProperty, BoolProperty, ByteProperty, EnumProperty,
-                      FloatProperty, IntProperty, MapProperty, NameProperty,
-                      SetProperty, StrProperty, StructProperty)
-        from .int_property import (Int8Property, Int16Property, Int32Property, Int64Property,
-                                  UInt16Property, UInt32Property, UInt64Property, DoubleProperty)
-        
+        from . import (
+            ArrayProperty,
+            BoolProperty,
+            ByteProperty,
+            EnumProperty,
+            FloatProperty,
+            IntProperty,
+            MapProperty,
+            NameProperty,
+            SetProperty,
+            StrProperty,
+            StructProperty,
+        )
+        from .int_property import (
+            Int8Property,
+            Int16Property,
+            Int32Property,
+            Int64Property,
+            UInt16Property,
+            UInt32Property,
+            UInt64Property,
+            DoubleProperty,
+        )
+
         # Map property types to their classes
         type_map = {
             "ArrayProperty": ArrayProperty,
@@ -80,34 +118,43 @@ class Property:
             "StrProperty": StrProperty,
             "StructProperty": StructProperty,
         }
-        
+
         # Get the appropriate property class
         print(f"Looking for property type: {property_type}")
         prop_class = type_map.get(property_type)
         if not prop_class:
             print(f"Available property types: {list(type_map.keys())}")
             raise DeserializeError(f"Unknown property type: {property_type}")
-            
+
         # Create and read the property
-        prop = prop_class()
-        
+        prop = prop_class(property_type)
+        print(f"Property created: {asdict(prop)} {include_header=}, {options=}")
+
         # Handle special cases for properties that need suggested_length
-        if property_type == "ByteProperty" and hasattr(prop, "read") and callable(getattr(prop, "read")):
+        if (
+            property_type == "ByteProperty"
+            and hasattr(prop, "read")
+            and callable(getattr(prop, "read"))
+        ):
             if suggested_length is not None:
                 prop.read(stream, include_header, suggested_length, options)
             else:
                 prop.read(stream, include_header, options)
-        elif property_type in ["ArrayProperty", "MapProperty", "SetProperty"] and hasattr(prop, "read") and callable(getattr(prop, "read")):
-            prop.read(stream, include_header, options)
         else:
             # Standard case
             prop.read(stream, include_header, options)
-        
+
+        print(f"Property read: {asdict(prop)}")
         return cls(property_type, prop)
-    
-    def write(self, stream: BinaryIO, include_header: bool = True, options: Optional[PropertyOptions] = None) -> int:
+
+    def write(
+        self,
+        stream: BinaryIO,
+        include_header: bool = True,
+        options: Optional[PropertyOptions] = None,
+    ) -> int:
         """Write property value to stream"""
         return self.value.write(stream, include_header, options)
-        
+
     def __repr__(self) -> str:
         return f"Property({self.type}, {self.value})"

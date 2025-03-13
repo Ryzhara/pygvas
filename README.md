@@ -33,11 +33,11 @@ pip install -r requirements.txt
 Basic example of reading a save file:
 
 ```python
-from gvas import GvasFile, GameVersion
+from gvas import GVASFile, GameVersion
 
 # Open and read a save file
 with open("save.sav", "rb") as f:
-    gvas_file = GvasFile.read(f, GameVersion.Default)
+    gvas_file = GVASFile.read(f, GameVersion.Default)
 
 # Print the contents
 print(gvas_file)
@@ -46,7 +46,7 @@ print(gvas_file)
 Example with type hints for struct properties:
 
 ```python
-from gvas import GvasFile, GameVersion
+from gvas import GVASFile, GameVersion
 
 # Create type hints for ambiguous structs
 hints = {
@@ -55,7 +55,7 @@ hints = {
 
 # Read with hints
 with open("save.sav", "rb") as f:
-    gvas_file = GvasFile.read_with_hints(f, GameVersion.Default, hints)
+    gvas_file = GVASFile.read_with_hints(f, GameVersion.Default, hints)
 ```
 
 ## Structure

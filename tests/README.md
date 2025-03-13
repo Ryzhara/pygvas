@@ -42,7 +42,7 @@ The tests are organized to mirror the Rust implementation:
 1. `test_gvas.py` - Main test file that tests loading and saving various GVAS files
 2. `gvas_tests/test_property.py` - Tests for property serialization and deserialization
 3. `gvas_tests/test_guid.py` - Tests for GUID functionality
-4. `gvas_tests/test_file.py` - Tests for GvasFile functionality
+4. `gvas_tests/test_file.py` - Tests for GVASFile functionality
 5. `gvas_tests/test_errors.py` - Tests for error handling
 
 ## Adding New Tests

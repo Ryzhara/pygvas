@@ -1,23 +1,27 @@
 """
 Expected values for delegate test
 """
-from gvas.gvas_file import GvasFile
-from gvas.properties.property import Property
+
+from gvas.gvas_file import GVASFile
+from gvas.properties.property_base import Property
 from gvas.properties.delegate_property import (
-    DelegateProperty, Delegate,
-    MulticastInlineDelegateProperty, MulticastSparseDelegateProperty,
-    MulticastScriptDelegate
+    DelegateProperty,
+    Delegate,
+    MulticastInlineDelegateProperty,
+    MulticastSparseDelegateProperty,
+    MulticastScriptDelegate,
 )
 
-def expected() -> GvasFile:
+
+def expected() -> GVASFile:
     """
-    Return the expected GvasFile for delegate.sav
-    
+    Return the expected GVASFile for delegate.sav
+
     Returns:
-        The expected GvasFile
+        The expected GVASFile
     """
-    file = GvasFile()
-    
+    file = GVASFile()
+
     # Set header values
     file.save_game_version = 1
     file.package_version = 522
@@ -28,37 +32,34 @@ def expected() -> GvasFile:
     file.engine_version = "4.27.2-0"
     file.custom_format_version = 0
     file.custom_format_data = {}
-    
+
     # Add delegate property
     file.properties["DelegateProperty"] = Property(
         type="DelegateProperty",
         value=DelegateProperty(
-            value=Delegate(
-                object="/Game/TestObject",
-                function_name="TestFunction"
-            )
-        )
+            value=Delegate(object="/Game/TestObject", function_name="TestFunction")
+        ),
     )
-    
+
     # Add multicast inline delegate property
     delegates = [
         Delegate(object="/Game/TestObject1", function_name="TestFunction1"),
-        Delegate(object="/Game/TestObject2", function_name="TestFunction2")
+        Delegate(object="/Game/TestObject2", function_name="TestFunction2"),
     ]
-    
+
     file.properties["MulticastInlineDelegateProperty"] = Property(
         type="MulticastInlineDelegateProperty",
         value=MulticastInlineDelegateProperty(
             value=MulticastScriptDelegate(delegates=delegates)
-        )
+        ),
     )
-    
+
     # Add multicast sparse delegate property
     file.properties["MulticastSparseDelegateProperty"] = Property(
         type="MulticastSparseDelegateProperty",
         value=MulticastSparseDelegateProperty(
             value=MulticastScriptDelegate(delegates=delegates)
-        )
+        ),
     )
-    
-    return file 
+
+    return file
