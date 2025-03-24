@@ -14,6 +14,7 @@ from io import BytesIO
 
 from .property_base import PropertyTrait, PropertyOptions
 from ..error import DeserializeError
+from ..utils import write_string
 
 
 @dataclass
@@ -71,6 +72,9 @@ class StrProperty(PropertyTrait):
         """Write string to stream"""
         bytes_written = 0
 
+        # Write property type needs to be written by the object
+        bytes_written += write_string(stream, "StrProperty")
+
         if include_header:
             # Write to temporary buffer first to get length
             buffer = BytesIO()
@@ -78,44 +82,40 @@ class StrProperty(PropertyTrait):
 
             # Write string value
             if self.value is not None:
-                str_bytes = (self.value + "\0").encode("utf-8")
-                buffer.write(struct.pack("<I", len(str_bytes)))
-                buffer.write(str_bytes)
-                buffer_bytes += 4 + len(str_bytes)
+                bytes_written += write_string(buffer, self.value)
+                # buffer_bytes += 4 + len(str_bytes)
             else:
                 buffer.write(struct.pack("<I", 0))
                 buffer_bytes += 4
 
             # Write length and array index
-            stream.write(struct.pack("<I", buffer_bytes))  # Total length
-            stream.write(struct.pack("<I", 0))  # Array index
-            bytes_written += 8
+            bytes_written += stream.write(struct.pack("<I", buffer_bytes))  # Total length
+            bytes_written += stream.write(struct.pack("<I", 0))  # Array index
+            # bytes_written += 8
 
             # Write terminator
-            stream.write(bytes([0]))
-            bytes_written += 1
+            bytes_written += stream.write(bytes([0]))
+            # bytes_written += 1
 
             # Write buffer contents
             buffer_data = buffer.getvalue()
-            stream.write(buffer_data)
-            bytes_written += len(buffer_data)
+            bytes_written += stream.write(buffer_data)
+            # bytes_written += len(buffer_data)
         else:
             # Write string value directly
             if self.value is not None:
-                str_bytes = (self.value + "\0").encode("utf-8")
-                stream.write(struct.pack("<I", len(str_bytes)))
-                stream.write(str_bytes)
-                bytes_written += 4 + len(str_bytes)
+                bytes_written += write_string(stream, self.value)
+                # buffer_bytes += 4 + len(str_bytes)
             else:
-                stream.write(struct.pack("<I", 0))
-                bytes_written += 4
+                bytes_written += stream.write(struct.pack("<I", 0))
+                # bytes_written += 4
 
         return bytes_written
 
 
 @dataclass
 class NameProperty(PropertyTrait):
-    """A property that holds a name value with an array index"""
+    """A property that holds a type_name value with an array index"""
 
     value: Optional[str] = None
     array_index: int = 0
@@ -131,7 +131,7 @@ class NameProperty(PropertyTrait):
         include_header: bool = True,
         options: Optional[PropertyOptions] = None,
     ) -> None:
-        """Read name value from stream"""
+        """Read type_name value from stream"""
         if include_header:
             # Read length and array index
             length = struct.unpack("<I", stream.read(4))[0]
@@ -167,7 +167,7 @@ class NameProperty(PropertyTrait):
         include_header: bool = True,
         options: Optional[PropertyOptions] = None,
     ) -> int:
-        """Write name value to stream"""
+        """Write type_name value to stream"""
         bytes_written = 0
 
         if include_header:

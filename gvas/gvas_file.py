@@ -23,6 +23,7 @@ from .game_version import (
 )
 from .gvas_types import Guid, HashableIndexMap
 from .properties import Property, PropertyOptions
+from .utils import read_string, write_string
 
 # Magic number that appears at the start of every GVAS file
 GVAS_MAGIC = b"GVAS"
@@ -66,7 +67,7 @@ class GvasHeader:
         engine_version_patch = struct.unpack("<H", stream.read(2))[0]
         engine_version_build = struct.unpack("<I", stream.read(4))[0]
 
-        # Read branch name
+        # Read branch type_name
         branch_len = struct.unpack("<I", stream.read(4))[0]
         engine_version_branch = stream.read(branch_len).decode("utf-8")[:-1]
 
@@ -80,7 +81,7 @@ class GvasHeader:
             version = struct.unpack("<I", stream.read(4))[0]
             custom_versions[Guid.from_bytes(guid_bytes)] = version
 
-        # Read save game class name
+        # Read save game class type_name
         class_name_len = struct.unpack("<I", stream.read(4))[0]
         save_game_class_name = stream.read(class_name_len).decode("utf-8")[:-1]
 
@@ -102,47 +103,51 @@ class GvasHeader:
         bytes_written = 0
 
         # Write magic number
-        stream.write(GVAS_MAGIC)
-        bytes_written += 4
+        bytes_written += stream.write(GVAS_MAGIC)
+        # bytes_written += 4
 
         # Write versions
-        stream.write(struct.pack("<I", 3 if self.package_file_version_ue5 else 2))
-        stream.write(struct.pack("<I", self.package_file_version))
-        bytes_written += 8
+        bytes_written += stream.write(
+            struct.pack("<I", 3 if self.package_file_version_ue5 else 2)
+        )
+        bytes_written += stream.write(struct.pack("<I", self.package_file_version))
+        # bytes_written += 8
 
         # Write UE5 version if present
         if self.package_file_version_ue5 is not None:
-            stream.write(struct.pack("<I", self.package_file_version_ue5))
-            bytes_written += 4
+            bytes_written += stream.write(
+                struct.pack("<I", self.package_file_version_ue5)
+            )
+            # bytes_written += 4
 
         # Write engine version
-        stream.write(struct.pack("<H", self.engine_version_major))
-        stream.write(struct.pack("<H", self.engine_version_minor))
-        stream.write(struct.pack("<H", self.engine_version_patch))
-        stream.write(struct.pack("<I", self.engine_version_build))
-        bytes_written += 10
+        bytes_written += stream.write(struct.pack("<H", self.engine_version_major))
+        bytes_written += stream.write(struct.pack("<H", self.engine_version_minor))
+        bytes_written += stream.write(struct.pack("<H", self.engine_version_patch))
+        bytes_written += stream.write(struct.pack("<I", self.engine_version_build))
+        # bytes_written += 10
 
-        # Write branch name
+        # Write branch type_name
         branch_bytes = (self.engine_version_branch + "\0").encode("utf-8")
-        stream.write(struct.pack("<I", len(branch_bytes)))
-        stream.write(branch_bytes)
-        bytes_written += 4 + len(branch_bytes)
+        bytes_written += stream.write(struct.pack("<I", len(branch_bytes)))
+        bytes_written += stream.write(branch_bytes)
+        # bytes_written += 4 + len(branch_bytes)
 
         # Write custom versions
-        stream.write(struct.pack("<I", self.custom_version_format))
-        stream.write(struct.pack("<I", len(self.custom_versions)))
-        bytes_written += 8
+        bytes_written += stream.write(struct.pack("<I", self.custom_version_format))
+        bytes_written += stream.write(struct.pack("<I", len(self.custom_versions)))
+        # bytes_written += 8
 
         for guid, version in self.custom_versions.items():
-            stream.write(guid.to_bytes())
-            stream.write(struct.pack("<I", version))
-            bytes_written += 20
+            bytes_written += stream.write(guid.to_bytes())
+            bytes_written += stream.write(struct.pack("<I", version))
+            # bytes_written += 20
 
-        # Write save game class name
+        # Write save game class type_name
         class_name_bytes = (self.save_game_class_name + "\0").encode("utf-8")
-        stream.write(struct.pack("<I", len(class_name_bytes)))
-        stream.write(class_name_bytes)
-        bytes_written += 4 + len(class_name_bytes)
+        bytes_written += stream.write(struct.pack("<I", len(class_name_bytes)))
+        bytes_written += stream.write(class_name_bytes)
+        # bytes_written += 4 + len(class_name_bytes)
 
         return bytes_written
 
@@ -163,7 +168,7 @@ class GVASFile:
         hints: Optional[Dict[str, str]] = None,
     ) -> "GVASFile":
 
-        print(f"Now insde read()")
+        print(f"Now inside read()")
 
         """Read GVAS file from stream"""
         # Create deserialized game version
@@ -180,7 +185,7 @@ class GVASFile:
         #         stream.seek(-4, 1)  # Rewind
 
         # Handle compression
-        if compression_type == CompressionType.ZLIB_TWICE:
+        if compression_type == CompressionType.PLZ:
             # TODO: Implement PLZ decompression
             raise NotImplementedError("PLZ compression not yet supported")
         elif compression_type == CompressionType.ZLIB:
@@ -196,7 +201,6 @@ class GVASFile:
 
         # Read header
         header = GvasHeader.read(stream)
-        # print(asdict(header))
 
         # Create property options
         options = PropertyOptions(hints=hints)
@@ -204,24 +208,22 @@ class GVASFile:
         # Read properties
         properties = {}
         while True:
-            # Read property name
-            name_len = struct.unpack("<I", stream.read(4))[0]
-            if name_len == 0:
+            # Read property type_name
+            name = read_string(stream)
+            if name in ["", "None"]:
+                print(f"No more properties to read")
                 break
-
-            name = stream.read(name_len).decode("utf-8")[:-1]
 
             # Read property type
-            type_len = struct.unpack("<I", stream.read(4))[0]
-            if type_len == 0:
-                break
+            prop_type = read_string(stream)
 
-            prop_type = stream.read(type_len).decode("utf-8")[:-1]
+            print(f"Reading {name=} and {prop_type=}")
 
             # Read property
             prop = Property.new(stream, prop_type, include_header=True, options=options)
             properties[name] = prop
 
+        print(f"Read header and {len(properties)=} from stream")
         return cls(header=header, properties=properties)
 
     def write(self, stream: BinaryIO, game_version: GameVersion) -> None:
@@ -230,19 +232,19 @@ class GVASFile:
         buffer = BytesIO()
 
         # Write header
-        self.header.write(buffer)
+        bytes_written = self.header.write(buffer)
+        print(f"Header {bytes_written=}")
 
         # Write properties
+        print(f"Writing property count: {len(self.properties.items())}")
         for name, prop in self.properties.items():
-            # Write property name
-            name_bytes = (name + "\0").encode("utf-8")
-            buffer.write(struct.pack("<I", len(name_bytes)))
-            buffer.write(name_bytes)
+            # Write property type_name
+            bytes_written += write_string(buffer, name)
 
-            # Write property type
-            type_bytes = (prop.type + "\0").encode("utf-8")
-            buffer.write(struct.pack("<I", len(type_bytes)))
-            buffer.write(type_bytes)
+            # # Write property type
+            # bytes_written += write_string(buffer, Property.type)
+
+            print(f"Writing {name=} of {prop.type=}")
 
             # Write property
             prop.write(buffer, include_header=True)
@@ -253,14 +255,18 @@ class GVASFile:
         # Get buffer contents
         data = buffer.getvalue()
 
+        print(f"Total bytes written: {len(data)}")
+
         # Handle compression
         compression_type = game_version.get_compression_type()
         if compression_type == CompressionType.PLZ:
             # TODO: Implement PLZ compression
             raise NotImplementedError("PLZ compression not yet supported")
         elif compression_type == CompressionType.ZLIB:
+            assert False, "ZLIB is not tested!"
             # Write PLZ magic if needed
-            if game_version == GameVersion.Palworld:
+            if game_version == GameVersion.PALWORLD:
+                assert False, "PALWORLD is not tested!"
                 stream.write(PLZ_MAGIC)
 
             # Compress data
@@ -271,4 +277,5 @@ class GVASFile:
             stream.write(compressed_data)
         else:
             # Write uncompressed
+            print(f"Writing data")
             stream.write(data)

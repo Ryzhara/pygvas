@@ -39,7 +39,7 @@ class EnumProperty(PropertyTrait):
                 position = stream.tell() - 4
                 raise DeserializeError.invalid_array_index(array_index, position)
 
-            # Read enum type name if present
+            # Read enum type type_name if present
             self.enum_type = read_string(stream)
 
             # Read terminator
@@ -80,7 +80,7 @@ class EnumProperty(PropertyTrait):
             stream.write(struct.pack("<I", 0))  # array_index
             bytes_written += 8
 
-            # Write enum type name if present
+            # Write enum type type_name if present
             if self.enum_type:
                 bytes_written += write_string(stream, self.enum_type)
             else:

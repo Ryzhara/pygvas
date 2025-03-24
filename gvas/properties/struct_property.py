@@ -15,7 +15,12 @@ import struct
 from .property_base import Property, PropertyTrait, PropertyOptions
 from ..gvas_types import Guid
 from ..error import DeserializeError
-from ..utils import read_string, write_string
+from ..utils import (
+    read_string,
+    write_string,
+    read_guid_with_terminator,
+    write_guid_with_terminator,
+)
 
 
 @dataclass
@@ -55,85 +60,75 @@ class StructProperty(PropertyTrait):
         options: Optional[PropertyOptions] = None,
     ) -> None:
         """Read struct from stream"""
-        if include_header:
-            # Read length and array index
-            length = struct.unpack("<I", stream.read(4))[0]
-            array_index = struct.unpack("<I", stream.read(4))[0]
-            print(f"found {length=} {array_index=}")
-            if array_index != 0:
-                print(f"found non-zero index! {array_index}")
-                # try to keep going to see if this is a real thing
-                # position = stream.tell() - 4
-                # raise DeserializeError.invalid_array_index(array_index, position)
+        if not include_header:
+            raise DeserializeError()
 
-            # Read struct type name
-            self.type_name = read_string(stream)
-            print(f"found {self.type_name}")
+        length = self.read_header(stream)
+        # this is BODY
+        # Record start position for length validation
+        start = stream.tell()
+        result_ = self.read_body(stream)
+        # Validate length if header was included
+        end = stream.tell()
+        actual_size = end - start
+        if actual_size != length:
+            raise DeserializeError.invalid_value_size(length, actual_size, start)
 
-            # Read terminator
-            terminator = stream.read(1)[0]
-            if terminator != 0:
-                position = stream.tell() - 1
-                raise DeserializeError.invalid_terminator(terminator, position)
+    def read_header(self, stream) -> int:
+        # Read length and array index
+        length = struct.unpack("<I", stream.read(4))[0]
+        array_index = struct.unpack("<I", stream.read(4))[0]
+        # print(f"found {length=} {array_index=}")
+        if array_index != 0:
+            print(f"found non-zero index! {array_index}")
 
-            # Record start position for length validation
-            start = stream.tell()
+        # Read struct type type_name
+        self.type_name = read_string(stream)
+        # print(f"Struct length {length=} for {self.type_name}")
 
-            # Read struct size
-            struct_size = struct.unpack("<Q", stream.read(8))[0]
+        self.guid = read_guid_with_terminator(stream)
 
-            # Read GUID
-            guid_bytes = stream.read(16)
-            self.guid = Guid.from_bytes(guid_bytes)
+        return length
 
-            # Read terminator
-            terminator = stream.read(1)[0]
-            if terminator != 0:
-                position = stream.tell() - 1
-                raise DeserializeError.invalid_terminator(terminator, position)
-
-        # Create options for nested properties
-        nested_options = PropertyOptions(
-            hints=options.hints if options else None,
-            property_path=(
-                f"{options.property_path}.StructProperty"
-                if options
-                else "StructProperty"
-            ),
-        )
-
-        # Get type hint if available
-        type_hint = nested_options.get_hint(nested_options.property_path)
-        actual_type = type_hint or self.type_name
+    def read_body(self, stream: BinaryIO) -> bytes:
 
         # Create struct value
-        self.value = StructPropertyValue(actual_type, {})
+        self.value = StructPropertyValue(self.type_name, {})
 
-        # Read properties until we hit None
+        """ We should have a match self.type_name: here with
+        Vector
+        Vector2D
+        Rotator
+        Quat
+        Datetime
+        Timespan
+        LinearColor
+        IntPoint
+        Guid
+        and then the catchall?
+        """
+
+        # Read properties until we hit None. Or is it "None" ?
         while True:
-            # Read property name
-            name = read_string(stream)
-            if not name:
+            # Read property property_name
+            property_name = read_string(stream)
+            # print(f"Found struct {property_name=}")
+            if property_name == "None":
+                # print(f"property reading NONE; break")
                 break
 
             # Read property type
-            prop_type = read_string(stream)
-            if not prop_type:
+            property_type = read_string(stream)
+            # print(f"found struct {property_type=}")
+            if not property_type:
+                print(f"property_type NONE; break!!!!!")
                 break
 
             # Read property
-            prop = Property.new(
-                stream, prop_type, include_header=True, options=nested_options
-            )
 
-            self.value.properties[name] = prop
-
-        # Validate length if header was included
-        if include_header:
-            end = stream.tell()
-            actual_size = end - start
-            if actual_size != length:
-                raise DeserializeError.invalid_value_size(length, actual_size, start)
+            property_value = Property.new(stream, property_type, include_header=True)
+            # print(f"found struct {property_value=}")
+            self.value.properties[property_name] = property_value
 
     def write(
         self,
@@ -142,101 +137,61 @@ class StructProperty(PropertyTrait):
         options: Optional[PropertyOptions] = None,
     ) -> int:
         """Write struct to stream"""
-        bytes_written = 0
+        # REF: Write to a temporary buffer first to get the length of the body
+        buffer = BytesIO()
+        buffer_bytes = 0
+        header_length_and_index_position = 0
+        header_length = 0
+
+        # Write property type
+        buffer_bytes += write_string(buffer, "StructProperty")
 
         if include_header:
-            # Write to a temporary buffer first to get the length
-            buffer = BytesIO()
-            buffer_bytes = 0
+            header_length, header_length_and_index_position = self.write_header(buffer)
+            buffer_bytes += header_length
+            # print(f"Write struct header {self.type_name}")
 
-            # Write struct type name
-            buffer_bytes += write_string(buffer, self.type_name)
+        # Write property children
+        if self.value:
+            for name, prop in self.value.properties.items():
+                # Write property type_name
+                buffer_bytes += write_string(buffer, name)
 
-            # Write terminator
-            buffer.write(bytes([0]))
-            buffer_bytes += 1
+                # # Write property type needs to be written by the object
+                # buffer_bytes += write_string(buffer, prop.type)
 
-            # Write struct size (placeholder)
-            size_pos = buffer.tell()
-            buffer.write(struct.pack("<Q", 0))
-            buffer_bytes += 8
+                # Write property
+                buffer_bytes += prop.write(buffer, include_header=True)
 
-            # Write GUID
-            buffer.write(self.guid.to_bytes())
-            buffer_bytes += 16
+        # Write None terminator for the struct
+        # This needs to be "None" as a string
+        buffer_bytes += write_string(buffer, "None")
+        # buffer_bytes == len("None")+1+4
 
-            # Write terminator
-            buffer.write(bytes([0]))
-            buffer_bytes += 1
+        # Update total child size in the header
+        if include_header:
+            buffer.seek(header_length_and_index_position)
+            # print(f"Update struct header length {buffer_bytes - header_length=}")
+            buffer.write(struct.pack("<I", buffer_bytes - header_length))
+            # buffer.write(struct.pack("<I", 0))
 
-            # Create options for nested properties
-            nested_options = PropertyOptions(
-                hints=options.hints if options else None,
-                property_path=(
-                    f"{options.property_path}.StructProperty"
-                    if options
-                    else "StructProperty"
-                ),
-            )
 
-            # Write properties
-            if self.value:
-                for name, prop in self.value.properties.items():
-                    # Write property name
-                    buffer_bytes += write_string(buffer, name)
+        # Write buffer contents with optional header
+        buffer.seek(0)
+        buffer_data = buffer.getvalue()
+        stream.write(buffer_data)
+        total_bytes_written = len(buffer_data)
 
-                    # Write property type
-                    buffer_bytes += write_string(buffer, prop.type)
+        return total_bytes_written
 
-                    # Write property
-                    buffer_bytes += prop.write(buffer, options=nested_options)
+    def write_header(self, stream: BinaryIO) -> int:
+        bytes_written = 0
 
-            # Write None terminator
-            buffer.write(struct.pack("<I", 0))
-            buffer_bytes += 4
+        # Write placeholder for struct size (4b) and index (4b), which must be zero
+        length_and_index_position = stream.tell()
+        bytes_written += stream.write(struct.pack("<I", 0))
+        bytes_written += stream.write(struct.pack("<I", 0))
+        # buffer_bytes += 8
 
-            # Update struct size
-            current_pos = buffer.tell()
-            buffer.seek(size_pos)
-            buffer.write(struct.pack("<Q", buffer_bytes - 30))  # 30 = header size
-            buffer.seek(0)
-
-            # Write length and array index
-            stream.write(struct.pack("<I", buffer_bytes))  # Total length
-            stream.write(struct.pack("<I", 0))  # Array index
-            bytes_written += 8
-
-            # Write buffer contents
-            buffer_data = buffer.getvalue()
-            stream.write(buffer_data)
-            bytes_written += len(buffer_data)
-        else:
-            # Create options for nested properties
-            nested_options = PropertyOptions(
-                hints=options.hints if options else None,
-                property_path=(
-                    f"{options.property_path}.StructProperty"
-                    if options
-                    else "StructProperty"
-                ),
-            )
-
-            # Write properties
-            if self.value:
-                for name, prop in self.value.properties.items():
-                    # Write property name
-                    bytes_written += write_string(stream, name)
-
-                    # Write property type
-                    bytes_written += write_string(stream, prop.type)
-
-                    # Write property
-                    bytes_written += prop.write(
-                        stream, include_header=True, options=nested_options
-                    )
-
-            # Write None terminator
-            stream.write(struct.pack("<I", 0))
-            bytes_written += 4
-
-        return bytes_written
+        bytes_written += write_guid_with_terminator(stream, self.guid)
+        return bytes_written, length_and_index_position

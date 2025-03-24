@@ -13,9 +13,15 @@ import struct
 from io import BytesIO
 
 from .property_base import Property, PropertyTrait, PropertyOptions
+from .struct_property import StructProperty
 from ..error import DeserializeError, SerializeError
 from ..gvas_types import Guid
-from ..utils import read_string, write_string
+from ..utils import (
+    read_string,
+    write_string,
+    read_guid_with_terminator,
+    write_guid_with_terminator,
+)
 
 
 @dataclass
@@ -57,107 +63,98 @@ class ArrayProperty(PropertyTrait):
         options: Optional[PropertyOptions] = None,
     ) -> None:
         """Read array from stream"""
+        if not include_header:
+            raise DeserializeError.invalid_property(
+                "ArrayProperty is not supported in arrays", stream.tell()
+            )
 
-        property_length_to_check = 0
-        if include_header:
-            # Read length and array index
-            length = struct.unpack("<I", stream.read(4))[0]
-            print(f"read array {length=}")
+        length = self.read_header(stream)
+        print(f"array property: {length=}")
+        # self.property_type should be populated
+        start = stream.tell()
+        self.read_body(stream)
+        end = stream.tell()
+        if end - start != length:
+            raise DeserializeError.invalid_value_size(length, end - start, start)
 
-            property_length_to_check = length
-            array_index = struct.unpack("<I", stream.read(4))[0]
-            if array_index != 0:
-                position = stream.tell() - 4
-                raise DeserializeError.invalid_array_index(array_index, position)
+    def read_header(self, stream: BinaryIO) -> (int, str):
+        # Read length and array index
+        length = struct.unpack("<I", stream.read(4))[0]
+        # print(f"Read ArrayProperty {length=}")
 
-            # Read property type
-            self.property_type = read_string(stream)
-            print(f"read array {self.property_type=}")
+        array_index = struct.unpack("<I", stream.read(4))[0]
+        if array_index != 0:
+            position = stream.tell() - 4
+            raise DeserializeError.invalid_array_index(array_index, position)
 
-            # Read terminator
-            terminator = stream.read(1)[0]
-            if terminator != 0:
-                position = stream.tell() - 1
-                raise DeserializeError.invalid_terminator(terminator, position)
+        # Read property type
+        self.property_type = read_string(stream)
+        # print(f"Read ArrayProperty: {self.property_type=}")
 
-            # Read number of elements in the array
-            array_member_count = struct.unpack("<I", stream.read(4))[0]
-            print(f"Found array member {array_member_count=}")
+        # Read string? terminator
+        terminator = stream.read(1)[0]
+        if terminator != 0:
+            position = stream.tell() - 1
+            raise DeserializeError.invalid_terminator(terminator, position)
 
-            # Handle struct properties
-            if self.property_type == "StructProperty":
-                # Read field name
+        # END OF HEADER FOR ARRAY PROPERTY
+        return length
+
+    def read_body(self, stream: BinaryIO) -> None:
+
+        # Read number of elements in the array
+        property_count = struct.unpack("<I", stream.read(4))[0]
+        # print(f"Found {property_count=}")
+
+        self.values = []  # prepare storage
+
+        match self.property_type:
+            case "StructProperty":
+                # Read field type_name
                 self.field_name = read_string(stream)
-                print(f"Found StructProperty {self.field_name=}")
 
                 # Read structure sub/generic type
-                prop_type = read_string(stream)
+                array_member_property_type = read_string(stream)
 
-                print(f"Found StructProperty {prop_type=}")
-                if prop_type != self.property_type:
-                    raise DeserializeError(
-                        f"Property type mismatch: {prop_type} != {self.property_type}"
-                    )
+                # print(f"Found StructProperty {array_member_property_type=}")
+                assert (
+                    array_member_property_type == self.property_type
+                ), f"Property array member type mismatch: {array_member_property_type} != {self.property_type}"
 
                 # Read properties size
-                prop_size = struct.unpack("<Q", stream.read(8))[0]
-                property_length_to_check = prop_size
+                # TODO: add check for byte count
+                properties_size = struct.unpack("<Q", stream.read(8))[0]
 
-                print(f"Found StructProperty {prop_size=}")
-
-                # Read struct type name
                 self.type_name = read_string(stream)
 
-                # Read GUID
-                guid_bytes = stream.read(16)
-                self.guid = Guid.from_bytes(guid_bytes)
-
-                print(f"Found StructProperty {self.guid=}")
-
-                # Read terminator
-                terminator = stream.read(1)[0]
-                if terminator != 0:
-                    raise DeserializeError.invalid_terminator(
-                        terminator, stream.tell() - 1
-                    )
+                self.guid = read_guid_with_terminator(stream)
 
                 # now we are supposed to read structs bodies, NO HEADER
                 # Read array elements
-                self.values = []
-                print(f"Reading StructProperty members")
-                for idx in range(array_member_count):
-                    print(f"Reading StructProperty member {idx=}")
-                    prop = Property.new(
-                        stream, self.property_type, include_header=False, options=None
-                    )
-                    self.values.append(prop.value)
-            else:
+                # print(f"Reading StructProperty members")
+                for idx in range(property_count):
+                    # print(f"Reading StructProperty member {idx=}")
+                    new_array_property = StructProperty(self.property_type)
+                    # print(f"Reading StructProperty member {new_array_property=}")
+                    # have to key the READ from the subtype type_name! aka STRUCT_NAME
+                    new_array_property.read_body(stream)
+                    self.values.append(new_array_property)
 
-                # REF: length validation may not be correct
-                # Record start position for length validation
-                start = stream.tell()
+            # we probably  need to handle more things in detail? read the code
+            # case "Guid", "DateTime", "Quat", "Vector", "Rotator", etc:
+            #     pass
+            case "StrProperty":
+                for _ in range(property_count):
+                    string_element = read_string(stream)
+                    self.values.append(string_element)
+            case _:
 
                 # Read array elements
-                self.values = []
-                print(f"Reading StructProperty members")
-                for idx in range(array_member_count):
-                    print(f"Reading StructProperty member {idx=}")
-                    prop = Property.new(
-                        stream, self.property_type, include_header=True, options=None
+                for _ in range(property_count):
+                    new_array_property = Property.new(
+                        stream, self.property_type, include_header=False, options=None
                     )
-                    self.values.append(prop.value)
-
-                # Validate length
-                end = stream.tell()
-                actual_size = end - start
-                if actual_size != property_length_to_check:
-                    raise DeserializeError.invalid_value_size(
-                        property_length_to_check, actual_size, start
-                    )
-        else:
-            raise DeserializeError.invalid_property(
-                "ArrayProperty is not supported in arrays", stream
-            )
+                    self.values.append(new_array_property.value)
 
     def write(
         self,
@@ -171,101 +168,75 @@ class ArrayProperty(PropertyTrait):
                 "ArrayProperty is not supported in arrays"
             )
 
-        # First write to a temporary buffer to get the length
-        buffer = BytesIO()
-        buffer_bytes = 0
+        # First write to a temporary array_buffer to get the length
+        array_buffer = BytesIO()
+        array_bytes = 0
 
         # Write property type
-        type_bytes = (self.property_type + "\0").encode("utf-8")
-        buffer.write(struct.pack("<I", len(type_bytes)))
-        buffer.write(type_bytes)
-        buffer_bytes += 4 + len(type_bytes)
+        array_bytes += write_string(array_buffer, "ArrayProperty")
 
-        # Write terminator
-        buffer.write(bytes([0]))
-        buffer_bytes += 1
+        # ====== START OF HEADER ==============
+        ap_byte_count_location = array_bytes
+        array_bytes += array_buffer.write(struct.pack("<I", 0))  # TBD total byte count
+        array_bytes += array_buffer.write(struct.pack("<I", 0))  # index
 
+        array_bytes += write_string(array_buffer, self.property_type)
+
+        # header terminator null byte
+        array_bytes += array_buffer.write(struct.pack("<B", 0))
+        # ====== END OF HEADER ==============
+
+        # property_count, or number of elements in the array
+        property_count = len(self.values)
+        array_bytes += array_buffer.write(struct.pack("<I", property_count))
+        print(f"\tWriting array: {property_count=}")
         # Handle struct properties
-        if self.property_type == "StructProperty":
-            # Write field name
-            field_bytes = (self.field_name + "\0").encode("utf-8")
-            buffer.write(struct.pack("<I", len(field_bytes)))
-            buffer.write(field_bytes)
-            buffer_bytes += 4 + len(field_bytes)
+        match self.property_type:
+            case "StructProperty":
 
-            # Write property type again
-            buffer.write(struct.pack("<I", len(type_bytes)))
-            buffer.write(type_bytes)
-            buffer_bytes += 4 + len(type_bytes)
+                array_bytes += write_string(array_buffer, self.field_name)
 
-            # Create buffer for properties
-            prop_buffer = BytesIO()
-            prop_bytes = 0
+                # Write property type again
+                array_bytes += write_string(array_buffer, self.property_type)
 
-            # Create options for nested properties
-            nested_options = PropertyOptions(
-                hints=options.hints if options else None,
-                property_path=(
-                    f"{options.property_path}.ArrayProperty"
-                    if options
-                    else "ArrayProperty"
-                ),
-            )
+                properties_byte_count_position = array_buffer.tell()
+                array_bytes += array_buffer.write(struct.pack("<I", 0))
+                array_bytes += array_buffer.write(struct.pack("<I", 0))
 
-            # Write properties to buffer
-            for value in self.values:
-                prop = Property(self.property_type, value)
-                prop_bytes += prop.write(prop_buffer, options=nested_options)
+                array_bytes += write_string(array_buffer, self.type_name)
+                array_bytes += write_guid_with_terminator(array_buffer, self.guid)
 
-            # Write properties size
-            buffer.write(struct.pack("<Q", prop_bytes))
-            buffer_bytes += 8
+                # Write properties to array_buffer
+                struct_properties_start = array_buffer.tell()
+                for struct_property in self.values:
+                    array_bytes += struct_property.write(
+                        array_buffer, include_header=False
+                    )
+                struct_properties_end = array_buffer.tell()
 
-            # Write struct type name
-            type_bytes = (self.type_name + "\0").encode("utf-8")
-            buffer.write(struct.pack("<I", len(type_bytes)))
-            buffer.write(type_bytes)
-            buffer_bytes += 4 + len(type_bytes)
+                # write total bytes in structs
+                struct_properties_bytes = (
+                    struct_properties_end - struct_properties_start
+                )
+                array_buffer.seek(properties_byte_count_position)
+                array_buffer.write(struct.pack("<I", struct_properties_bytes))
 
-            # Write GUID
-            buffer.write(self.guid.to_bytes())
-            buffer_bytes += 16
+            case "StrProperty":
+                for string_value in self.values:
+                    array_bytes += write_string(array_buffer, string_value)
 
-            # Write terminator
-            buffer.write(bytes([0]))
-            buffer_bytes += 1
+            case _:
+                # Write array elements
+                for array_property in self.values:
+                    array_bytes += array_property.write(
+                        array_buffer, include_header=False
+                    )
 
-            # Write properties from buffer
-            buffer_data = prop_buffer.getvalue()
-            buffer.write(buffer_data)
-            buffer_bytes += len(buffer_data)
+        # Write total byte count size
+        array_buffer.seek(ap_byte_count_location)
+        array_buffer.write(struct.pack("<I", array_bytes))
 
-        # Write number of elements
-        buffer.write(struct.pack("<I", len(self.values)))
-        buffer_bytes += 4
+        # now write the whole thing
+        stream.write(array_buffer.getvalue())
 
-        # Create options for nested properties
-        nested_options = PropertyOptions(
-            hints=options.hints if options else None,
-            property_path=(
-                f"{options.property_path}.ArrayProperty" if options else "ArrayProperty"
-            ),
-        )
-
-        # Write array elements
-        for value in self.values:
-            prop = Property(self.property_type, value)
-            buffer_bytes += prop.write(buffer, options=nested_options)
-
-        # Write header
-        bytes_written = 0
-        stream.write(struct.pack("<I", buffer_bytes))  # length
-        stream.write(struct.pack("<I", 0))  # array_index
-        bytes_written += 8
-
-        # Write buffer contents
-        buffer_data = buffer.getvalue()
-        stream.write(buffer_data)
-        bytes_written += len(buffer_data)
-
-        return bytes_written
+        return array_bytes

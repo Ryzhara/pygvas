@@ -22,7 +22,7 @@ class CompressionType(Enum):
     # Zlib
     ZLIB = 0x31
     # Zlib twice
-    ZLIB_TWICE = 0x32
+    PLZ = 0x32
 
 
 class GameVersion(Enum):
@@ -35,7 +35,7 @@ class GameVersion(Enum):
         """Get the compression type for this game version"""
         if self == GameVersion.PALWORLD:
             return CompressionType.PLZ
-        return CompressionType.ZLIB
+        return CompressionType.NONE
 
 
 class DeserializedGameVersion:

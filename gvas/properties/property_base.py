@@ -120,7 +120,7 @@ class Property:
         }
 
         # Get the appropriate property class
-        print(f"Looking for property type: {property_type}")
+        # print(f"Looking for property type: {property_type}")
         prop_class = type_map.get(property_type)
         if not prop_class:
             print(f"Available property types: {list(type_map.keys())}")
@@ -128,7 +128,7 @@ class Property:
 
         # Create and read the property
         prop = prop_class(property_type)
-        print(f"Property created: {asdict(prop)} {include_header=}, {options=}")
+        # print(f"Property created: {asdict(prop)} {include_header=}, {options=}")
 
         # Handle special cases for properties that need suggested_length
         if (
@@ -144,7 +144,7 @@ class Property:
             # Standard case
             prop.read(stream, include_header, options)
 
-        print(f"Property read: {asdict(prop)}")
+        # print(f"Property read: {asdict(prop)}")
         return cls(property_type, prop)
 
     def write(

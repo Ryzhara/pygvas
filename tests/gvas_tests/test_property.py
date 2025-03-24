@@ -40,7 +40,7 @@ class TestProperty(unittest.TestCase):
 
         Args:
             property_obj: The property to test
-            property_type: The type name of the property
+            property_type: The type type_name of the property
         """
         options = PropertyOptions()
 

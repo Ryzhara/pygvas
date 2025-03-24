@@ -44,18 +44,19 @@ class BoolProperty(PropertyTrait):
         if include_header:
             # Read length and array index
             length = struct.unpack("<I", stream.read(4))[0]
+            # print(f"Found bool {length=}")
             array_index = struct.unpack("<I", stream.read(4))[0]
-            if array_index != 0:
-                position = stream.tell() - 4
-                raise DeserializeError.invalid_array_index(array_index, position)
+            # print(f"Found bool {array_index=}")
+            assert array_index == 0, f"Invalid boolean array index {array_index=}"
 
+        self.value = bool(stream.read(1)[0])
+
+        if include_header:
             # Read terminator
             terminator = stream.read(1)[0]
             if terminator != 0:
                 position = stream.tell() - 1
                 raise DeserializeError.invalid_terminator(terminator, position)
-
-        self.value = bool(stream.read(1)[0])
 
     def write(
         self,
@@ -66,17 +67,20 @@ class BoolProperty(PropertyTrait):
         """Write boolean value to stream"""
         bytes_written = 0
 
+        # Write property type needs to be written by the object
+        bytes_written += write_string(stream, "BoolProperty")
+
         if include_header:
             # Write length (0 for bool)
-            stream.write(struct.pack("<I", 0))
+            bytes_written += stream.write(struct.pack("<I", 0))
             # Write array index
-            stream.write(struct.pack("<I", 0))
+            bytes_written += stream.write(struct.pack("<I", 0))
             # Write terminator
-            stream.write(bytes([0]))
-            bytes_written += 9
+            bytes_written += stream.write(bytes([0]))
+            # bytes_written += 9
 
-        stream.write(bytes([int(self.value)]))
-        bytes_written += 1
+        bytes_written += stream.write(bytes([int(self.value)]))
+        # bytes_written += 1 ???
 
         return bytes_written
 
@@ -90,7 +94,7 @@ class BytePropertyValue(Enum):
 
 @dataclass
 class ByteProperty(PropertyTrait):
-    """A property that holds a byte value or name"""
+    """A property that holds a byte value or type_name"""
 
     name: Optional[str] = None
     value: Union[int, str] = 0
@@ -102,7 +106,7 @@ class ByteProperty(PropertyTrait):
 
     @classmethod
     def new_name(cls, name: Optional[str], value: str) -> "ByteProperty":
-        """Create a new name-type property"""
+        """Create a new type_name-type property"""
         return cls(name=name, value=value)
 
     def read(
@@ -123,13 +127,13 @@ class ByteProperty(PropertyTrait):
                 position = stream.tell() - 1
                 raise DeserializeError.invalid_terminator(terminator, position)
 
-        # Read name if present
+        # Read type_name if present
         self.name = read_string(stream) if suggested_length > 1 else None
 
         # Read value based on length
         if suggested_length <= 1:  # indicates a byte value
             self.value = stream.read(1)[0]
-        else:  # indicates a name value
+        else:  # indicates a type_name value
             self.value = read_string(stream)
 
     def write(
@@ -146,7 +150,7 @@ class ByteProperty(PropertyTrait):
             buffer = BytesIO()
             buffer_bytes = 0
 
-            # Write name if present
+            # Write type_name if present
             if self.name:
                 buffer_bytes += write_string(buffer, self.name)
             else:
@@ -174,7 +178,7 @@ class ByteProperty(PropertyTrait):
             stream.write(buffer_data)
             bytes_written += len(buffer_data)
         else:
-            # Write name if present
+            # Write type_name if present
             if self.name:
                 bytes_written += write_string(stream, self.name)
             else:
@@ -232,17 +236,20 @@ class FloatProperty(PropertyTrait):
         """Write float value to stream"""
         bytes_written = 0
 
+        # Write property type needs to be written by the object
+        bytes_written += write_string(stream, "FloatProperty")
+
         if include_header:
             # Write length (4 for float)
-            stream.write(struct.pack("<I", 4))
+            bytes_written += stream.write(struct.pack("<I", 4))
             # Write array index
-            stream.write(struct.pack("<I", 0))
+            bytes_written += stream.write(struct.pack("<I", 0))
             # Write terminator
-            stream.write(bytes([0]))
-            bytes_written += 9
+            bytes_written += stream.write(bytes([0]))
+            # bytes_written += 9
 
-        stream.write(struct.pack("<f", self.value))
-        bytes_written += 4
+        bytes_written += stream.write(struct.pack("<f", self.value))
+        # bytes_written += 4
 
         return bytes_written
 
@@ -288,22 +295,25 @@ class DoubleProperty(PropertyTrait):
         """Write double value to stream"""
         bytes_written = 0
 
+        # Write property type needs to be written by the object
+        bytes_written += write_string(stream, "DoubleProperty")
+
         if include_header:
             # Write length (8 for double)
-            stream.write(struct.pack("<I", 8))
+            bytes_written += stream.write(struct.pack("<I", 8))
             # Write array index
-            stream.write(struct.pack("<I", 0))
+            bytes_written += stream.write(struct.pack("<I", 0))
             # Write terminator
-            stream.write(bytes([0]))
-            bytes_written += 9
+            bytes_written += stream.write(bytes([0]))
+            # bytes_written += 9
 
-        stream.write(struct.pack("<d", self.value))
-        bytes_written += 8
+        bytes_written += stream.write(struct.pack("<d", self.value))
+        # bytes_written += 8
 
         return bytes_written
 
 
-def create_int_property_class(name: str, size: int, signed: bool = True):
+def create_int_property_class(type_name: str, size: int, signed: bool = True):
     """Create an integer property class with the specified size and signedness"""
 
     @dataclass
@@ -322,10 +332,9 @@ def create_int_property_class(name: str, size: int, signed: bool = True):
             if include_header:
                 # Read length and array index
                 length = struct.unpack("<I", stream.read(4))[0]
-                if length != size:
-                    raise DeserializeError.invalid_value_size(
-                        size, length, stream.tell() - 4
-                    )
+                assert (
+                    length == size
+                ), f"Invalid integer size: expecting {length} and got {size} at position {stream.tell() - 4}"
 
                 array_index = struct.unpack("<I", stream.read(4))[0]
                 if array_index != 0:
@@ -373,14 +382,17 @@ def create_int_property_class(name: str, size: int, signed: bool = True):
             """Write integer value to stream"""
             bytes_written = 0
 
+            # Write property type needs to be written by the object
+            bytes_written += write_string(stream, type_name)
+
             if include_header:
                 # Write length
-                stream.write(struct.pack("<I", size))
+                bytes_written += stream.write(struct.pack("<I", size))
                 # Write array index
-                stream.write(struct.pack("<I", 0))
+                bytes_written += stream.write(struct.pack("<I", 0))
                 # Write terminator
-                stream.write(bytes([0]))
-                bytes_written += 9
+                bytes_written += stream.write(bytes([0]))
+                # bytes_written += 9
 
             # Write value based on size and signedness
             if size == 1:
@@ -411,7 +423,7 @@ def create_int_property_class(name: str, size: int, signed: bool = True):
 
             return bytes_written
 
-    IntPropertyClass.__name__ = name
+    IntPropertyClass.__name__ = type_name
     IntPropertyClass.__doc__ = f"A property that holds a {size}-bit {'signed' if signed else 'unsigned'} integer value"
     return IntPropertyClass
 
@@ -427,4 +439,4 @@ UInt32Property = create_int_property_class("UInt32Property", 4, False)
 UInt64Property = create_int_property_class("UInt64Property", 8, False)
 
 # For backward compatibility
-IntProperty = Int32Property
+IntProperty = create_int_property_class("IntProperty", 4, True)
