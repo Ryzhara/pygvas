@@ -7,6 +7,7 @@ from io import BytesIO
 import struct
 from typing import Dict, List
 
+from gvas import CompressionType
 from gvas.gvas_file import GVASFile, GvasHeader
 from gvas.game_version import GameVersion
 from gvas.properties.property_base import Property
@@ -50,11 +51,11 @@ class TestGvasFile(unittest.TestCase):
 
         # Serialize the file
         stream = BytesIO()
-        file.write(stream, GameVersion.Default)
+        file.write(stream, GameVersion.DEFAULT)
 
         # Deserialize the file
         stream.seek(0)
-        loaded_file = GVASFile.read(stream, GameVersion.Default)
+        loaded_file = GVASFile.read(stream, GameVersion.DEFAULT, CompressionType.NONE)
 
         # Check that the properties match
         self.assertEqual(len(loaded_file.properties), 3)
@@ -88,11 +89,11 @@ class TestGvasFile(unittest.TestCase):
 
         # Serialize the file
         stream = BytesIO()
-        file.write(stream, GameVersion.Default)
+        file.write(stream, GameVersion.DEFAULT)
 
         # Deserialize the file
         stream.seek(0)
-        loaded_file = GVASFile.read(stream, GameVersion.Default)
+        loaded_file = GVASFile.read(stream, GameVersion.DEFAULT, CompressionType.NONE)
 
         # Check that the header values match
         self.assertEqual(loaded_file.header.package_file_version, 123)
@@ -127,11 +128,13 @@ class TestGvasFile(unittest.TestCase):
 
         # Serialize with default game version
         default_stream = BytesIO()
-        file.write(default_stream, GameVersion.Default)
+        file.write(default_stream, GameVersion.DEFAULT)
 
         # Deserialize with default game version
         default_stream.seek(0)
-        default_file = GVASFile.read(default_stream, GameVersion.Default)
+        default_file = GVASFile.read(
+            default_stream, GameVersion.DEFAULT, CompressionType.NONE
+        )
 
         # Check that the property was loaded correctly
         self.assertEqual(default_file.properties["TestProperty"].value.value, 42)

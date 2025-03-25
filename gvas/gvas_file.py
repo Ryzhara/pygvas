@@ -168,7 +168,7 @@ class GVASFile:
         hints: Optional[Dict[str, str]] = None,
     ) -> "GVASFile":
 
-        print(f"Now inside read()")
+        # print(f"Now inside read()")
 
         """Read GVAS file from stream"""
         # Create deserialized game version
@@ -211,19 +211,19 @@ class GVASFile:
             # Read property type_name
             name = read_string(stream)
             if name in ["", "None"]:
-                print(f"No more properties to read")
+                # print(f"No more properties to read")
                 break
 
             # Read property type
             prop_type = read_string(stream)
 
-            print(f"Reading {name=} and {prop_type=}")
+            # print(f"Reading {name=} and {prop_type=}")
 
             # Read property
             prop = Property.new(stream, prop_type, include_header=True, options=options)
             properties[name] = prop
 
-        print(f"Read header and {len(properties)=} from stream")
+        # print(f"Read header and {len(properties)=} from stream")
         return cls(header=header, properties=properties)
 
     def write(self, stream: BinaryIO, game_version: GameVersion) -> None:
@@ -233,10 +233,10 @@ class GVASFile:
 
         # Write header
         bytes_written = self.header.write(buffer)
-        print(f"Header {bytes_written=}")
+        # print(f"Header {bytes_written=}")
 
         # Write properties
-        print(f"Writing property count: {len(self.properties.items())}")
+        # print(f"Writing property count: {len(self.properties.items())}")
         for name, prop in self.properties.items():
             # Write property type_name
             bytes_written += write_string(buffer, name)
@@ -244,7 +244,7 @@ class GVASFile:
             # # Write property type
             # bytes_written += write_string(buffer, Property.type)
 
-            print(f"Writing {name=} of {prop.type=}")
+            # print(f"Writing {name=} of {prop.type=}")
 
             # Write property
             prop.write(buffer, include_header=True)

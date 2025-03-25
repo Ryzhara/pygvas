@@ -40,13 +40,14 @@ class BoolProperty(PropertyTrait):
         include_header: bool = True,
         options: Optional[PropertyOptions] = None,
     ) -> None:
-        """Read boolean value from stream"""
+        """Read boolean value from stream -- these should both be zero?"""
         if include_header:
             # Read length and array index
             length = struct.unpack("<I", stream.read(4))[0]
             # print(f"Found bool {length=}")
             array_index = struct.unpack("<I", stream.read(4))[0]
             # print(f"Found bool {array_index=}")
+            assert length == 0, f"Invalid boolean length {length=}"
             assert array_index == 0, f"Invalid boolean array index {array_index=}"
 
         self.value = bool(stream.read(1)[0])
@@ -76,11 +77,13 @@ class BoolProperty(PropertyTrait):
             # Write array index
             bytes_written += stream.write(struct.pack("<I", 0))
             # Write terminator
-            bytes_written += stream.write(bytes([0]))
-            # bytes_written += 9
 
         bytes_written += stream.write(bytes([int(self.value)]))
         # bytes_written += 1 ???
+
+        if include_header:
+            bytes_written += stream.write(bytes([0]))
+            # bytes_written += 9
 
         return bytes_written
 

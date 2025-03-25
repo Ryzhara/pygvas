@@ -123,7 +123,7 @@ class Property:
         # print(f"Looking for property type: {property_type}")
         prop_class = type_map.get(property_type)
         if not prop_class:
-            print(f"Available property types: {list(type_map.keys())}")
+            print(f"Unknown property type: {property_type}")
             raise DeserializeError(f"Unknown property type: {property_type}")
 
         # Create and read the property

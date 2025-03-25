@@ -8,13 +8,7 @@ Key differences from Rust version:
 """
 
 
-class Error(Exception):
-    """Base exception for all GVAS errors"""
-
-    pass
-
-
-class DeserializeError(Error):
+class DeserializeError(Exception):
     """Error that occurs during deserialization"""
 
     def __init__(self, message: str, position: int = None):
@@ -48,11 +42,11 @@ class DeserializeError(Error):
         )
 
     @classmethod
-    def invalid_value_size(cls, length, param, start):
-        return f"Invalid value size: expecting {length} and got {param} at position {start}"
+    def invalid_value_size(cls, length: int, param: int, position: int):
+        return cls(f"Invalid value size: expecting {length} and got {param}", position)
 
 
-class SerializeError(Error):
+class SerializeError(BaseException):
     """Error that occurs during serialization"""
 
     @classmethod

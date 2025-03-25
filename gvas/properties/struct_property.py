@@ -95,18 +95,7 @@ class StructProperty(PropertyTrait):
         # Create struct value
         self.value = StructPropertyValue(self.type_name, {})
 
-        """ We should have a match self.type_name: here with
-        Vector
-        Vector2D
-        Rotator
-        Quat
-        Datetime
-        Timespan
-        LinearColor
-        IntPoint
-        Guid
-        and then the catchall?
-        """
+        """ We need properties to read/write"""
 
         # Read properties until we hit None. Or is it "None" ?
         while True:
@@ -140,20 +129,15 @@ class StructProperty(PropertyTrait):
         # REF: Write to a temporary buffer first to get the length of the body
         buffer = BytesIO()
         buffer_bytes = 0
-        header_length_and_index_position = 0
+        header_length_position = 0
         header_length = 0
 
-        if self.type_name == "JsonObjectWrapper":
-            kludge = 314159
-
         if include_header:
-            # Write property type
-            buffer_bytes += write_string(buffer, "StructProperty")
-
-            header_length, header_length_and_index_position = self.write_header(buffer)
+            header_length, header_length_position = self.write_header(buffer)
             buffer_bytes += header_length
 
         # Write property children
+        start_child_bytes = buffer_bytes
         if self.value:
             for name, prop in self.value.properties.items():
                 # Write property type_name
@@ -165,17 +149,16 @@ class StructProperty(PropertyTrait):
                 # Write property
                 buffer_bytes += prop.write(buffer, include_header=True)
 
-        # Write None terminator for the struct
-        # This needs to be "None" as a string
+        # Write "None" terminator for the struct
         buffer_bytes += write_string(buffer, "None")
         # buffer_bytes == len("None")+1+4
 
-        # Update total child size in the header
+        end_child_bytes = buffer_bytes
+
+        # Update total child byte count in the header
         if include_header:
-            buffer.seek(header_length_and_index_position)
-            # print(f"Update struct header length {buffer_bytes - header_length=}")
-            buffer.write(struct.pack("<I", buffer_bytes - header_length))
-            # buffer.write(struct.pack("<I", 0))
+            buffer.seek(header_length_position)
+            buffer.write(struct.pack("<I", end_child_bytes - start_child_bytes))
 
         # Write buffer contents with optional header
         buffer.seek(0)
@@ -188,8 +171,11 @@ class StructProperty(PropertyTrait):
     def write_header(self, stream: BinaryIO) -> (int, int):
         bytes_written = 0
 
+        # Write property type
+        bytes_written += write_string(stream, "StructProperty")
+
         # Write placeholder for struct size (4b) and index (4b), which must be zero
-        length_and_index_position = stream.tell()
+        header_length_position = stream.tell()
         bytes_written += stream.write(struct.pack("<I", 0))
         bytes_written += stream.write(struct.pack("<I", 0))
         # buffer_bytes += 8
@@ -198,4 +184,4 @@ class StructProperty(PropertyTrait):
         bytes_written += write_string(stream, self.type_name)
 
         bytes_written += write_guid_with_terminator(stream, self.guid)
-        return bytes_written, length_and_index_position
+        return bytes_written, header_length_position
