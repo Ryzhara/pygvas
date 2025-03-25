@@ -143,13 +143,15 @@ class StructProperty(PropertyTrait):
         header_length_and_index_position = 0
         header_length = 0
 
-        # Write property type
-        buffer_bytes += write_string(buffer, "StructProperty")
+        if self.type_name == "JsonObjectWrapper":
+            kludge = 314159
 
         if include_header:
+            # Write property type
+            buffer_bytes += write_string(buffer, "StructProperty")
+
             header_length, header_length_and_index_position = self.write_header(buffer)
             buffer_bytes += header_length
-            # print(f"Write struct header {self.type_name}")
 
         # Write property children
         if self.value:
@@ -175,7 +177,6 @@ class StructProperty(PropertyTrait):
             buffer.write(struct.pack("<I", buffer_bytes - header_length))
             # buffer.write(struct.pack("<I", 0))
 
-
         # Write buffer contents with optional header
         buffer.seek(0)
         buffer_data = buffer.getvalue()
@@ -184,7 +185,7 @@ class StructProperty(PropertyTrait):
 
         return total_bytes_written
 
-    def write_header(self, stream: BinaryIO) -> int:
+    def write_header(self, stream: BinaryIO) -> (int, int):
         bytes_written = 0
 
         # Write placeholder for struct size (4b) and index (4b), which must be zero
@@ -192,6 +193,9 @@ class StructProperty(PropertyTrait):
         bytes_written += stream.write(struct.pack("<I", 0))
         bytes_written += stream.write(struct.pack("<I", 0))
         # buffer_bytes += 8
+
+        # Write property subtype, aka type_name
+        bytes_written += write_string(stream, self.type_name)
 
         bytes_written += write_guid_with_terminator(stream, self.guid)
         return bytes_written, length_and_index_position

@@ -79,17 +79,20 @@ class StrProperty(PropertyTrait):
             # Write to temporary buffer first to get length
             buffer = BytesIO()
             buffer_bytes = 0
-
+            content_length = 0
             # Write string value
             if self.value is not None:
-                bytes_written += write_string(buffer, self.value)
+                content_length = write_string(buffer, self.value)
+                bytes_written += content_length
                 # buffer_bytes += 4 + len(str_bytes)
             else:
-                buffer.write(struct.pack("<I", 0))
-                buffer_bytes += 4
+                content_length = buffer.write(struct.pack("<I", 0))
+                buffer_bytes += content_length
 
             # Write length and array index
-            bytes_written += stream.write(struct.pack("<I", buffer_bytes))  # Total length
+            bytes_written += stream.write(
+                struct.pack("<I", content_length)
+            )  # Total length
             bytes_written += stream.write(struct.pack("<I", 0))  # Array index
             # bytes_written += 8
 

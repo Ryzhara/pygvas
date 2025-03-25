@@ -26,17 +26,23 @@ def write_string(stream: BinaryIO, value: str) -> int:
     return bytes_written  # 4 + len(value) + 1
 
 
-def read_guid_with_terminator(stream: BinaryIO) -> str:
+def read_guid_as_str(stream: BinaryIO) -> str:
+    guid = Guid.from_bytes(stream.read(16))
+
+
+def read_guid_with_terminator(stream: BinaryIO) -> Guid:
     guid_bytes = stream.read(16)
     guid = Guid.from_bytes(guid_bytes)
     # print(f"read_body: found {self.guid=}")
-    position = stream.tell()
+    terminator_position = stream.tell()
     terminator = stream.read(1)[0]
-    assert terminator == 0, f"Invalid terminator: {terminator} at {position=}"
+    assert (
+        terminator == 0
+    ), f"Invalid terminator: {terminator} at {terminator_position=}"
     return guid
 
 
-def write_guid_with_terminator(stream: BinaryIO, guid: Guid) -> str:
+def write_guid_with_terminator(stream: BinaryIO, guid: Guid) -> int:
     # Write GUID
     bytes_written = stream.write(guid.to_bytes())
     # bytes_written += 16

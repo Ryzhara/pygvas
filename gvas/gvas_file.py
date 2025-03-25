@@ -249,7 +249,8 @@ class GVASFile:
             # Write property
             prop.write(buffer, include_header=True)
 
-        # Write None terminator
+        # Write None + NULL byte terminator for file
+        write_string(buffer, "None")
         buffer.write(struct.pack("<I", 0))
 
         # Get buffer contents
