@@ -10,17 +10,10 @@ Key differences from Rust version:
 from dataclasses import dataclass
 from typing import Optional, Dict, Any, BinaryIO, List
 from io import BytesIO
-import struct
 
 from .property_base import Property, PropertyTrait, PropertyOptions
-from ..gvas_types import Guid
 from ..error import DeserializeError
-from ..utils import (
-    read_string,
-    write_string,
-    read_guid_with_terminator,
-    write_guid_with_terminator,
-)
+from ..utils import *
 
 
 @dataclass
@@ -67,27 +60,21 @@ class StructProperty(PropertyTrait):
         # this is BODY
         # Record start position for length validation
         start = stream.tell()
-        result_ = self.read_body(stream)
+        _result = self.read_body(stream)
         # Validate length if header was included
         end = stream.tell()
         actual_size = end - start
-        if actual_size != length:
-            raise DeserializeError.invalid_value_size(length, actual_size, start)
+        assert (
+            actual_size == length
+        ), f"Invalid value size: {length} != {actual_size} at {start}"
 
     def read_header(self, stream) -> int:
-        # Read length and array index
-        length = struct.unpack("<I", stream.read(4))[0]
-        array_index = struct.unpack("<I", stream.read(4))[0]
-        # print(f"found {length=} {array_index=}")
-        if array_index != 0:
-            print(f"found non-zero index! {array_index}")
 
-        # Read struct type type_name
+        length, array_index = read_length_and_array_index(
+            stream, assert_length=None, assert_index=0
+        )
         self.type_name = read_string(stream)
-        # print(f"Struct length {length=} for {self.type_name}")
-
         self.guid = read_guid_with_terminator(stream)
-
         return length
 
     def read_body(self, stream: BinaryIO) -> bytes:

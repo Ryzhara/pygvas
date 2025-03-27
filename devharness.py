@@ -8,7 +8,7 @@
 #     "127.0.0.1", port=60293, stdoutToServer=True, stderrToServer=True
 # )
 
-from gvas import GVASFile
+from gvas import GVASFile, DeserializeError
 from gvas import GameVersion, CompressionType
 import json
 import dataclasses
@@ -37,19 +37,37 @@ class EnhancedJSONEncoder(json.JSONEncoder):
 
 # first things first. We need to exercise reading the GVAS file header
 
-example_gvas = "Islands of Insight Example.sav"
-print(f"Loading {example_gvas}")
-# Open and read a save file
-gvas_file = None
-with open(example_gvas, "rb") as f:
-    print(f"loading file with target: {GameVersion.DEFAULT}")
-    gvas_file = GVASFile.read(f, GameVersion.DEFAULT, CompressionType)
+test_file_list = ["Islands of Insight Example.sav"]
 
-# dump for debug
-with open("ugly_debug.txt", "w") as f:
-    f.write(str(gvas_file))
-    # f.write(json.dumps(gvas_file, cls=EnhancedJSONEncoder))
+# The Rust package engineer created a plethora of tests. Let's cycle through them.
+import pathlib
 
-# dump binary to work toward idempotence for read, write, rinse and repeat
-with open("idempotent.sav", "wb") as f:
-    gvas_file.write(f, GameVersion.DEFAULT)
+test_directory = pathlib.Path("./resources/test")
+test_file_list = [
+    filepath for filepath in test_directory.glob("*.sav") if filepath.is_file()
+]
+print(test_file_list)
+
+for test_file in test_file_list:
+    print(f"Loading {test_file}")
+    # Open and read a save file
+    gvas_file = None
+    with open(test_file, "rb") as f:
+        print(f"loading file with target: {GameVersion.DEFAULT}")
+        gvas_file = GVASFile.read(f, GameVersion.DEFAULT, CompressionType.NONE)
+        # try:
+        #     gvas_file = GVASFile.read(f, GameVersion.DEFAULT, CompressionType.NONE)
+        # except Exception as e:
+        #     print(f"Failed to load {test_file}: {e}")
+        #     continue
+
+    # dump for debug
+    # with open("ugly_debug.txt", "w") as f:
+    #     f.write(str(gvas_file))
+    #     # f.write(json.dumps(gvas_file, cls=EnhancedJSONEncoder))
+
+    # dump binary to work toward idempotence for read, write, rinse and repeat
+    output_file = f"{test_file}.idempotent"
+    print(f"Writing {output_file}")
+    with open(output_file, "wb") as f:
+        gvas_file.write(f, GameVersion.DEFAULT)

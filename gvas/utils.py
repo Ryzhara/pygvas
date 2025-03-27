@@ -7,6 +7,32 @@ import struct
 from .gvas_types import Guid
 
 
+def read_length_and_array_index(
+    stream: BinaryIO, *, assert_length=None, assert_index=0
+) -> (int, int):
+    position = stream.tell()
+    length = struct.unpack("<I", stream.read(4))[0]
+    if assert_length is not None:
+        assert (
+            length == assert_length
+        ), f"Bad value: {length=} != {assert_length} at {position}"
+
+    position = stream.tell()
+    array_index = struct.unpack("<I", stream.read(4))[0]
+    if assert_index is not None:
+        assert (
+            array_index == 0
+        ), f"Bad value: {array_index=} != {assert_index} at {position}"
+
+    return length, array_index
+
+
+def read_null_byte_terminator_and_validate(stream: BinaryIO) -> None:
+    # Read terminator
+    terminator = stream.read(1)[0]
+    assert terminator == 0, f"Invalid terminator: {terminator} at {stream.tell() - 1}"
+
+
 def read_string(stream: BinaryIO) -> str:
     """Read a string from the stream (length + utf-8 bytes)"""
     length = struct.unpack("<I", stream.read(4))[0]

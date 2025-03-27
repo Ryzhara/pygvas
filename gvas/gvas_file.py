@@ -171,24 +171,21 @@ class GVASFile:
         # print(f"Now inside read()")
 
         """Read GVAS file from stream"""
-        # Create deserialized game version
-        # deserialized_version = DeserializedGameVersion(game_version)
-        # print(deserialized_version)
-        # # Check for PLZ compression
-        # if game_version == GameVersion.PALWORLD:
-        #     magic = stream.read(4)
-        #     if magic == PLZ_MAGIC:
-        #         print("Found PLZ MAGIC")
-        #         deserialized_version.compression_type = CompressionType.PALWORLD
-        #     else:
-        #         print(f"Tested MAGIC {magic=}")
-        #         stream.seek(-4, 1)  # Rewind
+        if game_version == GameVersion.PALWORLD:
+            magic = stream.read(4)
+            if magic == PLZ_MAGIC:
+                print("Found PLZ MAGIC")
+                compression_type = CompressionType.PLZ
+            else:
+                print(f"Tested MAGIC {magic=}")
+                stream.seek(-4, 1)  # Rewind
 
         # Handle compression
         if compression_type == CompressionType.PLZ:
             # TODO: Implement PLZ decompression
             raise NotImplementedError("PLZ compression not yet supported")
         elif compression_type == CompressionType.ZLIB:
+            raise NotImplementedError("PLZ compression not yet supported")
             # Read compressed size
             compressed_size = struct.unpack("<Q", stream.read(8))[0]
 

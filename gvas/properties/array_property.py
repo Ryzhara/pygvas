@@ -23,6 +23,16 @@ from ..utils import (
     write_guid_with_terminator,
 )
 
+from .graphical_types import (
+    DateTimeProperty,
+    IntPointProperty,
+    LinearColorProperty,
+    RotatorProperty,
+    QuatProperty,
+    VectorProperty,
+    Vector2Property,
+)
+
 
 @dataclass
 class ArrayProperty(PropertyTrait):
@@ -68,20 +78,19 @@ class ArrayProperty(PropertyTrait):
                 "ArrayProperty is not supported in arrays", stream.tell()
             )
 
-        length = self.read_header(stream)
-        print(f"array property: {length=}")
+        length = self.read_header(stream, options=options)
         # self.property_type should be populated
         start = stream.tell()
-        self.read_body(stream)
+        self.read_body(stream, options=options)
         end = stream.tell()
         if end - start != length:
             raise DeserializeError.invalid_value_size(length, end - start, start)
 
-    def read_header(self, stream: BinaryIO) -> (int, str):
+    def read_header(
+        self, stream: BinaryIO, options: Optional[PropertyOptions] = None
+    ) -> (int, str):
         # Read length and array index
         length = struct.unpack("<I", stream.read(4))[0]
-        # print(f"Read ArrayProperty {length=}")
-
         array_index = struct.unpack("<I", stream.read(4))[0]
         if array_index != 0:
             position = stream.tell() - 4
@@ -100,7 +109,9 @@ class ArrayProperty(PropertyTrait):
         # END OF HEADER FOR ARRAY PROPERTY
         return length
 
-    def read_body(self, stream: BinaryIO) -> None:
+    def read_body(
+        self, stream: BinaryIO, options: Optional[PropertyOptions] = None
+    ) -> None:
 
         # Read number of elements in the array
         property_count = struct.unpack("<I", stream.read(4))[0]
@@ -132,9 +143,31 @@ class ArrayProperty(PropertyTrait):
             # Read array elements
             # print(f"Reading StructProperty members")
             for _ in range(property_count):
-                new_array_property = StructProperty(self.property_type)
-                new_array_property.read_body(stream)
-                self.values.append(new_array_property)
+                if self.type_name in [
+                    "DateTime",
+                    "IntPoint",
+                    "LinearColor",
+                    "Rotator",
+                    "RotatorF",
+                    "RotatorD",
+                    "Quat",
+                    "QuatF",
+                    "QuatD",
+                    "Vector",
+                    "VectorF",
+                    "VectorD",
+                    "Vector2",
+                    "Vector2F",
+                    "Vector2D",
+                ]:
+                    new_array_property = Property.new(
+                        stream, self.type_name, include_header=False, options=options
+                    )
+                    self.values.append(new_array_property.value)
+                else:
+                    new_array_property = StructProperty(self.property_type)
+                    new_array_property.read_body(stream)
+                    self.values.append(new_array_property)
 
         elif self.property_type == "Guid":
             for _ in range(property_count):
@@ -154,16 +187,17 @@ class ArrayProperty(PropertyTrait):
                 self.values.append(string_element)
 
         elif self.property_type in [
-            "Int8Property",
-            "Int16Property",
-            "Int32Property",
-            "Int64Property",
-            "UInt8Property",
-            "UInt16Property",
-            "UInt32Property",
-            "UInt64Property",
-            "IntProperty",
             "BoolProperty",
+            "Int8Property",
+            "ByteProperty",
+            "UInt8Property",
+            "Int16Property",
+            "UInt16Property",
+            "Int32Property",
+            "UInt32Property",
+            "IntProperty",
+            "Int64Property",
+            "UInt64Property",
             "FloatProperty",
             "DoubleProperty",
         ]:
@@ -174,6 +208,8 @@ class ArrayProperty(PropertyTrait):
                     case "Int8Property":
                         self.values.append(struct.unpack("b", stream.read(1))[0])
                     case "UInt8Property":
+                        self.values.append(struct.unpack("B", stream.read(1))[0])
+                    case "ByteProperty":
                         self.values.append(struct.unpack("B", stream.read(1))[0])
                     case "Int16Property":
                         self.values.append(struct.unpack("<h", stream.read(2))[0])
@@ -210,7 +246,7 @@ class ArrayProperty(PropertyTrait):
         else:  # catchall
             for _ in range(property_count):
                 new_array_property = Property.new(
-                    stream, self.property_type, include_header=False, options=None
+                    stream, self.property_type, include_header=False, options=options
                 )
                 self.values.append(new_array_property.value)
 
@@ -234,7 +270,7 @@ class ArrayProperty(PropertyTrait):
         array_bytes += write_string(array_buffer, "ArrayProperty")
 
         # ====== START OF HEADER ==============
-        ap_byte_count_location = array_bytes
+        array_property_byte_count_location = array_bytes
         array_bytes += array_buffer.write(struct.pack("<I", 0))  # TBD total byte count
         array_bytes += array_buffer.write(struct.pack("<I", 0))  # index
 
@@ -244,10 +280,13 @@ class ArrayProperty(PropertyTrait):
         array_bytes += array_buffer.write(struct.pack("<B", 0))
         # ====== END OF HEADER ==============
 
+        properties_start = array_bytes
+
         # property_count, or number of elements in the array
         property_count = len(self.values)
         array_bytes += array_buffer.write(struct.pack("<I", property_count))
-        print(f"\tWriting array: {property_count=}")
+        # print(f"\tWriting array: {property_count=}")
+
         # Handle struct properties
         if self.property_type == "StructProperty":
 
@@ -256,7 +295,7 @@ class ArrayProperty(PropertyTrait):
             # Write property type again
             array_bytes += write_string(array_buffer, self.property_type)
 
-            properties_byte_count_position = array_buffer.tell()
+            struct_byte_count_location = array_buffer.tell()
             array_bytes += array_buffer.write(struct.pack("<I", 0))
             array_bytes += array_buffer.write(struct.pack("<I", 0))
 
@@ -264,14 +303,14 @@ class ArrayProperty(PropertyTrait):
             array_bytes += write_guid_with_terminator(array_buffer, self.guid)
 
             # Write properties to array_buffer
-            struct_properties_start = array_buffer.tell()
+            start = array_buffer.tell()
             for struct_property in self.values:
                 array_bytes += struct_property.write(array_buffer, include_header=False)
-            struct_properties_end = array_buffer.tell()
+            end = array_buffer.tell()
 
             # write total bytes in structs
-            struct_properties_bytes = struct_properties_end - struct_properties_start
-            array_buffer.seek(properties_byte_count_position)
+            struct_properties_bytes = end - start
+            array_buffer.seek(struct_byte_count_location)
             array_buffer.write(struct.pack("<I", struct_properties_bytes))
 
         elif self.property_type == "Guid":
@@ -289,16 +328,17 @@ class ArrayProperty(PropertyTrait):
                 array_bytes += write_string(array_buffer, string_value)
 
         elif self.property_type in [
-            "Int8Property",
-            "Int16Property",
-            "Int32Property",
-            "Int64Property",
-            "UInt8Property",
-            "UInt16Property",
-            "UInt32Property",
-            "UInt64Property",
-            "IntProperty",
             "BoolProperty",
+            "Int8Property",
+            "ByteProperty",
+            "UInt8Property",
+            "Int16Property",
+            "UInt16Property",
+            "Int32Property",
+            "UInt32Property",
+            "IntProperty",
+            "Int64Property",
+            "UInt64Property",
             "FloatProperty",
             "DoubleProperty",
         ]:
@@ -309,6 +349,8 @@ class ArrayProperty(PropertyTrait):
                     case "Int8Property":
                         array_bytes += array_buffer.write(struct.pack("b", value))
                     case "UInt8Property":
+                        array_bytes += array_buffer.write(struct.pack("B", value))
+                    case "ByteProperty":
                         array_bytes += array_buffer.write(struct.pack("B", value))
                     case "Int16Property":
                         array_bytes += array_buffer.write(struct.pack("<h", value))
@@ -346,11 +388,14 @@ class ArrayProperty(PropertyTrait):
             for array_property in self.values:
                 array_bytes += array_property.write(array_buffer, include_header=False)
 
-        # Write total byte count size
-        array_buffer.seek(ap_byte_count_location)
-        array_buffer.write(struct.pack("<I", array_bytes))
+        properties_end = array_bytes
+        array_property_byte_count = properties_end - properties_start
 
-        # now write the whole thing
+        # Write total byte count size
+        array_buffer.seek(array_property_byte_count_location)
+        array_buffer.write(struct.pack("<I", array_property_byte_count))
+
+        # now write the whole thing to the stream
         stream.write(array_buffer.getvalue())
 
         return array_bytes

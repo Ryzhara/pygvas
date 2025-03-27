@@ -19,7 +19,7 @@ class PropertyOptions:
     """Options for property reading/writing"""
 
     hints: Dict[str, str] = None
-    property_path: str = ""
+    # property_path: str = ""
 
     def get_hint(self, path: str) -> Optional[str]:
         """Get a type hint for a property path"""
@@ -95,6 +95,15 @@ class Property:
             UInt64Property,
             DoubleProperty,
         )
+        from .graphical_types import (
+            DateTimeProperty,
+            IntPointProperty,
+            LinearColorProperty,
+            QuatProperty,
+            RotatorProperty,
+            Vector2Property,
+            VectorProperty,
+        )
 
         # Map property types to their classes
         type_map = {
@@ -119,16 +128,44 @@ class Property:
             "StructProperty": StructProperty,
         }
 
+        # Map property types to their classes
+        graphical_type_map = {
+            "Vector": VectorProperty,
+            "VectorF": VectorProperty,
+            "VectorD": VectorProperty,
+            "Vector2": Vector2Property,
+            "Vector2F": Vector2Property,
+            "Vector2D": Vector2Property,
+            "Rotator": RotatorProperty,
+            "RotatorF": RotatorProperty,
+            "RotatorD": RotatorProperty,
+            "Quat": QuatProperty,
+            "QuatF": QuatProperty,
+            "QuatD": QuatProperty,
+            "LinearColor": LinearColorProperty,
+            "IntPoint": IntPointProperty,
+            "DateTime": DateTimeProperty,
+        }
+
         # Get the appropriate property class
-        # print(f"Looking for property type: {property_type}")
-        prop_class = type_map.get(property_type)
-        if not prop_class:
+        if property_type in type_map.keys():
+            prop_class = type_map.get(property_type)
+            prop = prop_class(property_type)
+
+        elif property_type in graphical_type_map.keys():
+            prop_class = graphical_type_map.get(property_type)
+            if property_type in ["DateTIme", "IntPoint", "LinearColor"]:
+                prop = prop_class(property_type)
+            else:
+                use_lwc = False
+                if lwc := options.get_hint("LargeWorldCoordinates"):
+                    assert type(lwc) is bool, "Invalid LargeWorldCoordinates hint"
+                    use_lwc = lwc
+                prop = prop_class(property_type, use_lwc)
+
+        else:
             print(f"Unknown property type: {property_type}")
             raise DeserializeError(f"Unknown property type: {property_type}")
-
-        # Create and read the property
-        prop = prop_class(property_type)
-        # print(f"Property created: {asdict(prop)} {include_header=}, {options=}")
 
         # Handle special cases for properties that need suggested_length
         if (

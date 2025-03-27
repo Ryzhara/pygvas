@@ -7,13 +7,12 @@ __version__ = "0.1.0"
 
 from .gvas_file import GVASFile
 from .game_version import GameVersion, CompressionType
-from .error import Error, DeserializeError, SerializeError
+from .error import DeserializeError, SerializeError
 
 __all__ = [
     "GVASFile",
     "GameVersion",
     "CompressionType",
-    "Error",
     "DeserializeError",
     "SerializeError",
 ]
