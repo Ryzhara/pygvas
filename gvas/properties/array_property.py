@@ -16,12 +16,7 @@ from .property_base import Property, PropertyTrait, SerializationHints
 from .struct_property import StructProperty
 from ..error import DeserializeError, SerializeError
 from ..gvas_types import Guid
-from ..utils import (
-    read_string,
-    write_string,
-    read_guid_with_terminator,
-    write_guid_with_terminator,
-)
+from ..utils import *
 
 from .graphical_types import (
     is_special_struct,
@@ -73,7 +68,6 @@ class ArrayProperty(PropertyTrait):
             )
 
         length = self.read_header(stream)
-        # self.property_type should be populated
         start = stream.tell()
         self.read_body(stream)
         end = stream.tell()
@@ -82,21 +76,10 @@ class ArrayProperty(PropertyTrait):
 
     def read_header(self, stream: BinaryIO) -> (int, str):
         # Read length and array index
-        length = struct.unpack("<I", stream.read(4))[0]
-        array_index = struct.unpack("<I", stream.read(4))[0]
-        if array_index != 0:
-            position = stream.tell() - 4
-            raise DeserializeError.invalid_array_index(array_index, position)
-
-        # Read property type
+        length = read_uint32(stream)
+        _array_index = read_uint32(stream, 0)
         self.property_type = read_string(stream)
-        # print(f"Read ArrayProperty: {self.property_type=}")
-
-        # Read string? terminator
-        terminator = stream.read(1)[0]
-        if terminator != 0:
-            position = stream.tell() - 1
-            raise DeserializeError.invalid_terminator(terminator, position)
+        _header_terminator = read_uint8(stream, 0)
 
         # END OF HEADER FOR ARRAY PROPERTY
         return length
@@ -131,7 +114,7 @@ class ArrayProperty(PropertyTrait):
 
             for _ in range(property_count):
                 if is_special_struct(self.type_name):
-                    print(f"Reading instance of {self.type_name}")
+                    print(f"Array: Reading instance of {self.type_name}")
                     new_array_property = get_special_struct_instance(self.type_name)
                     new_array_property.read(stream)
                     self.values.append(new_array_property)

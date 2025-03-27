@@ -224,7 +224,7 @@ class GVASFile:
             properties[name] = prop
 
         # print(f"Read header and {len(properties)=} from stream")
-        return cls(header=header)
+        return cls(header=header, properties=properties)
 
     def write(self, stream: BinaryIO, game_version: GameVersion) -> None:
         """Write GVAS file to stream"""

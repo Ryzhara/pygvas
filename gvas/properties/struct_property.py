@@ -69,12 +69,11 @@ class StructProperty(PropertyTrait):
         ), f"Invalid value size: {length} != {actual_size} at {start}"
 
     def read_header(self, stream) -> int:
-
-        length, array_index = read_length_and_array_index(
-            stream, assert_length=None, assert_index=0
-        )
+        length = read_uint32(stream, None)
+        _array_index = read_uint32(stream, 0)
         self.type_name = read_string(stream)
         self.guid = read_guid_with_terminator(stream)
+
         return length
 
     def read_body(self, stream: BinaryIO) -> bytes:
@@ -99,10 +98,18 @@ class StructProperty(PropertyTrait):
                 break
 
             # Read property
-
-            property_value = Property.new(stream, property_type, include_header=True)
-            # print(f"found struct {property_value=}")
-            self.value.properties[property_name] = property_value
+            if is_special_struct(self.type_name):
+                print(f"Struct: Reading instance of {self.type_name}")
+                property_value = get_special_struct_instance(self.type_name)
+                property_value.read(stream)
+                self.value.properties[property_name] = Property(
+                    self.type_name, property_value
+                )
+            else:
+                property_value = Property.new(
+                    stream, property_type, include_header=True
+                )
+                self.value.properties[property_name] = property_value
 
     def write(
         self,

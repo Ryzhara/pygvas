@@ -200,10 +200,8 @@ class FloatProperty(PropertyTrait):
     ) -> None:
         """Read float value from stream"""
         if include_header:
-            _length, _array_index = read_length_and_array_index(
-                stream, assert_length=4, assert_index=0
-            )
-
+            _length = read_uint32(stream, 4)
+            _array_index = read_uint32(stream, 0)
             read_null_byte_terminator_and_validate(stream)
 
         self.value = struct.unpack("<f", stream.read(4))[0]
@@ -302,9 +300,8 @@ def create_int_property_class(type_name: str, size: int, signed: bool = True):
             """Read integer value from stream"""
             if include_header:
                 # Read length and array index
-                _length, _array_index = read_length_and_array_index(
-                    stream, assert_length=size, assert_index=0
-                )
+                _length = read_uint32(stream, size)
+                _array_index = read_uint32(stream, 0)
 
                 read_null_byte_terminator_and_validate(stream)
 

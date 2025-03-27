@@ -143,7 +143,10 @@ class Property:
                 prop.read(stream, include_header)
         else:
             # Standard case
-            prop.read(stream, include_header)
+            try:
+                prop.read(stream, include_header)
+            except Exception as e:
+                print(e)
 
         # print(f"Property read: {asdict(prop)}")
         return cls(property_type, prop)
