@@ -22,7 +22,7 @@ from .game_version import (
     PLZ_MAGIC,
 )
 from .gvas_types import Guid, HashableIndexMap
-from .properties import Property, PropertyOptions
+from .properties import Property, SerializationHints
 from .utils import read_string, write_string
 
 # Magic number that appears at the start of every GVAS file
@@ -165,7 +165,6 @@ class GVASFile:
         stream: BinaryIO,
         game_version: GameVersion,
         compression_type: CompressionType,
-        hints: Optional[Dict[str, str]] = None,
     ) -> "GVASFile":
 
         # print(f"Now inside read()")
@@ -198,9 +197,13 @@ class GVASFile:
 
         # Read header
         header = GvasHeader.read(stream)
-
-        # Create property options
-        options = PropertyOptions(hints=hints)
+        # set up hints for use during serialization
+        SerializationHints.set_engine_version(
+            header.engine_version_major,
+            header.engine_version_minor,
+            header.engine_version_patch,
+            header.engine_version_build,
+        )
 
         # Read properties
         properties = {}
@@ -217,11 +220,11 @@ class GVASFile:
             # print(f"Reading {name=} and {prop_type=}")
 
             # Read property
-            prop = Property.new(stream, prop_type, include_header=True, options=options)
+            prop = Property.new(stream, prop_type, include_header=True)
             properties[name] = prop
 
         # print(f"Read header and {len(properties)=} from stream")
-        return cls(header=header, properties=properties)
+        return cls(header=header)
 
     def write(self, stream: BinaryIO, game_version: GameVersion) -> None:
         """Write GVAS file to stream"""

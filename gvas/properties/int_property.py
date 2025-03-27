@@ -23,7 +23,7 @@ from typing import Optional, Union, BinaryIO
 import struct
 from io import BytesIO
 
-from .property_base import PropertyTrait, PropertyOptions
+from .property_base import PropertyTrait, SerializationHints
 from ..error import DeserializeError, SerializeError
 from ..utils import *
 
@@ -38,7 +38,6 @@ class BoolProperty(PropertyTrait):
         self,
         stream: BinaryIO,
         include_header: bool = True,
-        options: Optional[PropertyOptions] = None,
     ) -> None:
         """Read boolean value from stream -- these should both be zero?"""
         if include_header:
@@ -63,7 +62,6 @@ class BoolProperty(PropertyTrait):
         self,
         stream: BinaryIO,
         include_header: bool = True,
-        options: Optional[PropertyOptions] = None,
     ) -> int:
         """Write boolean value to stream"""
         bytes_written = 0
@@ -135,7 +133,6 @@ class ByteProperty(PropertyTrait):
         self,
         stream: BinaryIO,
         include_header: bool = True,
-        options: Optional[PropertyOptions] = None,
     ) -> int:
         """Write byte property to stream"""
         bytes_written = 0
@@ -200,7 +197,6 @@ class FloatProperty(PropertyTrait):
         self,
         stream: BinaryIO,
         include_header: bool = True,
-        options: Optional[PropertyOptions] = None,
     ) -> None:
         """Read float value from stream"""
         if include_header:
@@ -208,7 +204,7 @@ class FloatProperty(PropertyTrait):
                 stream, assert_length=4, assert_index=0
             )
 
-            read_null_byte_terminator_and_validate()
+            read_null_byte_terminator_and_validate(stream)
 
         self.value = struct.unpack("<f", stream.read(4))[0]
 
@@ -216,7 +212,6 @@ class FloatProperty(PropertyTrait):
         self,
         stream: BinaryIO,
         include_header: bool = True,
-        options: Optional[PropertyOptions] = None,
     ) -> int:
         """Write float value to stream"""
         bytes_written = 0
@@ -249,7 +244,6 @@ class DoubleProperty(PropertyTrait):
         self,
         stream: BinaryIO,
         include_header: bool = True,
-        options: Optional[PropertyOptions] = None,
     ) -> None:
         """Read double value from stream"""
         if include_header:
@@ -265,7 +259,6 @@ class DoubleProperty(PropertyTrait):
         self,
         stream: BinaryIO,
         include_header: bool = True,
-        options: Optional[PropertyOptions] = None,
     ) -> int:
         """Write double value to stream"""
         bytes_written = 0
@@ -305,7 +298,6 @@ def create_int_property_class(type_name: str, size: int, signed: bool = True):
             self,
             stream: BinaryIO,
             include_header: bool = True,
-            options: Optional[PropertyOptions] = None,
         ) -> None:
             """Read integer value from stream"""
             if include_header:
@@ -314,7 +306,7 @@ def create_int_property_class(type_name: str, size: int, signed: bool = True):
                     stream, assert_length=size, assert_index=0
                 )
 
-                read_null_byte_terminator_and_validate()
+                read_null_byte_terminator_and_validate(stream)
 
             # Read value based on size and signedness
             self.value = struct.unpack(encoding_string, stream.read(size))[0]
@@ -323,7 +315,6 @@ def create_int_property_class(type_name: str, size: int, signed: bool = True):
             self,
             stream: BinaryIO,
             include_header: bool = True,
-            options: Optional[PropertyOptions] = None,
         ) -> int:
             """Write integer value to stream"""
             bytes_written = 0

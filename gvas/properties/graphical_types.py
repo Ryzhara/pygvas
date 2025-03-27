@@ -1,115 +1,95 @@
 import struct
+from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from .property_base import Property, PropertyTrait, PropertyOptions
-
-from enum import Enum
-from typing import Optional, BinaryIO
 import datetime
+from ..error import DeserializeError
+from typing import Any, BinaryIO
+from .property_base import SerializationHints
 
 
-""" These might be structs or unitary properties.
-    "DateTime",
-    "Timespan",
-"""
+class SpecialStructTrait(ABC):
+    """Base trait/interface for all special struct types"""
+
+    @abstractmethod
+    def read(self, stream: BinaryIO) -> None:
+        """Read property data from a binary stream"""
+        pass
+
+    @abstractmethod
+    def write(self, stream: BinaryIO) -> int:
+        """Write property data to a binary stream and return byte count written"""
+        pass
+
+    @classmethod
+    def uses_large_world_coordinates(cls):
+        major, _minor, _patch, _build = SerializationHints.get_engine_version()
+        return major >= 5
 
 
+# ============================================
+#
 @dataclass
-class DateTimeProperty(PropertyTrait):
+class DateTimeProperty(SpecialStructTrait):
     type_name: str = "DateTime"
     datetime: int = 0  # uint64
     comment: str = ""
 
     @classmethod
-    def new(cls, type_name: str) -> "DateTimeProperty":
-        assert type_name == "DateTime"
-        return cls(type_name=type_name)
+    def new(cls) -> "DateTimeProperty":
+        return cls()
 
-    def read(
-        self,
-        stream: BinaryIO,
-        include_header: bool = False,
-        options: Optional[PropertyOptions] = None,
-    ) -> None:
-        assert include_header == False, f"DateTimeProperty never has a header!"
+    def read(self, stream: BinaryIO) -> None:
         format_str, size = ("<Q", 8)
         self.datetime = struct.unpack(format_str, stream.read(size))[0]
         self.comment = str(datetime.datetime.fromtimestamp(self.datetime / 1000.0))
 
-    def write(
-        self,
-        stream: BinaryIO,
-        include_header: bool = False,
-        options: Optional[PropertyOptions] = None,
-    ) -> int:
-        assert include_header == False, f"DateTimeProperty never has a header!"
+    def write(self, stream: BinaryIO) -> int:
         format_str, _size = ("<Q", 8)
         bytes_written = stream.write(struct.pack(format_str, self.datetime))
         return bytes_written
 
 
+# ============================================
+#
 @dataclass
-class TimespanProperty(PropertyTrait):
+class TimespanProperty(SpecialStructTrait):
     type_name: str = "Timespan"
     timespan: int = 0  # uint64
     comment: str = ""
 
     @classmethod
-    def new(cls, type_name: str) -> "TimespanProperty":
-        assert type_name == "Timespan"
-        return cls(type_name=type_name)
+    def new(cls) -> "TimespanProperty":
+        return cls()
 
-    def read(
-        self,
-        stream: BinaryIO,
-        include_header: bool = False,
-        options: Optional[PropertyOptions] = None,
-    ) -> None:
-        assert include_header == False, f"DateTimeProperty never has a header!"
+    def read(self, stream: BinaryIO) -> None:
         format_str, size = ("<Q", 8)
         self.timespan = struct.unpack(format_str, stream.read(size))[0]
         self.comment = str(datetime.timedelta(milliseconds=(self.timespan / 1000.0)))
 
-    def write(
-        self,
-        stream: BinaryIO,
-        include_header: bool = False,
-        options: Optional[PropertyOptions] = None,
-    ) -> int:
-        assert include_header == False, f"DateTimeProperty never has a header!"
+    def write(self, stream: BinaryIO) -> int:
         format_str, _size = ("<Q", 8)
         bytes_written = stream.write(struct.pack(format_str, self.timespan))
         return bytes_written
 
 
+# ============================================
+#
 @dataclass
-class IntPointProperty(PropertyTrait):
+class IntPointProperty(SpecialStructTrait):
     type_name: str = "IntPoint"
     x: int = 0
     y: int = 0
 
     @classmethod
-    def new(cls, type_name: str) -> "IntPointProperty":
-        assert type_name == "IntPoint"
-        return cls(type_name=type_name)
+    def new(cls) -> "IntPointProperty":
+        return cls()
 
-    def read(
-        self,
-        stream: BinaryIO,
-        include_header: bool = False,
-        options: Optional[PropertyOptions] = None,
-    ) -> None:
-        assert include_header == False, f"IntPointProperty never has a header!"
+    def read(self, stream: BinaryIO) -> None:
         format_str, size = ("<i", 4)
         self.x = struct.unpack(format_str, stream.read(size))[0]
         self.y = struct.unpack(format_str, stream.read(size))[0]
 
-    def write(
-        self,
-        stream: BinaryIO,
-        include_header: bool = False,
-        options: Optional[PropertyOptions] = None,
-    ) -> int:
-        assert include_header == False, f"IntPointProperty never has a header!"
+    def write(self, stream: BinaryIO) -> int:
         format_str, _size = ("<i", 4)
         bytes_written = 0
         bytes_written += stream.write(struct.pack(format_str, self.x))
@@ -117,8 +97,10 @@ class IntPointProperty(PropertyTrait):
         return bytes_written
 
 
+# ============================================
+#
 @dataclass
-class LinearColorProperty(PropertyTrait):
+class LinearColorProperty(SpecialStructTrait):
     type_name: str = "LinearColor"
     a: float = 0
     b: float = 0
@@ -126,31 +108,18 @@ class LinearColorProperty(PropertyTrait):
     r: float = 0
 
     @classmethod
-    def new(cls, type_name: str) -> "LinearColorProperty":
-        assert type_name == "LinearColor"
-        return cls(type_name=type_name)
+    def new(cls) -> "LinearColorProperty":
+        return cls()
 
-    def read(
-        self,
-        stream: BinaryIO,
-        include_header: bool = False,
-        options: Optional[PropertyOptions] = None,
-    ) -> None:
-        assert include_header == False, f"{self.type_name} never has a header!"
+    def read(self, stream: BinaryIO) -> None:
         format_str, size = ("<f", 4)
         self.a = struct.unpack(format_str, stream.read(size))[0]
         self.b = struct.unpack(format_str, stream.read(size))[0]
         self.g = struct.unpack(format_str, stream.read(size))[0]
         self.r = struct.unpack(format_str, stream.read(size))[0]
 
-    def write(
-        self,
-        stream: BinaryIO,
-        include_header: bool = False,
-        options: Optional[PropertyOptions] = None,
-    ) -> int:
-        assert include_header == False, f"{self.type_name} never has a header!"
-        format_str = "<f"
+    def write(self, stream: BinaryIO) -> int:
+        format_str, _size = ("<f", 4)
         bytes_written = 0
         bytes_written += stream.write(struct.pack(format_str, self.a))
         bytes_written += stream.write(struct.pack(format_str, self.b))
@@ -159,41 +128,27 @@ class LinearColorProperty(PropertyTrait):
         return bytes_written
 
 
+# ============================================
+#
 @dataclass
-class RotatorProperty(PropertyTrait):
-    type_name = ""  # Rotator, RotatorF, RotatorD
+class RotatorProperty(SpecialStructTrait):
+    type_name = "Rotator"
     is_double: bool = False
     pitch: float = 0
     yaw: float = 0
     roll: float = 0
 
     @classmethod
-    def new(cls, type_name: str, use_lwc=False) -> "RotatorProperty":
-        # assert type_name in ["Rotator", "RotatorF", "RotatorD"]
-        # is_double = type_name == "RotatorD" or (type_name == "Rotator" and use_lwc)
-        assert type_name == "Rotator"
-        is_double = use_lwc
-        return cls(is_double=is_double)
+    def new(cls) -> "RotatorProperty":
+        return cls(is_double=SpecialStructTrait.uses_large_world_coordinates())
 
-    def read(
-        self,
-        stream: BinaryIO,
-        include_header: bool = False,
-        options: Optional[PropertyOptions] = None,
-    ) -> None:
-        assert include_header == False, f"{self.type_name} never has a header!"
+    def read(self, stream: BinaryIO) -> None:
         format_str, size = ("<d", 8) if self.is_double else ("<f", 4)
         self.pitch = struct.unpack(format_str, stream.read(size))[0]
         self.yaw = struct.unpack(format_str, stream.read(size))[0]
         self.roll = struct.unpack(format_str, stream.read(size))[0]
 
-    def write(
-        self,
-        stream: BinaryIO,
-        include_header: bool = False,
-        options: Optional[PropertyOptions] = None,
-    ) -> int:
-        assert include_header == False, f"{self.type_name} never has a header!"
+    def write(self, stream: BinaryIO) -> int:
         format_str, _size = ("<d", 8) if self.is_double else ("<f", 4)
         bytes_written = 0
         bytes_written += stream.write(struct.pack(format_str, self.pitch))
@@ -202,43 +157,29 @@ class RotatorProperty(PropertyTrait):
         return bytes_written
 
 
+# ============================================
+#
 @dataclass
-class QuatProperty(PropertyTrait):
-    type_name = ""  # Quat, QuatF, QuatD
+class QuatProperty(SpecialStructTrait):
+    type_name = "Quat"
     is_double: bool = False
     x: float = 0
+    y: float = 0
     z: float = 0
     w: float = 0
-    y: float = 0
 
     @classmethod
-    def new(cls, type_name: str, use_lwc=False) -> "QuatProperty":
-        # assert type_name in ["Quat", "QuatF", "QuatD"]
-        # is_double = type_name == "QuatD" or (type_name == "Quat" and use_lwc)
-        assert type_name == "Quat"
-        is_double = use_lwc
-        return cls(is_double=is_double)
+    def new(cls, use_lwc=False) -> "QuatProperty":
+        return cls(is_double=SpecialStructTrait.uses_large_world_coordinates())
 
-    def read(
-        self,
-        stream: BinaryIO,
-        include_header: bool = False,
-        options: Optional[PropertyOptions] = None,
-    ) -> None:
-        assert include_header == False, f"{self.type_name} never has a header!"
+    def read(self, stream: BinaryIO) -> None:
         format_str, size = ("<d", 8) if self.is_double else ("<f", 4)
         self.x = struct.unpack(format_str, stream.read(size))[0]
         self.y = struct.unpack(format_str, stream.read(size))[0]
         self.z = struct.unpack(format_str, stream.read(size))[0]
         self.w = struct.unpack(format_str, stream.read(size))[0]
 
-    def write(
-        self,
-        stream: BinaryIO,
-        include_header: bool = False,
-        options: Optional[PropertyOptions] = None,
-    ) -> int:
-        assert include_header == False, f"{self.type_name} never has a header!"
+    def write(self, stream: BinaryIO) -> int:
         format_str, _size = ("<d", 8) if self.is_double else ("<f", 4)
         bytes_written = 0
         bytes_written += stream.write(struct.pack(format_str, self.x))
@@ -248,41 +189,27 @@ class QuatProperty(PropertyTrait):
         return bytes_written
 
 
+# ============================================
+#
 @dataclass
-class VectorProperty(PropertyTrait):
-    type_name: str = ""
+class VectorProperty(SpecialStructTrait):
+    type_name: str = "Vector"
     is_double: bool = False
     x: float = 0
     y: float = 0
     z: float = 0
 
     @classmethod
-    def new(cls, type_name: str, use_lwc=False) -> "VectorProperty":
-        # assert type_name in ["Vector", "VectorF", "VectorD"]
-        # is_double = type_name == "VectorD" or (type_name == "Vector" and use_lwc)
-        assert type_name == "Vector"
-        is_double = use_lwc
-        return cls(type_name=type_name, is_double=is_double)
+    def new(cls, use_lwc=False) -> "VectorProperty":
+        return cls(is_double=SpecialStructTrait.uses_large_world_coordinates())
 
-    def read(
-        self,
-        stream: BinaryIO,
-        include_header: bool = False,
-        options: Optional[PropertyOptions] = None,
-    ) -> None:
-        assert include_header == False, f"{self.type_name} never has a header!"
+    def read(self, stream: BinaryIO) -> None:
         format_str, size = ("<d", 8) if self.is_double else ("<f", 4)
         self.x = struct.unpack(format_str, stream.read(size))[0]
         self.y = struct.unpack(format_str, stream.read(size))[0]
         self.z = struct.unpack(format_str, stream.read(size))[0]
 
-    def write(
-        self,
-        stream: BinaryIO,
-        include_header: bool = False,
-        options: Optional[PropertyOptions] = None,
-    ) -> int:
-        assert include_header == False, f"{self.type_name} never has a header!"
+    def write(self, stream: BinaryIO) -> int:
         format_str, _size = ("<d", 8) if self.is_double else ("<f", 4)
         bytes_written = 0
         bytes_written += stream.write(struct.pack(format_str, self.x))
@@ -291,42 +218,62 @@ class VectorProperty(PropertyTrait):
         return bytes_written
 
 
-# In Python, floats are actually doubles
+# ============================================
+#
 @dataclass
-class Vector2Property(PropertyTrait):
-    type_name: str = ""  # Vector2, Vector2F, Vector2D
+class Vector2Property(SpecialStructTrait):
+    type_name: str = "Vector2"
     is_double: bool = False
     x: float = 0
     y: float = 0
 
     @classmethod
-    def new(cls, type_name: str, use_lwc=False) -> "Vector2Property":
-        # assert type_name in ["Vector2", "Vector2F", "Vector2D"]
-        # is_double = type_name == "Vector2D" or (type_name == "Vector2" and use_lwc)
-        assert type_name == "Vector2"
-        is_double = use_lwc
-        return cls(type_name=type_name, is_double=is_double)
+    def new(cls, use_lwc=False) -> "Vector2Property":
+        return cls(is_double=SpecialStructTrait.uses_large_world_coordinates())
 
-    def read(
-        self,
-        stream: BinaryIO,
-        include_header: bool = False,
-        options: Optional[PropertyOptions] = None,
-    ) -> None:
-        assert include_header == False, f"{self.type_name} never has a header!"
+    def read(self, stream: BinaryIO) -> None:
         format_str, size = ("<d", 8) if self.is_double else ("<f", 4)
         self.x = struct.unpack(format_str, stream.read(size))[0]
         self.y = struct.unpack(format_str, stream.read(size))[0]
 
-    def write(
-        self,
-        stream: BinaryIO,
-        include_header: bool = False,
-        options: Optional[PropertyOptions] = None,
-    ) -> int:
-        assert include_header == False, f"{self.type_name} never has a header!"
+    def write(self, stream: BinaryIO) -> int:
         format_str, _size = ("<d", 8) if self.is_double else ("<", 4)
         bytes_written = 0
         bytes_written += stream.write(struct.pack(format_str, self.x))
         bytes_written += stream.write(struct.pack(format_str, self.y))
         return bytes_written
+
+
+_special_struct_type_map = {
+    "Vector": VectorProperty,
+    "Vector2": Vector2Property,
+    "Rotator": RotatorProperty,
+    "Quat": QuatProperty,
+    "LinearColor": LinearColorProperty,
+    "IntPoint": IntPointProperty,
+    "DateTime": DateTimeProperty,
+    "Timespan": TimespanProperty,
+}
+
+
+# ============================================
+#
+def is_special_struct(type_name: str) -> bool:
+    return type_name in _special_struct_type_map.keys()
+
+
+# ============================================
+#
+def get_special_struct_instance(
+    type_name: str, use_lwc: bool = False
+) -> SpecialStructTrait:
+    # Map property types to their classes
+
+    if type_name in _special_struct_type_map.keys():
+        prop_class = _special_struct_type_map.get(type_name)
+        prop = prop_class.new()
+    else:
+        print(f"Unknown special struc type: {type_name}")
+        raise DeserializeError(f"Unknown special struc type: {type_name}")
+
+    return prop

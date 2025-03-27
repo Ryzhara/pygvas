@@ -12,7 +12,7 @@ from typing import List, Optional, Any, BinaryIO
 import struct
 from io import BytesIO
 
-from .property_base import Property, PropertyTrait, PropertyOptions
+from .property_base import Property, PropertyTrait, SerializationHints
 from .struct_property import StructProperty
 from ..error import DeserializeError, SerializeError
 from ..gvas_types import Guid
@@ -24,13 +24,8 @@ from ..utils import (
 )
 
 from .graphical_types import (
-    DateTimeProperty,
-    IntPointProperty,
-    LinearColorProperty,
-    RotatorProperty,
-    QuatProperty,
-    VectorProperty,
-    Vector2Property,
+    is_special_struct,
+    get_special_struct_instance,
 )
 
 
@@ -70,7 +65,6 @@ class ArrayProperty(PropertyTrait):
         self,
         stream: BinaryIO,
         include_header: bool = True,
-        options: Optional[PropertyOptions] = None,
     ) -> None:
         """Read array from stream"""
         if not include_header:
@@ -78,17 +72,15 @@ class ArrayProperty(PropertyTrait):
                 "ArrayProperty is not supported in arrays", stream.tell()
             )
 
-        length = self.read_header(stream, options=options)
+        length = self.read_header(stream)
         # self.property_type should be populated
         start = stream.tell()
-        self.read_body(stream, options=options)
+        self.read_body(stream)
         end = stream.tell()
         if end - start != length:
             raise DeserializeError.invalid_value_size(length, end - start, start)
 
-    def read_header(
-        self, stream: BinaryIO, options: Optional[PropertyOptions] = None
-    ) -> (int, str):
+    def read_header(self, stream: BinaryIO) -> (int, str):
         # Read length and array index
         length = struct.unpack("<I", stream.read(4))[0]
         array_index = struct.unpack("<I", stream.read(4))[0]
@@ -109,9 +101,7 @@ class ArrayProperty(PropertyTrait):
         # END OF HEADER FOR ARRAY PROPERTY
         return length
 
-    def read_body(
-        self, stream: BinaryIO, options: Optional[PropertyOptions] = None
-    ) -> None:
+    def read_body(self, stream: BinaryIO) -> None:
 
         # Read number of elements in the array
         property_count = struct.unpack("<I", stream.read(4))[0]
@@ -139,31 +129,12 @@ class ArrayProperty(PropertyTrait):
 
             self.guid = read_guid_with_terminator(stream)
 
-            # now we are supposed to read structs bodies, NO HEADER
-            # Read array elements
-            # print(f"Reading StructProperty members")
             for _ in range(property_count):
-                if self.type_name in [
-                    "DateTime",
-                    "IntPoint",
-                    "LinearColor",
-                    "Rotator",
-                    "RotatorF",
-                    "RotatorD",
-                    "Quat",
-                    "QuatF",
-                    "QuatD",
-                    "Vector",
-                    "VectorF",
-                    "VectorD",
-                    "Vector2",
-                    "Vector2F",
-                    "Vector2D",
-                ]:
-                    new_array_property = Property.new(
-                        stream, self.type_name, include_header=False, options=options
-                    )
-                    self.values.append(new_array_property.value)
+                if is_special_struct(self.type_name):
+                    print(f"Reading instance of {self.type_name}")
+                    new_array_property = get_special_struct_instance(self.type_name)
+                    new_array_property.read(stream)
+                    self.values.append(new_array_property)
                 else:
                     new_array_property = StructProperty(self.property_type)
                     new_array_property.read_body(stream)
@@ -246,7 +217,7 @@ class ArrayProperty(PropertyTrait):
         else:  # catchall
             for _ in range(property_count):
                 new_array_property = Property.new(
-                    stream, self.property_type, include_header=False, options=options
+                    stream, self.property_type, include_header=False
                 )
                 self.values.append(new_array_property.value)
 
@@ -254,7 +225,6 @@ class ArrayProperty(PropertyTrait):
         self,
         stream: BinaryIO,
         include_header: bool = True,
-        options: Optional[PropertyOptions] = None,
     ) -> int:
         """Write array to stream"""
         if not include_header:

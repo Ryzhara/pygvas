@@ -2,7 +2,7 @@
 Property type implementations for GVAS
 """
 
-from .property_base import Property, PropertyTrait, PropertyOptions
+from .property_base import Property, PropertyTrait, SerializationHints
 from .array_property import ArrayProperty
 from .enum_property import EnumProperty
 from .int_property import BoolProperty, ByteProperty, FloatProperty, IntProperty
@@ -14,7 +14,7 @@ from .struct_property import StructProperty, StructPropertyValue
 __all__ = [
     "Property",
     "PropertyTrait",
-    "PropertyOptions",
+    "SerializationHints",
     "ArrayProperty",
     "BoolProperty",
     "ByteProperty",

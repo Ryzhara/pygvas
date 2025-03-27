@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from typing import Optional, BinaryIO
 import struct
 
-from .property_base import PropertyTrait, PropertyOptions
+from .property_base import PropertyTrait, SerializationHints
 from ..error import DeserializeError
 from ..utils import read_string, write_string
 
@@ -28,7 +28,6 @@ class EnumProperty(PropertyTrait):
         self,
         stream: BinaryIO,
         include_header: bool = True,
-        options: Optional[PropertyOptions] = None,
     ) -> None:
         """Read enum value from stream"""
         if include_header:
@@ -64,7 +63,6 @@ class EnumProperty(PropertyTrait):
         self,
         stream: BinaryIO,
         include_header: bool = True,
-        options: Optional[PropertyOptions] = None,
     ) -> int:
         """Write enum value to stream"""
         bytes_written = 0

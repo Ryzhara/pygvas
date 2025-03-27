@@ -12,7 +12,7 @@ from typing import Optional, BinaryIO
 import struct
 from io import BytesIO
 
-from .property_base import PropertyTrait, PropertyOptions
+from .property_base import PropertyTrait, SerializationHints
 from ..error import DeserializeError
 from ..utils import write_string
 
@@ -32,7 +32,6 @@ class StrProperty(PropertyTrait):
         self,
         stream: BinaryIO,
         include_header: bool = True,
-        options: Optional[PropertyOptions] = None,
     ) -> None:
         """Read string from stream"""
         if include_header:
@@ -67,7 +66,6 @@ class StrProperty(PropertyTrait):
         self,
         stream: BinaryIO,
         include_header: bool = True,
-        options: Optional[PropertyOptions] = None,
     ) -> int:
         """Write string to stream"""
         bytes_written = 0
@@ -132,7 +130,6 @@ class NameProperty(PropertyTrait):
         self,
         stream: BinaryIO,
         include_header: bool = True,
-        options: Optional[PropertyOptions] = None,
     ) -> None:
         """Read type_name value from stream"""
         if include_header:
@@ -168,7 +165,6 @@ class NameProperty(PropertyTrait):
         self,
         stream: BinaryIO,
         include_header: bool = True,
-        options: Optional[PropertyOptions] = None,
     ) -> int:
         """Write type_name value to stream"""
         bytes_written = 0

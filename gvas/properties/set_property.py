@@ -12,7 +12,7 @@ from typing import List, Optional, BinaryIO, Any
 from io import BytesIO
 import struct
 
-from .property_base import Property, PropertyTrait, PropertyOptions
+from .property_base import Property, PropertyTrait, SerializationHints
 from ..error import DeserializeError
 from ..utils import read_string, write_string
 
@@ -34,7 +34,6 @@ class SetProperty(PropertyTrait):
         cls,
         property_type: str,
         allocation_flags: int = 0,
-        properties: Optional[List[Property]] = None,
     ) -> "SetProperty":
         """Create a new set property"""
         return cls(
@@ -47,7 +46,6 @@ class SetProperty(PropertyTrait):
         self,
         stream: BinaryIO,
         include_header: bool = True,
-        options: Optional[PropertyOptions] = None,
     ) -> None:
         """Read set from stream"""
         if not include_header:
@@ -87,7 +85,6 @@ class SetProperty(PropertyTrait):
                     stream,
                     self.property_type,
                     include_header=False,
-                    options=options,
                     suggested_length=total_bytes_per_property,
                 )
                 self.properties.append(prop)
@@ -102,7 +99,6 @@ class SetProperty(PropertyTrait):
         self,
         stream: BinaryIO,
         include_header: bool = True,
-        options: Optional[PropertyOptions] = None,
     ) -> int:
         """Write set to stream"""
         bytes_written = 0

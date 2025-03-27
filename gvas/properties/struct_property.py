@@ -11,7 +11,8 @@ from dataclasses import dataclass
 from typing import Optional, Dict, Any, BinaryIO, List
 from io import BytesIO
 
-from .property_base import Property, PropertyTrait, PropertyOptions
+from .graphical_types import is_special_struct, get_special_struct_instance
+from .property_base import Property, PropertyTrait, SerializationHints
 from ..error import DeserializeError
 from ..utils import *
 
@@ -50,7 +51,6 @@ class StructProperty(PropertyTrait):
         self,
         stream: BinaryIO,
         include_header: bool = True,
-        options: Optional[PropertyOptions] = None,
     ) -> None:
         """Read struct from stream"""
         if not include_header:
@@ -82,8 +82,6 @@ class StructProperty(PropertyTrait):
         # Create struct value
         self.value = StructPropertyValue(self.type_name, {})
 
-        """ We need properties to read/write"""
-
         # Read properties until we hit None. Or is it "None" ?
         while True:
             # Read property property_name
@@ -110,7 +108,6 @@ class StructProperty(PropertyTrait):
         self,
         stream: BinaryIO,
         include_header: bool = True,
-        options: Optional[PropertyOptions] = None,
     ) -> int:
         """Write struct to stream"""
         # REF: Write to a temporary buffer first to get the length of the body
