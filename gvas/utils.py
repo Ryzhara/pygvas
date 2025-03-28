@@ -20,7 +20,7 @@ def read_atomic_data(
     if assert_value is not None:
         if value != assert_value:
             raise AssertionError(
-                f"{error_msg+': ' if error_msg else ""}Expected value {value} != {assert_value} at {position=}"
+                f"{error_msg+': ' if error_msg is not None else ""}Expected value {value} != {assert_value} at {position=}"
             )
     return value
 

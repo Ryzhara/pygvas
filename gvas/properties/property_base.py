@@ -92,7 +92,6 @@ class Property:
             BoolProperty,
             ByteProperty,
             EnumProperty,
-            FloatProperty,
             IntProperty,
             TextProperty,
             MapProperty,
@@ -103,37 +102,40 @@ class Property:
         )
         from .int_property import (
             Int8Property,
+            UInt8Property,
             Int16Property,
-            Int32Property,
-            Int64Property,
             UInt16Property,
+            Int32Property,
             UInt32Property,
+            Int64Property,
             UInt64Property,
+            FloatProperty,
             DoubleProperty,
         )
 
         # Map property types to their classes
         type_map = {
             "ArrayProperty": ArrayProperty,
+            "StructProperty": StructProperty,
+            "TextProperty": TextProperty,
+            "MapProperty": MapProperty,
+            "NameProperty": NameProperty,
+            "SetProperty": SetProperty,
+            "StrProperty": StrProperty,
             "BoolProperty": BoolProperty,
             "ByteProperty": ByteProperty,
             "EnumProperty": EnumProperty,
-            "FloatProperty": FloatProperty,
             "IntProperty": IntProperty,
             "Int8Property": Int8Property,
+            "UInt8Property": UInt8Property,
             "Int16Property": Int16Property,
             "Int32Property": Int32Property,
             "Int64Property": Int64Property,
             "UInt16Property": UInt16Property,
             "UInt32Property": UInt32Property,
             "UInt64Property": UInt64Property,
+            "FloatProperty": FloatProperty,
             "DoubleProperty": DoubleProperty,
-            "TextProperty": TextProperty,
-            "MapProperty": MapProperty,
-            "NameProperty": NameProperty,
-            "SetProperty": SetProperty,
-            "StrProperty": StrProperty,
-            "StructProperty": StructProperty,
         }
 
         # Get the appropriate property class

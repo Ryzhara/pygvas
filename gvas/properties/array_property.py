@@ -134,7 +134,6 @@ class ArrayProperty(PropertyTrait):
         #     pass
         elif self.property_type in [
             "StrProperty",
-            "NameProperty",
             "ObjectProperty",
             "EnumProperty",
         ]:
@@ -298,7 +297,6 @@ class ArrayProperty(PropertyTrait):
 
         elif self.property_type in [
             "StrProperty",
-            "NameProperty",
             "ObjectProperty",
             "EnumProperty",
         ]:
