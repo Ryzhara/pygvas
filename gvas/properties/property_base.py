@@ -11,13 +11,17 @@ Key differences from Rust version:
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, asdict, field
 from typing import Optional, Dict, Any, BinaryIO, Tuple
+
 from ..error import DeserializeError
 
 
 class SerializationHints:
     # one class variable to rule them all. This class is never instantiated.
     # We just set some data and
-    meta_info: Dict[str, Any] = {}
+    meta_info: Dict[str, Any] = {
+        "engine_version": (4, 0, 0, 0),
+        "body_bytes": 0,  # tell child reader how big their blob is
+    }
 
     @classmethod
     def set_engine_version(
@@ -28,6 +32,14 @@ class SerializationHints:
     @classmethod
     def get_engine_version(cls) -> Tuple[int, int, int, int]:
         return cls.meta_info.get("engine_version", (4, 0, 0, 0))
+
+    @classmethod
+    def set_body_bytes(cls, start: int, end: int) -> None:
+        cls.meta_info["body_bytes"] = (start, end)
+
+    @classmethod
+    def get_body_bytes(cls) -> int:
+        return cls.meta_info["body_bytes"]
 
     @classmethod
     def get(cls, key_name: str, default_value: Any = None):
@@ -82,6 +94,7 @@ class Property:
             EnumProperty,
             FloatProperty,
             IntProperty,
+            TextProperty,
             MapProperty,
             NameProperty,
             SetProperty,
@@ -115,6 +128,7 @@ class Property:
             "UInt32Property": UInt32Property,
             "UInt64Property": UInt64Property,
             "DoubleProperty": DoubleProperty,
+            "TextProperty": TextProperty,
             "MapProperty": MapProperty,
             "NameProperty": NameProperty,
             "SetProperty": SetProperty,

@@ -69,8 +69,10 @@ class ArrayProperty(PropertyTrait):
 
         length = self.read_header(stream)
         start = stream.tell()
+        SerializationHints.set_body_bytes(start, start + length)
         self.read_body(stream)
         end = stream.tell()
+        SerializationHints.set_body_bytes(0, 0)
         if end - start != length:
             raise DeserializeError.invalid_value_size(length, end - start, start)
 
@@ -140,10 +142,20 @@ class ArrayProperty(PropertyTrait):
                 string_element = read_string(stream)
                 self.values.append(string_element)
 
+        elif self.property_type == "ByteProperty":
+            # this is an array of bytes, so just make it a thing
+            new_array_property = Property.new(
+                stream,
+                self.property_type,
+                include_header=False,
+                suggested_length=property_count,
+            )
+            self.values.append(new_array_property)
+
         elif self.property_type in [
             "BoolProperty",
             "Int8Property",
-            "ByteProperty",
+            "UInt8Property",
             "UInt8Property",
             "Int16Property",
             "UInt16Property",
@@ -158,31 +170,31 @@ class ArrayProperty(PropertyTrait):
             for _ in range(property_count):
                 match self.property_type:
                     case "BoolProperty":
-                        self.values.append(struct.unpack("?", stream.read(1))[0])
+                        self.values.append(read_bool(stream))
                     case "Int8Property":
-                        self.values.append(struct.unpack("b", stream.read(1))[0])
+                        self.values.append(read_int8(stream))
                     case "UInt8Property":
-                        self.values.append(struct.unpack("B", stream.read(1))[0])
-                    case "ByteProperty":
-                        self.values.append(struct.unpack("B", stream.read(1))[0])
+                        self.values.append(read_uint8(stream))
+                    case "UInt8Property":
+                        self.values.append(read_uint8(stream))
                     case "Int16Property":
-                        self.values.append(struct.unpack("<h", stream.read(2))[0])
+                        self.values.append(read_int16(stream))
                     case "UInt16Property":
-                        self.values.append(struct.unpack("<H", stream.read(2))[0])
+                        self.values.append(read_uint16(stream))
                     case "IntProperty":  # backward compatibility
-                        self.values.append(struct.unpack("<i", stream.read(4))[0])
+                        self.values.append(read_int32(stream))
                     case "Int32Property":
-                        self.values.append(struct.unpack("<i", stream.read(4))[0])
+                        self.values.append(read_int32(stream))
                     case "UInt32Property":
-                        self.values.append(struct.unpack("<I", stream.read(4))[0])
+                        self.values.append(read_uint32(stream))
                     case "Int64Property":
-                        self.values.append(struct.unpack("<q", stream.read(8))[0])
+                        self.values.append(read_int64(stream))
                     case "UInt64Property":
-                        self.values.append(struct.unpack("<Q", stream.read(8))[0])
+                        self.values.append(read_uint64(stream))
                     case "FloatProperty":
-                        self.values.append(struct.unpack("<f", stream.read(4))[0])
+                        self.values.append(read_float(stream))
                     case "DoubleProperty":
-                        self.values.append(struct.unpack("<d", stream.read(8))[0])
+                        self.values.append(read_double(stream))
 
         # need to add other types?
         elif self.property_type in [
@@ -196,6 +208,13 @@ class ArrayProperty(PropertyTrait):
             "IntPoint",
         ]:
             assert False, f"Encountered unhandled property type {self.property_type}"
+
+        elif self.property_type == "TextProperty":
+            # capture the thing as a blob for now
+            new_array_property = Property.new(
+                stream, self.property_type, include_header=False
+            )
+            self.values.append(new_array_property.value)
 
         else:  # catchall
             for _ in range(property_count):

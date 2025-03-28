@@ -18,6 +18,7 @@ from ..utils import *
 class TextProperty(PropertyTrait):
     """A property that holds FText data"""
 
+    type_name: str = "TextProperty"
     flags: int = 0
     byte_data: Optional[bytes] = None  # just scarf the bytes
 
@@ -26,25 +27,22 @@ class TextProperty(PropertyTrait):
         """Create a new text property"""
         return cls()
 
-    def read_header(self, stream: BinaryIO) -> int:
-
-
     def read(
         self,
         stream: BinaryIO,
         include_header: bool = True,
     ) -> None:
         """Read text from stream"""
+        body_start, body_end = SerializationHints.get_body_bytes()
         length = 0
-        assert include_header, f"Without reading the header we don't know length!"
         if include_header:
             length = read_uint32(stream)
             _array_index = read_uint32(stream, 0)
-            read_null_byte_terminator_and_validate(stream)
+            read_null_byte_terminator(stream)
 
         self.flags = read_uint32(stream)
-        self.byte_data = read_bytes(stream, length-4)
-
+        bytes_remaining = body_end - stream.tell()
+        self.byte_data = read_bytes(stream, bytes_remaining)
 
     def write(
         self,
@@ -52,16 +50,16 @@ class TextProperty(PropertyTrait):
         include_header: bool = True,
     ) -> int:
         """Write text to stream"""
-        assert include_header, f"Without reading the header we don't know length!"
         length = 4 + len(self.byte_data)
         bytes_written = 0
         if include_header:
             bytes_written += write_uint32(stream, length)
-            bytes_written += write_uint32(stream, 0)
-            bytes_written += write_uint8(stream, 0)
+            bytes_written += write_uint32(stream, 0)  # array_index
+            bytes_written += write_uint8(stream, 0)  # null byte terminator
 
         bytes_written += write_uint32(stream, self.flags)
         bytes_written += write_bytes(stream, self.byte_data)
+        return bytes_written
 
 
 @dataclass
@@ -223,6 +221,6 @@ class FTextHistory:
 
         else:
             # Add other history types as needed
-            raise Error.invalid_value(f"Unsupported text history type: {self.type}")
+            raise ValueError(f"Unsupported text history type: {self.type}")
 
         return bytes_written

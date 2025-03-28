@@ -6,6 +6,7 @@ from .property_base import Property, PropertyTrait, SerializationHints
 from .array_property import ArrayProperty
 from .enum_property import EnumProperty
 from .int_property import BoolProperty, ByteProperty, FloatProperty, IntProperty
+from .text_property import TextProperty
 from .map_property import MapProperty
 from .set_property import SetProperty
 from .str_property import StrProperty, NameProperty
@@ -21,6 +22,7 @@ __all__ = [
     "EnumProperty",
     "FloatProperty",
     "IntProperty",
+    "TextProperty",
     "MapProperty",
     "NameProperty",
     "SetProperty",
@@ -28,3 +30,5 @@ __all__ = [
     "StructProperty",
     "StructPropertyValue",
 ]
+
+from .text_property import TextProperty

@@ -86,19 +86,12 @@ class BoolProperty(PropertyTrait):
         return bytes_written
 
 
-class BytePropertyValue(Enum):
-    """Type of byte property value"""
-
-    Byte = 0
-    Name = 1
-
-
 @dataclass
 class ByteProperty(PropertyTrait):
     """A property that holds a byte value or type_name"""
 
     name: Optional[str] = None
-    value: Union[int, str] = 0
+    value: Union[int, bytes] = 0
 
     @classmethod
     def new_byte(cls, name: Optional[str], value: int) -> "ByteProperty":
@@ -115,19 +108,19 @@ class ByteProperty(PropertyTrait):
     ) -> None:
         """Read byte property from stream"""
         if include_header:
-            _length, _array_index = read_length_and_array_index(
-                stream, assert_length=1, assert_index=0
-            )
-            read_null_byte_terminator_and_validate(stream)
+            _length = read_uint32(stream, assert_value=1)
+            _array_index = read_uint32(stream, assert_value=0)
+            read_null_byte_terminator(stream)
 
         # Read type_name if present
-        self.name = read_string(stream) if suggested_length > 1 else None
+        # this currently does not apply
+        # self.name = read_string(stream) if suggested_length > 1 else None
 
         # Read value based on length
         if suggested_length <= 1:  # indicates a byte value
             self.value = stream.read(1)[0]
         else:  # indicates a type_name value
-            self.value = read_string(stream)
+            self.value = read_bytes(stream, suggested_length)
 
     def write(
         self,
@@ -202,9 +195,9 @@ class FloatProperty(PropertyTrait):
         if include_header:
             _length = read_uint32(stream, 4)
             _array_index = read_uint32(stream, 0)
-            read_null_byte_terminator_and_validate(stream)
+            read_null_byte_terminator(stream)
 
-        self.value = struct.unpack("<f", stream.read(4))[0]
+        self.value = read_float(stream)
 
     def write(
         self,
@@ -249,7 +242,7 @@ class DoubleProperty(PropertyTrait):
                 stream, assert_length=8, assert_index=0
             )
 
-            read_null_byte_terminator_and_validate()
+            read_null_byte_terminator()
 
         self.value = struct.unpack("<d", stream.read(8))[0]
 
@@ -303,7 +296,7 @@ def create_int_property_class(type_name: str, size: int, signed: bool = True):
                 _length = read_uint32(stream, size)
                 _array_index = read_uint32(stream, 0)
 
-                read_null_byte_terminator_and_validate(stream)
+                read_null_byte_terminator(stream)
 
             # Read value based on size and signedness
             self.value = struct.unpack(encoding_string, stream.read(size))[0]
