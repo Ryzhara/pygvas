@@ -151,10 +151,14 @@ class Property:
             and hasattr(prop, "read")
             and callable(getattr(prop, "read"))
         ):
-            if suggested_length is not None:
-                prop.read(stream, include_header, suggested_length)
-            else:
-                prop.read(stream, include_header)
+            assert (
+                suggested_length is not None
+            ), f"Unexpected missing suggested length: for Byte Property {prop=}"
+            prop.read(stream, include_header, suggested_length)
+            # if suggested_length is not None:
+            #     prop.read(stream, include_header, suggested_length)
+            # else:
+            #     prop.read(stream, include_header)
         else:
             # Standard case
             try:

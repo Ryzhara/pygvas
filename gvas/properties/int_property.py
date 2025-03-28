@@ -112,10 +112,6 @@ class ByteProperty(PropertyTrait):
             _array_index = read_uint32(stream, assert_value=0)
             read_null_byte_terminator(stream)
 
-        # Read type_name if present
-        # this currently does not apply
-        # self.name = read_string(stream) if suggested_length > 1 else None
-
         # Read value based on length
         if suggested_length <= 1:  # indicates a byte value
             self.value = stream.read(1)[0]

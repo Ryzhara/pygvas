@@ -46,8 +46,17 @@ test_directory = pathlib.Path("./resources/test")
 test_file_list = [
     filepath for filepath in test_directory.glob("*.sav") if filepath.is_file()
 ]
-# test_file_list = ["Islands of Insight Example.sav"]
-test_file_list = ["resources/test/component8.sav"]
+# test_file_list = ["Islands of Insight Example.sav"]  # working!
+# test_file_list = ["resources/test/component8.sav"]  # Working!
+# test_file_list = ["resources/test/Options.sav"]  # Working!
+test_file_list = ["resources/test/vector2d.sav"]  # Working!
+test_file_list = ["resources/test/vector2d.sav"]  # Working!
+test_file_list = ["resources/test/vector2d.sav"]  # Working!
+test_file_list = ["resources/test/Profile_0.sav"]  # Working!
+
+# this one has complex stuff in it; more challenging!
+# test_file_list = ["resources/test/package_version_524.sav"]
+
 print(test_file_list)
 
 for test_file in test_file_list:

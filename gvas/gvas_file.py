@@ -23,7 +23,7 @@ from .game_version import (
 )
 from .gvas_types import Guid, HashableIndexMap
 from .properties import Property, SerializationHints
-from .utils import read_string, write_string
+from .utils import *
 
 # Magic number that appears at the start of every GVAS file
 GVAS_MAGIC = b"GVAS"
@@ -53,37 +53,35 @@ class GvasHeader:
             raise DeserializeError.invalid_header("Invalid magic number")
 
         # Read versions
-        save_game_version = struct.unpack("<I", stream.read(4))[0]
-        package_file_version = struct.unpack("<I", stream.read(4))[0]
+        save_game_version = read_uint32(stream)
+        package_file_version = read_uint32(stream)
 
         # Read UE5 version if present
         package_file_version_ue5 = None
         if save_game_version >= 3:  # SaveGameVersion::PackageFileSummaryVersionChange
-            package_file_version_ue5 = struct.unpack("<I", stream.read(4))[0]
+            package_file_version_ue5 = read_uint32(stream)
 
         # Read engine version
-        engine_version_major = struct.unpack("<H", stream.read(2))[0]
-        engine_version_minor = struct.unpack("<H", stream.read(2))[0]
-        engine_version_patch = struct.unpack("<H", stream.read(2))[0]
-        engine_version_build = struct.unpack("<I", stream.read(4))[0]
+        engine_version_major = read_uint16(stream)
+        engine_version_minor = read_uint16(stream)
+        engine_version_patch = read_uint16(stream)
+        engine_version_build = read_uint32(stream)
 
         # Read branch type_name
-        branch_len = struct.unpack("<I", stream.read(4))[0]
-        engine_version_branch = stream.read(branch_len).decode("utf-8")[:-1]
+        engine_version_branch = read_string(stream)
 
         # Read custom versions
-        custom_version_format = struct.unpack("<I", stream.read(4))[0]
-        custom_version_count = struct.unpack("<I", stream.read(4))[0]
+        custom_version_format = read_uint32(stream)
+        custom_version_count = read_uint32(stream)
 
         custom_versions = HashableIndexMap()
         for _ in range(custom_version_count):
             guid_bytes = stream.read(16)
-            version = struct.unpack("<I", stream.read(4))[0]
+            version = read_uint32(stream)
             custom_versions[Guid.from_bytes(guid_bytes)] = version
 
         # Read save game class type_name
-        class_name_len = struct.unpack("<I", stream.read(4))[0]
-        save_game_class_name = stream.read(class_name_len).decode("utf-8")[:-1]
+        save_game_class_name = read_string(stream)
 
         return cls(
             package_file_version=package_file_version,
@@ -240,11 +238,6 @@ class GVASFile:
         for name, prop in self.properties.items():
             # Write property type_name
             bytes_written += write_string(buffer, name)
-
-            # # Write property type
-            # bytes_written += write_string(buffer, Property.type)
-
-            # print(f"Writing {name=} of {prop.type=}")
 
             # Write property
             prop.write(buffer, include_header=True)

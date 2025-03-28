@@ -7,7 +7,7 @@ from io import BytesIO
 import struct
 from typing import Dict, List, Optional
 
-from gvas.properties.property_base import Property, PropertyTrait, PropertyOptions
+from gvas.properties.property_base import Property, PropertyTrait
 from gvas.properties.int_property import (
     BoolProperty,
     ByteProperty,

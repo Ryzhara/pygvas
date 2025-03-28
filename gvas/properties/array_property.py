@@ -277,7 +277,14 @@ class ArrayProperty(PropertyTrait):
             # Write properties to array_buffer
             start = array_buffer.tell()
             for struct_property in self.values:
-                array_bytes += struct_property.write(array_buffer, include_header=False)
+                if is_special_struct(self.type_name):
+                    print(f"Array: writing instance of {self.type_name}")
+                    array_bytes += struct_property.write(array_buffer)
+                else:
+                    array_bytes += struct_property.write(
+                        array_buffer, include_header=False
+                    )
+
             end = array_buffer.tell()
 
             # write total bytes in structs
@@ -298,6 +305,16 @@ class ArrayProperty(PropertyTrait):
             # some of these are "FString" types; not sure if those are handled correctly
             for string_value in self.values:
                 array_bytes += write_string(array_buffer, string_value)
+
+        elif self.property_type == "ByteProperty":
+            # this is an array of bytes, so just make it a thing
+            for byte_property in self.values:
+                if type(byte_property.value.value) is int:
+                    write_uint8(array_buffer, byte_property.value)
+                elif type(byte_property.value.value) is bytes:
+                    write_bytes(array_buffer, byte_property.value.value)
+                else:
+                    raise ValueError(f"Invalid type for type value in: {self}")
 
         elif self.property_type in [
             "BoolProperty",
@@ -321,8 +338,6 @@ class ArrayProperty(PropertyTrait):
                     case "Int8Property":
                         array_bytes += array_buffer.write(struct.pack("b", value))
                     case "UInt8Property":
-                        array_bytes += array_buffer.write(struct.pack("B", value))
-                    case "ByteProperty":
                         array_bytes += array_buffer.write(struct.pack("B", value))
                     case "Int16Property":
                         array_bytes += array_buffer.write(struct.pack("<h", value))
