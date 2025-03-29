@@ -59,9 +59,6 @@ class StrProperty(PropertyTrait):
         """Write string to stream"""
         bytes_written = 0
 
-        # Write property type needs to be written by the object
-        bytes_written += write_string(stream, "StrProperty")
-
         # Write to temporary buffer first to get length
         buffer = BytesIO()
         content_length = (
@@ -71,6 +68,9 @@ class StrProperty(PropertyTrait):
         )
 
         if include_header:
+            # Write property type needs to be written by the object
+            bytes_written += write_string(stream, "StrProperty")
+
             # Write length and array index
             bytes_written += write_uint32(stream, content_length)
             bytes_written += write_uint32(stream, 0)  # Array index

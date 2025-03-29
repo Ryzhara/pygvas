@@ -102,50 +102,31 @@ class GvasHeader:
 
         # Write magic number
         bytes_written += stream.write(GVAS_MAGIC)
-        # bytes_written += 4
 
         # Write versions
-        bytes_written += stream.write(
-            struct.pack("<I", 3 if self.package_file_version_ue5 else 2)
-        )
-        bytes_written += stream.write(struct.pack("<I", self.package_file_version))
-        # bytes_written += 8
+        bytes_written += write_uint32(stream, 3 if self.package_file_version_ue5 else 2)
+        bytes_written += write_uint32(stream, self.package_file_version)
 
         # Write UE5 version if present
         if self.package_file_version_ue5 is not None:
-            bytes_written += stream.write(
-                struct.pack("<I", self.package_file_version_ue5)
-            )
-            # bytes_written += 4
+            bytes_written += write_uint32(stream, self.package_file_version_ue5)
 
-        # Write engine version
-        bytes_written += stream.write(struct.pack("<H", self.engine_version_major))
-        bytes_written += stream.write(struct.pack("<H", self.engine_version_minor))
-        bytes_written += stream.write(struct.pack("<H", self.engine_version_patch))
-        bytes_written += stream.write(struct.pack("<I", self.engine_version_build))
-        # bytes_written += 10
+        # Write engine version data
+        bytes_written += write_uint16(stream, self.engine_version_major)
+        bytes_written += write_uint16(stream, self.engine_version_minor)
+        bytes_written += write_uint16(stream, self.engine_version_patch)
+        bytes_written += write_uint32(stream, self.engine_version_build)
+        bytes_written += write_string(stream, self.engine_version_branch)
 
-        # Write branch type_name
-        branch_bytes = (self.engine_version_branch + "\0").encode("utf-8")
-        bytes_written += stream.write(struct.pack("<I", len(branch_bytes)))
-        bytes_written += stream.write(branch_bytes)
-        # bytes_written += 4 + len(branch_bytes)
-
-        # Write custom versions
-        bytes_written += stream.write(struct.pack("<I", self.custom_version_format))
-        bytes_written += stream.write(struct.pack("<I", len(self.custom_versions)))
-        # bytes_written += 8
+        # Write custom version GUIDs
+        bytes_written += write_uint32(stream, self.custom_version_format)
+        bytes_written += write_uint32(stream, len(self.custom_versions))
 
         for guid, version in self.custom_versions.items():
-            bytes_written += stream.write(guid.to_bytes())
-            bytes_written += stream.write(struct.pack("<I", version))
-            # bytes_written += 20
+            bytes_written += write_bytes(stream, guid.to_bytes())
+            bytes_written += write_uint32(stream, version)
 
-        # Write save game class type_name
-        class_name_bytes = (self.save_game_class_name + "\0").encode("utf-8")
-        bytes_written += stream.write(struct.pack("<I", len(class_name_bytes)))
-        bytes_written += stream.write(class_name_bytes)
-        # bytes_written += 4 + len(class_name_bytes)
+        bytes_written += write_string(stream, self.save_game_class_name)
 
         return bytes_written
 

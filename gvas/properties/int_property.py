@@ -41,22 +41,15 @@ class BoolProperty(PropertyTrait):
     ) -> None:
         """Read boolean value from stream -- these should both be zero?"""
         if include_header:
+            # type string was read by caller
             # Read length and array index
-            length = struct.unpack("<I", stream.read(4))[0]
-            # print(f"Found bool {length=}")
-            array_index = struct.unpack("<I", stream.read(4))[0]
-            # print(f"Found bool {array_index=}")
-            assert length == 0, f"Invalid boolean length {length=}"
-            assert array_index == 0, f"Invalid boolean array index {array_index=}"
+            _length = read_uint32(stream, 0)  # length must be zero
+            _array_index = read_uint32(stream, 0)  # array index must be zero
 
-        self.value = bool(stream.read(1)[0])
+        self.value = read_bool(stream)
 
         if include_header:
-            # Read terminator
-            terminator = stream.read(1)[0]
-            if terminator != 0:
-                position = stream.tell() - 1
-                raise DeserializeError.invalid_terminator(terminator, position)
+            read_uint8(stream, 0)  # Read bool specific null byte
 
     def write(
         self,
@@ -66,22 +59,16 @@ class BoolProperty(PropertyTrait):
         """Write boolean value to stream"""
         bytes_written = 0
 
-        # Write property type needs to be written by the object
-        bytes_written += write_string(stream, "BoolProperty")
+        if include_header:
+            # Write property type needs to be written by the object
+            bytes_written += write_string(stream, "BoolProperty")
+            bytes_written += write_uint32(stream, 0)  # Write length (0 for bool)
+            bytes_written += write_uint32(stream, 0)  # Write array index
+
+        bytes_written += write_bool(stream, self.value)
 
         if include_header:
-            # Write length (0 for bool)
-            bytes_written += stream.write(struct.pack("<I", 0))
-            # Write array index
-            bytes_written += stream.write(struct.pack("<I", 0))
-            # Write terminator
-
-        bytes_written += stream.write(bytes([int(self.value)]))
-        # bytes_written += 1 ???
-
-        if include_header:
-            bytes_written += stream.write(bytes([0]))
-            # bytes_written += 9
+            bytes_written += write_uint8(stream, 0)  # Write bool specific null byte
 
         return bytes_written
 
@@ -132,46 +119,28 @@ class ByteProperty(PropertyTrait):
             buffer_bytes = 0
 
             # Write type_name if present
-            if self.name:
-                buffer_bytes += write_string(buffer, self.name)
-            else:
-                buffer.write(struct.pack("<I", 0))
-                buffer_bytes += 4
+            buffer_bytes += write_string(buffer, "ByteProperty")
 
             # Write value
             if isinstance(self.value, int):
-                buffer.write(bytes([self.value]))
-                buffer_bytes += 1
+                buffer_bytes += write_uint8(buffer, self.value)
             else:
-                buffer_bytes += write_string(buffer, self.value)
+                buffer_bytes += write_bytes(buffer, self.value)
 
-            # Write length and array index
-            stream.write(struct.pack("<I", buffer_bytes))  # Total length
-            stream.write(struct.pack("<I", 0))  # Array index
-            bytes_written += 8
-
-            # Write terminator
-            stream.write(bytes([0]))
-            bytes_written += 1
+            # now write all the things
+            bytes_written += write_uint32(stream, buffer_bytes)  # Total length
+            bytes_written += write_uint32(stream, 0)  # Array index
+            bytes_written += write_uint8(stream, 0)  # null byte terminator
 
             # Write buffer contents
-            buffer_data = buffer.getvalue()
-            stream.write(buffer_data)
-            bytes_written += len(buffer_data)
+            bytes_written += write_bytes(stream, buffer.getvalue())
         else:
-            # Write type_name if present
-            if self.name:
-                bytes_written += write_string(stream, self.name)
-            else:
-                stream.write(struct.pack("<I", 0))
-                bytes_written += 4
 
             # Write value
             if isinstance(self.value, int):
-                stream.write(bytes([self.value]))
-                bytes_written += 1
+                bytes_written += write_uint8(stream, self.value)
             else:
-                bytes_written += write_string(stream, self.value)
+                bytes_written += write_bytes(stream, self.value)
 
         return bytes_written
 
@@ -203,19 +172,14 @@ class FloatProperty(PropertyTrait):
         """Write float value to stream"""
         bytes_written = 0
 
-        # Write property type needs to be written by the object
-        bytes_written += write_string(stream, "FloatProperty")
-
         if include_header:
-            # Write length (4 for float)
-            bytes_written += stream.write(struct.pack("<I", 4))
-            # Write array index
-            bytes_written += stream.write(struct.pack("<I", 0))
-            # Write terminator
-            bytes_written += stream.write(bytes([0]))
-            # bytes_written += 9
+            # Write property type needs to be written by the object
+            bytes_written += write_string(stream, "FloatProperty")
+            bytes_written += write_uint32(stream, 4)  # length
+            bytes_written += write_uint32(stream, 0)  # Write array index
+            bytes_written += write_uint8(stream, 0)  # Write terminator
 
-        bytes_written += stream.write(struct.pack("<f", self.value))
+        bytes_written += write_float(stream, self.value)
         # bytes_written += 4
 
         return bytes_written
@@ -234,11 +198,9 @@ class DoubleProperty(PropertyTrait):
     ) -> None:
         """Read double value from stream"""
         if include_header:
-            _length, _array_index = read_length_and_array_index(
-                stream, assert_length=8, assert_index=0
-            )
-
-            read_null_byte_terminator()
+            _length = read_uint32(stream, 8)
+            _array_index = read_uint32(stream, 0)
+            read_null_byte_terminator(stream)
 
         self.value = struct.unpack("<d", stream.read(8))[0]
 
@@ -250,20 +212,14 @@ class DoubleProperty(PropertyTrait):
         """Write double value to stream"""
         bytes_written = 0
 
-        # Write property type needs to be written by the object
-        bytes_written += write_string(stream, "DoubleProperty")
-
         if include_header:
-            # Write length (8 for double)
-            bytes_written += stream.write(struct.pack("<I", 8))
-            # Write array index
-            bytes_written += stream.write(struct.pack("<I", 0))
-            # Write terminator
-            bytes_written += stream.write(bytes([0]))
-            # bytes_written += 9
+            # Write property type needs to be written by the object
+            bytes_written += write_string(stream, "DoubleProperty")
+            bytes_written += write_uint32(stream, 8)  # length
+            bytes_written += write_uint32(stream, 0)  # Write array index
+            bytes_written += write_uint8(stream, 0)  # Write terminator
 
-        bytes_written += stream.write(struct.pack("<d", self.value))
-        # bytes_written += 8
+        bytes_written += write_double(stream, self.value)
 
         return bytes_written
 
@@ -291,7 +247,6 @@ def create_int_property_class(type_name: str, size: int, signed: bool = True):
                 # Read length and array index
                 _length = read_uint32(stream, size)
                 _array_index = read_uint32(stream, 0)
-
                 read_null_byte_terminator(stream)
 
             # Read value based on size and signedness
@@ -305,17 +260,13 @@ def create_int_property_class(type_name: str, size: int, signed: bool = True):
             """Write integer value to stream"""
             bytes_written = 0
 
-            # Write property type needs to be written by the object
-            bytes_written += write_string(stream, type_name)
-
             if include_header:
-                # Write length
-                bytes_written += stream.write(struct.pack("<I", size))
-                # Write array index
-                bytes_written += stream.write(struct.pack("<I", 0))
-                # Write terminator
-                bytes_written += stream.write(bytes([0]))
-                # bytes_written += 9
+                # Write property type needs to be written by the object
+                bytes_written += write_string(stream, type_name)
+
+                bytes_written += write_uint32(stream, size)  # Write length
+                bytes_written += write_uint32(stream, 0)  # Write array index
+                bytes_written += write_uint8(stream, 0)  # null byte terminator
 
             bytes_written += stream.write(struct.pack(encoding_string, self.value))
 

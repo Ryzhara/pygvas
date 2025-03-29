@@ -46,9 +46,9 @@ def write_uint8(stream: BinaryIO, value) -> int:
     return stream.write(struct.pack("<B", value))
 
 
-def read_bool(stream: BinaryIO, assert_value=None, error_msg: str = None) -> int:
-    return read_atomic_data(
-        stream, "?", 1, assert_value=assert_value, error_msg=error_msg
+def read_bool(stream: BinaryIO, assert_value=None, error_msg: str = None) -> bool:
+    return bool(
+        read_atomic_data(stream, "?", 1, assert_value=assert_value, error_msg=error_msg)
     )
 
 
@@ -93,6 +93,7 @@ def read_uint32(stream: BinaryIO, assert_value=None, error_msg: str = None) -> i
 
 
 def write_uint32(stream: BinaryIO, value) -> int:
+    assert type(value) is int, f"What {value}"
     return stream.write(struct.pack("<I", value))
 
 
@@ -165,7 +166,7 @@ def write_string(stream: BinaryIO, value: str) -> int:
     """Write a string to the stream (length + utf-8 bytes)
     prefix is uin32: length, followed by UTF-8 byte encoded string
     """
-    if not value:
+    if not value:  # null | 0 | "" | ''
         return write_uint32(stream, 0)
 
     value_bytes = (value + "\0").encode("utf-8")  # attach null terminator

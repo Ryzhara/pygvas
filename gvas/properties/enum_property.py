@@ -4,12 +4,10 @@ Python port of enum_property.rs
 """
 
 from dataclasses import dataclass
+from io import BytesIO
 from typing import Optional, BinaryIO
-import struct
-
-from .property_base import PropertyTrait, SerializationHints
-from ..error import DeserializeError
-from ..utils import read_string, write_string
+from .property_base import PropertyTrait
+from ..utils import *
 
 
 @dataclass
@@ -30,34 +28,23 @@ class EnumProperty(PropertyTrait):
         include_header: bool = True,
     ) -> None:
         """Read enum value from stream"""
+        length = 0
         if include_header:
             # Read length and array index
-            length = struct.unpack("<I", stream.read(4))[0]
-            array_index = struct.unpack("<I", stream.read(4))[0]
-            if array_index != 0:
-                position = stream.tell() - 4
-                raise DeserializeError.invalid_array_index(array_index, position)
-
-            # Read enum type type_name if present
+            length = read_uint32(stream)
+            _array_index = read_uint32(stream, 0)
             self.enum_type = read_string(stream)
+            _terminator = read_uint8(stream, 0)
 
-            # Read terminator
-            terminator = stream.read(1)[0]
-            if terminator != 0:
-                position = stream.tell() - 1
-                raise DeserializeError.invalid_terminator(terminator, position)
+        # Read value
+        start = stream.tell()
+        self.value = read_string(stream)
+        end = stream.tell()
 
-            # Read value
-            start = stream.tell()
-            self.value = read_string(stream)
-            end = stream.tell()
-
-            # Verify length
+        # Verify length
+        if include_header:
             if end - start != length:
                 raise DeserializeError.invalid_value_size(length, end - start, start)
-        else:
-            # Just read the value when not reading header
-            self.value = read_string(stream)
 
     def write(
         self,
@@ -65,29 +52,21 @@ class EnumProperty(PropertyTrait):
         include_header: bool = True,
     ) -> int:
         """Write enum value to stream"""
-        bytes_written = 0
 
+        temp_body_buffer = BytesIO()
+        body_bytes = write_string(temp_body_buffer, self.value)
+
+        bytes_written = 0
         if include_header:
-            # First write to a temporary buffer to get the length
-            value_bytes = (self.value + "\0").encode("utf-8")
-            value_len_bytes = struct.pack("<I", len(value_bytes))
-            value_size = len(value_len_bytes) + len(value_bytes)
+            # Write property type needs to be written by the object
+            bytes_written += write_string(stream, "EnumProperty")
 
             # Write length and array index
-            stream.write(struct.pack("<I", value_size))
-            stream.write(struct.pack("<I", 0))  # array_index
-            bytes_written += 8
-
-            # Write enum type type_name if present
-            if self.enum_type:
-                bytes_written += write_string(stream, self.enum_type)
-            else:
-                stream.write(struct.pack("<I", 0))
-                bytes_written += 4
-
-            # Write terminator
-            stream.write(b"\0")
-            bytes_written += 1
+            bytes_written += write_uint32(stream, body_bytes)
+            bytes_written += write_uint32(stream, 0)  # array_index
+            bytes_written += write_string(
+                stream, self.enum_type
+            )  # write_string handles ""
 
         # Write enum value
         bytes_written += write_string(stream, self.value)

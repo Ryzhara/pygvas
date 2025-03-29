@@ -13,6 +13,7 @@ from .set_property import SetProperty
 from .str_property import StrProperty
 from .name_property import NameProperty
 from .struct_property import StructProperty, StructPropertyValue
+from .text_property import TextProperty
 
 __all__ = [
     "Property",
@@ -32,5 +33,3 @@ __all__ = [
     "StructProperty",
     "StructPropertyValue",
 ]
-
-from .text_property import TextProperty

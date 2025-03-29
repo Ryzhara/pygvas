@@ -10,8 +10,6 @@ Key differences from Rust version:
 from dataclasses import dataclass
 from io import BytesIO
 from typing import Optional, BinaryIO
-import struct
-
 from .property_base import PropertyTrait, SerializationHints
 from ..utils import *
 

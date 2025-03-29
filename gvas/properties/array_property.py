@@ -9,12 +9,9 @@ Key differences from Rust version:
 
 from dataclasses import dataclass
 from typing import List, Optional, Any, BinaryIO
-import struct
 from io import BytesIO
-
 from .property_base import Property, PropertyTrait, SerializationHints
 from .struct_property import StructProperty
-from ..error import DeserializeError, SerializeError
 from ..gvas_types import Guid
 from ..utils import *
 
@@ -116,7 +113,7 @@ class ArrayProperty(PropertyTrait):
 
             for _ in range(property_count):
                 if is_special_struct(self.type_name):
-                    print(f"Array: Reading instance of {self.type_name}")
+                    # print(f"Array: Reading instance of {self.type_name}")
                     new_array_property = get_special_struct_instance(self.type_name)
                     new_array_property.read(stream)
                     self.values.append(new_array_property)
@@ -135,7 +132,6 @@ class ArrayProperty(PropertyTrait):
         elif self.property_type in [
             "StrProperty",
             "ObjectProperty",
-            "EnumProperty",
         ]:
             for _ in range(property_count):
                 string_element = read_string(stream)
@@ -195,20 +191,7 @@ class ArrayProperty(PropertyTrait):
                     case "DoubleProperty":
                         self.values.append(read_double(stream))
 
-        # need to add other types?
-        elif self.property_type in [
-            "Vector",
-            "Vector2",
-            "Rotator",
-            "Quat",
-            "DateTime",
-            "Timespan",
-            "LinearColor",
-            "IntPoint",
-        ]:
-            assert False, f"Encountered unhandled property type {self.property_type}"
-
-        elif self.property_type == "TextProperty":
+        elif self.property_type in ["TextProperty"]:
             # capture the thing as a blob for now
             new_array_property = Property.new(
                 stream, self.property_type, include_header=False
@@ -298,7 +281,6 @@ class ArrayProperty(PropertyTrait):
         elif self.property_type in [
             "StrProperty",
             "ObjectProperty",
-            "EnumProperty",
         ]:
             # some of these are "FString" types; not sure if those are handled correctly
             for string_value in self.values:

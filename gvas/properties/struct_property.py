@@ -11,9 +11,12 @@ from dataclasses import dataclass
 from typing import Optional, Dict, Any, BinaryIO, List
 from io import BytesIO
 
-from .graphical_types import is_special_struct, get_special_struct_instance
+from .graphical_types import (
+    is_special_struct,
+    get_special_struct_instance,
+    SpecialStructTrait,
+)
 from .property_base import Property, PropertyTrait, SerializationHints
-from ..error import DeserializeError
 from ..utils import *
 
 
@@ -22,7 +25,7 @@ class StructPropertyValue:
     """Value stored in a struct property"""
 
     type_name: str
-    properties: Dict[str, Property]
+    properties: Dict[str, Property] | SpecialStructTrait
 
     @classmethod
     def new(cls, type_name: str) -> "StructPropertyValue":
@@ -53,20 +56,20 @@ class StructProperty(PropertyTrait):
         include_header: bool = True,
     ) -> None:
         """Read struct from stream"""
-        if not include_header:
-            raise DeserializeError()
+        if include_header:
+            length = self.read_header(stream)
 
-        length = self.read_header(stream)
-        # this is BODY
         # Record start position for length validation
         start = stream.tell()
-        _result = self.read_body(stream)
+        self.read_body(stream)
         # Validate length if header was included
         end = stream.tell()
-        actual_size = end - start
-        assert (
-            actual_size == length
-        ), f"Invalid value size: {length} != {actual_size} at {start}"
+
+        if include_header:
+            actual_size = end - start
+            assert (
+                actual_size == length
+            ), f"Invalid value size: {length} != {actual_size} at {start}"
 
     def read_header(self, stream) -> int:
         length = read_uint32(stream, None)
@@ -76,36 +79,31 @@ class StructProperty(PropertyTrait):
 
         return length
 
-    def read_body(self, stream: BinaryIO) -> bytes:
+    def read_body(self, stream: BinaryIO) -> None:
+        """we must check for type_name in the special (graphical) structure types and
+        then invoke reading that, vs reading a custom, arbitrary body as below"""
 
-        # Create struct value
-        self.value = StructPropertyValue(self.type_name, {})
+        if is_special_struct(self.type_name):
+            # print(f"Struct: Reading instance of {self.type_name}")
+            property_value = get_special_struct_instance(self.type_name)
+            property_value.read(stream)
+            self.value = StructPropertyValue(self.type_name, property_value)
 
-        # Read properties until we hit None. Or is it "None" ?
-        while True:
-            # Read property property_name
-            property_name = read_string(stream)
-            # print(f"Found struct {property_name=}")
-            if property_name == "None":
-                # print(f"property reading NONE; break")
-                break
+        else:  # fully custom
+            self.value = StructPropertyValue(self.type_name, {})
+            # Read properties until we hit None. Or is it "None" ?
+            while True:
+                # Read property property_name
+                property_name = read_string(stream)
+                if property_name == "None":
+                    break
 
-            # Read property type
-            property_type = read_string(stream)
-            # print(f"found struct {property_type=}")
-            if not property_type:
-                print(f"property_type NONE; break!!!!!")
-                break
+                # Read property type
+                property_type = read_string(stream)
+                if not property_type:
+                    print(f"property_type NONE; break!!!!!")
+                    break
 
-            # Read property
-            if is_special_struct(self.type_name):
-                print(f"Struct: Reading instance of {self.type_name}")
-                property_value = get_special_struct_instance(self.type_name)
-                property_value.read(stream)
-                self.value.properties[property_name] = Property(
-                    self.type_name, property_value
-                )
-            else:
                 property_value = Property.new(
                     stream, property_type, include_header=True
                 )
@@ -130,19 +128,16 @@ class StructProperty(PropertyTrait):
         # Write property children
         start_child_bytes = buffer_bytes
         if self.value:
-            for name, prop in self.value.properties.items():
-                # Write property type_name
-                buffer_bytes += write_string(buffer, name)
+            if is_special_struct(self.type_name):
+                # print(f"Struct: Writing instance of {self.type_name}")
+                self.value.properties.write(buffer)
 
-                # # Write property type needs to be written by the object
-                # buffer_bytes += write_string(buffer, prop.type)
-
-                # Write property
-                buffer_bytes += prop.write(buffer, include_header=True)
-
-        # Write "None" terminator for the struct
-        buffer_bytes += write_string(buffer, "None")
-        # buffer_bytes == len("None")+1+4
+            else:  # fully custom
+                for property_name, property_value in self.value.properties.items():
+                    buffer_bytes += write_string(buffer, property_name)
+                    buffer_bytes += property_value.write(buffer, include_header=True)
+                # Write "None" terminator for the struct
+                buffer_bytes += write_string(buffer, "None")
 
         end_child_bytes = buffer_bytes
 
@@ -165,11 +160,9 @@ class StructProperty(PropertyTrait):
         # Write property type
         bytes_written += write_string(stream, "StructProperty")
 
-        # Write placeholder for struct size (4b) and index (4b), which must be zero
         header_length_position = stream.tell()
-        bytes_written += stream.write(struct.pack("<I", 0))
-        bytes_written += stream.write(struct.pack("<I", 0))
-        # buffer_bytes += 8
+        bytes_written += write_uint32(stream, 0)  # placeholder for length
+        bytes_written += write_uint32(stream, 0)  # array_index zero
 
         # Write property subtype, aka type_name
         bytes_written += write_string(stream, self.type_name)
