@@ -49,10 +49,14 @@ test_file_list = [
 # test_file_list = ["Islands of Insight Example.sav"]  # working!
 # test_file_list = ["resources/test/component8.sav"]  # Working!
 # test_file_list = ["resources/test/Options.sav"]  # Working!
+# test_file_list = ["resources/test/Profile_0.sav"]  # Working!
+
 test_file_list = ["resources/test/vector2d.sav"]  # Working!
-test_file_list = ["resources/test/vector2d.sav"]  # Working!
-test_file_list = ["resources/test/vector2d.sav"]  # Working!
-test_file_list = ["resources/test/Profile_0.sav"]  # Working!
+test_file_list = ["resources/test/Delegate.sav"]  # Working!
+test_file_list = ["resources/test/enum_array.sav"]  # Working!
+
+# always a quick retest
+# test_file_list = ["Islands of Insight Example.sav"]  # working!
 
 # this one has complex stuff in it; more challenging!
 # test_file_list = ["resources/test/package_version_524.sav"]
