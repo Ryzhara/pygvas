@@ -12,6 +12,7 @@ from .map_property import MapProperty
 from .set_property import SetProperty
 from .str_property import StrProperty
 from .name_property import NameProperty
+from .text_property import TextProperty
 from .struct_property import StructProperty, StructPropertyValue
 from .text_property import TextProperty
 

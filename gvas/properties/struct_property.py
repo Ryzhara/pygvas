@@ -130,7 +130,7 @@ class StructProperty(PropertyTrait):
         if self.value:
             if is_special_struct(self.type_name):
                 # print(f"Struct: Writing instance of {self.type_name}")
-                self.value.properties.write(buffer)
+                buffer_bytes += self.value.properties.write(buffer)
 
             else:  # fully custom
                 for property_name, property_value in self.value.properties.items():
@@ -144,7 +144,7 @@ class StructProperty(PropertyTrait):
         # Update total child byte count in the header
         if include_header:
             buffer.seek(header_length_position)
-            buffer.write(struct.pack("<I", end_child_bytes - start_child_bytes))
+            write_uint32(buffer, end_child_bytes - start_child_bytes)
 
         # Write buffer contents with optional header
         buffer.seek(0)

@@ -18,14 +18,15 @@ from ..utils import *
 class TextProperty(PropertyTrait):
     """A property that holds FText data"""
 
+    actual_text_count: int = 0  # needed for parent property writing this to a stream
     type_name: str = "TextProperty"
     flags: int = 0
     byte_data: Optional[bytes] = None  # just scarf the bytes
 
     @classmethod
-    def new(cls) -> "TextProperty":
+    def new(cls, actual_text_count) -> "TextProperty":
         """Create a new text property"""
-        return cls()
+        return cls(actual_text_count=actual_text_count)
 
     def read(
         self,
@@ -120,14 +121,14 @@ class FText:
     @classmethod
     def read(cls, stream: BinaryIO) -> "FText":
         """Read FText from stream"""
-        flags = struct.unpack("<I", stream.read(4))[0]
+        flags = read_uint32(stream)
         history = FTextHistory.read(stream)
         return cls(flags=flags, history=history)
 
     def write(self, stream: BinaryIO) -> int:
         """Write FText to stream"""
         bytes_written = 0
-        stream.write(struct.pack("<I", self.flags))
+        bytes_written += write_uint32(stream, self.flags)
         bytes_written += 4
         bytes_written += self.history.write(stream)
         return bytes_written
