@@ -66,7 +66,8 @@ class EnumProperty(PropertyTrait):
             bytes_written += write_uint32(stream, 0)  # array_index
             bytes_written += write_string(
                 stream, self.enum_type
-            )  # write_string handles ""
+            )  # write_string handles empty string
+            bytes_written += write_uint8(stream, 0)  # terminator
 
         # Write enum value
         bytes_written += write_string(stream, self.value)

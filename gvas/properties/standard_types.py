@@ -5,6 +5,7 @@ import datetime
 from ..error import DeserializeError
 from typing import Any, BinaryIO
 from .property_base import SerializationHints
+from ..utils import *
 
 
 class SpecialStructTrait(ABC):
@@ -41,11 +42,27 @@ class DateTimeProperty(SpecialStructTrait):
     def read(self, stream: BinaryIO) -> None:
         format_str, size = ("<Q", 8)
         self.datetime = struct.unpack(format_str, stream.read(size))[0]
-        self.comment = str(datetime.datetime.fromtimestamp(self.datetime / 1000.0))
+        try:
+            # datetime.datetime.fromtimestamp takes time in seconds since January 1, 1970, 00:00:00 (UTC) as a floating-point number
+            # FDateTime type represents dates and times as ticks (0.1 microseconds) since January 1, 0001
+            seconds_since_1_1_00001 = 6_392_264_799_600
+            ticks_per_second = 10_000_000.0
+            seconds = self.datetime / ticks_per_second
+            self.comment = (
+                datetime.datetime.min + datetime.timedelta(seconds=seconds)
+            ).strftime("%d/%m/%Y %H:%M:%S.%f")
+            # print(f"Found DateTime: {self.comment}")
+            # self.comment = str(datetime.datetime.fromtimestamp(self.datetime / 1000.0))
+        except Exception as e:
+            print(f"Cant process {self.datetime=}")
+            self.comment = str(self.datetime)
 
     def write(self, stream: BinaryIO) -> int:
-        format_str, _size = ("<Q", 8)
-        bytes_written = stream.write(struct.pack(format_str, self.datetime))
+        format_str, size = ("<Q", 8)
+        # bytes_written = stream.write(struct.pack(format_str, self.datetime))
+        bytes_written = write_uint64(stream, self.datetime)
+        assert bytes_written == size
+        print(f"Datetime buffer: {struct.pack(format_str, self.datetime)}")
         return bytes_written
 
 

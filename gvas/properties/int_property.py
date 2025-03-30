@@ -95,14 +95,15 @@ class ByteProperty(PropertyTrait):
     ) -> None:
         """Read byte property from stream"""
         if include_header:
-            _length = read_uint32(stream, assert_value=1)
-            _array_index = read_uint32(stream, assert_value=0)
-            read_null_byte_terminator(stream)
+            _length = read_uint32(stream, 1)  # expect value 1
+            _array_index = read_uint32(stream, 0)  # require zero array_index
+            _null_byte = read_uint8(stream, 0)  # enforce null terminator
 
         # Read value based on length
         if suggested_length <= 1:  # indicates a byte value
-            self.value = stream.read(1)[0]
+            self.value = read_uint8(stream)
         else:  # indicates a type_name value
+            # according to the RUST code, this is actually an FSTRING, with  int32 prefix of length. NOT raw bytes
             self.value = read_bytes(stream, suggested_length)
 
     def write(
@@ -114,20 +115,21 @@ class ByteProperty(PropertyTrait):
         bytes_written = 0
 
         if include_header:
-            # Write to temporary buffer first to get length
+            # Write the BODY to temporary buffer first to get length
             buffer = BytesIO()
             buffer_bytes = 0
-
-            # Write type_name if present
-            buffer_bytes += write_string(buffer, "ByteProperty")
 
             # Write value
             if isinstance(self.value, int):
                 buffer_bytes += write_uint8(buffer, self.value)
-            else:
+            elif isinstance(self.value, bytes):
+                # according to the RUST code, this is actually an FSTRING, with  int32 prefix of length. NOT raw bytes
                 buffer_bytes += write_bytes(buffer, self.value)
+            else:
+                raise TypeError(f"Invalid type in ByteProperty: {type(self.value)}")
 
             # now write all the things
+            buffer_bytes += write_string(stream, "ByteProperty")
             bytes_written += write_uint32(stream, buffer_bytes)  # Total length
             bytes_written += write_uint32(stream, 0)  # Array index
             bytes_written += write_uint8(stream, 0)  # null byte terminator
@@ -138,8 +140,11 @@ class ByteProperty(PropertyTrait):
 
             # Write value
             if isinstance(self.value, int):
+                # bytes_written += write_uint32(stream, 1)  # Total length
                 bytes_written += write_uint8(stream, self.value)
             else:
+                # according to the RUST code, this is actually an FSTRING, with  int32 prefix of length. NOT raw bytes
+                # bytes_written += write_uint32(stream, len(self.value))  # Total length
                 bytes_written += write_bytes(stream, self.value)
 
         return bytes_written

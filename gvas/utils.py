@@ -93,7 +93,6 @@ def read_uint32(stream: BinaryIO, assert_value=None, error_msg: str = None) -> i
 
 
 def write_uint32(stream: BinaryIO, value) -> int:
-    assert type(value) is int, f"What {value}"
     return stream.write(struct.pack("<I", value))
 
 

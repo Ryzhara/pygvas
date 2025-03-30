@@ -28,9 +28,9 @@ class StructPropertyValue:
     properties: Dict[str, Property] | SpecialStructTrait
 
     @classmethod
-    def new(cls, type_name: str) -> "StructPropertyValue":
+    def new(cls, type_name: str, properties=None) -> "StructPropertyValue":
         """Create a new struct property value"""
-        return cls(type_name=type_name, properties={})
+        return cls(type_name=type_name, properties=properties or {})
 
 
 @dataclass
@@ -84,10 +84,10 @@ class StructProperty(PropertyTrait):
         then invoke reading that, vs reading a custom, arbitrary body as below"""
 
         if is_special_struct(self.type_name):
-            # print(f"Struct: Reading instance of {self.type_name}")
             property_value = get_special_struct_instance(self.type_name)
             property_value.read(stream)
             self.value = StructPropertyValue(self.type_name, property_value)
+            # print(f"Struct: Reading instance of {self.type_name} {self.value=}")
 
         else:  # fully custom
             self.value = StructPropertyValue(self.type_name, {})
@@ -147,7 +147,6 @@ class StructProperty(PropertyTrait):
             write_uint32(buffer, end_child_bytes - start_child_bytes)
 
         # Write buffer contents with optional header
-        buffer.seek(0)
         buffer_data = buffer.getvalue()
         stream.write(buffer_data)
         total_bytes_written = len(buffer_data)

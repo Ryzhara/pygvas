@@ -226,14 +226,12 @@ class ArrayProperty(PropertyTrait):
         array_bytes += write_string(array_buffer, "ArrayProperty")
 
         # ====== START OF HEADER ==============
-        array_property_byte_count_location = array_bytes
+        array_property_byte_count_location = array_buffer.tell()
         array_bytes += write_uint32(array_buffer, 0)  # TBD total byte count
         array_bytes += write_uint32(array_buffer, 0)  # index
         array_bytes += write_string(array_buffer, self.property_type)
         array_bytes += write_uint8(array_buffer, 0)  # header terminator null byte
         # ====== END OF HEADER ==============
-
-        properties_start = array_bytes
 
         # property_count, or number of elements in the array
         property_count = len(self.values)
@@ -241,9 +239,12 @@ class ArrayProperty(PropertyTrait):
         if self.property_type == "TextProperty" and property_count > 0:
             text_property: TextProperty = self.values[0]
             property_count = text_property.actual_text_count
+        elif self.property_type == "ByteProperty" and property_count > 0:
+            byte_property: ByteProperty = self.values[0]
+            property_count = len(byte_property.value.value)
 
+        properties_body_start = array_buffer.tell()
         array_bytes += write_uint32(array_buffer, property_count)
-        # print(f"\tWriting array: {property_count=}")
 
         # Handle struct properties
         if self.property_type == "StructProperty":
@@ -278,6 +279,9 @@ class ArrayProperty(PropertyTrait):
             array_buffer.seek(struct_byte_count_location)
             write_uint32(array_buffer, struct_properties_bytes)
 
+            # put things back! because we are using it again later!
+            array_buffer.seek(end)
+
         elif self.property_type == "Guid":
             for value in self.values:
                 array_bytes += array_buffer.write(value.to_bytes())
@@ -291,14 +295,9 @@ class ArrayProperty(PropertyTrait):
                 array_bytes += write_string(array_buffer, string_value)
 
         elif self.property_type == "ByteProperty":
-            # this is an array of bytes, so just make it a thing
+            # this is an array of bytes, so just make it a blob thing
             for byte_property in self.values:
-                if type(byte_property.value.value) is int:
-                    write_uint8(array_buffer, byte_property.value)
-                elif type(byte_property.value.value) is bytes:
-                    write_bytes(array_buffer, byte_property.value.value)
-                else:
-                    raise ValueError(f"Invalid type for type value in: {self}")
+                array_bytes += byte_property.write(array_buffer, include_header=False)
 
         elif self.property_type in [
             "BoolProperty",
@@ -359,12 +358,15 @@ class ArrayProperty(PropertyTrait):
             for array_property in self.values:
                 array_bytes += array_property.write(array_buffer, include_header=False)
 
-        properties_end = array_bytes
-        array_property_byte_count = properties_end - properties_start
+        properties_body_end = array_buffer.tell()
+        assert (
+            properties_body_end == array_bytes
+        ), f"Counting is off in array! {array_bytes} != {properties_body_end}"
+        properties_body_byte_count = properties_body_end - properties_body_start
 
         # Write total byte count size
         array_buffer.seek(array_property_byte_count_location)
-        write_uint32(array_buffer, array_property_byte_count)
+        write_uint32(array_buffer, properties_body_byte_count)
 
         # now write the whole thing to the stream
         stream.write(array_buffer.getvalue())
