@@ -11,7 +11,7 @@ from dataclasses import dataclass
 from typing import Optional, Dict, Any, BinaryIO, List
 from io import BytesIO
 
-from .graphical_types import (
+from .standard_types import (
     is_special_struct,
     get_special_struct_instance,
     SpecialStructTrait,

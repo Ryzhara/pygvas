@@ -16,7 +16,7 @@ from .struct_property import StructProperty
 from ..gvas_types import Guid
 from ..utils import *
 
-from .graphical_types import (
+from .standard_types import (
     is_special_struct,
     get_special_struct_instance,
 )
