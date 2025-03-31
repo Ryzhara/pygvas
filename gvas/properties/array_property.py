@@ -248,39 +248,37 @@ class ArrayProperty(PropertyTrait):
 
         # Handle struct properties
         if self.property_type == "StructProperty":
-
-            array_bytes += write_string(array_buffer, self.field_name)
-
-            # Write property type again
-            array_bytes += write_string(array_buffer, self.property_type)
-
-            struct_byte_count_location = array_buffer.tell()
-            array_bytes += write_uint32(array_buffer, 0)
-            array_bytes += write_uint32(array_buffer, 0)
-
-            array_bytes += write_string(array_buffer, self.type_name)
-            array_bytes += write_guid_with_terminator(array_buffer, self.guid)
-
             # Write properties to array_buffer
-            start = array_buffer.tell()
+            body_buffer = BytesIO()
+            body_bytes = 0
+            body_start = body_buffer.tell()
             for struct_property in self.values:
                 if is_special_struct(self.type_name):
                     # print(f"Array: writing instance of {self.type_name}")
-                    array_bytes += struct_property.write(array_buffer)
+                    body_bytes += struct_property.write(body_buffer)
                 else:
-                    array_bytes += struct_property.write(
-                        array_buffer, include_header=False
+                    body_bytes += struct_property.write(
+                        body_buffer, include_header=False
                     )
+            body_end = body_buffer.tell()
+            struct_body_bytes = body_end - body_start
+            try:
+                assert struct_body_bytes == len(body_buffer.getvalue())
+            except AssertionError:
+                pass
 
-            end = array_buffer.tell()
-
-            # write total bytes in structs
-            struct_properties_bytes = end - start
-            array_buffer.seek(struct_byte_count_location)
-            write_uint32(array_buffer, struct_properties_bytes)
-
-            # put things back! because we are using it again later!
-            array_buffer.seek(end)
+            # ALWAYS WRITE HEADER
+            array_bytes += write_string(array_buffer, self.field_name)
+            array_bytes += write_string(array_buffer, self.property_type)
+            array_bytes += write_uint32(array_buffer, struct_body_bytes)
+            array_bytes += write_uint32(array_buffer, 0)
+            array_bytes += write_string(array_buffer, self.type_name)
+            array_bytes += write_guid_with_terminator(array_buffer, self.guid)
+            try:
+                write_bytes(array_buffer, body_buffer.getvalue())
+                array_bytes += struct_body_bytes
+            except Exception as e:
+                print(f"{e}")
 
         elif self.property_type == "Guid":
             for value in self.values:

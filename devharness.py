@@ -71,6 +71,7 @@ test_file_list = ["resources/test/Slot1.sav"]  # Working!
 
 # always a quick retest
 # test_file_list = ["Islands of Insight Example.sav"]  # working!
+# test_file_list = ["resources/test/component8.sav"]  # Working!
 
 # this one has complex stuff in it; more challenging!
 # test_file_list = ["resources/test/package_version_524.sav"]
