@@ -53,28 +53,22 @@ test_file_list = [
 # test_file_list = ["resources/test/enum_array.sav"]  # Working!
 # test_file_list = ["resources/test/package_version_525.sav"]  # Working!
 # test_file_list = ["resources/test/package_version_524.sav"]  # Working!
+# test_file_list = ["resources/test/Slot1.sav"]  # Working!
+# test_file_list = ["resources/test/Slot2.sav"]  # Working!
+# test_file_list = ["resources/test/Slot3.sav"]  # Working!
+# test_file_list = ["resources/test/transform.sav"]  # Working!
+# test_file_list = ["resources/test/ro_64bit_fav.sav"]  # Working!
 
 test_file_list = ["resources/test/palworld_zlib.sav"]  # Working!
 test_file_list = ["resources/test/palworld_zlib_twice.sav"]  # Working!
-test_file_list = ["resources/test/ro_64bit_fav.sav"]  # Working!
-test_file_list = ["resources/test/SaveSlot_03.sav"]  # Working!
-test_file_list = ["resources/test/Slot1.sav"]  # Working!
-test_file_list = ["resources/test/Slot2.sav"]  # Working!
-test_file_list = ["resources/test/Slot3.sav"]  # Working!
-test_file_list = ["resources/test/transform.sav"]  # Working!
-
 # there are some "BIN" files: features_01.bin, regression_01.bin, text_property_noarray.bin
 
 test_file_list = ["resources/test/vector2d.sav"]  # Working!
 
-test_file_list = ["resources/test/Slot1.sav"]  # Working!
+test_file_list = ["resources/test/SaveSlot_03.sav"]  # Working!
 
 # always a quick retest
 # test_file_list = ["Islands of Insight Example.sav"]  # working!
-# test_file_list = ["resources/test/component8.sav"]  # Working!
-
-# this one has complex stuff in it; more challenging!
-# test_file_list = ["resources/test/package_version_524.sav"]
 
 print(test_file_list)
 
