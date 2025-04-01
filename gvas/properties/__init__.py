@@ -17,6 +17,7 @@ from .struct_property import StructProperty, StructPropertyValue
 from .text_property import TextProperty
 from .object_property import ObjectProperty
 from .field_path_property import FieldPath, FieldPathProperty
+from .delegate_property import MulticastInlineDelegateProperty
 
 __all__ = [
     "Property",
@@ -38,4 +39,5 @@ __all__ = [
     "ObjectProperty",
     "FieldPath",
     "FieldPathProperty",
+    "MulticastInlineDelegateProperty",
 ]

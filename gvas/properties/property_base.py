@@ -11,6 +11,7 @@ Key differences from Rust version:
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, asdict, field
 from typing import Optional, Dict, Any, BinaryIO, Tuple
+
 from ..error import DeserializeError
 
 
@@ -100,6 +101,7 @@ class Property:
             StructProperty,
             ObjectProperty,
             FieldPathProperty,
+            MulticastInlineDelegateProperty,
         )
         from .int_property import (
             Int8Property,
@@ -127,6 +129,7 @@ class Property:
             "EnumProperty": EnumProperty,
             "ObjectProperty": ObjectProperty,
             "FieldPathProperty": FieldPathProperty,
+            "MulticastInlineDelegateProperty": MulticastInlineDelegateProperty,
             # numerical stuff
             "BoolProperty": BoolProperty,
             "Int8Property": Int8Property,

@@ -238,14 +238,14 @@ class VectorProperty(SpecialStructTrait):
 # ============================================
 #
 @dataclass
-class Vector2Property(SpecialStructTrait):
-    type_name: str = "Vector2"
+class Vector2DProperty(SpecialStructTrait):
+    type_name: str = "Vector2D"
     is_double: bool = False
     x: float = 0
     y: float = 0
 
     @classmethod
-    def new(cls, use_lwc=False) -> "Vector2Property":
+    def new(cls, use_lwc=False) -> "Vector2DProperty":
         return cls(is_double=SpecialStructTrait.uses_large_world_coordinates())
 
     def read(self, stream: BinaryIO) -> None:
@@ -263,7 +263,7 @@ class Vector2Property(SpecialStructTrait):
 
 _special_struct_type_map = {
     "Vector": VectorProperty,
-    "Vector2": Vector2Property,
+    "Vector2D": Vector2DProperty,
     "Rotator": RotatorProperty,
     "Quat": QuatProperty,
     "LinearColor": LinearColorProperty,

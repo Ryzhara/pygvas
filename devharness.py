@@ -14,6 +14,7 @@ import json
 import dataclasses
 import uuid
 from gvas.gvas_types import Guid
+from test_utilities import compare_binary_files
 
 
 # ============================================
@@ -58,6 +59,7 @@ test_file_list = [
 # test_file_list = ["resources/test/Slot3.sav"]  # Working!
 # test_file_list = ["resources/test/transform.sav"]  # Working!
 # test_file_list = ["resources/test/ro_64bit_fav.sav"]  # Working!
+# test_file_list = ["resources/test/SaveSlot_03.sav"]  # Working!
 
 test_file_list = ["resources/test/palworld_zlib.sav"]  # Working!
 test_file_list = ["resources/test/palworld_zlib_twice.sav"]  # Working!
@@ -65,7 +67,6 @@ test_file_list = ["resources/test/palworld_zlib_twice.sav"]  # Working!
 
 test_file_list = ["resources/test/vector2d.sav"]  # Working!
 
-test_file_list = ["resources/test/SaveSlot_03.sav"]  # Working!
 
 # always a quick retest
 # test_file_list = ["Islands of Insight Example.sav"]  # working!
@@ -95,3 +96,5 @@ for test_file in test_file_list:
     print(f"Writing {output_file}")
     with open(output_file, "wb") as f:
         gvas_file.write(f, GameVersion.DEFAULT)
+
+    compare_binary_files(test_file, output_file)

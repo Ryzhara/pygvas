@@ -3,7 +3,7 @@ FieldPath property implementation for GVAS
 Python port of field_path_property.rs
 """
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from io import BytesIO
 from typing import Optional, Dict, Any, BinaryIO, List
 from .property_base import PropertyTrait
@@ -12,12 +12,12 @@ from ..utils import *
 
 @dataclass
 class FieldPath:
-    path: list[str]
-    resolved_owner: str
+    path: list[str] = field(default_factory=list)
+    resolved_owner: str = ""
 
     def read(self, stream: BinaryIO):
         path_element_count: int = read_uint32(stream)
-        self.path = []
+
         for _ in range(path_element_count):
             self.path.append(read_string(stream))
         self.resolved_owner = read_string(stream)
