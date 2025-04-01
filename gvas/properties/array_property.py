@@ -127,17 +127,6 @@ class ArrayProperty(PropertyTrait):
             for _ in range(property_count):
                 self.values.append(Guid.from_bytes(stream.read(16)))
 
-        # we probably  need to handle more things in detail? read the code
-        # case "Guid", "DateTime", "Quat", "Vector", "Rotator", etc:
-        #     pass
-        elif self.property_type in [
-            "StrProperty",
-            "ObjectProperty",
-        ]:
-            for _ in range(property_count):
-                string_element = read_string(stream)
-                self.values.append(string_element)
-
         elif self.property_type in ["TextProperty"]:
             # capture the thing as a blob for now; ugly hack
             new_array_property = Property.new(
@@ -156,29 +145,25 @@ class ArrayProperty(PropertyTrait):
             )
             self.values.append(new_array_property)
 
+        # special case raw values, for clarity
+        # fmt: off
         elif self.property_type in [
-            "BoolProperty",
-            "Int8Property",
-            "UInt8Property",
-            "UInt8Property",
-            "Int16Property",
-            "UInt16Property",
-            "Int32Property",
-            "UInt32Property",
-            "IntProperty",
-            "Int64Property",
-            "UInt64Property",
-            "FloatProperty",
-            "DoubleProperty",
+            "StrProperty",
+            "BoolProperty", "Int8Property", "UInt8Property",
+            "Int16Property", "UInt16Property",
+            "Int32Property", "UInt32Property", "IntProperty",
+            "Int64Property", "UInt64Property",
+            "FloatProperty", "DoubleProperty",
         ]:
+            # fmt: on
             for _ in range(property_count):
                 match self.property_type:
+                    case "StringProperty":
+                        self.values.append(read_string(stream))
                     case "BoolProperty":
                         self.values.append(read_bool(stream))
                     case "Int8Property":
                         self.values.append(read_int8(stream))
-                    case "UInt8Property":
-                        self.values.append(read_uint8(stream))
                     case "UInt8Property":
                         self.values.append(read_uint8(stream))
                     case "Int16Property":
@@ -286,7 +271,6 @@ class ArrayProperty(PropertyTrait):
 
         elif self.property_type in [
             "StrProperty",
-            "ObjectProperty",
         ]:
             # some of these are "FString" types; not sure if those are handled correctly
             for string_value in self.values:
@@ -297,23 +281,20 @@ class ArrayProperty(PropertyTrait):
             for byte_property in self.values:
                 array_bytes += byte_property.write(array_buffer, include_header=False)
 
+        # fmt: off
         elif self.property_type in [
-            "BoolProperty",
-            "Int8Property",
-            "ByteProperty",
-            "UInt8Property",
-            "Int16Property",
-            "UInt16Property",
-            "IntProperty",
-            "Int32Property",
-            "UInt32Property",
-            "Int64Property",
-            "UInt64Property",
-            "FloatProperty",
-            "DoubleProperty",
+            "StrProperty",
+            "BoolProperty", "Int8Property", "ByteProperty",
+            "UInt8Property", "Int16Property", "UInt16Property",
+            "Int32Property", "UInt32Property", "IntProperty",
+            "Int64Property", "UInt64Property",
+            "FloatProperty",  "DoubleProperty",
         ]:
+            # fmt: on
             for value in self.values:
                 match self.property_type:
+                    case "StrProperty":
+                        array_bytes += write_string(array_buffer, value)
                     case "BoolProperty":
                         array_bytes += write_bool(array_buffer, value)
                     case "Int8Property":
@@ -338,18 +319,6 @@ class ArrayProperty(PropertyTrait):
                         array_bytes += write_float(array_buffer, value)
                     case "DoubleProperty":
                         array_bytes += write_double(array_buffer, value)
-
-        elif self.property_type in [
-            "Vector",
-            "Vector2",
-            "Rotator",
-            "Quat",
-            "DateTime",
-            "Timespan",
-            "LinearColor",
-            "IntPoint",
-        ]:
-            assert False, f"Encountered unhandled property type {self.property_type}"
 
         else:  # catch everything else
             # Write array elements

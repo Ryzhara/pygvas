@@ -15,6 +15,8 @@ from .name_property import NameProperty
 from .text_property import TextProperty
 from .struct_property import StructProperty, StructPropertyValue
 from .text_property import TextProperty
+from .object_property import ObjectProperty
+from .field_path_property import FieldPath, FieldPathProperty
 
 __all__ = [
     "Property",
@@ -33,4 +35,7 @@ __all__ = [
     "StrProperty",
     "StructProperty",
     "StructPropertyValue",
+    "ObjectProperty",
+    "FieldPath",
+    "FieldPathProperty",
 ]

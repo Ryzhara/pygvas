@@ -11,7 +11,6 @@ Key differences from Rust version:
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, asdict, field
 from typing import Optional, Dict, Any, BinaryIO, Tuple
-
 from ..error import DeserializeError
 
 
@@ -99,6 +98,8 @@ class Property:
             SetProperty,
             StrProperty,
             StructProperty,
+            ObjectProperty,
+            FieldPathProperty,
         )
         from .int_property import (
             Int8Property,
@@ -122,17 +123,20 @@ class Property:
             "NameProperty": NameProperty,
             "SetProperty": SetProperty,
             "StrProperty": StrProperty,
-            "BoolProperty": BoolProperty,
             "ByteProperty": ByteProperty,
             "EnumProperty": EnumProperty,
-            "IntProperty": IntProperty,
+            "ObjectProperty": ObjectProperty,
+            "FieldPathProperty": FieldPathProperty,
+            # numerical stuff
+            "BoolProperty": BoolProperty,
             "Int8Property": Int8Property,
             "UInt8Property": UInt8Property,
             "Int16Property": Int16Property,
-            "Int32Property": Int32Property,
-            "Int64Property": Int64Property,
             "UInt16Property": UInt16Property,
+            "Int32Property": Int32Property,
             "UInt32Property": UInt32Property,
+            "IntProperty": IntProperty,
+            "Int64Property": Int64Property,
             "UInt64Property": UInt64Property,
             "FloatProperty": FloatProperty,
             "DoubleProperty": DoubleProperty,
