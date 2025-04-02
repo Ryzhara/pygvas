@@ -8,8 +8,10 @@ Key differences from Rust version:
 - Uses dataclasses for structured data
 """
 
+import os
 from dataclasses import dataclass, asdict
 from typing import Dict, Optional, BinaryIO, List
+from .game_version import CompressionType
 import struct
 import zlib
 from io import BytesIO
@@ -146,37 +148,64 @@ class GVASFile:
         compression_type: CompressionType,
     ) -> "GVASFile":
 
-        # print(f"Now inside read()")
-
-        """Read GVAS file from stream"""
         if game_version == GameVersion.PALWORLD:
-            magic = stream.read(4)
-            if magic == PLZ_MAGIC:
-                print("Found PLZ MAGIC")
-                compression_type = CompressionType.PLZ
-            else:
-                print(f"Tested MAGIC {magic=}")
-                stream.seek(-4, 1)  # Rewind
+            # we have to peek through custom file format. *sigh*
+            decompressed_size = read_uint32(stream)
+            compressed_size = read_uint32(stream)
+            magic_bytes = stream.read(3)
+            if magic_bytes == b"PlZ":  # PLZ_MAGIC:
+                print("Found PLZ MAGIC for palword")
+                enum_value = read_int8(stream)
+                match enum_value:
+                    case CompressionType.NONE.value:
+                        compression_type = CompressionType.NONE
+                    case CompressionType.ZLIB.value:
+                        compression_type = CompressionType.ZLIB
+                    case CompressionType.ZLIB_TWICE.value:
+                        compression_type = CompressionType.ZLIB_TWICE
+                    case _:
+                        raise ValueError("Unknown compression type")
 
-        # Handle compression
-        if compression_type == CompressionType.PLZ:
-            # TODO: Implement PLZ decompression
-            raise NotImplementedError("PLZ compression not yet supported")
-        elif compression_type == CompressionType.ZLIB:
-            raise NotImplementedError("PLZ compression not yet supported")
-            # Read compressed size
-            compressed_size = struct.unpack("<Q", stream.read(8))[0]
-
-            # Read and decompress data
+        # Handle compression options
+        if compression_type == CompressionType.ZLIB_TWICE:
             compressed_data = stream.read(compressed_size)
-            decompressed_data = zlib.decompress(compressed_data)
+            decompressed_data = zlib.decompress(compressed_data)  # once
+            decompressed_data = zlib.decompress(decompressed_data)  # twice
+            assert decompressed_size == len(
+                decompressed_data
+            ), f"{decompressed_size=} != {len(decompressed_data)=}"
+
+            # hacky temp testing
+            with open("resources/test/palworld_zlib_twice.sav.decompressed", "wb") as f:
+                f.write(decompressed_data)
 
             # Create new stream from decompressed data
             stream = BytesIO(decompressed_data)
 
+        elif compression_type == CompressionType.ZLIB:
+            compressed_data = stream.read(compressed_size)
+            decompressed_data = zlib.decompress(compressed_data)
+            assert decompressed_size == len(
+                decompressed_data
+            ), f"{decompressed_size=} != {len(decompressed_data)=}"
+
+            # hacky temp testing
+            with open("resources/test/palworld_zlib.sav.decompressed", "wb") as f:
+                f.write(decompressed_data)
+
+            # Create new stream from decompressed data
+            stream = BytesIO(decompressed_data)
+
+        elif compression_type == CompressionType.NONE:
+            pass
+
+        else:
+            raise ValueError("Unknown compression type")
+
         # Read header
         header = GvasHeader.read(stream)
-        # set up hints for use during serialization
+
+        # set up hints for use during deserialization
         SerializationHints.set_engine_version(
             header.engine_version_major,
             header.engine_version_minor,
@@ -184,7 +213,7 @@ class GVASFile:
             header.engine_version_build,
         )
 
-        # Read properties
+        # Read all the top level file properties
         properties = {}
         while True:
             # Read property type_name
@@ -234,12 +263,12 @@ class GVASFile:
 
         # Handle compression
         compression_type = game_version.get_compression_type()
-        if compression_type == CompressionType.PLZ:
-            # TODO: Implement PLZ compression
-            raise NotImplementedError("PLZ compression not yet supported")
+        if compression_type == CompressionType.ZLIB_TWICE:
+            # TODO: Implement ZLIB_TWICE compression
+            raise NotImplementedError("ZLIB_TWICE compression not yet supported")
         elif compression_type == CompressionType.ZLIB:
             assert False, "ZLIB is not tested!"
-            # Write PLZ magic if needed
+            # Write ZLIB_TWICE magic if needed
             if game_version == GameVersion.PALWORLD:
                 assert False, "PALWORLD is not tested!"
                 stream.write(PLZ_MAGIC)

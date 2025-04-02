@@ -42,14 +42,7 @@ class NameProperty(PropertyTrait):
             # Read length and array index
             length = read_uint32(stream)
             self.array_index = read_uint32(stream)  # actually use this for once?
-
-            # Read property type
-            property_type = read_string(stream)
-            if property_type != "NameProperty":
-                raise ValueError(f"Expected NameProperty, got {property_type}")
-
-            # Read terminator
-            read_null_byte_terminator(stream)
+            read_uint8(stream, 0)  # ensure null byte terminator
 
         # Record start position for length validation
         start = stream.tell()
@@ -73,9 +66,9 @@ class NameProperty(PropertyTrait):
 
         bytes_written = 0
         if include_header:
+            bytes_written += write_string(stream, "NameProperty")
             bytes_written += write_uint32(stream, length)
             bytes_written += write_uint32(stream, self.array_index)
-            bytes_written += write_string(stream, "NameProperty")
             bytes_written += write_uint8(stream, 0)
 
         bytes_written += write_bytes(stream, buffer.getvalue())

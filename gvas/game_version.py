@@ -10,19 +10,20 @@ Key differences from Rust version:
 from enum import Enum, auto
 from typing import Optional
 
-# Magic number for PLZ compression
-PLZ_MAGIC = b"PLZ\x00"
+# Magic number for ZLIB_TWICE compression
+# PLZ_MAGIC = b"PLZ\x00"
+PLZ_MAGIC = b"PLZ"  # not sure why RUST uses a null byte terminator
 
 
 class CompressionType(Enum):
-    """Compression types used in Palworld saves"""
+    """Compression types used in Palworld custom file format"""
 
     # None
     NONE = 0x30
     # Zlib
     ZLIB = 0x31
     # Zlib twice
-    PLZ = 0x32
+    ZLIB_TWICE = 0x32
 
 
 class GameVersion(Enum):
@@ -34,7 +35,7 @@ class GameVersion(Enum):
     def get_compression_type(self) -> CompressionType:
         """Get the compression type for this game version"""
         if self == GameVersion.PALWORLD:
-            return CompressionType.PLZ
+            return CompressionType.ZLIB_TWICE
         return CompressionType.NONE
 
 

@@ -1,4 +1,4 @@
-import struct
+import uuid
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 import datetime
@@ -30,6 +30,33 @@ class SpecialStructTrait(ABC):
 # ============================================
 #
 @dataclass
+class GuidProperty(SpecialStructTrait):
+    type_name: str = "Guid"
+    guid: uuid = None
+    comment: str = ""
+
+    @classmethod
+    def new(cls) -> "GuidProperty":
+        return cls()
+
+    def read(self, stream: BinaryIO) -> None:
+        guid_bytes = stream.read(16)
+        self.guid = uuid.UUID(bytes_le=guid_bytes)
+        try:
+            self.comment = str(self.guid)
+        except Exception as e:
+            print(f"Cant process {self.guid=} : {e}")
+            self.comment = str(self.guid)
+
+    def write(self, stream: BinaryIO) -> int:
+        bytes_written = write_bytes(stream, self.guid.bytes_le)
+        assert bytes_written == 16
+        return bytes_written
+
+
+# ============================================
+#
+@dataclass
 class DateTimeProperty(SpecialStructTrait):
     type_name: str = "DateTime"
     datetime: int = 0  # uint64
@@ -54,7 +81,7 @@ class DateTimeProperty(SpecialStructTrait):
             # print(f"Found DateTime: {self.comment}")
             # self.comment = str(datetime.datetime.fromtimestamp(self.datetime / 1000.0))
         except Exception as e:
-            print(f"Cant process {self.datetime=}")
+            print(f"Cant process {self.datetime=} : {e}")
             self.comment = str(self.datetime)
 
     def write(self, stream: BinaryIO) -> int:
@@ -62,7 +89,6 @@ class DateTimeProperty(SpecialStructTrait):
         # bytes_written = stream.write(struct.pack(format_str, self.datetime))
         bytes_written = write_uint64(stream, self.datetime)
         assert bytes_written == size
-        print(f"Datetime buffer: {struct.pack(format_str, self.datetime)}")
         return bytes_written
 
 
@@ -270,6 +296,7 @@ _special_struct_type_map = {
     "IntPoint": IntPointProperty,
     "DateTime": DateTimeProperty,
     "Timespan": TimespanProperty,
+    "Guid": GuidProperty,
 }
 
 

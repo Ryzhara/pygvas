@@ -60,12 +60,11 @@ test_file_list = [
 # test_file_list = ["resources/test/transform.sav"]  # Working!
 # test_file_list = ["resources/test/ro_64bit_fav.sav"]  # Working!
 # test_file_list = ["resources/test/SaveSlot_03.sav"]  # Working!
+# test_file_list = ["resources/test/vector2d.sav"]  # Working!
 
-test_file_list = ["resources/test/palworld_zlib.sav"]  # Working!
 test_file_list = ["resources/test/palworld_zlib_twice.sav"]  # Working!
+test_file_list = ["resources/test/palworld_zlib.sav"]  # Working!
 # there are some "BIN" files: features_01.bin, regression_01.bin, text_property_noarray.bin
-
-test_file_list = ["resources/test/vector2d.sav"]  # Working!
 
 
 # always a quick retest
@@ -73,18 +72,23 @@ test_file_list = ["resources/test/vector2d.sav"]  # Working!
 
 print(test_file_list)
 
+# game_version = GameVersion.DEFAULT
+game_version = GameVersion.PALWORLD
+
+# compression = CompressionType.NONE
+compression = CompressionType.ZLIB
+
 for test_file in test_file_list:
     print(f"Loading {test_file}")
     # Open and read a save file
     gvas_file = None
     with open(test_file, "rb") as f:
-        print(f"loading file with target: {GameVersion.DEFAULT}")
-        gvas_file = GVASFile.read(f, GameVersion.DEFAULT, CompressionType.NONE)
-        # try:
-        #     gvas_file = GVASFile.read(f, GameVersion.DEFAULT, CompressionType.NONE)
-        # except Exception as e:
-        #     print(f"Failed to load {test_file}: {e}")
-        #     continue
+        print(f"loading file with target: {game_version}")
+        try:
+            gvas_file = GVASFile.read(f, game_version, compression)
+        except Exception as e:
+            print(f"Failed to load {test_file}: {e}")
+            continue
 
     # dump for debug
     # with open("ugly_debug.txt", "w") as f:
