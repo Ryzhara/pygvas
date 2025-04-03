@@ -13,7 +13,6 @@ from gvas import GameVersion, CompressionType
 import json
 import dataclasses
 import uuid
-from gvas.gvas_types import Guid
 from test_utilities import compare_binary_files
 
 
@@ -25,7 +24,7 @@ class EnhancedJSONEncoder(json.JSONEncoder):
         elif isinstance(o, uuid):
             print(f"uuid: {o}")
             return str(o)
-        elif isinstance(o, Guid):
+        elif isinstance(o, uuid):
             print(f"Guid: {o}")
             return str(o)
         return super().default(o)
@@ -61,11 +60,14 @@ test_file_list = [
 # test_file_list = ["resources/test/ro_64bit_fav.sav"]  # Working!
 # test_file_list = ["resources/test/SaveSlot_03.sav"]  # Working!
 # test_file_list = ["resources/test/vector2d.sav"]  # Working!
+# test_file_list = ["resources/test/palworld_zlib.sav"]  # Need to finish compressed save
 
-test_file_list = ["resources/test/palworld_zlib_twice.sav"]  # Working!
-test_file_list = ["resources/test/palworld_zlib.sav"]  # Working!
+# this one requires HINTS implementation.
+# There is a 16-byte GUID hiding anonymously as a struct_property in a map_property
+# See gvas/tests/common/palworld.rs in hints() hashmap for testing sequence
+# test_file_list = ["resources/test/palworld_zlib_twice.sav"]  # Working!
+
 # there are some "BIN" files: features_01.bin, regression_01.bin, text_property_noarray.bin
-
 
 # always a quick retest
 # test_file_list = ["Islands of Insight Example.sav"]  # working!
@@ -85,20 +87,21 @@ for test_file in test_file_list:
     with open(test_file, "rb") as f:
         print(f"loading file with target: {game_version}")
         try:
-            gvas_file = GVASFile.read(f, game_version, compression)
+            gvas_file, decompressed_data = GVASFile.read(f, game_version, compression)
         except Exception as e:
             print(f"Failed to load {test_file}: {e}")
             continue
 
-    # dump for debug
-    # with open("ugly_debug.txt", "w") as f:
-    #     f.write(str(gvas_file))
-    #     # f.write(json.dumps(gvas_file, cls=EnhancedJSONEncoder))
+    if compression != CompressionType.NONE:
+        decompressed_data_file = f"{test_file}.decompressed"
+        print(f"Saving decompressed data {decompressed_data_file}")
+        with open(decompressed_data_file, "wb") as f:
+            f.write(decompressed_data.getvalue())
 
     # dump binary to work toward idempotence for read, write, rinse and repeat
     output_file = f"{test_file}.idempotent"
     print(f"Writing {output_file}")
     with open(output_file, "wb") as f:
-        gvas_file.write(f, GameVersion.DEFAULT)
+        gvas_file.write(f, game_version, compression)
 
     compare_binary_files(test_file, output_file)

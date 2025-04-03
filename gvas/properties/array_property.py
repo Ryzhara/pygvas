@@ -13,7 +13,6 @@ from io import BytesIO
 
 from .property_base import Property, PropertyTrait, SerializationHints
 from .struct_property import StructProperty
-from ..gvas_types import Guid
 from ..utils import *
 
 from .standard_types import (
@@ -29,14 +28,14 @@ class ArrayProperty(PropertyTrait):
     property_type: str = ""
     field_name: Optional[str] = None
     type_name: Optional[str] = None
-    guid: Optional[Guid] = None
+    guid: Optional[uuid] = None
     values: List[Any] = None
 
     def __post_init__(self):
         if self.values is None:
             self.values = []
         if self.guid is None:
-            self.guid = Guid()
+            self.guid = uuid.UUID(int=0)
 
     @classmethod
     def new(
@@ -44,14 +43,14 @@ class ArrayProperty(PropertyTrait):
         property_type: str,
         field_name: Optional[str] = None,
         type_name: Optional[str] = None,
-        guid: Optional[Guid] = None,
+        guid: Optional[uuid] = None,
     ) -> "ArrayProperty":
         """Create a new array property"""
         return cls(
             property_type=property_type,
             field_name=field_name,
             type_name=type_name,
-            guid=guid or Guid(),
+            guid=guid or uuid.UUID(int=0),
         )
 
     def read(
@@ -91,6 +90,10 @@ class ArrayProperty(PropertyTrait):
         # print(f"Found {property_count=}")
 
         self.values = []  # prepare storage
+
+        # don't read bytes that are not for you!
+        if property_count == 0:
+            return
 
         if self.property_type == "StructProperty":
             # Read field type_name

@@ -50,9 +50,9 @@ class NameProperty(PropertyTrait):
         end = stream.tell()
 
         if start and end and length:
-            assert (
-                end - start == length
-            ), f"Invalid length: expected {length}, got {end - start}"
+            actual_size = end - start
+            if actual_size != length:
+                DeserializeError.invalid_value_size(length, actual_size, start)
 
     def write(
         self,

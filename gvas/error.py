@@ -43,7 +43,9 @@ class DeserializeError(Exception):
 
     @classmethod
     def invalid_value_size(cls, length: int, param: int, position: int):
-        return cls(f"Invalid value size: expecting {length} and got {param}", position)
+        raise ValueError(
+            f"Invalid size: expecting {length} and got {param} at {position=}"
+        )
 
 
 class SerializeError(BaseException):

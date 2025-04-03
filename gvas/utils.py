@@ -4,8 +4,9 @@ Common utility functions for GVAS
 
 from typing import BinaryIO
 import struct
-from .gvas_types import Guid
+import uuid
 from .error import *
+import zlib
 
 
 def read_atomic_data(
@@ -151,19 +152,19 @@ def write_bytes(stream: BinaryIO, value_bytes: bytes) -> int:
 
 
 def read_string(stream: BinaryIO) -> str:
-    """Read a string from the stream (length + utf-8 bytes)
-    prefix is uin32: length, followed by UTF-8 byte encoded string
+    """Read a string from the stream
+    prefix is uint32: length, followed by UTF-8 byte encoded string
     """
-    length = read_uint32(stream)
-    if length == 0:
+
+    if (length := read_uint32(stream)) == 0:
         return ""
     value_bytes = read_bytes(stream, length)
     return value_bytes.decode("utf-8")[:-1]  # Remove included '\0'
 
 
 def write_string(stream: BinaryIO, value: str) -> int:
-    """Write a string to the stream (length + utf-8 bytes)
-    prefix is uin32: length, followed by UTF-8 byte encoded string
+    """Write a string to the stream
+    prefix is uint32: length, followed by UTF-8 byte encoded string
     """
     if not value:  # null | 0 | "" | ''
         return write_uint32(stream, 0)
@@ -174,28 +175,57 @@ def write_string(stream: BinaryIO, value: str) -> int:
     return bytes_written  # 4 + len(value) + 1
 
 
-def read_guid(stream: BinaryIO) -> Guid:
-    return Guid.from_bytes(stream.read(16))
+def read_guid(stream: BinaryIO) -> uuid:
+    return uuid.UUID(bytes_le=stream.read(16))
 
 
-def read_guid_with_terminator(stream: BinaryIO) -> Guid:
-    guid_bytes = stream.read(16)
-    guid = Guid.from_bytes(guid_bytes)
-    # print(f"read_body: found {self.guid=}")
+def write_guid(stream: BinaryIO, guid: uuid) -> uuid:
+    return stream.write(guid.bytes_le)
+
+
+def read_guid_with_terminator(stream: BinaryIO) -> uuid:
+    guid = read_guid(stream)
     terminator_position = stream.tell()
-    terminator = stream.read(1)[0]
-    assert (
-        terminator == 0
-    ), f"Invalid terminator: {terminator} at {terminator_position=}"
+    terminator = read_uint8(stream)
+    assert terminator == 0, DeserializeError.invalid_terminator(
+        terminator, terminator_position
+    )
     return guid
 
 
-def write_guid_with_terminator(stream: BinaryIO, guid: Guid) -> int:
-    # Write GUID
-    bytes_written = stream.write(guid.to_bytes())
-    # bytes_written += 16
-
-    # Write terminator
-    bytes_written += stream.write(bytes([0]))
-    # bytes_written += 1
+def write_guid_with_terminator(stream: BinaryIO, guid: uuid) -> int:
+    bytes_written = write_guid(stream, guid)
+    bytes_written += write_uint8(stream, 0)
     return bytes_written
+
+
+def is_zlib_compressed(data):
+    """
+    Checks if the data is likely zlib compressed based on the initial bytes.
+
+    Args:
+        data: The bytes-like object to check.
+
+    Returns:
+        True if the data is likely zlib compressed, False otherwise.
+    """
+    if len(data) < 2:
+        return False
+    return data[:2] in (b"\x78\x01", b"\x78\x9c", b"\x78\xda")
+
+
+def is_definitely_zlib_compressed(data):
+    """
+    Checks if the data is definitely zlib compressed by attempting decompression.
+
+    Args:
+        data: The bytes-like object to check.
+
+    Returns:
+        True if the data is definitely zlib compressed, False otherwise.
+    """
+    try:
+        zlib.decompress(data)
+        return True
+    except zlib.error:
+        return False

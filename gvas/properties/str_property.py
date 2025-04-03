@@ -47,9 +47,8 @@ class StrProperty(PropertyTrait):
 
         # Validate length if header was included
         if include_header:
-            assert (
-                end - start == length
-            ), f"Invalid string size: {end-start} != {length}"
+            if end - start != length:
+                DeserializeError.invalid_value_size(length, end - start, start)
 
     def write(
         self,

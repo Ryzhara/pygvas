@@ -38,17 +38,17 @@ class StructProperty(PropertyTrait):
     """A property that holds structured data"""
 
     type_name: str = ""
-    guid: Guid = None
+    guid: uuid = None
     value: Optional[StructPropertyValue] = None
 
     def __post_init__(self):
         if self.guid is None:
-            self.guid = Guid()
+            self.guid = uuid.UUID(int=0)
 
     @classmethod
-    def new(cls, type_name: str, guid: Optional[Guid] = None) -> "StructProperty":
+    def new(cls, type_name: str, guid: Optional[uuid] = None) -> "StructProperty":
         """Create a new struct property"""
-        return cls(type_name=type_name, guid=guid or Guid())
+        return cls(type_name=type_name, guid=guid or uuid.UUID(int=0))
 
     def read(
         self,
@@ -67,9 +67,8 @@ class StructProperty(PropertyTrait):
 
         if include_header:
             actual_size = end - start
-            assert (
-                actual_size == length
-            ), f"Invalid value size: {length} != {actual_size} at {start}"
+            if actual_size != length:
+                DeserializeError.invalid_value_size(length, actual_size, start)
 
     def read_header(self, stream) -> int:
         length = read_uint32(stream, None)
@@ -93,17 +92,9 @@ class StructProperty(PropertyTrait):
             self.value = StructPropertyValue(self.type_name, {})
             # Read properties until we hit None. Or is it "None" ?
             while True:
-                # Read property property_name
-                property_name = read_string(stream)
-                if property_name == "None":
+                if (property_name := read_string(stream)) == "None":
                     break
-
-                # Read property type
                 property_type = read_string(stream)
-                if not property_type:
-                    print(f"property_type NONE; break!!!!!")
-                    break
-
                 property_value = Property.new(
                     stream, property_type, include_header=True
                 )

@@ -11,6 +11,8 @@ Key differences from Rust version:
 import os
 from dataclasses import dataclass, asdict
 from typing import Dict, Optional, BinaryIO, List
+from xml.sax.handler import property_encoding, property_dom_node
+
 from .game_version import CompressionType
 import struct
 import zlib
@@ -23,7 +25,7 @@ from .game_version import (
     CompressionType,
     PLZ_MAGIC,
 )
-from .gvas_types import Guid, HashableIndexMap
+from .gvas_types import HashableIndexMap
 from .properties import Property, SerializationHints
 from .utils import *
 
@@ -43,7 +45,7 @@ class GvasHeader:
     engine_version_build: int
     engine_version_branch: str
     custom_version_format: int
-    custom_versions: HashableIndexMap[Guid, int]
+    custom_versions: HashableIndexMap[uuid, int]
     save_game_class_name: str
 
     @classmethod
@@ -78,9 +80,9 @@ class GvasHeader:
 
         custom_versions = HashableIndexMap()
         for _ in range(custom_version_count):
-            guid_bytes = stream.read(16)
+            guid = read_guid(stream)
             version = read_uint32(stream)
-            custom_versions[Guid.from_bytes(guid_bytes)] = version
+            custom_versions[guid] = version
 
         # Read save game class type_name
         save_game_class_name = read_string(stream)
@@ -125,7 +127,7 @@ class GvasHeader:
         bytes_written += write_uint32(stream, len(self.custom_versions))
 
         for guid, version in self.custom_versions.items():
-            bytes_written += write_bytes(stream, guid.to_bytes())
+            bytes_written += write_guid(stream, guid)
             bytes_written += write_uint32(stream, version)
 
         bytes_written += write_string(stream, self.save_game_class_name)
@@ -146,15 +148,15 @@ class GVASFile:
         stream: BinaryIO,
         game_version: GameVersion,
         compression_type: CompressionType,
-    ) -> "GVASFile":
+    ) -> ("GVASFile", BinaryIO):
 
         if game_version == GameVersion.PALWORLD:
             # we have to peek through custom file format. *sigh*
             decompressed_size = read_uint32(stream)
             compressed_size = read_uint32(stream)
             magic_bytes = stream.read(3)
-            if magic_bytes == b"PlZ":  # PLZ_MAGIC:
-                print("Found PLZ MAGIC for palword")
+            if magic_bytes == PLZ_MAGIC:
+                print("Found PLZ MAGIC for PalWorld")
                 enum_value = read_int8(stream)
                 match enum_value:
                     case CompressionType.NONE.value:
@@ -168,30 +170,22 @@ class GVASFile:
 
         # Handle compression options
         if compression_type == CompressionType.ZLIB_TWICE:
-            compressed_data = stream.read(compressed_size)
+            compressed_data = stream.read()
             decompressed_data = zlib.decompress(compressed_data)  # once
             decompressed_data = zlib.decompress(decompressed_data)  # twice
             assert decompressed_size == len(
                 decompressed_data
             ), f"{decompressed_size=} != {len(decompressed_data)=}"
 
-            # hacky temp testing
-            with open("resources/test/palworld_zlib_twice.sav.decompressed", "wb") as f:
-                f.write(decompressed_data)
-
             # Create new stream from decompressed data
             stream = BytesIO(decompressed_data)
 
         elif compression_type == CompressionType.ZLIB:
-            compressed_data = stream.read(compressed_size)
+            compressed_data = stream.read()
             decompressed_data = zlib.decompress(compressed_data)
             assert decompressed_size == len(
                 decompressed_data
             ), f"{decompressed_size=} != {len(decompressed_data)=}"
-
-            # hacky temp testing
-            with open("resources/test/palworld_zlib.sav.decompressed", "wb") as f:
-                f.write(decompressed_data)
 
             # Create new stream from decompressed data
             stream = BytesIO(decompressed_data)
@@ -216,70 +210,64 @@ class GVASFile:
         # Read all the top level file properties
         properties = {}
         while True:
-            # Read property type_name
-            name = read_string(stream)
-            if name in ["", "None"]:
-                # print(f"No more properties to read")
+            if (property_name := read_string(stream)) == "None":
                 break
+            property_type = read_string(stream)
+            property_value = Property.new(stream, property_type, include_header=True)
+            properties[property_name] = property_value
 
-            # Read property type
-            prop_type = read_string(stream)
+        stream.seek(0)
+        return cls(header=header, properties=properties), stream
 
-            # print(f"Reading {name=} and {prop_type=}")
-
-            # Read property
-            prop = Property.new(stream, prop_type, include_header=True)
-            properties[name] = prop
-
-        # print(f"Read header and {len(properties)=} from stream")
-        return cls(header=header, properties=properties)
-
-    def write(self, stream: BinaryIO, game_version: GameVersion) -> None:
+    def write(
+        self,
+        stream: BinaryIO,
+        game_version: GameVersion,
+        compression_type: CompressionType,
+    ) -> None:
         """Write GVAS file to stream"""
-        # Create temporary buffer for compression
+
+        # First we serialize the content to UE format
         buffer = BytesIO()
-
-        # Write header
         bytes_written = self.header.write(buffer)
-        # print(f"Header {bytes_written=}")
-
-        # Write properties
-        # print(f"Writing property count: {len(self.properties.items())}")
         for name, prop in self.properties.items():
-            # Write property type_name
             bytes_written += write_string(buffer, name)
-
-            # Write property
             prop.write(buffer, include_header=True)
 
-        # Write None + NULL byte terminator for file
+        # Write None + NULL byte terminator for file end
         write_string(buffer, "None")
         buffer.write(struct.pack("<I", 0))
 
         # Get buffer contents
-        data = buffer.getvalue()
+        data_to_write = buffer.getvalue()
+        decompressed_size = len(data_to_write)
+        compressed_size = decompressed_size  # for no compression
+        print(f"Total bytes serialized: {decompressed_size}")
 
-        print(f"Total bytes written: {len(data)}")
-
-        # Handle compression
-        compression_type = game_version.get_compression_type()
+        # ====================================
+        # Handle compression options
         if compression_type == CompressionType.ZLIB_TWICE:
-            # TODO: Implement ZLIB_TWICE compression
-            raise NotImplementedError("ZLIB_TWICE compression not yet supported")
+            data_to_write = zlib.compress(data_to_write)  # once
+            data_to_write = zlib.compress(data_to_write)  # twice
+            compressed_size = len(data_to_write)
+
         elif compression_type == CompressionType.ZLIB:
-            assert False, "ZLIB is not tested!"
-            # Write ZLIB_TWICE magic if needed
-            if game_version == GameVersion.PALWORLD:
-                assert False, "PALWORLD is not tested!"
-                stream.write(PLZ_MAGIC)
+            data_to_write = zlib.compress(data_to_write)  # once
+            compressed_size = len(data_to_write)
 
-            # Compress data
-            compressed_data = zlib.compress(data)
+        elif compression_type == CompressionType.NONE:
+            compressed_size = decompressed_size
 
-            # Write compressed size and data
-            stream.write(struct.pack("<Q", len(compressed_data)))
-            stream.write(compressed_data)
         else:
-            # Write uncompressed
-            print(f"Writing data")
-            stream.write(data)
+            raise ValueError("Unknown compression type")
+
+        # ====================================
+        # Handle PalWorld special prefix
+        if game_version == GameVersion.PALWORLD:
+            print(f"Writing PalWorld format: {decompressed_size=} {compressed_size}")
+            write_uint32(stream, decompressed_size)
+            write_uint32(stream, compressed_size)
+            write_bytes(stream, PLZ_MAGIC)
+            write_uint8(stream, compression_type.value)
+
+        stream.write(data_to_write)

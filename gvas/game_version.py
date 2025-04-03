@@ -12,7 +12,7 @@ from typing import Optional
 
 # Magic number for ZLIB_TWICE compression
 # PLZ_MAGIC = b"PLZ\x00"
-PLZ_MAGIC = b"PLZ"  # not sure why RUST uses a null byte terminator
+PLZ_MAGIC = b"PlZ"  # not sure why RUST uses a null byte terminator
 
 
 class CompressionType(Enum):
