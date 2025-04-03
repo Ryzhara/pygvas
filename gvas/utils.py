@@ -5,8 +5,36 @@ Common utility functions for GVAS
 import struct
 import uuid
 import zlib
-from typing import BinaryIO
+from typing import BinaryIO, Any, List
 from .error import *
+from .game_version import GVAS_MAGIC, PLZ_MAGIC, CompressionType
+
+
+class ByteCountValidator:
+    """
+    Use stream.tell() to count bytes and compare to expectations.
+    """
+
+    def __init__(self, stream: BinaryIO, expected_byte_count: int, do_validation):
+        self.stream = stream
+        self.expected_byte_count = expected_byte_count
+        self.do_validation = do_validation
+        self.start_byte = 0
+        self.end_byte = 0
+
+    def __enter__(self):
+        self.start_byte = self.stream.tell()
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        if not self.do_validation:
+            return
+        self.end_byte = self.stream.tell()
+        found_bytes = self.end_byte - self.start_byte
+        assert (
+            found_bytes == self.expected_byte_count
+        ), DeserializeError.invalid_read_count(
+            self.expected_byte_count, found_bytes, self.start_byte
+        )
 
 
 def read_atomic_data(
@@ -258,3 +286,56 @@ def looks_like_palworld(stream: BinaryIO) -> bool:
     magic_ok = plz_bytes == PLZ_MAGIC
     enum_ok = enum_value in [member.value for member in CompressionType]
     return sizes_ok and magic_ok and enum_ok
+
+
+def read_standard_header(
+    stream: BinaryIO,
+    *,
+    assert_length=None,
+    assert_array_index=0,
+    stream_readers=None,  # read after array index and before terminator
+) -> List[Any]:
+
+    result_list = [
+        read_uint32(stream, assert_length),  # length; almost always something needed
+        read_uint32(stream, assert_array_index),  # array_index; almost always zero
+    ]
+
+    # if there is a list of reader functions, apply them to extract data
+    if stream_readers is not None:
+        for reader in stream_readers:
+            result_list.append(reader(stream))
+
+    # last step is to ensure a null byte terminator, but we do not return it
+    read_uint8(stream, 0)
+
+    return result_list
+
+
+def write_standard_header(
+    stream: BinaryIO,
+    property_type,
+    *,
+    length=None,
+    array_index=0,
+    data_to_write=None,  # read after array index and before terminator
+) -> int:
+    bytes_written = 0
+    bytes_written += write_string(stream, property_type)
+    bytes_written += write_uint32(stream, length)
+    bytes_written += write_uint32(stream, array_index)
+
+    # write any optional bare data types; expect this to be strings and/or uuid
+    if data_to_write is not None:
+        for data in data_to_write:
+            if type(data) is str:
+                bytes_written += write_string(stream, data)
+            elif type(data) is uuid.UUID:
+                bytes_written += write_guid(stream, data)
+            else:
+                raise TypeError(
+                    f"Unexpected type in write_standard_header: {type(data)}"
+                )
+
+    bytes_written += write_uint8(stream, 0)  # terminator
+    return bytes_written

@@ -11,26 +11,19 @@ Key differences from Rust version:
 import os
 from dataclasses import dataclass, asdict
 from typing import Dict, Optional, BinaryIO, List
-from xml.sax.handler import property_encoding, property_dom_node
 
-from .game_version import CompressionType
-import struct
-import zlib
 from io import BytesIO
 
 from .error import DeserializeError, SerializeError
 from .game_version import (
     GameVersion,
-    DeserializedGameVersion,
+    GVAS_MAGIC,
     CompressionType,
     PLZ_MAGIC,
 )
 from .gvas_types import HashableIndexMap
 from .properties import Property, SerializationHints
 from .utils import *
-
-# Magic number that appears at the start of every GVAS file
-GVAS_MAGIC = b"GVAS"
 
 
 @dataclass

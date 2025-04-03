@@ -10,6 +10,9 @@ Key differences from Rust version:
 from enum import Enum, auto
 from typing import Optional
 
+# Magic number that appears at the start of every GVAS file
+GVAS_MAGIC = b"GVAS"
+
 # Magic number for ZLIB_TWICE compression
 # PLZ_MAGIC = b"PLZ\x00"
 PLZ_MAGIC = b"PlZ"  # not sure why RUST uses a null byte terminator

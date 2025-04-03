@@ -8,6 +8,7 @@ Key differences from Rust version:
 """
 
 from dataclasses import dataclass
+from time import struct_time
 from typing import List, Optional, Any, BinaryIO
 from io import BytesIO
 
@@ -99,7 +100,10 @@ class ArrayProperty(PropertyTrait):
                 "ArrayProperty is not supported in arrays", stream.tell()
             )
 
-        length = self.read_header(stream)
+        length, _array_index, self.property_type = read_standard_header(
+            stream, stream_readers=[read_string]
+        )
+
         start = stream.tell()
         SerializationHints.set_body_bytes(start, start + length)
         self.read_body(stream)
@@ -107,16 +111,6 @@ class ArrayProperty(PropertyTrait):
         SerializationHints.set_body_bytes(0, 0)
         if end - start != length:
             raise DeserializeError.invalid_value_size(length, end - start, start)
-
-    def read_header(self, stream: BinaryIO) -> (int, str):
-        # Read length and array index
-        length = read_uint32(stream)
-        _array_index = read_uint32(stream, 0)
-        self.property_type = read_string(stream)
-        _header_terminator = read_uint8(stream, 0)
-
-        # END OF HEADER FOR ARRAY PROPERTY
-        return length
 
     def read_body(self, stream: BinaryIO) -> None:
 
@@ -131,36 +125,29 @@ class ArrayProperty(PropertyTrait):
             return
 
         if self.property_type == "StructProperty":
-            # Read field type_name
+
+            # This embedded struct header differs slightly by repeating the type.
+
             self.field_name = read_string(stream)
-
-            # Read structure sub/generic type
-            member_property_type = read_string(stream)
-
+            member_type = read_string(stream)
             assert (
-                member_property_type == self.property_type
-            ), f"Property array member type mismatch: {member_property_type} != {self.property_type}"
+                member_type == self.property_type
+            ), f"Property array member type mismatch: {member_type} != {self.property_type}"
 
-            expected_byte_count = read_uint64(stream)
-            self.type_name = read_string(stream)
-            self.guid = read_guid_with_terminator(stream)
-
-            start = stream.tell()
-            for _ in range(property_count):
-                if is_special_struct(self.type_name):
-                    new_array_property = get_special_struct_instance(self.type_name)
-                    new_array_property.read(stream)
-                    self.values.append(new_array_property)
-                else:
-                    new_array_property = StructProperty(self.property_type)
-                    new_array_property.read_body(stream)
-                    self.values.append(new_array_property)
-            end = stream.tell()
-            assert (
-                end - start == expected_byte_count
-            ), DeserializeError.invalid_value_size(
-                expected_byte_count, end - start, start
+            expected_byte_count, _array_index, self.type_name, self.guid = (
+                read_standard_header(stream, stream_readers=[read_string, read_guid])
             )
+
+            with ByteCountValidator(stream, expected_byte_count, do_validation=True):
+                for _ in range(property_count):
+                    if is_special_struct(self.type_name):
+                        new_array_property = get_special_struct_instance(self.type_name)
+                        new_array_property.read(stream)
+                        self.values.append(new_array_property)
+                    else:
+                        new_array_property = StructProperty(self.property_type)
+                        new_array_property.read_body(stream)
+                        self.values.append(new_array_property)
 
         elif self.property_type in ["TextProperty"]:
             # capture the thing as a blob for now; ugly hack
@@ -200,7 +187,7 @@ class ArrayProperty(PropertyTrait):
     ) -> int:
         """Write array to stream"""
         if not include_header:
-            raise SerializeError.invalid_property(
+            raise SerializeError.invalid_value(
                 "ArrayProperty is not supported in arrays"
             )
 
@@ -208,17 +195,7 @@ class ArrayProperty(PropertyTrait):
         array_buffer = BytesIO()
         array_bytes = 0
 
-        # Write property type
-        array_bytes += write_string(array_buffer, "ArrayProperty")
-
-        # ====== START OF HEADER ==============
-        array_property_byte_count_location = array_buffer.tell()
-        array_bytes += write_uint32(array_buffer, 0)  # TBD total byte count
-        array_bytes += write_uint32(array_buffer, 0)  # index
-        array_bytes += write_string(array_buffer, self.property_type)
-        array_bytes += write_uint8(array_buffer, 0)  # header terminator null byte
-        # ====== END OF HEADER ==============
-
+        # Crap special handling
         # property_count, or number of elements in the array
         property_count = len(self.values)
         # ugly, hacky fixup until we complete TextProperty implementation
@@ -235,37 +212,25 @@ class ArrayProperty(PropertyTrait):
 
         # Handle struct properties
         if self.property_type == "StructProperty":
-            # Write properties to array_buffer
-            body_buffer = BytesIO()
-            body_bytes = 0
-            body_start = body_buffer.tell()
+            struct_body_buffer = BytesIO()
             for struct_property in self.values:
                 if is_special_struct(self.type_name):
-                    # print(f"Array: writing instance of {self.type_name}")
-                    body_bytes += struct_property.write(body_buffer)
+                    struct_property.write(struct_body_buffer)
                 else:
-                    body_bytes += struct_property.write(
-                        body_buffer, include_header=False
-                    )
-            body_end = body_buffer.tell()
-            struct_body_bytes = body_end - body_start
-            try:
-                assert struct_body_bytes == len(body_buffer.getvalue())
-            except AssertionError:
-                pass
+                    struct_property.write(struct_body_buffer, include_header=False)
+            struct_body_bytes = len(struct_body_buffer.getvalue())
 
-            # ALWAYS WRITE HEADER
+            # WRITE HEADER extra part
             array_bytes += write_string(array_buffer, self.field_name)
-            array_bytes += write_string(array_buffer, self.property_type)
-            array_bytes += write_uint32(array_buffer, struct_body_bytes)
-            array_bytes += write_uint32(array_buffer, 0)
-            array_bytes += write_string(array_buffer, self.type_name)
-            array_bytes += write_guid_with_terminator(array_buffer, self.guid)
-            try:
-                write_bytes(array_buffer, body_buffer.getvalue())
-                array_bytes += struct_body_bytes
-            except Exception as e:
-                print(f"{e}")
+            # write standard header
+            array_bytes += write_standard_header(
+                array_buffer,
+                self.property_type,
+                length=struct_body_bytes,
+                data_to_write=[self.type_name, self.guid],
+            )
+
+            array_bytes += write_bytes(array_buffer, struct_body_buffer.getvalue())
 
         elif self.property_type in g_bare_type_writers.keys():
             bare_type_writer = g_bare_type_writers[self.property_type]
@@ -286,11 +251,16 @@ class ArrayProperty(PropertyTrait):
         ), f"Counting is off in array! {array_bytes} != {properties_body_end}"
         properties_body_byte_count = properties_body_end - properties_body_start
 
-        # Write total byte count size
-        array_buffer.seek(array_property_byte_count_location)
-        write_uint32(array_buffer, properties_body_byte_count)
+        # ========================================
+        # now that we have the body in a buffer, write the header and then the body
+        header_bytes = write_standard_header(
+            stream,
+            "ArrayProperty",
+            length=properties_body_byte_count,
+            data_to_write=[self.property_type],
+        )
 
         # now write the whole thing to the stream
-        stream.write(array_buffer.getvalue())
+        write_bytes(stream, array_buffer.getvalue())
 
-        return array_bytes
+        return header_bytes + array_bytes

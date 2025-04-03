@@ -61,7 +61,7 @@ import pathlib
 #     filepath for filepath in test_directory.glob("*.sav") if filepath.is_file()
 # ]
 
-# test_file_list = ["Islands of Insight Example.sav"]  # working!
+test_file_list = ["Islands of Insight Example.sav"]  # working!
 # test_file_list = ["resources/test/component8.sav"]  # Working!
 # test_file_list = ["resources/test/Options.sav"]  # Working!
 # test_file_list = ["resources/test/Profile_0.sav"]  # Working!

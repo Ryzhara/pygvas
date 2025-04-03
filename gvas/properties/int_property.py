@@ -151,9 +151,7 @@ class FloatProperty(PropertyTrait):
     ) -> None:
         """Read float value from stream"""
         if include_header:
-            _length = read_uint32(stream, 4)
-            _array_index = read_uint32(stream, 0)
-            read_null_byte_terminator(stream)
+            read_standard_header(stream, assert_length=4)
 
         self.value = read_float(stream)
 
@@ -166,14 +164,9 @@ class FloatProperty(PropertyTrait):
         bytes_written = 0
 
         if include_header:
-            # Write property type needs to be written by the object
-            bytes_written += write_string(stream, "FloatProperty")
-            bytes_written += write_uint32(stream, 4)  # length
-            bytes_written += write_uint32(stream, 0)  # Write array index
-            bytes_written += write_uint8(stream, 0)  # Write terminator
+            bytes_written += write_standard_header(stream, "FloatProperty", length=4)
 
         bytes_written += write_float(stream, self.value)
-        # bytes_written += 4
 
         return bytes_written
 
@@ -191,11 +184,9 @@ class DoubleProperty(PropertyTrait):
     ) -> None:
         """Read double value from stream"""
         if include_header:
-            _length = read_uint32(stream, 8)
-            _array_index = read_uint32(stream, 0)
-            read_null_byte_terminator(stream)
+            read_standard_header(stream, assert_length=8)
 
-        self.value = struct.unpack("<d", stream.read(8))[0]
+        self.value = read_double(stream)
 
     def write(
         self,
@@ -204,13 +195,8 @@ class DoubleProperty(PropertyTrait):
     ) -> int:
         """Write double value to stream"""
         bytes_written = 0
-
         if include_header:
-            # Write property type needs to be written by the object
-            bytes_written += write_string(stream, "DoubleProperty")
-            bytes_written += write_uint32(stream, 8)  # length
-            bytes_written += write_uint32(stream, 0)  # Write array index
-            bytes_written += write_uint8(stream, 0)  # Write terminator
+            bytes_written += write_standard_header(stream, "DoubleProperty", length=8)
 
         bytes_written += write_double(stream, self.value)
 
@@ -218,9 +204,12 @@ class DoubleProperty(PropertyTrait):
 
 
 def create_int_property_class(type_name: str, size: int, signed: bool = True):
-    """Create an integer property class with the specified size and signedness"""
+    """
+    Create an integer property class with the specified size and signedness
+    """
+    # It is cleaner to use struct functions rather than read/write wrappers
     # tuple of (unsigned-str, signed-str)
-    parameter_map = {1: ("B", "b"), 2: ("<H", "<h"), 4: ("<I", "<i"), 8: ("<q", "<Q")}
+    parameter_map = {1: ("B", "b"), 2: ("<H", "<h"), 4: ("<I", "<i"), 8: ("<Q", "<q")}
     assert size in parameter_map.keys()
     encoding_string = parameter_map[size][1 if signed else 0]
 
@@ -235,14 +224,12 @@ def create_int_property_class(type_name: str, size: int, signed: bool = True):
             stream: BinaryIO,
             include_header: bool = True,
         ) -> None:
-            """Read integer value from stream"""
+            """
+            Read integer value from stream
+            """
             if include_header:
-                # Read length and array index
-                _length = read_uint32(stream, size)
-                _array_index = read_uint32(stream, 0)
-                read_null_byte_terminator(stream)
+                read_standard_header(stream, assert_length=size)
 
-            # Read value based on size and signedness
             self.value = struct.unpack(encoding_string, stream.read(size))[0]
 
         def write(
@@ -250,16 +237,13 @@ def create_int_property_class(type_name: str, size: int, signed: bool = True):
             stream: BinaryIO,
             include_header: bool = True,
         ) -> int:
-            """Write integer value to stream"""
+            """
+            Write integer value to stream
+            """
             bytes_written = 0
 
             if include_header:
-                # Write property type needs to be written by the object
-                bytes_written += write_string(stream, type_name)
-
-                bytes_written += write_uint32(stream, size)  # Write length
-                bytes_written += write_uint32(stream, 0)  # Write array index
-                bytes_written += write_uint8(stream, 0)  # null byte terminator
+                bytes_written += write_standard_header(stream, type_name, length=size)
 
             bytes_written += stream.write(struct.pack(encoding_string, self.value))
 
@@ -272,12 +256,12 @@ def create_int_property_class(type_name: str, size: int, signed: bool = True):
 
 # Create all integer property classes
 Int8Property = create_int_property_class("Int8Property", 1, True)
-Int16Property = create_int_property_class("Int16Property", 2, True)
-Int32Property = create_int_property_class("Int32Property", 4, True)
-Int64Property = create_int_property_class("Int64Property", 8, True)
 UInt8Property = create_int_property_class("UInt8Property", 1, False)
+Int16Property = create_int_property_class("Int16Property", 2, True)
 UInt16Property = create_int_property_class("UInt16Property", 2, False)
+Int32Property = create_int_property_class("Int32Property", 4, True)
 UInt32Property = create_int_property_class("UInt32Property", 4, False)
+Int64Property = create_int_property_class("Int64Property", 8, True)
 UInt64Property = create_int_property_class("UInt64Property", 8, False)
 
 # For backward compatibility

@@ -43,8 +43,12 @@ class DeserializeError(Exception):
 
     @classmethod
     def invalid_value_size(cls, length: int, param: int, position: int):
-        raise ValueError(
-            f"Invalid size: expecting {length} and got {param} at {position=}"
+        return cls(f"Invalid size: expecting {length} and got {param} at {position=}")
+
+    @classmethod
+    def invalid_read_count(cls, expected: int, found: int, position: int):
+        return cls(
+            f"Expected to read {expected} bytes but got {found} bytes at {position=}"
         )
 
 
