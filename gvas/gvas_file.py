@@ -156,7 +156,9 @@ class GVASFile:
             compressed_size = read_uint32(stream)
             magic_bytes = stream.read(3)
             if magic_bytes == PLZ_MAGIC:
-                print("Found PLZ MAGIC for PalWorld")
+                print(
+                    f"Found PLZ MAGIC for PalWorld with {decompressed_size=} and {compressed_size=}"
+                )
                 enum_value = read_int8(stream)
                 match enum_value:
                     case CompressionType.NONE.value:
@@ -264,7 +266,9 @@ class GVASFile:
         # ====================================
         # Handle PalWorld special prefix
         if game_version == GameVersion.PALWORLD:
-            print(f"Writing PalWorld format: {decompressed_size=} {compressed_size}")
+            print(
+                f"Writing PalWorld file with {decompressed_size=} and {compressed_size=}"
+            )
             write_uint32(stream, decompressed_size)
             write_uint32(stream, compressed_size)
             write_bytes(stream, PLZ_MAGIC)

@@ -19,6 +19,41 @@ from .standard_types import (
     is_special_struct,
     get_special_struct_instance,
 )
+from ..utils import read_int16, read_int64
+
+g_bare_type_readers = {
+    "StrProperty": read_string,
+    "GuidProperty": read_guid,
+    "BoolProperty": read_bool,
+    "Int8Property": read_int8,
+    "UInt8Property": read_uint8,
+    "Int16Property": read_int16,
+    "UInt16Property": read_uint16,
+    "Int32Property": read_int32,
+    "UInt32Property": read_uint32,
+    "IntProperty": read_int32,  # backward compatibility
+    "Int64Property": read_int64,
+    "UInt64Property": read_uint64,
+    "FloatProperty": read_float,
+    "DoubleProperty": read_double,
+}
+
+g_bare_type_writers = {
+    "StrProperty": write_string,
+    "GuidProperty": write_guid,
+    "BoolProperty": write_bool,
+    "Int8Property": write_int8,
+    "UInt8Property": write_uint8,
+    "Int16Property": write_int16,
+    "UInt16Property": write_uint16,
+    "Int32Property": write_int32,
+    "UInt32Property": write_uint32,
+    "IntProperty": write_int32,  # backward compatibility
+    "Int64Property": write_int64,
+    "UInt64Property": write_uint64,
+    "FloatProperty": write_float,
+    "DoubleProperty": write_double,
+}
 
 
 @dataclass
@@ -100,24 +135,19 @@ class ArrayProperty(PropertyTrait):
             self.field_name = read_string(stream)
 
             # Read structure sub/generic type
-            array_member_property_type = read_string(stream)
+            member_property_type = read_string(stream)
 
-            # print(f"Found StructProperty {array_member_property_type=}")
             assert (
-                array_member_property_type == self.property_type
-            ), f"Property array member type mismatch: {array_member_property_type} != {self.property_type}"
+                member_property_type == self.property_type
+            ), f"Property array member type mismatch: {member_property_type} != {self.property_type}"
 
-            # Read properties size
-            # TODO: add check for byte count
-            properties_size = read_uint64(stream)
-
+            expected_byte_count = read_uint64(stream)
             self.type_name = read_string(stream)
-
             self.guid = read_guid_with_terminator(stream)
 
+            start = stream.tell()
             for _ in range(property_count):
                 if is_special_struct(self.type_name):
-                    # print(f"Array: Reading instance of {self.type_name}")
                     new_array_property = get_special_struct_instance(self.type_name)
                     new_array_property.read(stream)
                     self.values.append(new_array_property)
@@ -125,10 +155,12 @@ class ArrayProperty(PropertyTrait):
                     new_array_property = StructProperty(self.property_type)
                     new_array_property.read_body(stream)
                     self.values.append(new_array_property)
-
-        elif self.property_type == "Guid":
-            for _ in range(property_count):
-                self.values.append(Guid.from_bytes(stream.read(16)))
+            end = stream.tell()
+            assert (
+                end - start == expected_byte_count
+            ), DeserializeError.invalid_value_size(
+                expected_byte_count, end - start, start
+            )
 
         elif self.property_type in ["TextProperty"]:
             # capture the thing as a blob for now; ugly hack
@@ -148,45 +180,11 @@ class ArrayProperty(PropertyTrait):
             )
             self.values.append(new_array_property)
 
-        # special case raw values, for clarity
-        # fmt: off
-        elif self.property_type in [
-            "StrProperty",
-            "BoolProperty", "Int8Property", "UInt8Property",
-            "Int16Property", "UInt16Property",
-            "Int32Property", "UInt32Property", "IntProperty",
-            "Int64Property", "UInt64Property",
-            "FloatProperty", "DoubleProperty",
-        ]:
-            # fmt: on
+        # some data types are read without any additional metadata
+        elif self.property_type in g_bare_type_readers.keys():
+            bare_type_reader = g_bare_type_readers[self.property_type]
             for _ in range(property_count):
-                match self.property_type:
-                    case "StringProperty":
-                        self.values.append(read_string(stream))
-                    case "BoolProperty":
-                        self.values.append(read_bool(stream))
-                    case "Int8Property":
-                        self.values.append(read_int8(stream))
-                    case "UInt8Property":
-                        self.values.append(read_uint8(stream))
-                    case "Int16Property":
-                        self.values.append(read_int16(stream))
-                    case "UInt16Property":
-                        self.values.append(read_uint16(stream))
-                    case "IntProperty":  # backward compatibility
-                        self.values.append(read_int32(stream))
-                    case "Int32Property":
-                        self.values.append(read_int32(stream))
-                    case "UInt32Property":
-                        self.values.append(read_uint32(stream))
-                    case "Int64Property":
-                        self.values.append(read_int64(stream))
-                    case "UInt64Property":
-                        self.values.append(read_uint64(stream))
-                    case "FloatProperty":
-                        self.values.append(read_float(stream))
-                    case "DoubleProperty":
-                        self.values.append(read_double(stream))
+                self.values.append(bare_type_reader(stream))
 
         else:  # catchall
             for _ in range(property_count):
@@ -227,6 +225,7 @@ class ArrayProperty(PropertyTrait):
         if self.property_type == "TextProperty" and property_count > 0:
             text_property: TextProperty = self.values[0]
             property_count = text_property.actual_text_count
+
         elif self.property_type == "ByteProperty" and property_count > 0:
             byte_property: ByteProperty = self.values[0]
             property_count = len(byte_property.value.value)
@@ -268,65 +267,18 @@ class ArrayProperty(PropertyTrait):
             except Exception as e:
                 print(f"{e}")
 
-        elif self.property_type == "Guid":
+        elif self.property_type in g_bare_type_writers.keys():
+            bare_type_writer = g_bare_type_writers[self.property_type]
             for value in self.values:
-                array_bytes += array_buffer.write(value.to_bytes())
+                array_bytes += bare_type_writer(array_buffer, value)
 
-        elif self.property_type in [
-            "StrProperty",
-        ]:
-            # some of these are "FString" types; not sure if those are handled correctly
-            for string_value in self.values:
-                array_bytes += write_string(array_buffer, string_value)
-
-        elif self.property_type == "ByteProperty":
-            # this is an array of bytes, so just make it a blob thing
-            for byte_property in self.values:
-                array_bytes += byte_property.write(array_buffer, include_header=False)
-
-        # fmt: off
-        elif self.property_type in [
-            "StrProperty",
-            "BoolProperty", "Int8Property", "ByteProperty",
-            "UInt8Property", "Int16Property", "UInt16Property",
-            "Int32Property", "UInt32Property", "IntProperty",
-            "Int64Property", "UInt64Property",
-            "FloatProperty",  "DoubleProperty",
-        ]:
-            # fmt: on
-            for value in self.values:
-                match self.property_type:
-                    case "StrProperty":
-                        array_bytes += write_string(array_buffer, value)
-                    case "BoolProperty":
-                        array_bytes += write_bool(array_buffer, value)
-                    case "Int8Property":
-                        array_bytes += write_int8(array_buffer, value)
-                    case "UInt8Property":
-                        array_bytes += write_uint8(array_buffer, value)
-                    case "Int16Property":
-                        array_bytes += write_int16(array_buffer, value)
-                    case "UInt16Property":
-                        array_bytes += write_uint16(array_buffer, value)
-                    case "IntProperty":  # backward compatibility
-                        array_bytes += write_int32(array_buffer, value)
-                    case "Int32Property":
-                        array_bytes += write_int32(array_buffer, value)
-                    case "UInt32Property":
-                        array_bytes += write_uint32(array_buffer, value)
-                    case "Int64Property":
-                        array_bytes += write_int64(array_buffer, value)
-                    case "UInt64Property":
-                        array_bytes += write_uint64(array_buffer, value)
-                    case "FloatProperty":
-                        array_bytes += write_float(array_buffer, value)
-                    case "DoubleProperty":
-                        array_bytes += write_double(array_buffer, value)
-
+        # elif self.property_type == "ByteProperty":
+        #     # read was special, but write is not
+        #     for value in self.values:
+        #         array_bytes += value.write(array_buffer, include_header=False)
         else:  # catch everything else
-            # Write array elements
-            for array_property in self.values:
-                array_bytes += array_property.write(array_buffer, include_header=False)
+            for value in self.values:
+                array_bytes += value.write(array_buffer, include_header=False)
 
         properties_body_end = array_buffer.tell()
         assert (

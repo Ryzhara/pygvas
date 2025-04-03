@@ -42,10 +42,25 @@ test_file_list = ["Islands of Insight Example.sav"]
 # The Rust package engineer created a plethora of tests. Let's cycle through them.
 import pathlib
 
-test_directory = pathlib.Path("./resources/test")
-test_file_list = [
-    filepath for filepath in test_directory.glob("*.sav") if filepath.is_file()
-]
+
+# @dataclasses.dataclass
+# class Bar:
+#     member1: int = 0
+#     member2: int = 0
+#
+#     def foo(self, variable_list: list):
+#         for variable in variable_list:
+#             self.__setattr__(variable, 1)
+#
+#
+# bar = Bar()
+# bar.foo(["member1", "member2"])
+#
+# test_directory = pathlib.Path("./resources/test")
+# test_file_list = [
+#     filepath for filepath in test_directory.glob("*.sav") if filepath.is_file()
+# ]
+
 # test_file_list = ["Islands of Insight Example.sav"]  # working!
 # test_file_list = ["resources/test/component8.sav"]  # Working!
 # test_file_list = ["resources/test/Options.sav"]  # Working!
@@ -74,11 +89,11 @@ test_file_list = [
 
 print(test_file_list)
 
-# game_version = GameVersion.DEFAULT
-game_version = GameVersion.PALWORLD
+game_version = GameVersion.DEFAULT
+# game_version = GameVersion.PALWORLD
 
-# compression = CompressionType.NONE
-compression = CompressionType.ZLIB
+compression = CompressionType.NONE
+# compression = CompressionType.ZLIB
 
 for test_file in test_file_list:
     print(f"Loading {test_file}")

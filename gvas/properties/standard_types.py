@@ -2,8 +2,6 @@ import uuid
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 import datetime
-from ..error import DeserializeError
-from typing import Any, BinaryIO
 from .property_base import SerializationHints
 from ..utils import *
 
