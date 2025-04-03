@@ -16,6 +16,8 @@ def compare_binary_files(file1_path: Path | str, file2_path: Path | str) -> bool
         return True
     else:
         print(f"Files {file1_path} and {file2_path} are different.")
+        return False
+
         with open(file1_path, "rb") as f1, open(file2_path, "rb") as f2:
             file1_bytes = f1.read()
             file2_bytes = f2.read()

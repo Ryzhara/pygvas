@@ -1,13 +1,3 @@
-# import pdb
-#
-# pdb.set_trace()
-
-# import pydevd_pycharm
-#
-# pydevd_pycharm.settrace(
-#     "127.0.0.1", port=60293, stdoutToServer=True, stderrToServer=True
-# )
-
 from gvas import GVASFile, DeserializeError
 from gvas import GameVersion, CompressionType
 import json
@@ -43,25 +33,7 @@ test_file_list = ["Islands of Insight Example.sav"]
 import pathlib
 
 
-# @dataclasses.dataclass
-# class Bar:
-#     member1: int = 0
-#     member2: int = 0
-#
-#     def foo(self, variable_list: list):
-#         for variable in variable_list:
-#             self.__setattr__(variable, 1)
-#
-#
-# bar = Bar()
-# bar.foo(["member1", "member2"])
-#
-# test_directory = pathlib.Path("./resources/test")
-# test_file_list = [
-#     filepath for filepath in test_directory.glob("*.sav") if filepath.is_file()
-# ]
-
-test_file_list = ["Islands of Insight Example.sav"]  # working!
+# test_file_list = ["Islands of Insight Example.sav"]  # working!
 # test_file_list = ["resources/test/component8.sav"]  # Working!
 # test_file_list = ["resources/test/Options.sav"]  # Working!
 # test_file_list = ["resources/test/Profile_0.sav"]  # Working!
@@ -77,6 +49,23 @@ test_file_list = ["Islands of Insight Example.sav"]  # working!
 # test_file_list = ["resources/test/vector2d.sav"]  # Working!
 # test_file_list = ["resources/test/palworld_zlib.sav"]  # Need to finish compressed save
 
+test_file_list = [
+    "Islands of Insight Example.sav",
+    "resources/test/component8.sav",
+    "resources/test/Options.sav",
+    "resources/test/Profile_0.sav",
+    "resources/test/enum_array.sav",
+    "resources/test/package_version_525.sav",
+    "resources/test/package_version_524.sav",
+    "resources/test/Slot1.sav",
+    "resources/test/Slot2.sav",
+    "resources/test/Slot3.sav",
+    "resources/test/transform.sav",
+    "resources/test/ro_64bit_fav.sav",
+    "resources/test/SaveSlot_03.sav",
+    "resources/test/vector2d.sav",
+]
+
 # this one requires HINTS implementation.
 # There is a 16-byte GUID hiding anonymously as a struct_property in a map_property
 # See gvas/tests/common/palworld.rs in hints() hashmap for testing sequence
@@ -87,7 +76,7 @@ test_file_list = ["Islands of Insight Example.sav"]  # working!
 # always a quick retest
 # test_file_list = ["Islands of Insight Example.sav"]  # working!
 
-print(test_file_list)
+# print(test_file_list)
 
 game_version = GameVersion.DEFAULT
 # game_version = GameVersion.PALWORLD
@@ -96,11 +85,11 @@ compression = CompressionType.NONE
 # compression = CompressionType.ZLIB
 
 for test_file in test_file_list:
-    print(f"Loading {test_file}")
+    # print(f"Loading {test_file}")
     # Open and read a save file
     gvas_file = None
     with open(test_file, "rb") as f:
-        print(f"loading file with target: {game_version}")
+        # print(f"loading file with target: {game_version}")
         try:
             gvas_file, decompressed_data = GVASFile.read(f, game_version, compression)
         except Exception as e:
@@ -109,13 +98,13 @@ for test_file in test_file_list:
 
     if compression != CompressionType.NONE:
         decompressed_data_file = f"{test_file}.decompressed"
-        print(f"Saving decompressed data {decompressed_data_file}")
+        # print(f"Saving decompressed data {decompressed_data_file}")
         with open(decompressed_data_file, "wb") as f:
             f.write(decompressed_data.getvalue())
 
     # dump binary to work toward idempotence for read, write, rinse and repeat
     output_file = f"{test_file}.idempotent"
-    print(f"Writing {output_file}")
+    # print(f"Writing {output_file}")
     with open(output_file, "wb") as f:
         gvas_file.write(f, game_version, compression)
 

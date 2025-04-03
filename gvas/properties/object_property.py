@@ -27,20 +27,11 @@ class ObjectProperty(PropertyTrait):
     ) -> None:
         length = 0
         if include_header:
-            length = read_uint32(stream)
-            _array_index = read_uint32(stream, 0)
-            # if there were strings, they'd go here
-            _terminator = read_uint8(stream, 0)
+            length, _array_index = read_standard_header(stream)
 
         # Read value
-        start = stream.tell()
-        self.value = read_string(stream)
-        end = stream.tell()
-
-        # Verify length
-        if include_header:
-            if end - start != length:
-                raise DeserializeError.invalid_value_size(length, end - start, start)
+        with ByteCountValidator(stream, length, do_validation=include_header):
+            self.value = read_string(stream)
 
     def write(
         self,
@@ -50,20 +41,15 @@ class ObjectProperty(PropertyTrait):
         """Write enum value to stream"""
 
         # create temporary buffer for body
-        temp_body_buffer = BytesIO()
-        body_bytes = write_string(temp_body_buffer, self.value)
-        assert body_bytes == len(temp_body_buffer.getvalue())
+        body_buffer = BytesIO()
+        body_bytes = write_string(body_buffer, self.value)
+        assert body_bytes == len(body_buffer.getvalue())
 
         bytes_written = 0
         if include_header:
-            # Write property type needs to be written by the object
-            bytes_written += write_string(stream, "ObjectProperty")
-            bytes_written += write_uint32(stream, body_bytes)
-            bytes_written += write_uint32(stream, 0)  # array_index
-            # if there were strings, they'd go here
-            bytes_written += write_uint8(stream, 0)  # terminator
+            bytes_written = write_standard_header(
+                stream, "ObjectProperty", length=body_bytes
+            )
 
-        # Write enum value
-        bytes_written += write_bytes(stream, temp_body_buffer.getvalue())
-
+        bytes_written += write_bytes(stream, body_buffer.getvalue())
         return bytes_written

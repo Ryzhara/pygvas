@@ -30,21 +30,13 @@ class EnumProperty(PropertyTrait):
         """Read enum value from stream"""
         length = 0
         if include_header:
-            # Read length and array index
-            length = read_uint32(stream)
-            _array_index = read_uint32(stream, 0)
-            self.enum_type = read_string(stream)
-            _terminator = read_uint8(stream, 0)
+            length, _array_index, self.enum_type = read_standard_header(
+                stream, stream_readers=[read_string]
+            )
 
         # Read value
-        start = stream.tell()
-        self.value = read_string(stream)
-        end = stream.tell()
-
-        # Verify length
-        if include_header:
-            if end - start != length:
-                raise DeserializeError.invalid_value_size(length, end - start, start)
+        with ByteCountValidator(stream, length, do_validation=include_header):
+            self.value = read_string(stream)
 
     def write(
         self,
@@ -58,18 +50,12 @@ class EnumProperty(PropertyTrait):
 
         bytes_written = 0
         if include_header:
-            # Write property type needs to be written by the object
-            bytes_written += write_string(stream, "EnumProperty")
+            bytes_written = write_standard_header(
+                stream,
+                "EnumProperty",
+                length=body_bytes,
+                data_to_write=[self.enum_type],
+            )
 
-            # Write length and array index
-            bytes_written += write_uint32(stream, body_bytes)
-            bytes_written += write_uint32(stream, 0)  # array_index
-            bytes_written += write_string(
-                stream, self.enum_type
-            )  # write_string handles empty string
-            bytes_written += write_uint8(stream, 0)  # terminator
-
-        # Write enum value
         bytes_written += write_string(stream, self.value)
-
         return bytes_written

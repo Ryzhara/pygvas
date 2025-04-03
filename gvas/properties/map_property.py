@@ -8,12 +8,11 @@ Key differences from Rust version:
 """
 
 from dataclasses import dataclass
+from email.base64mime import body_decode
 from io import BytesIO
 from typing import Dict, Optional, BinaryIO, Any
-import struct
 
 from .property_base import Property, PropertyTrait, SerializationHints
-from ..error import *
 from ..gvas_types import HashableIndexMap
 from ..utils import *
 
@@ -37,6 +36,7 @@ class MapProperty(PropertyTrait):
         return cls(key_type=key_type, value_type=value_type)
 
     def read_header(self, stream: BinaryIO) -> (int, str):
+
         # Read length and array index
         length = read_uint32(stream)
         _array_index = read_uint32(stream, 0)
@@ -54,18 +54,22 @@ class MapProperty(PropertyTrait):
         """Read map from stream"""
 
         if include_header:
-            content_length = self.read_header(stream)
+            # content_length = self.read_header(stream)
+            length, _array_index, self.key_type, self.value_type = read_standard_header(
+                stream, stream_readers=[read_string, read_string]
+            )
 
-        # Read number of entries
-        self.allocation_flags = read_uint32(stream)
-        element_count = read_uint32(stream)
+        with ByteCountValidator(stream, length, do_validation=include_header):
+            # Read number of entries
+            self.allocation_flags = read_uint32(stream)
+            element_count = read_uint32(stream)
 
-        # Read entries
-        self.values = {}
-        for _ in range(element_count):
-            key_prop = Property.new(stream, self.key_type, include_header=False)
-            value_prop = Property.new(stream, self.value_type, include_header=False)
-            self.values[key_prop] = value_prop
+            # Read entries
+            self.values = {}
+            for _ in range(element_count):
+                key_prop = Property.new(stream, self.key_type, include_header=False)
+                value_prop = Property.new(stream, self.value_type, include_header=False)
+                self.values[key_prop] = value_prop
 
     def write(
         self,
@@ -74,40 +78,41 @@ class MapProperty(PropertyTrait):
     ) -> int:
         """Write map to stream"""
 
-        buffer = BytesIO()
+        body_buffer = BytesIO()
         buffer_bytes_written = 0
-        length_location = 0
-        if include_header:
-            # START OF HEADER
-            buffer_bytes_written += write_string(buffer, "MapProperty")
-            length_location = buffer.tell()
-            buffer_bytes_written += write_uint32(buffer, 0)  # placeholder value
-            buffer_bytes_written += write_uint32(buffer, 0)  # zero value array_index
-            buffer_bytes_written += write_string(buffer, self.key_type)
-            buffer_bytes_written += write_string(buffer, self.value_type)
-            buffer_bytes_written += write_uint8(buffer, 0)  # null byte terminator
 
         # START OF BODY
-        start = buffer.tell()
-        buffer_bytes_written += write_uint32(buffer, self.allocation_flags)
+        body_start = body_buffer.tell()
+        buffer_bytes_written += write_uint32(body_buffer, self.allocation_flags)
         element_count = len(self.values.keys())
-        buffer_bytes_written += write_uint32(buffer, element_count)
+        buffer_bytes_written += write_uint32(body_buffer, element_count)
 
         # Write entries
         for key, value in self.values.items():
+            # wrap them with correct type, then write
+            key_property = Property(self.key_type, key)
+            buffer_bytes_written += key_property.write(
+                body_buffer, include_header=False
+            )
 
-            key_prop = Property(self.key_type, key)
-            buffer_bytes_written += key_prop.write(buffer, include_header=False)
+            value_property = Property(self.value_type, value)
+            buffer_bytes_written += value_property.write(
+                body_buffer, include_header=False
+            )
+        body_end = body_buffer.tell()
+        body_bytes = body_end - body_start
+        assert body_bytes == buffer_bytes_written
 
-            # Write value
-            value_prop = Property(self.value_type, value)
-            buffer_bytes_written += value_prop.write(buffer, include_header=False)
-        end = buffer.tell()
-
+        stream_bytes_written = 0
         if include_header:
-            buffer.seek(length_location)
-            total_bytes_written = end - start
-            write_uint32(buffer, total_bytes_written)
+            stream_bytes_written += write_standard_header(
+                stream,
+                "MapProperty",
+                length=body_bytes,
+                data_to_write=[self.key_type, self.value_type],
+            )
+
+        stream_bytes_written += write_bytes(stream, body_buffer.getvalue())
 
         # now write the temp buffer to the stream
-        return write_bytes(stream, buffer.getvalue())
+        return stream_bytes_written

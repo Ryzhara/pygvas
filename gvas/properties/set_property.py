@@ -14,7 +14,7 @@ import struct
 
 from .property_base import Property, PropertyTrait, SerializationHints
 from ..error import DeserializeError
-from ..utils import read_string, write_string
+from ..utils import *
 
 
 @dataclass
@@ -53,47 +53,27 @@ class SetProperty(PropertyTrait):
                 "SetProperty is not supported in arrays", stream.tell()
             )
 
-        # Read length and array index
-        length = struct.unpack("<I", stream.read(4))[0]
-        array_index = struct.unpack("<I", stream.read(4))[0]
-        if array_index != 0:
-            position = stream.tell() - 4
-            raise DeserializeError.invalid_array_index(array_index, position)
+        length, _array_index, self.property_type = read_standard_header(
+            stream, stream_readers=[read_string]
+        )
 
-        # Read property type
-        self.property_type = read_string(stream)
+        with ByteCountValidator(stream, length, do_validation=True):
+            self.allocation_flags = read_uint32(stream)
+            element_count = read_uint32(stream)
 
-        # Read terminator
-        terminator = stream.read(1)[0]
-        if terminator != 0:
-            position = stream.tell() - 1
-            raise DeserializeError.invalid_terminator(terminator, position)
+            self.properties = []
+            if element_count > 0:
+                total_bytes_per_property = (length - 8) // element_count
+                for _ in range(element_count):
+                    prop = Property.new(
+                        stream,
+                        self.property_type,
+                        include_header=False,
+                        suggested_length=total_bytes_per_property,
+                    )
+                    self.properties.append(prop)
 
-        # Record start position for length validation
-        start = stream.tell()
-
-        # Read allocation flags and element count
-        self.allocation_flags = struct.unpack("<I", stream.read(4))[0]
-        element_count = struct.unpack("<I", stream.read(4))[0]
-
-        # Read properties
-        self.properties = []
-        if element_count > 0:
-            total_bytes_per_property = (length - 8) // element_count
-            for _ in range(element_count):
-                prop = Property.new(
-                    stream,
-                    self.property_type,
-                    include_header=False,
-                    suggested_length=total_bytes_per_property,
-                )
-                self.properties.append(prop)
-
-        # Validate length
-        end = stream.tell()
-        actual_size = end - start
-        if actual_size != length:
-            raise DeserializeError.invalid_value_size(length, actual_size, start)
+                    need to finish this
 
     def write(
         self,

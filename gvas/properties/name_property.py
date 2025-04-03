@@ -39,20 +39,13 @@ class NameProperty(PropertyTrait):
         """Read name from stream"""
         length, start, end = 0, 0, 0
         if include_header:
-            # Read length and array index
-            length = read_uint32(stream)
-            self.array_index = read_uint32(stream)  # actually use this for once?
-            read_uint8(stream, 0)  # ensure null byte terminator
+            length, self.array_index = read_standard_header(
+                stream, assert_array_index=None
+            )
 
         # Record start position for length validation
-        start = stream.tell()
-        self.value = read_string(stream)
-        end = stream.tell()
-
-        if start and end and length:
-            actual_size = end - start
-            if actual_size != length:
-                DeserializeError.invalid_value_size(length, actual_size, start)
+        with ByteCountValidator(stream, length, do_validation=include_header):
+            self.value = read_string(stream)
 
     def write(
         self,
@@ -66,11 +59,9 @@ class NameProperty(PropertyTrait):
 
         bytes_written = 0
         if include_header:
-            bytes_written += write_string(stream, "NameProperty")
-            bytes_written += write_uint32(stream, length)
-            bytes_written += write_uint32(stream, self.array_index)
-            bytes_written += write_uint8(stream, 0)
+            bytes_written += write_standard_header(
+                stream, "NameProperty", array_index=self.array_index
+            )
 
         bytes_written += write_bytes(stream, buffer.getvalue())
-
         return bytes_written

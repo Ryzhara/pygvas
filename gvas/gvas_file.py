@@ -237,7 +237,7 @@ class GVASFile:
         data_to_write = buffer.getvalue()
         decompressed_size = len(data_to_write)
         compressed_size = decompressed_size  # for no compression
-        print(f"Total bytes serialized: {decompressed_size}")
+        # print(f"Total bytes serialized: {decompressed_size}")
 
         # ====================================
         # Handle compression options

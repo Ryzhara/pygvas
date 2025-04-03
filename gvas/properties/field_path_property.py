@@ -48,21 +48,11 @@ class FieldPathProperty(PropertyTrait):
     ) -> None:
         length = 0
         if include_header:
-            length = read_uint32(stream)
-            _array_index = read_uint32(stream, 0)
-            # if there were strings, they'd go here
-            _terminator = read_uint8(stream, 0)
+            length, _array_index = read_standard_header(stream)
 
         self.value = FieldPath(path=[], resolved_owner="")
-        # Read value
-        start = stream.tell()
-        self.value.read(stream)
-        end = stream.tell()
-
-        # Verify length
-        if include_header:
-            if end - start != length:
-                raise DeserializeError.invalid_value_size(length, end - start, start)
+        with ByteCountValidator(stream, length, do_validation=include_header):
+            self.value.read(stream)
 
     def write(
         self,
@@ -78,14 +68,9 @@ class FieldPathProperty(PropertyTrait):
 
         bytes_written = 0
         if include_header:
-            # Write property type needs to be written by the object
-            bytes_written += write_string(stream, "FieldPathProperty")
-            bytes_written += write_uint32(stream, body_bytes)
-            bytes_written += write_uint32(stream, 0)  # array_index
-            # if there were strings, they'd go here
-            bytes_written += write_uint8(stream, 0)  # terminator
+            bytes_written += write_standard_header(
+                stream, "FieldPathProperty", length=body_bytes
+            )
 
-        # Write enum value
         bytes_written += write_bytes(stream, temp_body_buffer.getvalue())
-
         return bytes_written
