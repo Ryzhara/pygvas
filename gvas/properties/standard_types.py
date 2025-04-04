@@ -21,8 +21,7 @@ class SpecialStructTrait(ABC):
 
     @classmethod
     def uses_large_world_coordinates(cls):
-        major, _minor, _patch, _build = SerializationHints.get_engine_version()
-        return major >= 5
+        return SerializationHints.get_engine_version().major >= 5
 
 
 # ============================================

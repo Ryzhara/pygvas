@@ -5,6 +5,7 @@ Common utility functions for GVAS
 import struct
 import uuid
 import zlib
+from io import BytesIO
 from typing import BinaryIO, Any, List
 from .error import *
 from .game_version import GVAS_MAGIC, PLZ_MAGIC, CompressionType
@@ -201,6 +202,15 @@ def write_string(stream: BinaryIO, value: str) -> int:
     bytes_written = write_uint32(stream, len(value_bytes))
     bytes_written += write_bytes(stream, value_bytes)
     return bytes_written  # 4 + len(value) + 1
+
+
+def guid_from_uint32x4(uint1: int, uint2: int, uint3: int, uint4: int) -> uuid:
+    buffer = BytesIO()
+    write_uint32(buffer, uint1)
+    write_uint32(buffer, uint2)
+    write_uint32(buffer, uint3)
+    write_uint32(buffer, uint4)
+    return uuid.UUID(bytes_le=buffer.getvalue())
 
 
 def read_guid(stream: BinaryIO) -> uuid:

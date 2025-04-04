@@ -14,13 +14,10 @@ from typing import Dict, Optional, BinaryIO, List
 
 from io import BytesIO
 
+from .custom_versions import FCustomVersion
 from .error import DeserializeError, SerializeError
-from .game_version import (
-    GameVersion,
-    GVAS_MAGIC,
-    CompressionType,
-    PLZ_MAGIC,
-)
+from .engine_versions import EngineVersion, FEngineVersion
+from .game_version import GameVersion
 from .gvas_types import HashableIndexMap
 from .properties import Property, SerializationHints
 from .utils import *
@@ -32,11 +29,7 @@ class GvasHeader:
 
     package_file_version: int
     package_file_version_ue5: Optional[int]
-    engine_version_major: int
-    engine_version_minor: int
-    engine_version_patch: int
-    engine_version_build: int
-    engine_version_branch: str
+    engine_version: FEngineVersion
     custom_version_format: int
     custom_versions: HashableIndexMap[uuid, int]
     save_game_class_name: str
@@ -59,23 +52,17 @@ class GvasHeader:
             package_file_version_ue5 = read_uint32(stream)
 
         # Read engine version
-        engine_version_major = read_uint16(stream)
-        engine_version_minor = read_uint16(stream)
-        engine_version_patch = read_uint16(stream)
-        engine_version_build = read_uint32(stream)
-
-        # Read branch type_name
-        engine_version_branch = read_string(stream)
+        engine_version: FEngineVersion = FEngineVersion.read(stream)
 
         # Read custom versions
         custom_version_format = read_uint32(stream)
         custom_version_count = read_uint32(stream)
 
+        custom_version_reader = FCustomVersion()
         custom_versions = HashableIndexMap()
         for _ in range(custom_version_count):
-            guid = read_guid(stream)
-            version = read_uint32(stream)
-            custom_versions[guid] = version
+            custom_version_reader.read(stream)
+            custom_versions[custom_version_reader.key] = custom_version_reader.version
 
         # Read save game class type_name
         save_game_class_name = read_string(stream)
@@ -83,11 +70,7 @@ class GvasHeader:
         return cls(
             package_file_version=package_file_version,
             package_file_version_ue5=package_file_version_ue5,
-            engine_version_major=engine_version_major,
-            engine_version_minor=engine_version_minor,
-            engine_version_patch=engine_version_patch,
-            engine_version_build=engine_version_build,
-            engine_version_branch=engine_version_branch,
+            engine_version=engine_version,
             custom_version_format=custom_version_format,
             custom_versions=custom_versions,
             save_game_class_name=save_game_class_name,
@@ -109,19 +92,14 @@ class GvasHeader:
             bytes_written += write_uint32(stream, self.package_file_version_ue5)
 
         # Write engine version data
-        bytes_written += write_uint16(stream, self.engine_version_major)
-        bytes_written += write_uint16(stream, self.engine_version_minor)
-        bytes_written += write_uint16(stream, self.engine_version_patch)
-        bytes_written += write_uint32(stream, self.engine_version_build)
-        bytes_written += write_string(stream, self.engine_version_branch)
+        bytes_written += self.engine_version.write(stream)
 
         # Write custom version GUIDs
         bytes_written += write_uint32(stream, self.custom_version_format)
         bytes_written += write_uint32(stream, len(self.custom_versions))
 
         for guid, version in self.custom_versions.items():
-            bytes_written += write_guid(stream, guid)
-            bytes_written += write_uint32(stream, version)
+            bytes_written += FCustomVersion(guid, version).write(stream)
 
         bytes_written += write_string(stream, self.save_game_class_name)
 
@@ -193,14 +171,11 @@ class GVASFile:
 
         # Read header
         header = GvasHeader.read(stream)
+        print(header.engine_version)
 
         # set up hints for use during deserialization
-        SerializationHints.set_engine_version(
-            header.engine_version_major,
-            header.engine_version_minor,
-            header.engine_version_patch,
-            header.engine_version_build,
-        )
+        SerializationHints.set_engine_version(header.engine_version)
+        SerializationHints.custom_versions = header.custom_versions
 
         # Read all the top level file properties
         properties = {}

@@ -12,14 +12,13 @@ from typing import Optional
 
 # Magic number that appears at the start of every GVAS file
 GVAS_MAGIC = b"GVAS"
-
-# Magic number for ZLIB_TWICE compression
-# PLZ_MAGIC = b"PLZ\x00"
 PLZ_MAGIC = b"PlZ"  # not sure why RUST uses a null byte terminator
 
 
 class CompressionType(Enum):
-    """Compression types used in Palworld custom file format"""
+    """
+    Compression types used in Palworld custom file format
+    """
 
     # None
     NONE = 0x30
@@ -27,6 +26,8 @@ class CompressionType(Enum):
     ZLIB = 0x31
     # Zlib twice
     ZLIB_TWICE = 0x32
+    # Palworld specific compression type; NOT IMPLEMENTED
+    PLZ = 0xFF
 
 
 class GameVersion(Enum):

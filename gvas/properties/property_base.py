@@ -10,40 +10,49 @@ Key differences from Rust version:
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, asdict, field
-from typing import Optional, Dict, Any, BinaryIO, Tuple
+from typing import Optional, Dict, Any, BinaryIO, List, Tuple
 
+from ..custom_versions import (
+    EditorObjectVersionLookup,
+    UE5ReleaseStreamObjectVersionLookup,
+)
 from ..error import DeserializeError
+from ..engine_versions import FEngineVersion, EngineVersion
 
 
 class SerializationHints:
     # one class variable to rule them all. This class is never instantiated.
     # We just set some data and
-    meta_info: Dict[str, Any] = {
-        "engine_version": (4, 0, 0, 0),
-        "body_bytes": 0,  # tell child reader how big their blob is
-    }
+    body_bytes: Tuple[int, int] = (0, 0)  # tell child reader how big their blob is
+    editor_object_version_lookup: EditorObjectVersionLookup = (
+        EditorObjectVersionLookup()
+    )
+    ue5_release_stream_object_version_lookup: UE5ReleaseStreamObjectVersionLookup = (
+        UE5ReleaseStreamObjectVersionLookup()
+    )
+    engine_version: FEngineVersion
+    hints: Dict[str, str] = {}
+    properties_stack: List[str] = []
 
     @classmethod
-    def set_engine_version(
-        cls, major: int, minor: int, patch: int, build: int = 0
-    ) -> None:
-        cls.meta_info["engine_version"] = (major, minor, patch, build)
+    def set_engine_version(cls, engine_version: FEngineVersion) -> None:
+        cls.engine_version = engine_version
 
     @classmethod
-    def get_engine_version(cls) -> Tuple[int, int, int, int]:
-        return cls.meta_info.get("engine_version", (4, 0, 0, 0))
+    def get_engine_version(cls) -> FEngineVersion:
+        return cls.engine_version
 
     @classmethod
     def set_body_bytes(cls, start: int, end: int) -> None:
-        cls.meta_info["body_bytes"] = (start, end)
+        cls.body_bytes = (start, end)
 
     @classmethod
-    def get_body_bytes(cls) -> int:
-        return cls.meta_info["body_bytes"]
+    def get_body_bytes(cls) -> Tuple[int, int]:
+        return cls.body_bytes
 
-    @classmethod
-    def get(cls, key_name: str, default_value: Any = None):
-        return cls.meta_info.get(key_name, default_value)
+    def supports_version(self, custom_version) -> bool:
+        current_version: EngineVersion = self.engine_version.get_version()
+        pass
 
 
 class PropertyTrait(ABC):

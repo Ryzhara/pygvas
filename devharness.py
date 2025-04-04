@@ -4,6 +4,7 @@ import json
 import dataclasses
 import uuid
 from test_utilities import compare_binary_files
+from gvas.utils import *
 
 
 # ============================================
@@ -32,6 +33,17 @@ test_file_list = ["Islands of Insight Example.sav"]
 # The Rust package engineer created a plethora of tests. Let's cycle through them.
 import pathlib
 
+print(
+    guid_from_uint32x4(0xD89B5E42, 0x24BD4D46, 0x8412ACA8, 0xDF641779),
+    guid_from_uint32x4(0xE4B068ED, 0xF49442E9, 0xA231DA0B, 0x2E46BB41),
+)
+
+# fugly test
+# import enum
+# class FEditorObjectVersion(enum.IntEnum):
+#     BeforeCustomVersionWasAdded = 0
+#     GatheredTextProcessVersionFlagging = enum.auto()
+# print({member.name: member.value for member in FEditorObjectVersion})
 
 # test_file_list = ["Islands of Insight Example.sav"]  # working!
 # test_file_list = ["resources/test/component8.sav"]  # Working!
@@ -95,6 +107,8 @@ for test_file in test_file_list:
         except Exception as e:
             print(f"Failed to load {test_file}: {e}")
             continue
+
+    print(gvas_file.header.custom_versions)
 
     if compression != CompressionType.NONE:
         decompressed_data_file = f"{test_file}.decompressed"
