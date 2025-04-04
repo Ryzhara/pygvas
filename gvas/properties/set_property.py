@@ -73,58 +73,36 @@ class SetProperty(PropertyTrait):
                     )
                     self.properties.append(prop)
 
-                    need to finish this
-
     def write(
         self,
         stream: BinaryIO,
         include_header: bool = True,
     ) -> int:
         """Write set to stream"""
+
+        # Create the body in a temporary buffer
+        body_buffer = BytesIO()
+        body_bytes = 0
+
+        # Write allocation flags and element count
+        body_bytes += write_uint32(body_buffer, self.allocation_flags)
+        body_bytes += write_uint32(body_buffer, len(self.properties))
+
+        # Write properties
+        for set_property in self.properties:
+            body_bytes += set_property.write(body_buffer, include_header=False)
+
+        assert body_bytes == len(body_buffer.getvalue())
+
         bytes_written = 0
-
         if include_header:
-            # Write to temporary buffer first to get length
-            buffer = BytesIO()
-            buffer_bytes = 0
+            bytes_written += write_standard_header(
+                stream,
+                self.property_type,
+                length=body_bytes,
+                data_to_write=[self.property_type],
+            )
 
-            # Write allocation flags and element count
-            buffer.write(struct.pack("<I", self.allocation_flags))
-            buffer.write(struct.pack("<I", len(self.properties)))
-            buffer_bytes += 8
-
-            # Write properties
-            for prop in self.properties:
-                buffer_bytes += prop.write(
-                    buffer, include_header=False, options=options
-                )
-
-            # Write length and array index
-            stream.write(struct.pack("<I", buffer_bytes))  # Total length
-            stream.write(struct.pack("<I", 0))  # Array index
-            bytes_written += 8
-
-            # Write property type
-            bytes_written += write_string(stream, self.property_type)
-
-            # Write terminator
-            stream.write(bytes([0]))
-            bytes_written += 1
-
-            # Write buffer contents
-            buffer_data = buffer.getvalue()
-            stream.write(buffer_data)
-            bytes_written += len(buffer_data)
-        else:
-            # Write allocation flags and element count
-            stream.write(struct.pack("<I", self.allocation_flags))
-            stream.write(struct.pack("<I", len(self.properties)))
-            bytes_written += 8
-
-            # Write properties
-            for prop in self.properties:
-                bytes_written += prop.write(
-                    stream, include_header=False, options=options
-                )
-
+        # Write buffer contents
+        bytes_written += write_bytes(stream, body_buffer.getvalue())
         return bytes_written

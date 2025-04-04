@@ -45,8 +45,8 @@ class EnumProperty(PropertyTrait):
     ) -> int:
         """Write enum value to stream"""
 
-        temp_body_buffer = BytesIO()
-        body_bytes = write_string(temp_body_buffer, self.value)
+        body_buffer = BytesIO()
+        body_bytes = write_string(body_buffer, self.value)
 
         bytes_written = 0
         if include_header:
@@ -57,5 +57,5 @@ class EnumProperty(PropertyTrait):
                 data_to_write=[self.enum_type],
             )
 
-        bytes_written += write_string(stream, self.value)
+        bytes_written += write_bytes(stream, body_buffer.getvalue())
         return bytes_written

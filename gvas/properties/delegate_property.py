@@ -56,9 +56,9 @@ class DelegateProperty(PropertyTrait):
         """Write enum value to stream"""
 
         # create temporary buffer for body
-        temp_body_buffer = BytesIO()
-        body_bytes = self.value.write(temp_body_buffer)
-        assert body_bytes == len(temp_body_buffer.getvalue())
+        body_buffer = BytesIO()
+        body_bytes = self.value.write(body_buffer)
+        assert body_bytes == len(body_buffer.getvalue())
 
         bytes_written = 0
         if include_header:
@@ -66,7 +66,7 @@ class DelegateProperty(PropertyTrait):
                 stream, "DelegateProperty", length=body_bytes
             )
 
-        bytes_written += write_bytes(stream, temp_body_buffer.getvalue())
+        bytes_written += write_bytes(stream, body_buffer.getvalue())
         return bytes_written
 
 
@@ -118,9 +118,9 @@ class MulticastInlineDelegateProperty(PropertyTrait):
         include_header=True,
     ) -> int:
         # create temporary buffer for body
-        temp_body_buffer = BytesIO()
-        body_bytes = self.value.write(temp_body_buffer)
-        assert body_bytes == len(temp_body_buffer.getvalue())
+        body_buffer = BytesIO()
+        body_bytes = self.value.write(body_buffer)
+        assert body_bytes == len(body_buffer.getvalue())
 
         bytes_written = 0
         if include_header:
@@ -128,5 +128,5 @@ class MulticastInlineDelegateProperty(PropertyTrait):
                 stream, "MulticastInlineDelegateProperty", length=body_bytes
             )
 
-        bytes_written += write_bytes(stream, temp_body_buffer.getvalue())
+        bytes_written += write_bytes(stream, body_buffer.getvalue())
         return bytes_written

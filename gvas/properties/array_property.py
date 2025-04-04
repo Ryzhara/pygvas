@@ -116,10 +116,8 @@ class ArrayProperty(PropertyTrait):
 
         # Read number of elements in the array
         property_count = read_uint32(stream)
-        # print(f"Found {property_count=}")
 
         self.values = []  # prepare storage
-
         # don't read bytes that are not for you!
         if property_count == 0:
             return
@@ -127,7 +125,6 @@ class ArrayProperty(PropertyTrait):
         if self.property_type == "StructProperty":
 
             # This embedded struct header differs slightly by repeating the type.
-
             self.field_name = read_string(stream)
             member_type = read_string(stream)
             assert (
@@ -141,31 +138,31 @@ class ArrayProperty(PropertyTrait):
             with ByteCountValidator(stream, expected_byte_count, do_validation=True):
                 for _ in range(property_count):
                     if is_special_struct(self.type_name):
-                        new_array_property = get_special_struct_instance(self.type_name)
-                        new_array_property.read(stream)
-                        self.values.append(new_array_property)
+                        array_property = get_special_struct_instance(self.type_name)
+                        array_property.read(stream)
+                        self.values.append(array_property)
                     else:
-                        new_array_property = StructProperty(self.property_type)
-                        new_array_property.read_body(stream)
-                        self.values.append(new_array_property)
+                        array_property = StructProperty(self.property_type)
+                        array_property.read_body(stream)
+                        self.values.append(array_property)
 
         elif self.property_type in ["TextProperty"]:
             # capture the thing as a blob for now; ugly hack
-            new_array_property = Property.new(
+            array_property = Property.new(
                 stream, self.property_type, include_header=False
             )
-            new_array_property.value.actual_text_count = property_count
-            self.values.append(new_array_property.value)
+            array_property.value.actual_text_count = property_count
+            self.values.append(array_property.value)
 
         elif self.property_type == "ByteProperty":
             # this is an array of bytes, so just make it a thing
-            new_array_property = Property.new(
+            array_property = Property.new(
                 stream,
                 self.property_type,
                 include_header=False,
                 suggested_length=property_count,
             )
-            self.values.append(new_array_property)
+            self.values.append(array_property)
 
         # some data types are read without any additional metadata
         elif self.property_type in g_bare_type_readers.keys():
@@ -175,10 +172,10 @@ class ArrayProperty(PropertyTrait):
 
         else:  # catchall
             for _ in range(property_count):
-                new_array_property = Property.new(
+                array_property = Property.new(
                     stream, self.property_type, include_header=False
                 )
-                self.values.append(new_array_property.value)
+                self.values.append(array_property.value)
 
     def write(
         self,
@@ -212,13 +209,16 @@ class ArrayProperty(PropertyTrait):
 
         # Handle struct properties
         if self.property_type == "StructProperty":
-            struct_body_buffer = BytesIO()
+            body_buffer = BytesIO()
+            body_bytes = 0
             for struct_property in self.values:
                 if is_special_struct(self.type_name):
-                    struct_property.write(struct_body_buffer)
+                    body_bytes += struct_property.write(body_buffer)
                 else:
-                    struct_property.write(struct_body_buffer, include_header=False)
-            struct_body_bytes = len(struct_body_buffer.getvalue())
+                    body_bytes += struct_property.write(
+                        body_buffer, include_header=False
+                    )
+            assert body_bytes == len(body_buffer.getvalue())
 
             # WRITE HEADER extra part
             array_bytes += write_string(array_buffer, self.field_name)
@@ -226,11 +226,11 @@ class ArrayProperty(PropertyTrait):
             array_bytes += write_standard_header(
                 array_buffer,
                 self.property_type,
-                length=struct_body_bytes,
+                length=body_bytes,
                 data_to_write=[self.type_name, self.guid],
             )
 
-            array_bytes += write_bytes(array_buffer, struct_body_buffer.getvalue())
+            array_bytes += write_bytes(array_buffer, body_buffer.getvalue())
 
         elif self.property_type in g_bare_type_writers.keys():
             bare_type_writer = g_bare_type_writers[self.property_type]

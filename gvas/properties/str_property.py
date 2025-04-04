@@ -8,6 +8,7 @@ Contains implementations for:
 """
 
 from dataclasses import dataclass
+from email.base64mime import body_decode
 from typing import Optional, BinaryIO
 import struct
 from io import BytesIO
@@ -49,19 +50,19 @@ class StrProperty(PropertyTrait):
         """Write string to stream"""
         bytes_written = 0
 
-        # Write to temporary buffer first to get length
-        buffer = BytesIO()
+        # Write to temporary body_buffer first to get length
+        body_buffer = BytesIO()
+        body_bytes = 0
         if self.value is None:
-            write_uint32(buffer, 0)  # empty string
+            body_bytes += write_uint32(body_buffer, 0)  # empty string
         else:
-            write_string(buffer, self.value)
+            body_bytes += write_string(body_buffer, self.value)
+        assert body_bytes == len(body_buffer.getvalue())
 
         if include_header:
             bytes_written += write_standard_header(
-                stream, "StrProperty", length=len(buffer.getvalue())
+                stream, "StrProperty", length=body_bytes
             )
 
-        # Write buffer contents
-        bytes_written += stream.write(buffer.getvalue())
-
+        bytes_written += stream.write(body_buffer.getvalue())
         return bytes_written
