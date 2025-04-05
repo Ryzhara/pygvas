@@ -8,6 +8,32 @@ from .utils import *
 from .engine_versions import *
 
 
+# Used for predefining custom versions for nicer checking when parsing
+class CustomVersionTrait:
+    # Custom version friendly name
+    friendly_name: str  # &'static str;
+    # Custom version uuid
+    guid: uuid
+    # Mappings from engine version to version number of this custom version
+    #
+    # # Example
+    # UE4_27 -> 13
+    # UE4_23 -> 12
+    version_mappings: dict[str, int]  # static [(EngineVersion, i32)];
+
+    def initialize(
+        self,
+        friendly_name: str,
+        guid: uuid.UUID,
+        version_mappings: dict[EngineVersion, int],
+    ) -> None:
+        self.friendly_name = friendly_name
+        self.guid = guid
+        self.version_mappings: dict[EngineVersion, int] = version_mappings
+
+    # def lookup(self, EngineVersion):
+
+
 # Stores CustomVersions serialized by UE4
 # [derive(Debug, Clone, PartialEq, Eq)]
 # [cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
@@ -38,9 +64,40 @@ class FCustomVersion:
 
 # Custom serialization version for changes made in Dev-Editor stream.
 class FEditorObjectVersion(enum.IntEnum):
+
+    @property
+    def friendly_name(self) -> str:
+        return FEditorObjectVersion.__name__
+
+    @property
+    def custom_version_guid(self) -> uuid:
+        return guid_from_uint32x4(0xE4B068ED, 0xF49442E9, 0xA231DA0B, 0x2E46BB41)
+
+    @property
+    def version_mappings(self):
+        return {
+            EngineVersion.VER_UE4_AUTOMATIC_VERSION: FEditorObjectVersion.LatestVersion,
+            EngineVersion.VER_UE4_AUTOMATIC_VERSION_PLUS_ONE: FEditorObjectVersion.VersionPlusOne,
+            EngineVersion.VER_UE4_26: FEditorObjectVersion.SkeletalMeshSourceDataSupport16bitOfMaterialNumber,
+            EngineVersion.VER_UE4_25: FEditorObjectVersion.SkeletalMeshMoveEditorSourceDataToPrivateAsset,
+            EngineVersion.VER_UE4_24: FEditorObjectVersion.SkeletalMeshBuildRefactor,
+            EngineVersion.VER_UE4_23: FEditorObjectVersion.RemoveLandscapeHoleMaterial,
+            EngineVersion.VER_UE4_22: FEditorObjectVersion.MeshDescriptionRemovedHoles,
+            EngineVersion.VER_UE4_21: FEditorObjectVersion.MeshDescriptionNewAttributeFormat,
+            EngineVersion.VER_UE4_20: FEditorObjectVersion.SerializeInstancedStaticMeshRenderData,
+            EngineVersion.VER_UE4_19: FEditorObjectVersion.AddedMorphTargetSectionIndices,
+            EngineVersion.VER_UE4_17: FEditorObjectVersion.GatheredTextEditorOnlyPackageLocId,
+            EngineVersion.VER_UE4_16: FEditorObjectVersion.MaterialThumbnailRenderingChanges,
+            EngineVersion.VER_UE4_15: FEditorObjectVersion.AddedInlineFontFaceAssets,
+            EngineVersion.VER_UE4_14: FEditorObjectVersion.AddedFontFaceAssets,
+            EngineVersion.VER_UE4_13: FEditorObjectVersion.SplineComponentCurvesInStruct,
+            EngineVersion.VER_UE4_12: FEditorObjectVersion.GatheredTextPackageCacheFixesV1,
+            EngineVersion.VER_UE4_OLDEST_LOADABLE_PACKAGE: FEditorObjectVersion.BeforeCustomVersionWasAdded,
+        }
+
     # Before any version changes were made
     # Introduced: ObjectVersion.VER_UE4_OLDEST_LOADABLE_PACKAGE
-    BeforeCustomVersionWasAdded = 1
+    BeforeCustomVersionWasAdded = 0
 
     # Localizable text gathered and stored in packages is now flagged with a localizable text gathering process version
     # Introduced: ObjectVersion.VER_UE4_STREAMABLE_TEXTURE_AABB
@@ -208,66 +265,23 @@ class FEditorObjectVersion(enum.IntEnum):
     LatestVersion = enum.auto()
 
 
-# Used for predefining custom versions for nicer checking when parsing
-class CustomVersionTrait:
-    # Custom version friendly name
-    friendly_name: str  # &'static str;
-    # Custom version uuid
-    guid: uuid
-    # Mappings from engine version to version number of this custom version
-    #
-    # # Example
-    # UE4_27 -> 13
-    # UE4_23 -> 12
-    version_mappings: dict[str, int]  # static [(EngineVersion, i32)];
-
-    def initialize(
-        self,
-        friendly_name: str,
-        guid: uuid.UUID,
-        version_mappings: dict[EngineVersion, int],
-    ) -> None:
-        self.friendly_name = friendly_name
-        self.guid = guid
-        self.version_mappings: dict[EngineVersion, int] = version_mappings
-
-    # def lookup(self, EngineVersion):
-
-
-class EditorObjectVersionLookup(CustomVersionTrait):
-    def __init__(self):
-        # from CustomVersionTrait
-        self.initialize(
-            "FEditorObjectVersion",
-            guid_from_uint32x4(0xE4B068ED, 0xF49442E9, 0xA231DA0B, 0x2E46BB41),
-            {
-                EngineVersion.VER_UE4_AUTOMATIC_VERSION: FEditorObjectVersion.LatestVersion,
-                EngineVersion.VER_UE4_AUTOMATIC_VERSION_PLUS_ONE: FEditorObjectVersion.VersionPlusOne,
-                EngineVersion.VER_UE4_26: FEditorObjectVersion.SkeletalMeshSourceDataSupport16bitOfMaterialNumber,
-                EngineVersion.VER_UE4_25: FEditorObjectVersion.SkeletalMeshMoveEditorSourceDataToPrivateAsset,
-                EngineVersion.VER_UE4_24: FEditorObjectVersion.SkeletalMeshBuildRefactor,
-                EngineVersion.VER_UE4_23: FEditorObjectVersion.RemoveLandscapeHoleMaterial,
-                EngineVersion.VER_UE4_22: FEditorObjectVersion.MeshDescriptionRemovedHoles,
-                EngineVersion.VER_UE4_21: FEditorObjectVersion.MeshDescriptionNewAttributeFormat,
-                EngineVersion.VER_UE4_20: FEditorObjectVersion.SerializeInstancedStaticMeshRenderData,
-                EngineVersion.VER_UE4_19: FEditorObjectVersion.AddedMorphTargetSectionIndices,
-                EngineVersion.VER_UE4_17: FEditorObjectVersion.GatheredTextEditorOnlyPackageLocId,
-                EngineVersion.VER_UE4_16: FEditorObjectVersion.MaterialThumbnailRenderingChanges,
-                EngineVersion.VER_UE4_15: FEditorObjectVersion.AddedInlineFontFaceAssets,
-                EngineVersion.VER_UE4_14: FEditorObjectVersion.AddedFontFaceAssets,
-                EngineVersion.VER_UE4_13: FEditorObjectVersion.SplineComponentCurvesInStruct,
-                EngineVersion.VER_UE4_12: FEditorObjectVersion.GatheredTextPackageCacheFixesV1,
-                EngineVersion.VER_UE4_OLDEST_LOADABLE_PACKAGE: FEditorObjectVersion.BeforeCustomVersionWasAdded,
-            },
-        )
-
-
 # Custom serialization version for changes made in //UE5/Release-* stream
-# [derive(IntoPrimitive)]
-# [repr(int)]
-class FUE5ReleaseStreamObjectVersion(enum.Enum):
+class FUE5ReleaseStreamObjectVersion(enum.IntEnum):
+
+    @property
+    def friendly_name(self) -> str:
+        return FEditorObjectVersion.__name__
+
+    @property
+    def custom_version_guid(self) -> uuid:
+        return guid_from_uint32x4(0xD89B5E42, 0x24BD4D46, 0x8412ACA8, 0xDF641779)
+
+    @property
+    def version_mappings(self):
+        return {}
+
     # Before any version changes were made
-    BeforeCustomVersionWasAdded = enum.auto(), 0
+    BeforeCustomVersionWasAdded = 0
 
     # Added Lumen reflections to new reflection enum, changed defaults
     ReflectionMethodEnum = enum.auto()
@@ -421,13 +435,3 @@ class FUE5ReleaseStreamObjectVersion(enum.Enum):
 
     # Orthographic Near and Far Plane Auto-resolve enabled by default
     OrthographicAutoNearFarPlane = enum.auto()
-
-
-class UE5ReleaseStreamObjectVersionLookup(CustomVersionTrait):
-    def __init__(self):
-        # from CustomVersionTrait
-        self.initialize(
-            "FUE5ReleaseStreamObjectVersion",
-            guid_from_uint32x4(0xD89B5E42, 0x24BD4D46, 0x8412ACA8, 0xDF641779),
-            {},
-        )

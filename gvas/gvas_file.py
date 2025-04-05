@@ -171,11 +171,12 @@ class GVASFile:
 
         # Read header
         header = GvasHeader.read(stream)
-        print(header.engine_version)
+        # print(header.engine_version)
 
         # set up hints for use during deserialization
-        SerializationHints.set_engine_version(header.engine_version)
-        SerializationHints.custom_versions = header.custom_versions
+        SerializationHints.set_header_and_custom_versions(
+            header.engine_version, header.custom_versions
+        )
 
         # Read all the top level file properties
         properties = {}

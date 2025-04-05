@@ -3,6 +3,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 import datetime
 from .property_base import SerializationHints
+from ..custom_versions import FUE5ReleaseStreamObjectVersion
 from ..utils import *
 
 
@@ -21,7 +22,10 @@ class SpecialStructTrait(ABC):
 
     @classmethod
     def uses_large_world_coordinates(cls):
-        return SerializationHints.get_engine_version().major >= 5
+        uses_lwc = SerializationHints.supports_version(
+            FUE5ReleaseStreamObjectVersion.LargeWorldCoordinates
+        )
+        return uses_lwc
 
 
 # ============================================
@@ -64,28 +68,23 @@ class DateTimeProperty(SpecialStructTrait):
         return cls()
 
     def read(self, stream: BinaryIO) -> None:
-        format_str, size = ("<Q", 8)
-        self.datetime = struct.unpack(format_str, stream.read(size))[0]
+        self.datetime = read_uint64(stream)
         try:
             # datetime.datetime.fromtimestamp takes time in seconds since January 1, 1970, 00:00:00 (UTC) as a floating-point number
             # FDateTime type represents dates and times as ticks (0.1 microseconds) since January 1, 0001
-            seconds_since_1_1_00001 = 6_392_264_799_600
+            # seconds_since_1_1_00001 = 6_392_264_799_600
             ticks_per_second = 10_000_000.0
             seconds = self.datetime / ticks_per_second
             self.comment = (
                 datetime.datetime.min + datetime.timedelta(seconds=seconds)
             ).strftime("%d/%m/%Y %H:%M:%S.%f")
-            # print(f"Found DateTime: {self.comment}")
-            # self.comment = str(datetime.datetime.fromtimestamp(self.datetime / 1000.0))
+
         except Exception as e:
             print(f"Cant process {self.datetime=} : {e}")
             self.comment = str(self.datetime)
 
     def write(self, stream: BinaryIO) -> int:
-        format_str, size = ("<Q", 8)
-        # bytes_written = stream.write(struct.pack(format_str, self.datetime))
         bytes_written = write_uint64(stream, self.datetime)
-        assert bytes_written == size
         return bytes_written
 
 
@@ -125,15 +124,15 @@ class IntPointProperty(SpecialStructTrait):
         return cls()
 
     def read(self, stream: BinaryIO) -> None:
-        format_str, size = ("<i", 4)
-        self.x = struct.unpack(format_str, stream.read(size))[0]
-        self.y = struct.unpack(format_str, stream.read(size))[0]
+        # always int32
+        self.x = read_int32(stream)
+        self.y = read_int32(stream)
 
     def write(self, stream: BinaryIO) -> int:
-        format_str, _size = ("<i", 4)
+        # always int32
         bytes_written = 0
-        bytes_written += stream.write(struct.pack(format_str, self.x))
-        bytes_written += stream.write(struct.pack(format_str, self.y))
+        bytes_written += write_int32(stream, self.x)
+        bytes_written += write_int32(stream, self.y)
         return bytes_written
 
 
@@ -152,19 +151,19 @@ class LinearColorProperty(SpecialStructTrait):
         return cls()
 
     def read(self, stream: BinaryIO) -> None:
-        format_str, size = ("<f", 4)
-        self.a = struct.unpack(format_str, stream.read(size))[0]
-        self.b = struct.unpack(format_str, stream.read(size))[0]
-        self.g = struct.unpack(format_str, stream.read(size))[0]
-        self.r = struct.unpack(format_str, stream.read(size))[0]
+        # always float32
+        self.a = read_float(stream)
+        self.b = read_float(stream)
+        self.g = read_float(stream)
+        self.r = read_float(stream)
 
     def write(self, stream: BinaryIO) -> int:
-        format_str, _size = ("<f", 4)
+        # always float32
         bytes_written = 0
-        bytes_written += stream.write(struct.pack(format_str, self.a))
-        bytes_written += stream.write(struct.pack(format_str, self.b))
-        bytes_written += stream.write(struct.pack(format_str, self.g))
-        bytes_written += stream.write(struct.pack(format_str, self.r))
+        bytes_written += write_float(stream, self.a)
+        bytes_written += write_float(stream, self.b)
+        bytes_written += write_float(stream, self.g)
+        bytes_written += write_float(stream, self.r)
         return bytes_written
 
 
@@ -180,20 +179,23 @@ class RotatorProperty(SpecialStructTrait):
 
     @classmethod
     def new(cls) -> "RotatorProperty":
-        return cls(is_double=SpecialStructTrait.uses_large_world_coordinates())
+        uses_lwc = SerializationHints.supports_version(
+            FUE5ReleaseStreamObjectVersion.LargeWorldCoordinates
+        )
+        return cls(is_double=uses_lwc)
 
     def read(self, stream: BinaryIO) -> None:
-        format_str, size = ("<d", 8) if self.is_double else ("<f", 4)
-        self.pitch = struct.unpack(format_str, stream.read(size))[0]
-        self.yaw = struct.unpack(format_str, stream.read(size))[0]
-        self.roll = struct.unpack(format_str, stream.read(size))[0]
+        read_fn = read_double if self.is_double else read_float
+        self.pitch = read_fn(stream)
+        self.yaw = read_fn(stream)
+        self.roll = read_fn(stream)
 
     def write(self, stream: BinaryIO) -> int:
-        format_str, _size = ("<d", 8) if self.is_double else ("<f", 4)
+        write_fn = write_double if self.is_double else write_float
         bytes_written = 0
-        bytes_written += stream.write(struct.pack(format_str, self.pitch))
-        bytes_written += stream.write(struct.pack(format_str, self.yaw))
-        bytes_written += stream.write(struct.pack(format_str, self.roll))
+        bytes_written += write_fn(stream, self.pitch)
+        bytes_written += write_fn(stream, self.yaw)
+        bytes_written += write_fn(stream, self.roll)
         return bytes_written
 
 
@@ -209,23 +211,26 @@ class QuatProperty(SpecialStructTrait):
     w: float = 0
 
     @classmethod
-    def new(cls, use_lwc=False) -> "QuatProperty":
-        return cls(is_double=SpecialStructTrait.uses_large_world_coordinates())
+    def new(cls) -> "QuatProperty":
+        uses_lwc = SerializationHints.supports_version(
+            FUE5ReleaseStreamObjectVersion.LargeWorldCoordinates
+        )
+        return cls(is_double=uses_lwc)
 
     def read(self, stream: BinaryIO) -> None:
-        format_str, size = ("<d", 8) if self.is_double else ("<f", 4)
-        self.x = struct.unpack(format_str, stream.read(size))[0]
-        self.y = struct.unpack(format_str, stream.read(size))[0]
-        self.z = struct.unpack(format_str, stream.read(size))[0]
-        self.w = struct.unpack(format_str, stream.read(size))[0]
+        read_fn = read_double if self.is_double else read_float
+        self.x = read_fn(stream)
+        self.y = read_fn(stream)
+        self.z = read_fn(stream)
+        self.w = read_fn(stream)
 
     def write(self, stream: BinaryIO) -> int:
-        format_str, _size = ("<d", 8) if self.is_double else ("<f", 4)
+        write_fn = write_double if self.is_double else write_float
         bytes_written = 0
-        bytes_written += stream.write(struct.pack(format_str, self.x))
-        bytes_written += stream.write(struct.pack(format_str, self.y))
-        bytes_written += stream.write(struct.pack(format_str, self.z))
-        bytes_written += stream.write(struct.pack(format_str, self.w))
+        bytes_written += write_fn(stream, self.x)
+        bytes_written += write_fn(stream, self.y)
+        bytes_written += write_fn(stream, self.z)
+        bytes_written += write_fn(stream, self.w)
         return bytes_written
 
 
@@ -241,20 +246,23 @@ class VectorProperty(SpecialStructTrait):
 
     @classmethod
     def new(cls, use_lwc=False) -> "VectorProperty":
-        return cls(is_double=SpecialStructTrait.uses_large_world_coordinates())
+        uses_lwc = SerializationHints.supports_version(
+            FUE5ReleaseStreamObjectVersion.LargeWorldCoordinates
+        )
+        return cls(is_double=uses_lwc)
 
     def read(self, stream: BinaryIO) -> None:
-        format_str, size = ("<d", 8) if self.is_double else ("<f", 4)
-        self.x = struct.unpack(format_str, stream.read(size))[0]
-        self.y = struct.unpack(format_str, stream.read(size))[0]
-        self.z = struct.unpack(format_str, stream.read(size))[0]
+        read_fn = read_double if self.is_double else read_float
+        self.x = read_fn(stream)
+        self.y = read_fn(stream)
+        self.z = read_fn(stream)
 
     def write(self, stream: BinaryIO) -> int:
-        format_str, _size = ("<d", 8) if self.is_double else ("<f", 4)
+        write_fn = write_double if self.is_double else write_float
         bytes_written = 0
-        bytes_written += stream.write(struct.pack(format_str, self.x))
-        bytes_written += stream.write(struct.pack(format_str, self.y))
-        bytes_written += stream.write(struct.pack(format_str, self.z))
+        bytes_written += write_fn(stream, self.x)
+        bytes_written += write_fn(stream, self.y)
+        bytes_written += write_fn(stream, self.z)
         return bytes_written
 
 
@@ -268,19 +276,22 @@ class Vector2DProperty(SpecialStructTrait):
     y: float = 0
 
     @classmethod
-    def new(cls, use_lwc=False) -> "Vector2DProperty":
-        return cls(is_double=SpecialStructTrait.uses_large_world_coordinates())
+    def new(cls) -> "Vector2DProperty":
+        uses_lwc = SerializationHints.supports_version(
+            FUE5ReleaseStreamObjectVersion.LargeWorldCoordinates
+        )
+        return cls(is_double=uses_lwc)
 
     def read(self, stream: BinaryIO) -> None:
-        format_str, size = ("<d", 8) if self.is_double else ("<f", 4)
-        self.x = struct.unpack(format_str, stream.read(size))[0]
-        self.y = struct.unpack(format_str, stream.read(size))[0]
+        read_fn = read_double if self.is_double else read_float
+        self.x = read_fn(stream)
+        self.y = read_fn(stream)
 
     def write(self, stream: BinaryIO) -> int:
-        format_str, _size = ("<d", 8) if self.is_double else ("<", 4)
+        write_fn = write_double if self.is_double else write_float
         bytes_written = 0
-        bytes_written += stream.write(struct.pack(format_str, self.x))
-        bytes_written += stream.write(struct.pack(format_str, self.y))
+        bytes_written += write_fn(stream, self.x)
+        bytes_written += write_fn(stream, self.y)
         return bytes_written
 
 

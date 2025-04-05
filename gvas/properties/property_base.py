@@ -8,39 +8,35 @@ Key differences from Rust version:
 - Uses dataclasses for property options
 """
 
+import enum
+import uuid
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, asdict, field
 from typing import Optional, Dict, Any, BinaryIO, List, Tuple
 
-from ..custom_versions import (
-    EditorObjectVersionLookup,
-    UE5ReleaseStreamObjectVersionLookup,
-)
+from ..custom_versions import FEditorObjectVersion, FUE5ReleaseStreamObjectVersion
 from ..error import DeserializeError
 from ..engine_versions import FEngineVersion, EngineVersion
+from ..gvas_types import HashableIndexMap
 
 
 class SerializationHints:
-    # one class variable to rule them all. This class is never instantiated.
-    # We just set some data and
+    # one class to rule them all. This class is never instantiated and is used in lieu of variable passing.
+    # Hack for TextProperty;
     body_bytes: Tuple[int, int] = (0, 0)  # tell child reader how big their blob is
-    editor_object_version_lookup: EditorObjectVersionLookup = (
-        EditorObjectVersionLookup()
-    )
-    ue5_release_stream_object_version_lookup: UE5ReleaseStreamObjectVersionLookup = (
-        UE5ReleaseStreamObjectVersionLookup()
-    )
     engine_version: FEngineVersion
+    custom_versions: HashableIndexMap[uuid, int]
     hints: Dict[str, str] = {}
     properties_stack: List[str] = []
 
     @classmethod
-    def set_engine_version(cls, engine_version: FEngineVersion) -> None:
+    def set_header_and_custom_versions(
+        cls,
+        engine_version: FEngineVersion,
+        custom_versions: HashableIndexMap[uuid, int],
+    ) -> None:
         cls.engine_version = engine_version
-
-    @classmethod
-    def get_engine_version(cls) -> FEngineVersion:
-        return cls.engine_version
+        cls.custom_versions = custom_versions
 
     @classmethod
     def set_body_bytes(cls, start: int, end: int) -> None:
@@ -50,9 +46,13 @@ class SerializationHints:
     def get_body_bytes(cls) -> Tuple[int, int]:
         return cls.body_bytes
 
-    def supports_version(self, custom_version) -> bool:
-        current_version: EngineVersion = self.engine_version.get_version()
-        pass
+    @classmethod
+    def supports_version(
+        self, required_version: FEditorObjectVersion | FUE5ReleaseStreamObjectVersion
+    ) -> bool:
+        guid_key = required_version.custom_version_guid
+        supported_version = self.custom_versions.get(guid_key, 0)
+        return supported_version >= required_version.value
 
 
 class PropertyTrait(ABC):
