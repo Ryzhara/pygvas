@@ -14,7 +14,6 @@ from typing import Dict, Optional, BinaryIO, List
 
 from io import BytesIO
 
-from .custom_versions import FCustomVersion
 from .error import DeserializeError, SerializeError
 from .engine_versions import EngineVersion, FEngineVersion
 from .game_version import GameVersion
@@ -22,6 +21,34 @@ from .gvas_types import HashableIndexMap
 from .properties import Property
 from .properties.property_base import SerializationTools
 from .utils import *
+
+
+# Stores CustomVersions serialized by UE4
+# [derive(Debug, Clone, PartialEq, Eq)]
+# [cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+@dataclass
+class FCustomVersion:
+    # Key
+    key: uuid = uuid.UUID(int=0)
+    # Value
+    version: int = 0
+
+    # Creates a new instance of `FCustomVersion`
+    @classmethod
+    def new(cls, key: uuid, version: int):
+        return cls(key=key, version=version)
+
+    # Read FCustomVersion from a binary file
+    def read(self, stream: BinaryIO) -> None:
+        self.key = read_guid(stream)
+        self.version = read_uint32(stream)
+
+    # Write FCustomVersion to a binary file
+    def write(self, stream: BinaryIO) -> int:
+        bytes_written = 0
+        bytes_written += write_guid(stream, self.key)
+        bytes_written += write_int32(stream, self.version)
+        return bytes_written
 
 
 @dataclass

@@ -11,7 +11,7 @@ from dataclasses import dataclass
 from email.base64mime import body_decode
 from io import BytesIO
 from typing import Optional, BinaryIO
-from .property_base import PropertyTrait, SerializationTools
+from .property_base import PropertyTrait
 from ..utils import *
 
 

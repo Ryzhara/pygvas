@@ -1,7 +1,7 @@
 # Engine version information
 import enum
 from dataclasses import dataclass
-from typing import BinaryIO
+
 from .utils import *
 
 

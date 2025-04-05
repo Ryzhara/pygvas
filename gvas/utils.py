@@ -6,9 +6,11 @@ import struct
 import uuid
 import zlib
 from io import BytesIO
-from typing import BinaryIO, Any, List
+from typing import BinaryIO, Any, List, Tuple, Dict
+
 from .error import *
 from .game_version import GVAS_MAGIC, PLZ_MAGIC, CompressionType
+from .gvas_types import HashableIndexMap
 
 
 class ByteCountValidator:
@@ -36,6 +38,21 @@ class ByteCountValidator:
         ), DeserializeError.invalid_read_count(
             self.expected_byte_count, found_bytes, self.start_byte
         )
+
+
+class ContextScopeTracker:
+    parent_context = "unknown"
+    context = "unknown"
+
+    def __init__(self, context: str):
+        self.parent_context = SerializationTools.get_path()
+        self.context_string = context
+
+    def __enter__(self):
+        SerializationTools.push_path(self.context)
+
+    def __exit__(self):
+        SerializationTools.pop_path()
 
 
 def read_atomic_data(

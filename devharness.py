@@ -4,9 +4,7 @@ import json
 import dataclasses
 import uuid
 
-from gvas.custom_versions import FEditorObjectVersion
 from test_utilities import compare_binary_files
-from gvas.utils import *
 
 
 # ============================================
@@ -73,15 +71,15 @@ test_file_list = [
 # there are some "BIN" files: features_01.bin, regression_01.bin, text_property_noarray.bin
 
 # always a quick retest
-# test_file_list = ["Islands of Insight Example.sav"]  # working!
+test_file_list = ["resources/test/palworld_zlib_twice.sav"]  # working!
+test_file_list = ["resources/test/component8.sav"]
 
-# print(test_file_list)
 
 game_version = GameVersion.DEFAULT
 # game_version = GameVersion.PALWORLD
 
 compression = CompressionType.NONE
-# compression = CompressionType.ZLIB
+# compression = CompressionType.ZLIB_TWICE
 
 for test_file in test_file_list:
     # print(f"Loading {test_file}")

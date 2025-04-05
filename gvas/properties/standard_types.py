@@ -1,10 +1,9 @@
-import uuid
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 import datetime
-from .property_base import SerializationTools
-from ..custom_versions import FUE5ReleaseStreamObjectVersion
+
 from ..utils import *
+from .property_base import SerializationTools
 
 
 class SpecialStructTrait(ABC):
@@ -20,12 +19,12 @@ class SpecialStructTrait(ABC):
         """Write property data to a binary stream and return byte count written"""
         pass
 
-    @classmethod
-    def uses_large_world_coordinates(cls):
-        uses_lwc = SerializationTools.supports_version(
-            FUE5ReleaseStreamObjectVersion.LargeWorldCoordinates
-        )
-        return uses_lwc
+    # @classmethod
+    # def uses_large_world_coordinates(cls):
+    #     uses_lwc = SerializationTools.supports_version(
+    #         FUE5ReleaseStreamObjectVersion.LargeWorldCoordinates
+    #     )
+    #     return uses_lwc
 
 
 # ============================================

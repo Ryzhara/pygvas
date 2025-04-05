@@ -1,7 +1,7 @@
 # Custom version information
 import uuid
-
-from .engine_versions import *
+import enum
+from dataclasses import dataclass
 from .utils import *
 
 
@@ -22,41 +22,13 @@ class CustomVersionTrait:
         self,
         friendly_name: str,
         guid: uuid.UUID,
-        version_mappings: dict[EngineVersion, int],
+        version_mappings: dict[object, int],
     ) -> None:
         self.friendly_name = friendly_name
         self.guid = guid
-        self.version_mappings: dict[EngineVersion, int] = version_mappings
+        self.version_mappings: dict[object, int] = version_mappings
 
     # def lookup(self, EngineVersion):
-
-
-# Stores CustomVersions serialized by UE4
-# [derive(Debug, Clone, PartialEq, Eq)]
-# [cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
-@dataclass
-class FCustomVersion:
-    # Key
-    key: uuid = uuid.UUID(int=0)
-    # Value
-    version: int = 0
-
-    # Creates a new instance of `FCustomVersion`
-    @classmethod
-    def new(cls, key: uuid, version: int):
-        return cls(key=key, version=version)
-
-    # Read FCustomVersion from a binary file
-    def read(self, stream: BinaryIO) -> None:
-        self.key = read_guid(stream)
-        self.version = read_uint32(stream)
-
-    # Write FCustomVersion to a binary file
-    def write(self, stream: BinaryIO) -> int:
-        bytes_written = 0
-        bytes_written += write_guid(stream, self.key)
-        bytes_written += write_int32(stream, self.version)
-        return bytes_written
 
 
 # Custom serialization version for changes made in Dev-Editor stream.

@@ -1,16 +1,8 @@
-"""
-Text property implementation for GVAS
-Python port of text_property.rs
-
-Key differences from Rust version:
-- Uses dataclasses for struct types
-- Simplified type handling
-"""
-
-from dataclasses import dataclass
-from typing import Optional, Dict, List, BinaryIO
+from typing import Optional
 from enum import IntEnum, auto
-from .property_base import PropertyTrait, SerializationTools
+from dataclasses import dataclass
+
+from .property_base import PropertyTrait
 from ..utils import *
 
 
