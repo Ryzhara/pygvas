@@ -12,7 +12,12 @@ from time import struct_time
 from typing import List, Optional, Any, BinaryIO
 from io import BytesIO
 
-from .property_base import Property, PropertyTrait, SerializationTools
+from .property_base import (
+    Property,
+    PropertyTrait,
+    SerializationTools,
+    ContextScopeTracker,
+)
 from .struct_property import StructProperty
 from ..utils import *
 
@@ -126,25 +131,31 @@ class ArrayProperty(PropertyTrait):
 
             # This embedded struct header differs slightly by repeating the type.
             self.field_name = read_string(stream)
-            member_type = read_string(stream)
-            assert (
-                member_type == self.property_type
-            ), f"Property array member type mismatch: {member_type} != {self.property_type}"
 
-            expected_byte_count, _array_index, self.type_name, self.guid = (
-                read_standard_header(stream, stream_readers=[read_string, read_guid])
-            )
+            with ContextScopeTracker(self.field_name):
+                member_type = read_string(stream)
+                assert (
+                    member_type == self.property_type
+                ), f"Property array member type mismatch: {member_type} != {self.property_type}"
 
-            with ByteCountValidator(stream, expected_byte_count, do_validation=True):
-                for _ in range(property_count):
-                    if is_special_struct(self.type_name):
-                        array_property = get_special_struct_instance(self.type_name)
-                        array_property.read(stream)
-                        self.values.append(array_property)
-                    else:
-                        array_property = StructProperty(self.property_type)
-                        array_property.read_body(stream)
-                        self.values.append(array_property)
+                expected_byte_count, _array_index, self.type_name, self.guid = (
+                    read_standard_header(
+                        stream, stream_readers=[read_string, read_guid]
+                    )
+                )
+
+                with ByteCountValidator(
+                    stream, expected_byte_count, do_validation=True
+                ):
+                    for _ in range(property_count):
+                        if is_special_struct(self.type_name):
+                            array_property = get_special_struct_instance(self.type_name)
+                            array_property.read(stream)
+                            self.values.append(array_property)
+                        else:
+                            array_property = StructProperty(self.property_type)
+                            array_property.read_body(stream)
+                            self.values.append(array_property)
 
         elif self.property_type in ["TextProperty"]:
             # capture the thing as a blob for now; ugly hack

@@ -12,7 +12,7 @@ from email.base64mime import body_decode
 from io import BytesIO
 from typing import Dict, Optional, BinaryIO, Any
 
-from .property_base import Property, PropertyTrait
+from .property_base import Property, PropertyTrait, ContextScopeTracker
 from ..gvas_types import HashableIndexMap
 from ..utils import *
 
@@ -67,8 +67,12 @@ class MapProperty(PropertyTrait):
             # Read entries
             self.values = {}
             for _ in range(element_count):
-                key_prop = Property.new(stream, self.key_type, include_header=False)
-                value_prop = Property.new(stream, self.value_type, include_header=False)
+                with ContextScopeTracker("Key"):
+                    key_prop = Property.new(stream, self.key_type, include_header=False)
+                with ContextScopeTracker("Value"):
+                    value_prop = Property.new(
+                        stream, self.value_type, include_header=False
+                    )
                 self.values[key_prop] = value_prop
 
     def write(

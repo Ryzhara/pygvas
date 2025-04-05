@@ -62,6 +62,32 @@ class StructProperty(PropertyTrait):
                 stream, stream_readers=[read_string, read_guid]
             )
 
+            # this is working for resources/test/Profile_0.sav without hints
+            """ Rust logic:
+            "StructProperty" => match include_header {
+                true => Ok(StructProperty::read(cursor, include_header, options)?.into()),
+                false => {
+                    let struct_path = options.properties_stack.join(".");
+                    let Some(hint) = options.hints.get(&struct_path) else {
+                        Err(DeserializeError::MissingHint(
+                            "StructProperty".into(),
+                            struct_path.into_boxed_str(),
+                            cursor.stream_position()?,
+                        ))?
+                    };
+                    Ok(StructProperty::read_body(cursor, hint, options)?.into())
+                }
+            },
+                        """
+        # else:
+        #     # we need to get typename from the hints
+        #     struc_path = SerializationTools.get_path()
+        #     self.type_name = SerializationTools.hints.get(struc_path, None)
+        #     if self.type_name is None:
+        #         raise DeserializeError.missing_hint(
+        #             "StructProperty", struc_path, stream.tell()
+        #         )
+
         with ByteCountValidator(stream, length, do_validation=include_header):
             self.read_body(stream)
 

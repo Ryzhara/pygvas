@@ -71,8 +71,9 @@ test_file_list = [
 # there are some "BIN" files: features_01.bin, regression_01.bin, text_property_noarray.bin
 
 # always a quick retest
-test_file_list = ["resources/test/palworld_zlib_twice.sav"]  # working!
-test_file_list = ["resources/test/component8.sav"]
+# test_file_list = ["resources/test/component8.sav"]
+test_file_list = ["Islands of Insight Example.sav"]  # working!
+# test_file_list = ["resources/test/palworld_zlib_twice.sav"]  # working!
 
 
 game_version = GameVersion.DEFAULT

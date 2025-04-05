@@ -19,7 +19,7 @@ from .engine_versions import EngineVersion, FEngineVersion
 from .game_version import GameVersion
 from .gvas_types import HashableIndexMap
 from .properties import Property
-from .properties.property_base import SerializationTools
+from .properties.property_base import SerializationTools, ContextScopeTracker
 from .utils import *
 
 
@@ -211,9 +211,12 @@ class GVASFile:
         while True:
             if (property_name := read_string(stream)) == "None":
                 break
-            property_type = read_string(stream)
-            property_value = Property.new(stream, property_type, include_header=True)
-            properties[property_name] = property_value
+            with ContextScopeTracker(property_name):
+                property_type = read_string(stream)
+                property_value = Property.new(
+                    stream, property_type, include_header=True
+                )
+                properties[property_name] = property_value
 
         stream.seek(0)
         return cls(header=header, properties=properties), stream

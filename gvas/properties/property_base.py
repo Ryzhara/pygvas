@@ -11,7 +11,6 @@ Key differences from Rust version:
 import enum
 import uuid
 from abc import ABC, abstractmethod
-from dataclasses import dataclass, asdict, field
 from typing import Optional, Dict, Any, BinaryIO, List, Tuple
 
 from ..custom_versions import FEditorObjectVersion, FUE5ReleaseStreamObjectVersion
@@ -52,7 +51,7 @@ class SerializationTools:
         cls.properties_stack.append(step)
 
     @classmethod
-    def pop_path(cls, step: str) -> None:
+    def pop_path(cls) -> None:
         cls.properties_stack.pop()
 
     @classmethod
@@ -70,11 +69,33 @@ class SerializationTools:
 
     @classmethod
     def supports_version(
-        self, required_version: FEditorObjectVersion | FUE5ReleaseStreamObjectVersion
+        cls, required_version: FEditorObjectVersion | FUE5ReleaseStreamObjectVersion
     ) -> bool:
         guid_key = required_version.custom_version_guid
-        supported_version = self.custom_versions.get(guid_key, 0)
+        supported_version = cls.custom_versions.get(guid_key, 0)
         return supported_version >= required_version.value
+
+
+class ContextScopeTracker:
+    parent_context = "unknown"
+    context = "unknown"
+
+    def __init__(self, context: str):
+        self.parent_context = SerializationTools.get_path()
+        self.context = context
+
+    def __enter__(self):
+        SerializationTools.push_path(self.context)
+        # print(f"Entering scope: {SerializationTools.get_path()}")
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        if exc_type is not None:
+            print(
+                f"An exception of type {exc_type} occurred: {exc_val} with context {SerializationTools.get_path()}"
+            )
+            return False
+        # print(f"Exiting scope: {SerializationTools.get_path()}")
+        SerializationTools.pop_path()
 
 
 class PropertyTrait(ABC):
@@ -176,35 +197,26 @@ class Property:
             "DoubleProperty": DoubleProperty,
         }
 
-        # Get the appropriate property class
-        if property_type in type_map.keys():
-            prop_class = type_map.get(property_type)
-            prop = prop_class(property_type)
+        with ContextScopeTracker(property_type):
+            # Get the appropriate property class
+            if property_type in type_map.keys():
+                prop_class = type_map.get(property_type)
+                prop = prop_class(property_type)
 
-        else:
-            print(f"Unknown property type: {property_type}")
-            raise DeserializeError(f"Unknown property type: {property_type}")
+            else:
+                print(f"Unknown property type: {property_type}")
+                raise DeserializeError(f"Unknown property type: {property_type}")
 
-        # Handle special cases for properties that need suggested_length
-        if (
-            property_type == "ByteProperty"
-            and hasattr(prop, "read")
-            and callable(getattr(prop, "read"))
-        ):
-            # assert (
-            #     suggested_length is not None
-            # ), f"Unexpected missing suggested length: for Byte Property {prop=}"
-            prop.read(stream, include_header, suggested_length)
-            # if suggested_length is not None:
-            #     prop.read(stream, include_header, suggested_length)
-            # else:
-            #     prop.read(stream, include_header)
-        else:
-            # Standard case
-            try:
+            # Handle special cases for properties that need suggested_length
+            if (
+                property_type == "ByteProperty"
+                and hasattr(prop, "read")
+                and callable(getattr(prop, "read"))
+            ):
+                prop.read(stream, include_header, suggested_length)
+            else:
+                # Standard case
                 prop.read(stream, include_header)
-            except Exception as e:
-                print(e)
 
         # print(f"Property read: {asdict(prop)}")
         return cls(property_type, prop)

@@ -29,6 +29,17 @@ class ByteCountValidator:
         self.start_byte = self.stream.tell()
 
     def __exit__(self, exc_type, exc_val, exc_tb):
+        if exc_type is not None:
+            print(f"An exception of type {exc_type} occurred: {exc_val}")
+            return False
+            # # Handle specific exceptions differently
+            # if exc_type is ValueError:
+            #     print("ValueError handled, suppressing exception")
+            #     return True  # Suppress ValueError
+            # else:
+            #     print("Other exception, re-raising")
+            #     return False # Re-raise other exceptions
+
         if not self.do_validation:
             return
         self.end_byte = self.stream.tell()
@@ -38,21 +49,6 @@ class ByteCountValidator:
         ), DeserializeError.invalid_read_count(
             self.expected_byte_count, found_bytes, self.start_byte
         )
-
-
-class ContextScopeTracker:
-    parent_context = "unknown"
-    context = "unknown"
-
-    def __init__(self, context: str):
-        self.parent_context = SerializationTools.get_path()
-        self.context_string = context
-
-    def __enter__(self):
-        SerializationTools.push_path(self.context)
-
-    def __exit__(self):
-        SerializationTools.pop_path()
 
 
 def read_atomic_data(
@@ -236,22 +232,6 @@ def read_guid(stream: BinaryIO) -> uuid:
 
 def write_guid(stream: BinaryIO, guid: uuid) -> uuid:
     return stream.write(guid.bytes_le)
-
-
-def read_guid_with_terminator(stream: BinaryIO) -> uuid:
-    guid = read_guid(stream)
-    terminator_position = stream.tell()
-    terminator = read_uint8(stream)
-    assert terminator == 0, DeserializeError.invalid_terminator(
-        terminator, terminator_position
-    )
-    return guid
-
-
-def write_guid_with_terminator(stream: BinaryIO, guid: uuid) -> int:
-    bytes_written = write_guid(stream, guid)
-    bytes_written += write_uint8(stream, 0)
-    return bytes_written
 
 
 def peek(stream, count: int) -> bytes:

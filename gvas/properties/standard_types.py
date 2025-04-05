@@ -4,6 +4,7 @@ import datetime
 
 from ..utils import *
 from .property_base import SerializationTools
+from ..custom_versions import FUE5ReleaseStreamObjectVersion
 
 
 class SpecialStructTrait(ABC):

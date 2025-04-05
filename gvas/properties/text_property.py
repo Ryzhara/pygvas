@@ -2,7 +2,7 @@ from typing import Optional
 from enum import IntEnum, auto
 from dataclasses import dataclass
 
-from .property_base import PropertyTrait
+from .property_base import PropertyTrait, SerializationTools
 from ..utils import *
 
 
