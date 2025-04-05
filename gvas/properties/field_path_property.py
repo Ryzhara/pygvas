@@ -51,7 +51,9 @@ class FieldPathProperty(PropertyTrait):
             length, _array_index = read_standard_header(stream)
 
         self.value = FieldPath(path=[], resolved_owner="")
-        with ByteCountValidator(stream, length, do_validation=include_header):
+        with ByteCountValidator(
+            stream, length, do_validation=include_header
+        ) as _validator:
             self.value.read(stream)
 
     def write(

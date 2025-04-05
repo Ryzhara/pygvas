@@ -10,15 +10,17 @@ from ..utils import *
 class TextProperty(PropertyTrait):
     """A property that holds FText data"""
 
-    actual_text_count: int = 0  # needed for parent property writing this to a stream
+    actual_property_count: int = (
+        0  # needed for parent property writing this to a stream
+    )
     type_name: str = "TextProperty"
     flags: int = 0
     byte_data: Optional[bytes] = None  # just scarf the bytes
 
     @classmethod
-    def new(cls, actual_text_count) -> "TextProperty":
+    def new(cls, actual_property_count) -> "TextProperty":
         """Create a new text property"""
-        return cls(actual_text_count=actual_text_count)
+        return cls(actual_property_count=actual_property_count)
 
     def read(
         self,
@@ -26,15 +28,14 @@ class TextProperty(PropertyTrait):
         include_header: bool = True,
     ) -> None:
         """Read text from stream"""
-        body_start, body_end = SerializationTools.get_body_bytes()
+        # body_start, body_end = SerializationTools.get_byte_block_to_be_read()
+        text_property_blob = SerializationTools.text_property_blob
         length = 0
         if include_header:
-            length = read_uint32(stream)
-            _array_index = read_uint32(stream, 0)
-            read_null_byte_terminator(stream)
+            length, _array_index = read_standard_header(stream)
 
         self.flags = read_uint32(stream)
-        bytes_remaining = body_end - stream.tell()
+        bytes_remaining = text_property_blob - 4
         self.byte_data = read_bytes(stream, bytes_remaining)
 
     def write(
@@ -46,9 +47,9 @@ class TextProperty(PropertyTrait):
         length = 4 + len(self.byte_data)
         bytes_written = 0
         if include_header:
-            bytes_written += write_uint32(stream, length)
-            bytes_written += write_uint32(stream, 0)  # array_index
-            bytes_written += write_uint8(stream, 0)  # null byte terminator
+            bytes_written += write_standard_header(
+                stream, "TextProperty", length=length
+            )
 
         bytes_written += write_uint32(stream, self.flags)
         bytes_written += write_bytes(stream, self.byte_data)

@@ -30,7 +30,9 @@ class ObjectProperty(PropertyTrait):
             length, _array_index = read_standard_header(stream)
 
         # Read value
-        with ByteCountValidator(stream, length, do_validation=include_header):
+        with ByteCountValidator(
+            stream, length, do_validation=include_header
+        ) as _validator:
             self.value = read_string(stream)
 
     def write(

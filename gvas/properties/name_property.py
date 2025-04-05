@@ -45,7 +45,9 @@ class NameProperty(PropertyTrait):
             )
 
         # Record start position for length validation
-        with ByteCountValidator(stream, length, do_validation=include_header):
+        with ByteCountValidator(
+            stream, length, do_validation=include_header
+        ) as _validator:
             self.value = read_string(stream)
 
     def write(

@@ -110,29 +110,29 @@ class ArrayProperty(PropertyTrait):
         )
 
         start = stream.tell()
-        SerializationTools.set_body_bytes(start, start + length)
-        self.read_body(stream)
+        SerializationTools.set_byte_block_to_be_read(start, start + length)
+        self.read_body(stream, length)
         end = stream.tell()
-        SerializationTools.set_body_bytes(0, 0)
+        SerializationTools.set_byte_block_to_be_read(0, 0)
         if end - start != length:
             raise DeserializeError.invalid_value_size(length, end - start, start)
 
-    def read_body(self, stream: BinaryIO) -> None:
+    def read_body(self, stream: BinaryIO, length: int) -> None:
 
         # Read number of elements in the array
         property_count = read_uint32(stream)
 
         self.values = []  # prepare storage
-        # don't read bytes that are not for you!
-        if property_count == 0:
-            return
+        # We do this for the individually handled items below with a for _ in <>: clause
+        # if property_count == 0:
+        #     return
 
         if self.property_type == "StructProperty":
 
             # This embedded struct header differs slightly by repeating the type.
             self.field_name = read_string(stream)
 
-            with ContextScopeTracker(self.field_name):
+            with ContextScopeTracker(self.field_name) as _scope_tracker:
                 member_type = read_string(stream)
                 assert (
                     member_type == self.property_type
@@ -146,7 +146,7 @@ class ArrayProperty(PropertyTrait):
 
                 with ByteCountValidator(
                     stream, expected_byte_count, do_validation=True
-                ):
+                ) as _validator:
                     for _ in range(property_count):
                         if is_special_struct(self.type_name):
                             array_property = get_special_struct_instance(self.type_name)
@@ -159,21 +159,37 @@ class ArrayProperty(PropertyTrait):
 
         elif self.property_type in ["TextProperty"]:
             # capture the thing as a blob for now; ugly hack
+            SerializationTools.text_property_blob = (
+                length - 4
+            )  # minus 4 for property count read
             array_property = Property.new(
                 stream, self.property_type, include_header=False
             )
-            array_property.value.actual_text_count = property_count
+            array_property.value.actual_property_count = property_count
             self.values.append(array_property.value)
 
+            # for when this is fixed
+            # for _ in range(property_count):
+            #     array_property = Property.new(
+            #         stream, self.property_type, include_header=False
+            #     )
+            #     self.values.append(array_property.value)
+
         elif self.property_type == "ByteProperty":
-            # this is an array of bytes, so just make it a thing
-            array_property = Property.new(
-                stream,
-                self.property_type,
-                include_header=False,
-                suggested_length=property_count,
+            suggested_length = (
+                (length - 4) / property_count
+                if (property_count > 0 and length >= 4)
+                else 0
             )
-            self.values.append(array_property)
+            for _ in range(property_count):
+                # this is an array of bytes, so just make it a thing
+                array_property = Property.new(
+                    stream,
+                    self.property_type,
+                    include_header=False,
+                    suggested_length=suggested_length,
+                )
+                self.values.append(array_property)
 
         # some data types are read without any additional metadata
         elif self.property_type in g_bare_type_readers.keys():
@@ -209,11 +225,15 @@ class ArrayProperty(PropertyTrait):
         # ugly, hacky fixup until we complete TextProperty implementation
         if self.property_type == "TextProperty" and property_count > 0:
             text_property: TextProperty = self.values[0]
-            property_count = text_property.actual_text_count
+            property_count = text_property.actual_property_count
 
         elif self.property_type == "ByteProperty" and property_count > 0:
             byte_property: ByteProperty = self.values[0]
-            property_count = len(byte_property.value.value)
+            property_count = (
+                1
+                if type(byte_property.value.value) is int
+                else len(byte_property.value.value)
+            )
 
         properties_body_start = array_buffer.tell()
         array_bytes += write_uint32(array_buffer, property_count)

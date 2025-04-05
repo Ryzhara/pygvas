@@ -16,7 +16,12 @@ from .standard_types import (
     get_special_struct_instance,
     SpecialStructTrait,
 )
-from .property_base import Property, PropertyTrait, SerializationTools
+from .property_base import (
+    Property,
+    PropertyTrait,
+    SerializationTools,
+    ContextScopeTracker,
+)
 from ..utils import *
 
 
@@ -57,6 +62,7 @@ class StructProperty(PropertyTrait):
     ) -> None:
         """Read struct from stream"""
         length = 0
+        type_name_override = None
         if include_header:
             length, _array_index, self.type_name, self.guid = read_standard_header(
                 stream, stream_readers=[read_string, read_guid]
@@ -79,37 +85,38 @@ class StructProperty(PropertyTrait):
                 }
             },
                         """
-        # else:
-        #     # we need to get typename from the hints
-        #     struc_path = SerializationTools.get_path()
-        #     self.type_name = SerializationTools.hints.get(struc_path, None)
-        #     if self.type_name is None:
-        #         raise DeserializeError.missing_hint(
-        #             "StructProperty", struc_path, stream.tell()
-        #         )
+        else:
+            # we need to get typename from the hints
+            struct_path = SerializationTools.get_path()
+            type_name_override = SerializationTools.hints.get(struct_path, None)
 
-        with ByteCountValidator(stream, length, do_validation=include_header):
-            self.read_body(stream)
+        with ByteCountValidator(
+            stream, length, do_validation=include_header
+        ) as _validator:
+            self.read_body(stream, type_name_override)
 
-    def read_body(self, stream: BinaryIO) -> None:
+    def read_body(self, stream: BinaryIO, type_name_override: str = None) -> None:
         """we must check for type_name in the special (graphical) structure types and
         then invoke reading that, vs reading a custom, arbitrary body as below"""
 
-        if is_special_struct(self.type_name):
-            property_value = get_special_struct_instance(self.type_name)
+        deserialize_type = type_name_override or self.type_name
+
+        if is_special_struct(deserialize_type):
+            property_value = get_special_struct_instance(deserialize_type)
             property_value.read(stream)
-            self.value = StructPropertyValue(self.type_name, property_value)
+            self.value = StructPropertyValue(deserialize_type, property_value)
 
         else:  # fully custom
-            self.value = StructPropertyValue(self.type_name, {})
+            self.value = StructPropertyValue(deserialize_type, {})
             while True:
                 if (property_name := read_string(stream)) == "None":
                     break
-                property_type = read_string(stream)
-                property_value = Property.new(
-                    stream, property_type, include_header=True
-                )
-                self.value.properties[property_name] = property_value
+                with ContextScopeTracker(property_name) as _scope_tracker:
+                    property_type = read_string(stream)
+                    property_value = Property.new(
+                        stream, property_type, include_header=True
+                    )
+                    self.value.properties[property_name] = property_value
 
     def write(
         self,

@@ -57,7 +57,7 @@ class SetProperty(PropertyTrait):
             stream, stream_readers=[read_string]
         )
 
-        with ByteCountValidator(stream, length, do_validation=True):
+        with ByteCountValidator(stream, length, do_validation=True) as _validator:
             self.allocation_flags = read_uint32(stream)
             element_count = read_uint32(stream)
 

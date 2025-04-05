@@ -39,7 +39,9 @@ class StrProperty(PropertyTrait):
         if include_header:
             length, *_ = read_standard_header(stream)
 
-        with ByteCountValidator(stream, length, do_validation=include_header):
+        with ByteCountValidator(
+            stream, length, do_validation=include_header
+        ) as _validator:
             self.value = read_string(stream)
 
     def write(

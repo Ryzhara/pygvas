@@ -35,7 +35,9 @@ class EnumProperty(PropertyTrait):
             )
 
         # Read value
-        with ByteCountValidator(stream, length, do_validation=include_header):
+        with ByteCountValidator(
+            stream, length, do_validation=include_header
+        ) as _validator:
             self.value = read_string(stream)
 
     def write(

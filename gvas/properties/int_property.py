@@ -94,10 +94,9 @@ class ByteProperty(PropertyTrait):
     ) -> None:
         """Read byte property from stream"""
         if include_header:
-            suggested_length = read_uint32(stream, 1)  # expect value 1
-            _array_index = read_uint32(stream, 0)  # require zero array_index
-            self.name = read_string(stream)
-            _null_byte = read_uint8(stream, 0)  # enforce null terminator
+            suggested_length, _array_index, self.name = read_standard_header(
+                stream, stream_readers=[read_string]
+            )
 
         # Read value based on length
         if suggested_length <= 1:  # indicates a byte value
@@ -115,15 +114,10 @@ class ByteProperty(PropertyTrait):
         bytes_written = 0
 
         if include_header:
-            # Write the BODY to temporary buffer first to get length
-
-            # now write all the things
-            bytes_written += write_string(stream, "ByteProperty")
             total_bytes = 1 if type(self.value) is int else len(self.value)
-            bytes_written += write_uint32(stream, total_bytes)  # Total length
-            bytes_written += write_uint32(stream, 0)  # Array index
-            bytes_written += write_string(stream, self.name)
-            bytes_written += write_uint8(stream, 0)  # null byte terminator
+            bytes_written += write_standard_header(
+                stream, "ByteProperty", length=total_bytes, data_to_write=[self.name]
+            )
 
         # Write value
         if type(self.value) is int:

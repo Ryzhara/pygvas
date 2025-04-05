@@ -59,7 +59,9 @@ class MapProperty(PropertyTrait):
                 stream, stream_readers=[read_string, read_string]
             )
 
-        with ByteCountValidator(stream, length, do_validation=include_header):
+        with ByteCountValidator(
+            stream, length, do_validation=include_header
+        ) as _validator:
             # Read number of entries
             self.allocation_flags = read_uint32(stream)
             element_count = read_uint32(stream)
@@ -67,9 +69,9 @@ class MapProperty(PropertyTrait):
             # Read entries
             self.values = {}
             for _ in range(element_count):
-                with ContextScopeTracker("Key"):
+                with ContextScopeTracker("Key") as _scope_tracker:
                     key_prop = Property.new(stream, self.key_type, include_header=False)
-                with ContextScopeTracker("Value"):
+                with ContextScopeTracker("Value") as _scope_tracker:
                     value_prop = Property.new(
                         stream, self.value_type, include_header=False
                     )

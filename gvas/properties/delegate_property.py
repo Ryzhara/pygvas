@@ -45,7 +45,9 @@ class DelegateProperty(PropertyTrait):
 
         self.value = Delegate(object="", function_name="")
         # Read value
-        with ByteCountValidator(stream, length, do_validation=include_header):
+        with ByteCountValidator(
+            stream, length, do_validation=include_header
+        ) as _validator:
             self.value.read(stream)
 
     def write(
@@ -109,7 +111,9 @@ class MulticastInlineDelegateProperty(PropertyTrait):
             length, _array_index = read_standard_header(stream)
 
         self.value = MulticastScriptDelegate()
-        with ByteCountValidator(stream, length, do_validation=include_header):
+        with ByteCountValidator(
+            stream, length, do_validation=include_header
+        ) as _validator:
             self.value.read(stream)
 
     def write(

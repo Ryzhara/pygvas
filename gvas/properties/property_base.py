@@ -34,6 +34,7 @@ class SerializationTools:
     custom_versions: HashableIndexMap[uuid, int]
     hints: Dict[str, str] = {}
     properties_stack: List[str] = []
+    text_property_blob: int = 0  # temp hack for TextProperty as blob
 
     # initialization requirements
     @classmethod
@@ -60,11 +61,11 @@ class SerializationTools:
 
     # hack for getting around unknown object byte count
     @classmethod
-    def set_body_bytes(cls, start: int, end: int) -> None:
+    def set_byte_block_to_be_read(cls, start: int, end: int) -> None:
         cls.body_bytes = (start, end)
 
     @classmethod
-    def get_body_bytes(cls) -> Tuple[int, int]:
+    def get_byte_block_to_be_read(cls) -> Tuple[int, int]:
         return cls.body_bytes
 
     @classmethod
@@ -96,6 +97,7 @@ class ContextScopeTracker:
             return False
         # print(f"Exiting scope: {SerializationTools.get_path()}")
         SerializationTools.pop_path()
+        return True
 
 
 class PropertyTrait(ABC):
@@ -197,7 +199,7 @@ class Property:
             "DoubleProperty": DoubleProperty,
         }
 
-        with ContextScopeTracker(property_type):
+        with ContextScopeTracker(property_type) as _scope_tracker:
             # Get the appropriate property class
             if property_type in type_map.keys():
                 prop_class = type_map.get(property_type)

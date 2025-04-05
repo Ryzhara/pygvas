@@ -4,6 +4,7 @@ import json
 import dataclasses
 import uuid
 
+from gvas.properties import SerializationTools
 from test_utilities import compare_binary_files
 
 
@@ -71,16 +72,19 @@ test_file_list = [
 # there are some "BIN" files: features_01.bin, regression_01.bin, text_property_noarray.bin
 
 # always a quick retest
+# test_file_list = ["Islands of Insight Example.sav"]  # working!
 # test_file_list = ["resources/test/component8.sav"]
-test_file_list = ["Islands of Insight Example.sav"]  # working!
-# test_file_list = ["resources/test/palworld_zlib_twice.sav"]  # working!
-
-
-game_version = GameVersion.DEFAULT
-# game_version = GameVersion.PALWORLD
-
+# game_version = GameVersion.DEFAULT
 compression = CompressionType.NONE
-# compression = CompressionType.ZLIB_TWICE
+
+test_file_list = ["resources/test/palworld_zlib_twice.sav"]  # working!
+game_version = GameVersion.PALWORLD
+compression = CompressionType.ZLIB_TWICE
+SerializationTools.hints = {
+    "worldSaveData.StructProperty.MapObjectSpawnerInStageSaveData.MapProperty.Value.StructProperty.SpawnerDataMapByLevelObjectInstanceId.MapProperty.Key.StructProperty": "Guid",
+    "worldSaveData.StructProperty.BaseCampSaveData.MapProperty.Key.StructProperty": "Guid",
+    "worldSaveData.StructProperty.GroupSaveDataMap.MapProperty.Key.StructProperty": "Guid",
+}
 
 for test_file in test_file_list:
     # print(f"Loading {test_file}")
