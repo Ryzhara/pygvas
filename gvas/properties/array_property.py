@@ -12,7 +12,7 @@ from time import struct_time
 from typing import List, Optional, Any, BinaryIO
 from io import BytesIO
 
-from .property_base import Property, PropertyTrait, SerializationHints
+from .property_base import Property, PropertyTrait, SerializationTools
 from .struct_property import StructProperty
 from ..utils import *
 
@@ -105,10 +105,10 @@ class ArrayProperty(PropertyTrait):
         )
 
         start = stream.tell()
-        SerializationHints.set_body_bytes(start, start + length)
+        SerializationTools.set_body_bytes(start, start + length)
         self.read_body(stream)
         end = stream.tell()
-        SerializationHints.set_body_bytes(0, 0)
+        SerializationTools.set_body_bytes(0, 0)
         if end - start != length:
             raise DeserializeError.invalid_value_size(length, end - start, start)
 

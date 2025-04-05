@@ -23,7 +23,7 @@ from typing import Optional, Union, BinaryIO
 import struct
 from io import BytesIO
 
-from .property_base import PropertyTrait, SerializationHints
+from .property_base import PropertyTrait, SerializationTools
 from ..error import DeserializeError, SerializeError
 from ..utils import *
 

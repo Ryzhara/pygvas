@@ -2,7 +2,7 @@ import uuid
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 import datetime
-from .property_base import SerializationHints
+from .property_base import SerializationTools
 from ..custom_versions import FUE5ReleaseStreamObjectVersion
 from ..utils import *
 
@@ -22,7 +22,7 @@ class SpecialStructTrait(ABC):
 
     @classmethod
     def uses_large_world_coordinates(cls):
-        uses_lwc = SerializationHints.supports_version(
+        uses_lwc = SerializationTools.supports_version(
             FUE5ReleaseStreamObjectVersion.LargeWorldCoordinates
         )
         return uses_lwc
@@ -179,7 +179,7 @@ class RotatorProperty(SpecialStructTrait):
 
     @classmethod
     def new(cls) -> "RotatorProperty":
-        uses_lwc = SerializationHints.supports_version(
+        uses_lwc = SerializationTools.supports_version(
             FUE5ReleaseStreamObjectVersion.LargeWorldCoordinates
         )
         return cls(is_double=uses_lwc)
@@ -212,7 +212,7 @@ class QuatProperty(SpecialStructTrait):
 
     @classmethod
     def new(cls) -> "QuatProperty":
-        uses_lwc = SerializationHints.supports_version(
+        uses_lwc = SerializationTools.supports_version(
             FUE5ReleaseStreamObjectVersion.LargeWorldCoordinates
         )
         return cls(is_double=uses_lwc)
@@ -246,7 +246,7 @@ class VectorProperty(SpecialStructTrait):
 
     @classmethod
     def new(cls, use_lwc=False) -> "VectorProperty":
-        uses_lwc = SerializationHints.supports_version(
+        uses_lwc = SerializationTools.supports_version(
             FUE5ReleaseStreamObjectVersion.LargeWorldCoordinates
         )
         return cls(is_double=uses_lwc)
@@ -277,7 +277,7 @@ class Vector2DProperty(SpecialStructTrait):
 
     @classmethod
     def new(cls) -> "Vector2DProperty":
-        uses_lwc = SerializationHints.supports_version(
+        uses_lwc = SerializationTools.supports_version(
             FUE5ReleaseStreamObjectVersion.LargeWorldCoordinates
         )
         return cls(is_double=uses_lwc)

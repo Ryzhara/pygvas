@@ -12,7 +12,7 @@ from email.base64mime import body_decode
 from io import BytesIO
 from typing import Dict, Optional, BinaryIO, Any
 
-from .property_base import Property, PropertyTrait, SerializationHints
+from .property_base import Property, PropertyTrait, SerializationTools
 from ..gvas_types import HashableIndexMap
 from ..utils import *
 

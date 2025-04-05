@@ -16,7 +16,7 @@ from .standard_types import (
     get_special_struct_instance,
     SpecialStructTrait,
 )
-from .property_base import Property, PropertyTrait, SerializationHints
+from .property_base import Property, PropertyTrait, SerializationTools
 from ..utils import *
 
 

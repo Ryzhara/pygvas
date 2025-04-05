@@ -10,7 +10,7 @@ Key differences from Rust version:
 from dataclasses import dataclass
 from typing import Optional, Dict, List, BinaryIO
 from enum import IntEnum, auto
-from .property_base import PropertyTrait, SerializationHints
+from .property_base import PropertyTrait, SerializationTools
 from ..utils import *
 
 
@@ -34,7 +34,7 @@ class TextProperty(PropertyTrait):
         include_header: bool = True,
     ) -> None:
         """Read text from stream"""
-        body_start, body_end = SerializationHints.get_body_bytes()
+        body_start, body_end = SerializationTools.get_body_bytes()
         length = 0
         if include_header:
             length = read_uint32(stream)

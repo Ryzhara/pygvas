@@ -20,8 +20,15 @@ from ..engine_versions import FEngineVersion, EngineVersion
 from ..gvas_types import HashableIndexMap
 
 
-class SerializationHints:
-    # one class to rule them all. This class is never instantiated and is used in lieu of variable passing.
+# This class is never instantiated and is used in lieu of variable passing through all the calling chains.
+class SerializationTools:
+    """
+    If your file fails while parsing with a DeserializeError::MissingHint error you need hints.
+    When a struct is stored inside ArrayProperty/SetProperty/MapProperty in GvasFile it does not
+    contain type annotations. This means that a library parsing the file must know the type
+    beforehand. That’s why you need hints.
+    """
+
     # Hack for TextProperty;
     body_bytes: Tuple[int, int] = (0, 0)  # tell child reader how big their blob is
     engine_version: FEngineVersion
@@ -29,6 +36,7 @@ class SerializationHints:
     hints: Dict[str, str] = {}
     properties_stack: List[str] = []
 
+    # initialization requirements
     @classmethod
     def set_header_and_custom_versions(
         cls,
@@ -38,6 +46,20 @@ class SerializationHints:
         cls.engine_version = engine_version
         cls.custom_versions = custom_versions
 
+    # used for processing hints
+    @classmethod
+    def push_path(cls, step: str) -> None:
+        cls.properties_stack.append(step)
+
+    @classmethod
+    def pop_path(cls, step: str) -> None:
+        cls.properties_stack.pop()
+
+    @classmethod
+    def get_path(cls) -> str:
+        return ".".join(cls.properties_stack)
+
+    # hack for getting around unknown object byte count
     @classmethod
     def set_body_bytes(cls, start: int, end: int) -> None:
         cls.body_bytes = (start, end)

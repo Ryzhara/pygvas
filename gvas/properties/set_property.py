@@ -12,7 +12,7 @@ from typing import List, Optional, BinaryIO, Any
 from io import BytesIO
 import struct
 
-from .property_base import Property, PropertyTrait, SerializationHints
+from .property_base import Property, PropertyTrait, SerializationTools
 from ..error import DeserializeError
 from ..utils import *
 

@@ -19,7 +19,7 @@ from .error import DeserializeError, SerializeError
 from .engine_versions import EngineVersion, FEngineVersion
 from .game_version import GameVersion
 from .gvas_types import HashableIndexMap
-from .properties import Property, SerializationHints
+from .properties import Property, SerializationTools
 from .utils import *
 
 
@@ -174,7 +174,7 @@ class GVASFile:
         # print(header.engine_version)
 
         # set up hints for use during deserialization
-        SerializationHints.set_header_and_custom_versions(
+        SerializationTools.set_header_and_custom_versions(
             header.engine_version, header.custom_versions
         )
 
