@@ -38,16 +38,17 @@ class BoolProperty(PropertyTrait):
         stream: BinaryIO,
         include_header: bool = True,
     ) -> None:
-        """Read boolean value from stream -- these should both be zero?"""
+        """Read boolean value from stream -- length and array_index should both be zero"""
         if include_header:
-            # type string was read by caller
-            # Read length and array index
+            # BoolProperty header is just 8 bytes of zeros! No terminator
             _length = read_uint32(stream, 0)  # length must be zero
             _array_index = read_uint32(stream, 0)  # array index must be zero
 
+        # Could conceivably be just embedding the value in the header, but only if header was ALWAYS required.
         self.value = read_bool(stream)
 
         if include_header:
+            # And then ends in a terminator
             read_uint8(stream, 0)  # Read bool specific null byte
 
     def write(
@@ -59,14 +60,15 @@ class BoolProperty(PropertyTrait):
         bytes_written = 0
 
         if include_header:
-            # Write property type needs to be written by the object
             bytes_written += write_string(stream, "BoolProperty")
+            # BoolProperty header is just 8 bytes of zeros! No terminator
             bytes_written += write_uint32(stream, 0)  # Write length (0 for bool)
             bytes_written += write_uint32(stream, 0)  # Write array index
 
         bytes_written += write_bool(stream, self.value)
 
         if include_header:
+            # And then ends in a terminator
             bytes_written += write_uint8(stream, 0)  # Write bool specific null byte
 
         return bytes_written

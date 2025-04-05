@@ -1,14 +1,19 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 import datetime
+from xml.sax.handler import property_encoding
 
 from ..utils import *
 from .property_base import SerializationTools
 from ..custom_versions import FUE5ReleaseStreamObjectVersion
 
 
+# ============================================
+#
 class SpecialStructTrait(ABC):
-    """Base trait/interface for all special struct types"""
+    """
+    Base trait/interface for all structure types that could be in any environment
+    """
 
     @abstractmethod
     def read(self, stream: BinaryIO) -> None:
@@ -19,13 +24,6 @@ class SpecialStructTrait(ABC):
     def write(self, stream: BinaryIO) -> int:
         """Write property data to a binary stream and return byte count written"""
         pass
-
-    # @classmethod
-    # def uses_large_world_coordinates(cls):
-    #     uses_lwc = SerializationTools.supports_version(
-    #         FUE5ReleaseStreamObjectVersion.LargeWorldCoordinates
-    #     )
-    #     return uses_lwc
 
 
 # ============================================
@@ -41,16 +39,15 @@ class GuidProperty(SpecialStructTrait):
         return cls()
 
     def read(self, stream: BinaryIO) -> None:
-        guid_bytes = stream.read(16)
-        self.guid = uuid.UUID(bytes_le=guid_bytes)
+        position = stream.tell()
+        self.guid = read_guid(stream)
         try:
             self.comment = str(self.guid)
         except Exception as e:
-            print(f"Cant process {self.guid=} : {e}")
-            self.comment = str(self.guid)
+            raise DeserializeError.invalid_property(f"Guid read error: {e}", position)
 
     def write(self, stream: BinaryIO) -> int:
-        bytes_written = write_bytes(stream, self.guid.bytes_le)
+        bytes_written = write_guid(stream, self.guid)
         assert bytes_written == 16
         return bytes_written
 
@@ -295,6 +292,8 @@ class Vector2DProperty(SpecialStructTrait):
         return bytes_written
 
 
+# ============================================
+#
 _special_struct_type_map = {
     "Vector": VectorProperty,
     "Vector2D": Vector2DProperty,
@@ -322,10 +321,10 @@ def get_special_struct_instance(
     # Map property types to their classes
 
     if type_name in _special_struct_type_map.keys():
-        prop_class = _special_struct_type_map.get(type_name)
-        prop = prop_class.new()
+        property_encoding_class = _special_struct_type_map.get(type_name)
+        property_instance = property_encoding_class.new()
     else:
         print(f"Unknown special struct type: {type_name}")
         raise DeserializeError(f"Unknown special struct type: {type_name}")
 
-    return prop
+    return property_instance

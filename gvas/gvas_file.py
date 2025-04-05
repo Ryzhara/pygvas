@@ -51,6 +51,66 @@ class FCustomVersion:
         return bytes_written
 
 
+# ============================================
+#
+def is_zlib_compressed(data):
+    """
+    Checks if the data is likely zlib compressed based on the initial bytes.
+
+    Args:
+        data: The bytes-like object to check.
+
+    Returns:
+        True if the data is likely zlib compressed, False otherwise.
+    """
+    if len(data) < 2:
+        return False
+    return data[:2] in (b"\x78\x01", b"\x78\x9c", b"\x78\xda")
+
+
+def is_definitely_zlib_compressed(data):
+    """
+    Checks if the data is definitely zlib compressed by attempting decompression.
+
+    Args:
+        data: The bytes-like object to check.
+
+    Returns:
+        True if the data is definitely zlib compressed, False otherwise.
+    """
+    try:
+        zlib.decompress(data)
+        return True
+    except zlib.error:
+        return False
+
+
+# ============================================
+#
+def looks_like_gvas(stream: BinaryIO) -> bool:
+    peeked_bytes = peek(stream, 4)
+    return peeked_bytes == GVAS_MAGIC
+
+
+# ============================================
+#
+def looks_like_palworld(stream: BinaryIO) -> bool:
+
+    current_position = stream.tell()
+    # grab the elements
+    decompressed_size = read_uint32(stream)
+    compressed_size = read_uint32(stream)
+    plz_bytes = read_bytes(stream, len(PLZ_MAGIC))
+    enum_value = read_uint8(stream)
+    stream.seek(current_position)
+
+    # tests:
+    sizes_ok = compressed_size <= decompressed_size < 1_000_000_000
+    magic_ok = plz_bytes == PLZ_MAGIC
+    enum_ok = enum_value in [member.value for member in CompressionType]
+    return sizes_ok and magic_ok and enum_ok
+
+
 @dataclass
 class GvasHeader:
     """Header information for GVAS files"""

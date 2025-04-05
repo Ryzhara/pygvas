@@ -19,9 +19,14 @@ from ..engine_versions import FEngineVersion, EngineVersion
 from ..gvas_types import HashableIndexMap
 
 
-# This class is never instantiated and is used in lieu of variable passing through all the calling chains.
+# ============================================
+
+
 class SerializationTools:
     """
+    This class corresponds to the Rust package use of "options" and scoped property stacks.
+    It is never instantiated and avoids cluttering signatures with mostly unused parameters.
+
     If your file fails while parsing with a DeserializeError::MissingHint error you need hints.
     When a struct is stored inside ArrayProperty/SetProperty/MapProperty in GvasFile it does not
     contain type annotations. This means that a library parsing the file must know the type
@@ -77,6 +82,8 @@ class SerializationTools:
         return supported_version >= required_version.value
 
 
+# ============================================
+#
 class ContextScopeTracker:
     parent_context = "unknown"
     context = "unknown"
@@ -92,16 +99,20 @@ class ContextScopeTracker:
     def __exit__(self, exc_type, exc_val, exc_tb):
         if exc_type is not None:
             print(
-                f"An exception of type {exc_type} occurred: {exc_val} with context {SerializationTools.get_path()}"
+                f"An exception of type {exc_type} occurred: {exc_val} with context\n\t{SerializationTools.get_path()}"
             )
             return False
-        # print(f"Exiting scope: {SerializationTools.get_path()}")
+        # Don't pop so we can have deepest context for debugging
         SerializationTools.pop_path()
         return True
 
 
+# ============================================
+#
 class PropertyTrait(ABC):
-    """Base trait/interface for all property types"""
+    """
+    Base trait/interface for Unreal specific property types
+    """
 
     @abstractmethod
     def read(

@@ -68,25 +68,11 @@ class StructProperty(PropertyTrait):
                 stream, stream_readers=[read_string, read_guid]
             )
 
-            # this is working for resources/test/Profile_0.sav without hints
-            """ Rust logic:
-            "StructProperty" => match include_header {
-                true => Ok(StructProperty::read(cursor, include_header, options)?.into()),
-                false => {
-                    let struct_path = options.properties_stack.join(".");
-                    let Some(hint) = options.hints.get(&struct_path) else {
-                        Err(DeserializeError::MissingHint(
-                            "StructProperty".into(),
-                            struct_path.into_boxed_str(),
-                            cursor.stream_position()?,
-                        ))?
-                    };
-                    Ok(StructProperty::read_body(cursor, hint, options)?.into())
-                }
-            },
-                        """
+        #  This modelled after the line in RUST file struct_property.rs
+        #  "StructProperty" => match include_header {
+        #    true => Ok(StructProperty::read(cursor, include_header, options)?.into()),
         else:
-            # we need to get typename from the hints
+            # see if we have to override the type name
             struct_path = SerializationTools.get_path()
             type_name_override = SerializationTools.hints.get(struct_path, None)
 
@@ -129,27 +115,17 @@ class StructProperty(PropertyTrait):
         body_bytes = 0
 
         if self.value:
-            if is_special_struct(self.type_name):
+            if isinstance(self.value.properties, SpecialStructTrait):
                 body_bytes += self.value.properties.write(body_buffer)
-
-            else:  # fully custom
-                try:
-                    if type(self.value.properties) is not dict:
-                        # this was a "special" type, likely from HINTS
-                        body_bytes += self.value.properties.write(body_buffer)
-                    else:
-                        for (
-                            property_name,
-                            property_value,
-                        ) in self.value.properties.items():
-                            body_bytes += write_string(body_buffer, property_name)
-                            body_bytes += property_value.write(
-                                body_buffer, include_header=True
-                            )
-                        # Write "None" terminator
-                        body_bytes += write_string(body_buffer, "None")
-                except Exception as e:
-                    raise e
+            else:
+                for (
+                    property_name,
+                    property_value,
+                ) in self.value.properties.items():
+                    body_bytes += write_string(body_buffer, property_name)
+                    body_bytes += property_value.write(body_buffer, include_header=True)
+                # Write "None" terminator
+                body_bytes += write_string(body_buffer, "None")
 
         assert body_bytes == len(body_buffer.getvalue())
 

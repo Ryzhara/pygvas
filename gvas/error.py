@@ -1,10 +1,6 @@
 """
 Error types for GVAS
 Python port of error.rs
-
-Key differences from Rust version:
-- Uses Python's exception system instead of Result types
-- Simplified error hierarchy
 """
 
 
