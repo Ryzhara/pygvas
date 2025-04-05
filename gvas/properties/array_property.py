@@ -227,13 +227,13 @@ class ArrayProperty(PropertyTrait):
             text_property: TextProperty = self.values[0]
             property_count = text_property.actual_property_count
 
-        elif self.property_type == "ByteProperty" and property_count > 0:
-            byte_property: ByteProperty = self.values[0]
-            property_count = (
-                1
-                if type(byte_property.value.value) is int
-                else len(byte_property.value.value)
-            )
+        # elif self.property_type == "ByteProperty" and property_count > 0:
+        #     byte_property: ByteProperty = self.values[0]
+        #     property_count = (
+        #         1
+        #         if type(byte_property.value.value) is int
+        #         else len(byte_property.value.value)
+        #     )
 
         properties_body_start = array_buffer.tell()
         array_bytes += write_uint32(array_buffer, property_count)

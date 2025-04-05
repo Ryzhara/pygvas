@@ -325,7 +325,7 @@ def get_special_struct_instance(
         prop_class = _special_struct_type_map.get(type_name)
         prop = prop_class.new()
     else:
-        print(f"Unknown special struc type: {type_name}")
-        raise DeserializeError(f"Unknown special struc type: {type_name}")
+        print(f"Unknown special struct type: {type_name}")
+        raise DeserializeError(f"Unknown special struct type: {type_name}")
 
     return prop

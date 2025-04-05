@@ -153,6 +153,7 @@ class GVASFile:
             # we have to peek through custom file format. *sigh*
             decompressed_size = read_uint32(stream)
             compressed_size = read_uint32(stream)
+            print(f"Found: {decompressed_size=} and {compressed_size=}")
             magic_bytes = stream.read(3)
             if magic_bytes == PLZ_MAGIC:
                 print(
@@ -172,8 +173,14 @@ class GVASFile:
         # Handle compression options
         if compression_type == CompressionType.ZLIB_TWICE:
             compressed_data = stream.read()
+            print(f"Found compressed data: {len(compressed_data)=}")
             decompressed_data = zlib.decompress(compressed_data)  # once
+            first_compressed_size = len(decompressed_data)
+            print(f"Found: {first_compressed_size=}")
             decompressed_data = zlib.decompress(decompressed_data)  # twice
+            second_compressed_size = len(decompressed_data)
+            print(f"Found: {second_compressed_size=}")
+
             assert decompressed_size == len(
                 decompressed_data
             ), f"{decompressed_size=} != {len(decompressed_data)=}"
@@ -226,6 +233,7 @@ class GVASFile:
         stream: BinaryIO,
         game_version: GameVersion,
         compression_type: CompressionType,
+        ucompressed_file_name: str = None,
     ) -> None:
         """Write GVAS file to stream"""
 
@@ -242,18 +250,34 @@ class GVASFile:
 
         # Get buffer contents
         data_to_write = buffer.getvalue()
+
         decompressed_size = len(data_to_write)
         compressed_size = decompressed_size  # for no compression
-        # print(f"Total bytes serialized: {decompressed_size}")
 
         # ====================================
         # Handle compression options
         if compression_type == CompressionType.ZLIB_TWICE:
+            # hack to save uncompressed
+            if ucompressed_file_name:
+                print(f"Writing {ucompressed_file_name}")
+                with open(ucompressed_file_name, "wb") as f:
+                    f.write(data_to_write)
+
             data_to_write = zlib.compress(data_to_write)  # once
+            first_compressed_size = len(data_to_write)
+            print(f"We have: {first_compressed_size=}")
+
             data_to_write = zlib.compress(data_to_write)  # twice
-            compressed_size = len(data_to_write)
+            second_compressed_size = len(data_to_write)
+            print(f"We have: {second_compressed_size=}")
+
+            # tricky folks; they store the first compressed size, not the final
+            compressed_size = first_compressed_size
 
         elif compression_type == CompressionType.ZLIB:
+            print(f"Writing {ucompressed_file_name}")
+            with open(ucompressed_file_name, "wb") as f:
+                f.write(data_to_write)
             data_to_write = zlib.compress(data_to_write)  # once
             compressed_size = len(data_to_write)
 

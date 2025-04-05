@@ -74,8 +74,17 @@ test_file_list = [
 # always a quick retest
 # test_file_list = ["Islands of Insight Example.sav"]  # working!
 # test_file_list = ["resources/test/component8.sav"]
-# game_version = GameVersion.DEFAULT
+game_version = GameVersion.DEFAULT
 compression = CompressionType.NONE
+
+# test_file_list = ["resources/test/palworld_zlib.sav"]  # working!
+# game_version = GameVersion.PALWORLD
+# compression = CompressionType.ZLIB
+# SerializationTools.hints = {
+#     "worldSaveData.StructProperty.MapObjectSpawnerInStageSaveData.MapProperty.Value.StructProperty.SpawnerDataMapByLevelObjectInstanceId.MapProperty.Key.StructProperty": "Guid",
+#     "worldSaveData.StructProperty.BaseCampSaveData.MapProperty.Key.StructProperty": "Guid",
+#     "worldSaveData.StructProperty.GroupSaveDataMap.MapProperty.Key.StructProperty": "Guid",
+# }
 
 test_file_list = ["resources/test/palworld_zlib_twice.sav"]  # working!
 game_version = GameVersion.PALWORLD
@@ -108,8 +117,9 @@ for test_file in test_file_list:
 
     # dump binary to work toward idempotence for read, write, rinse and repeat
     output_file = f"{test_file}.idempotent"
+    uncompressed_output_file = f"{test_file}.decompressed.idempotent"
     # print(f"Writing {output_file}")
     with open(output_file, "wb") as f:
-        gvas_file.write(f, game_version, compression)
+        gvas_file.write(f, game_version, compression, uncompressed_output_file)
 
     compare_binary_files(test_file, output_file)

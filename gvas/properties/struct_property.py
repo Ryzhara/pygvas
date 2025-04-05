@@ -133,11 +133,23 @@ class StructProperty(PropertyTrait):
                 body_bytes += self.value.properties.write(body_buffer)
 
             else:  # fully custom
-                for property_name, property_value in self.value.properties.items():
-                    body_bytes += write_string(body_buffer, property_name)
-                    body_bytes += property_value.write(body_buffer, include_header=True)
-                # Write "None" terminator
-                body_bytes += write_string(body_buffer, "None")
+                try:
+                    if type(self.value.properties) is not dict:
+                        # this was a "special" type, likely from HINTS
+                        body_bytes += self.value.properties.write(body_buffer)
+                    else:
+                        for (
+                            property_name,
+                            property_value,
+                        ) in self.value.properties.items():
+                            body_bytes += write_string(body_buffer, property_name)
+                            body_bytes += property_value.write(
+                                body_buffer, include_header=True
+                            )
+                        # Write "None" terminator
+                        body_bytes += write_string(body_buffer, "None")
+                except Exception as e:
+                    raise e
 
         assert body_bytes == len(body_buffer.getvalue())
 
