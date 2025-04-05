@@ -19,7 +19,8 @@ from .error import DeserializeError, SerializeError
 from .engine_versions import EngineVersion, FEngineVersion
 from .game_version import GameVersion
 from .gvas_types import HashableIndexMap
-from .properties import Property, SerializationTools
+from .properties import Property
+from .properties.property_base import SerializationTools
 from .utils import *
 
 

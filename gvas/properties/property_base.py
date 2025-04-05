@@ -11,7 +11,6 @@ Key differences from Rust version:
 import enum
 import uuid
 from abc import ABC, abstractmethod
-from dataclasses import dataclass, asdict, field
 from typing import Optional, Dict, Any, BinaryIO, List, Tuple
 
 from ..custom_versions import FEditorObjectVersion, FUE5ReleaseStreamObjectVersion

@@ -11,7 +11,6 @@ from dataclasses import dataclass
 from time import struct_time
 from typing import List, Optional, Any, BinaryIO
 from io import BytesIO
-
 from .property_base import Property, PropertyTrait, SerializationTools
 from .struct_property import StructProperty
 from ..utils import *
@@ -20,7 +19,6 @@ from .standard_types import (
     is_special_struct,
     get_special_struct_instance,
 )
-from ..utils import read_int16, read_int64
 
 g_bare_type_readers = {
     "StrProperty": read_string,

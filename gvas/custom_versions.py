@@ -1,11 +1,8 @@
 # Custom version information
 import uuid
-from dataclasses import dataclass
-import enum
-from io import BytesIO
 
-from .utils import *
 from .engine_versions import *
+from .utils import *
 
 
 # Used for predefining custom versions for nicer checking when parsing
