@@ -79,6 +79,7 @@ compression = CompressionType.NONE
 #   text_property_noarray.bin -- SaveGameData.StructProperty.QuestsStatus.ArrayProperty.QuestsStatus.ShortDescription.TextProperty
 # test_file_list = ["resources/test/text_property_noarray.bin"]  # Working!
 
+# test_file_list = ["resources/test/vector2d.sav"]
 
 for test_file in test_file_list:
     # print(f"Loading {test_file}")

@@ -27,7 +27,7 @@ class ObjectProperty(PropertyTrait):
     ) -> None:
         length = 0
         if include_header:
-            length, _array_index = read_standard_header(stream)
+            length, *_ = read_standard_header(stream)
 
         # Read value
         with ByteCountValidator(

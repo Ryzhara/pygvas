@@ -41,7 +41,7 @@ class DelegateProperty(PropertyTrait):
     ) -> None:
         length = 0
         if include_header:
-            length, _array_index = read_standard_header(stream)
+            length, *_ = read_standard_header(stream)
 
         self.value = Delegate(object="", function_name="")
         # Read value
@@ -108,7 +108,7 @@ class MulticastInlineDelegateProperty(PropertyTrait):
     ) -> None:
         length = 0
         if include_header:
-            length, _array_index = read_standard_header(stream)
+            length, *_ = read_standard_header(stream)
 
         self.value = MulticastScriptDelegate()
         with ByteCountValidator(

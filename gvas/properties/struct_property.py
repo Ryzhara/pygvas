@@ -64,7 +64,7 @@ class StructProperty(PropertyTrait):
         length = 0
         type_name_override = None
         if include_header:
-            length, _array_index, self.type_name, self.guid = read_standard_header(
+            length, self.type_name, self.guid = read_standard_header(
                 stream, stream_readers=[read_string, read_guid]
             )
 

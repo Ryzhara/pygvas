@@ -32,11 +32,14 @@ class TextProperty(PropertyTrait):
         text_property_blob = SerializationTools.text_property_blob
         length = 0
         if include_header:
-            length, _array_index = read_standard_header(stream)
+            length, *_ = read_standard_header(stream)
 
-        self.flags = read_uint32(stream)
-        bytes_remaining = text_property_blob - 4
-        self.byte_data = read_bytes(stream, bytes_remaining)
+        with ByteCountValidator(
+            stream, length, do_validation=include_header
+        ) as _validator:
+            self.flags = read_uint32(stream)
+            bytes_remaining = text_property_blob - 4
+            self.byte_data = read_bytes(stream, bytes_remaining)
 
     def write(
         self,

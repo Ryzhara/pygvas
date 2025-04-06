@@ -53,7 +53,7 @@ class SetProperty(PropertyTrait):
                 "SetProperty is not supported in arrays", stream.tell()
             )
 
-        length, _array_index, self.property_type = read_standard_header(
+        length, self.property_type = read_standard_header(
             stream, stream_readers=[read_string]
         )
 

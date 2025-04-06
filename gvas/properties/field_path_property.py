@@ -48,7 +48,7 @@ class FieldPathProperty(PropertyTrait):
     ) -> None:
         length = 0
         if include_header:
-            length, _array_index = read_standard_header(stream)
+            length, *_ = read_standard_header(stream)
 
         self.value = FieldPath(path=[], resolved_owner="")
         with ByteCountValidator(

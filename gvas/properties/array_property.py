@@ -105,7 +105,7 @@ class ArrayProperty(PropertyTrait):
                 "ArrayProperty is not supported in arrays", stream.tell()
             )
 
-        length, _array_index, self.property_type = read_standard_header(
+        length, self.property_type = read_standard_header(
             stream, stream_readers=[read_string]
         )
 
@@ -138,10 +138,8 @@ class ArrayProperty(PropertyTrait):
                     member_type == self.property_type
                 ), f"Property array member type mismatch: {member_type} != {self.property_type}"
 
-                expected_byte_count, _array_index, self.type_name, self.guid = (
-                    read_standard_header(
-                        stream, stream_readers=[read_string, read_guid]
-                    )
+                expected_byte_count, self.type_name, self.guid = read_standard_header(
+                    stream, stream_readers=[read_string, read_guid]
                 )
 
                 with ByteCountValidator(

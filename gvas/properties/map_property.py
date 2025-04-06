@@ -55,7 +55,7 @@ class MapProperty(PropertyTrait):
 
         if include_header:
             # content_length = self.read_header(stream)
-            length, _array_index, self.key_type, self.value_type = read_standard_header(
+            length, self.key_type, self.value_type = read_standard_header(
                 stream, stream_readers=[read_string, read_string]
             )
 

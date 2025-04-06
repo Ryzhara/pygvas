@@ -30,7 +30,7 @@ class EnumProperty(PropertyTrait):
         """Read enum value from stream"""
         length = 0
         if include_header:
-            length, _array_index, self.enum_type = read_standard_header(
+            length, self.enum_type = read_standard_header(
                 stream, stream_readers=[read_string]
             )
 

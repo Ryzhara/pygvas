@@ -32,7 +32,7 @@ class ByteCountValidator:
     def __exit__(self, exc_type, exc_val, exc_tb):
         if exc_type is not None:
             print(
-                f"An exception of type {exc_type} was caught in ByteCountValidator: {exc_val}\n\t{self.start_byte=} {self.expected_byte_count=} {self.do_validation=}"
+                f"An exception of type {exc_type} was caught in ByteCountValidator: {exc_val}\n\t{self.start_byte=} {self.expected_byte_count=} {self.do_validation=}\n\t{exc_tb}"
             )
             return False
 
@@ -40,11 +40,11 @@ class ByteCountValidator:
             return
         self.end_byte = self.stream.tell()
         found_bytes = self.end_byte - self.start_byte
-        assert (
-            found_bytes == self.expected_byte_count
-        ), DeserializeError.invalid_read_count(
-            self.expected_byte_count, found_bytes, self.start_byte
-        )
+        if found_bytes != self.expected_byte_count:
+            raise DeserializeError.invalid_read_count(
+                self.expected_byte_count, found_bytes, self.start_byte
+            )
+        return False
 
 
 # ============================================
@@ -314,18 +314,40 @@ def read_standard_header(
     assert_array_index=0,
     stream_readers=None,  # read after array index and before terminator
 ) -> List[Any]:
+    """
+    Args:
+        stream: source from which to read data
+        assert_length: if not None, assert required value
+        assert_array_index: if not None, assert required value
+        stream_readers: list of function taking a stream and returning something
 
-    result_list = [
-        read_uint32(stream, assert_length),  # length; almost always something needed
-        read_uint32(stream, assert_array_index),  # array_index; almost always zero
-    ]
+    Data structure to be read:
+        UINT32 - length
+        UINT32 - array_index
+        [TYPE_1, ... TYPE_N] - as requested
+        UINT8 -- REUQIRED, NOT RETURENED
+
+    Returns:
+        [
+        length
+        OPTIONAL: array_index
+        OPTIONAL: [TYPE_1, ... TYPE_N]
+        ]
+    """
+
+    length = read_uint32(stream, assert_length)
+    array_index = read_uint32(stream, assert_array_index)
+
+    result_list = [length]  # length; almost always something needed
+    if assert_array_index is None:
+        result_list.append(array_index)
 
     # if there is a list of reader functions, apply them to extract data
     if stream_readers is not None:
         for reader in stream_readers:
             result_list.append(reader(stream))
 
-    # last step is to ensure a null byte terminator, but we do not return it
+    # last, ensure a null byte terminator; we do not return it
     read_uint8(stream, 0)
 
     return result_list

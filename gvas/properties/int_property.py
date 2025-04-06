@@ -96,7 +96,7 @@ class ByteProperty(PropertyTrait):
     ) -> None:
         """Read byte property from stream"""
         if include_header:
-            suggested_length, _array_index, self.name = read_standard_header(
+            suggested_length, self.name = read_standard_header(
                 stream, stream_readers=[read_string]
             )
 
