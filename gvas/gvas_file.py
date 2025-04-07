@@ -9,6 +9,7 @@ Key differences from Rust version:
 """
 
 import os
+import zlib
 from dataclasses import dataclass, asdict
 from typing import Dict, Optional, BinaryIO, List
 
@@ -16,7 +17,7 @@ from io import BytesIO
 
 from .error import DeserializeError, SerializeError
 from .engine_versions import EngineVersion, FEngineVersion
-from .game_version import GameVersion, CompressionType, GVAS_MAGIC
+from .game_version import GameVersion, CompressionType, GVAS_MAGIC, PLZ_MAGIC
 from .gvas_types import HashableIndexMap
 from .properties import Property
 from .properties.property_base import SerializationTools, ContextScopeTracker
@@ -24,18 +25,16 @@ from .utils import *
 
 
 # Stores CustomVersions serialized by UE4
-# [derive(Debug, Clone, PartialEq, Eq)]
-# [cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 @dataclass
 class FCustomVersion:
     # Key
-    key: str = None  # uuid = uuid.UUID(int=0)
+    key: str = None
     # Value
     version: int = 0
 
     # Read FCustomVersion from a binary file
     def read(self, stream: BinaryIO) -> None:
-        self.key = str(read_guid(stream))
+        self.key = str(read_guid(stream)).upper()
         self.version = read_uint32(stream)
 
     # Write FCustomVersion to a binary file

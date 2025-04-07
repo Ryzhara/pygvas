@@ -79,7 +79,7 @@ class SerializationTools:
         cls, required_version: FEditorObjectVersion | FUE5ReleaseStreamObjectVersion
     ) -> bool:
         guid_key = required_version.custom_version_guid
-        guid_key_str = str(guid_key)
+        guid_key_str = str(guid_key).upper()
         supported_version = cls.custom_versions.get(guid_key_str, 0)
         return supported_version >= required_version.value
 

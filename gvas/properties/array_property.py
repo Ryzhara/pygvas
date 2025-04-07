@@ -70,7 +70,7 @@ g_bare_type_writers = {
 class ArrayProperty(PropertyTrait):
     """A property that holds an array of values"""
 
-    type = "ArrayProperty"
+    type: str = "ArrayProperty"
     field_name: Optional[str] = None
     type_name: Optional[str] = None
     property_type: str = ""
@@ -159,13 +159,9 @@ class ArrayProperty(PropertyTrait):
             #     self.values.append(array_property.value)
 
         elif self.property_type == "ByteProperty":
-            suggested_length = (
-                (length - 4) / property_count
-                if (property_count > 0 and length >= 4)
-                else 0
-            )
-            for _ in range(property_count):
-                # this is an array of bytes, so just make it a thing
+            # read it all as one blob
+            suggested_length = (length - 4) if length >= 4 else 0
+            if property_count > 0:
                 array_property = Property.new(
                     stream,
                     self.property_type,
@@ -210,13 +206,12 @@ class ArrayProperty(PropertyTrait):
             text_property: TextProperty = self.values[0]
             property_count = text_property.actual_property_count
 
-        # elif self.property_type == "ByteProperty" and property_count > 0:
-        #     byte_property: ByteProperty = self.values[0]
-        #     property_count = (
-        #         1
-        #         if type(byte_property.value.value) is int
-        #         else len(byte_property.value.value)
-        #     )
+        # this method is MUCH better than serializing each byte independently. Who does that?!
+        elif self.property_type == "ByteProperty" and property_count > 0:
+            byte_property: ByteProperty = self.values[0]
+            property_count = (
+                1 if type(byte_property.value) is int else len(byte_property.value)
+            )
 
         properties_body_start = array_buffer.tell()
         array_bytes += write_uint32(array_buffer, property_count)
@@ -251,10 +246,6 @@ class ArrayProperty(PropertyTrait):
             for value in self.values:
                 array_bytes += bare_type_writer(array_buffer, value)
 
-        # elif self.property_type == "ByteProperty":
-        #     # read was special, but write is not
-        #     for value in self.values:
-        #         array_bytes += value.write(array_buffer, include_header=False)
         else:  # catch everything else
             for value in self.values:
                 try:

@@ -17,7 +17,7 @@ from ..utils import *
 class MapProperty(PropertyTrait):
     """A property that holds a key-value mapping"""
 
-    type = "MapProperty"
+    type: str = "MapProperty"
     key_type: str = ""
     value_type: str = ""
     allocation_flags: int = 0

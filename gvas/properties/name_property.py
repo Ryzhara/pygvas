@@ -19,7 +19,7 @@ from ..utils import *
 class NameProperty(PropertyTrait):
     """A property that holds a name"""
 
-    type = "NameProperty"
+    type: str = "NameProperty"
     array_index: int = 0
     value: Optional[str] = None
 

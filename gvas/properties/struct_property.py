@@ -42,10 +42,10 @@ class StructPropertyValue:
 class StructProperty(PropertyTrait):
     """A property that holds structured data"""
 
-    type = "StructProperty"
-    type_name: str = ""
-    guid: uuid = None
-    value: Optional[StructPropertyValue] = None
+    type: str = "StructProperty"
+    type_name: str = None
+    # guid: uuid = None
+    value: Optional[SpecialStructTrait | Dict | None] = None
 
     def read(
         self,
@@ -56,9 +56,10 @@ class StructProperty(PropertyTrait):
         length = 0
         type_name_override = None
         if include_header:
-            length, self.type_name, self.guid = read_standard_header(
+            length, self.type_name, _guid = read_standard_header(
                 stream, stream_readers=[read_string, read_guid]
             )
+            assert _guid == uuid.UUID(int=0)
 
         #  This modelled after the line in RUST file struct_property.rs
         #  "StructProperty" => match include_header {
@@ -82,10 +83,11 @@ class StructProperty(PropertyTrait):
         if is_special_struct(deserialize_type):
             property_value = get_special_struct_instance(deserialize_type)
             property_value.read(stream)
-            self.value = StructPropertyValue(deserialize_type, property_value)
+            self.value = property_value
+            # self.value = StructPropertyValue(deserialize_type, property_value)
 
         else:  # fully custom
-            self.value = StructPropertyValue(deserialize_type, {})
+            self.value = {}
             while True:
                 if (property_name := read_string(stream)) == "None":
                     break
@@ -94,7 +96,7 @@ class StructProperty(PropertyTrait):
                     property_value = Property.new(
                         stream, property_type, include_header=True
                     )
-                    self.value.properties[property_name] = property_value
+                    self.value[property_name] = property_value
 
     def write(
         self,
@@ -107,13 +109,13 @@ class StructProperty(PropertyTrait):
         body_bytes = 0
 
         if self.value:
-            if isinstance(self.value.properties, SpecialStructTrait):
-                body_bytes += self.value.properties.write(body_buffer)
+            if isinstance(self.value, SpecialStructTrait):
+                body_bytes += self.value.write(body_buffer)
             else:
                 for (
                     property_name,
                     property_value,
-                ) in self.value.properties.items():
+                ) in self.value.items():
                     body_bytes += write_string(body_buffer, property_name)
                     body_bytes += property_value.write(body_buffer, include_header=True)
                 # Write "None" terminator
@@ -127,7 +129,7 @@ class StructProperty(PropertyTrait):
                 stream,
                 "StructProperty",
                 length=body_bytes,
-                data_to_write=[self.type_name, self.guid],
+                data_to_write=[self.type_name, uuid.UUID(int=0)],
             )
 
         # Write buffer contents with optional header

@@ -35,7 +35,7 @@ class FieldPath:
 class FieldPathProperty(PropertyTrait):
     """A property that holds an FieldPath value"""
 
-    type = "FieldPathProperty"
+    type: str = "FieldPathProperty"
     value: FieldPath = None
 
     def read(

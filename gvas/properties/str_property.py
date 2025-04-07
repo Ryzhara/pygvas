@@ -20,7 +20,8 @@ from ..utils import *
 
 @dataclass
 class StrProperty(PropertyTrait):
-    type = "StrProperty"
+
+    type: str = "StrProperty"
     value: Optional[str] = None
 
     def read(

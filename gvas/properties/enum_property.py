@@ -14,7 +14,7 @@ from ..utils import *
 class EnumProperty(PropertyTrait):
     """A property that holds an enumeration value"""
 
-    type = "EnumProperty"
+    type: str = "EnumProperty"
     enum_type: Optional[str] = None
     value: Optional[str] = None
 

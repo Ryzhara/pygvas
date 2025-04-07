@@ -4,31 +4,31 @@ import enum
 from dataclasses import dataclass
 from .utils import *
 
-
-# Used for predefining custom versions for nicer checking when parsing
-class CustomVersionTrait:
-    # Custom version friendly name
-    friendly_name: str  # &'static str;
-    # Custom version uuid
-    guid: uuid
-    # Mappings from engine version to version number of this custom version
-    #
-    # # Example
-    # UE4_27 -> 13
-    # UE4_23 -> 12
-    version_mappings: dict[str, int]  # static [(EngineVersion, i32)];
-
-    def initialize(
-        self,
-        friendly_name: str,
-        guid: uuid.UUID,
-        version_mappings: dict[object, int],
-    ) -> None:
-        self.friendly_name = friendly_name
-        self.guid = guid
-        self.version_mappings: dict[object, int] = version_mappings
-
-    # def lookup(self, EngineVersion):
+#
+# # Used for predefining custom versions for nicer checking when parsing
+# class CustomVersionTrait:
+#     # Custom version friendly name
+#     friendly_name: str  # &'static str;
+#     # Custom version uuid
+#     guid: uuid
+#     # Mappings from engine version to version number of this custom version
+#     #
+#     # # Example
+#     # UE4_27 -> 13
+#     # UE4_23 -> 12
+#     version_mappings: dict[str, int]  # static [(EngineVersion, i32)];
+#
+#     def initialize(
+#         self,
+#         friendly_name: str,
+#         guid: uuid.UUID,
+#         version_mappings: dict[object, int],
+#     ) -> None:
+#         self.friendly_name = friendly_name
+#         self.guid = guid
+#         self.version_mappings: dict[object, int] = version_mappings
+#
+#     # def lookup(self, EngineVersion):
 
 
 # Custom serialization version for changes made in Dev-Editor stream.

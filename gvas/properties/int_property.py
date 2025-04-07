@@ -31,6 +31,7 @@ from ..utils import *
 class BoolProperty(PropertyTrait):
     """A property that holds a boolean value"""
 
+    type: str = "BoolProperty"
     value: bool = False
 
     def read(

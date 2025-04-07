@@ -3,7 +3,7 @@ from dataclasses import dataclass
 
 from gvas import GVASFile, DeserializeError
 from gvas import GameVersion, CompressionType
-from gvas.properties import Property, PropertyTrait
+from gvas.properties import Property, PropertyTrait, SerializationTools
 from gvas.utils import *
 
 from test_utilities import compare_binary_files
