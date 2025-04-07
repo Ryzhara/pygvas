@@ -20,10 +20,9 @@ from ..utils import *
 
 @dataclass
 class StrProperty(PropertyTrait):
+    type = "StrProperty"
 
-    def __init__(self, type_name: str, value: Optional[str] = None):
-        """Create a new string property"""
-        self.type = type_name
+    def __init__(self, value: Optional[str] = None):
         self.value = value
 
     def read(

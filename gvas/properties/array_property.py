@@ -29,6 +29,8 @@ from ..utils import read_int16, read_int64
 
 g_bare_type_readers = {
     "StrProperty": read_string,
+    "NameProperty": read_string,
+    "EnumProperty": read_string,
     "GuidProperty": read_guid,
     "BoolProperty": read_bool,
     "Int8Property": read_int8,
@@ -46,6 +48,8 @@ g_bare_type_readers = {
 
 g_bare_type_writers = {
     "StrProperty": write_string,
+    "NameProperty": write_string,
+    "EnumProperty": write_string,
     "GuidProperty": write_guid,
     "BoolProperty": write_bool,
     "Int8Property": write_int8,
@@ -66,33 +70,24 @@ g_bare_type_writers = {
 class ArrayProperty(PropertyTrait):
     """A property that holds an array of values"""
 
-    property_type: str = ""
+    type = "ArrayProperty"
     field_name: Optional[str] = None
     type_name: Optional[str] = None
-    guid: Optional[uuid] = None
+    property_type: str = ""
+    guid: Optional[uuid] = None  # always ZEROS
     values: List[Any] = None
 
-    def __post_init__(self):
-        if self.values is None:
-            self.values = []
-        if self.guid is None:
-            self.guid = uuid.UUID(int=0)
-
-    @classmethod
-    def new(
-        cls,
-        property_type: str,
+    def __init__(
+        self,
         field_name: Optional[str] = None,
         type_name: Optional[str] = None,
+        property_type: Optional[str] = None,
         guid: Optional[uuid] = None,
-    ) -> "ArrayProperty":
-        """Create a new array property"""
-        return cls(
-            property_type=property_type,
-            field_name=field_name,
-            type_name=type_name,
-            guid=guid or uuid.UUID(int=0),
-        )
+    ):
+        self.field_name = field_name
+        self.type_name = type_name
+        self.property_type = property_type
+        self.guid = guid or uuid.UUID(int=0)
 
     def read(
         self,
@@ -129,7 +124,7 @@ class ArrayProperty(PropertyTrait):
 
         if self.property_type == "StructProperty":
 
-            # This embedded struct header differs slightly by repeating the type.
+            # This embedded struct header differs slightly by repeating the field_name.
             self.field_name = read_string(stream)
 
             with ContextScopeTracker(self.field_name) as _scope_tracker:
@@ -141,6 +136,8 @@ class ArrayProperty(PropertyTrait):
                 expected_byte_count, self.type_name, self.guid = read_standard_header(
                     stream, stream_readers=[read_string, read_guid]
                 )
+                # TODO: come back and remove wasted storage for always-ZERO guid?
+                assert self.guid == uuid.UUID(int=0)
 
                 with ByteCountValidator(
                     stream, expected_byte_count, do_validation=True
@@ -163,8 +160,8 @@ class ArrayProperty(PropertyTrait):
             array_property = Property.new(
                 stream, self.property_type, include_header=False
             )
-            array_property.value.actual_property_count = property_count
-            self.values.append(array_property.value)
+            array_property.actual_property_count = property_count
+            self.values.append(array_property)
 
             # for when this is fixed
             # for _ in range(property_count):
@@ -272,7 +269,10 @@ class ArrayProperty(PropertyTrait):
         #         array_bytes += value.write(array_buffer, include_header=False)
         else:  # catch everything else
             for value in self.values:
-                array_bytes += value.write(array_buffer, include_header=False)
+                try:
+                    array_bytes += value.write(array_buffer, include_header=False)
+                except Exception as e:
+                    print(f"Failed to write {self.property_type}: {e}")
 
         properties_body_end = array_buffer.tell()
         assert (

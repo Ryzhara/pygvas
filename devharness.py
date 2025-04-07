@@ -57,13 +57,13 @@ compression = CompressionType.NONE
 #   features_01.bin, -- custom struct @ FSDEventRewardsSave.StructProperty.EventsSeen.SetProperty.StructProperty
 #   regression_01.bin,  -- custom struct @ FSDEventRewardsSave.StructProperty.EventsSeen.SetProperty.StructProperty
 #   text_property_noarray.bin -- SaveGameData.StructProperty.QuestsStatus.ArrayProperty.QuestsStatus.ShortDescription.TextProperty
-# test_file_list = ["resources/test/text_property_noarray.bin"]  # Working!
+# test_file_list = ["resources/test/SaveSlot_03.bin"]  # Working!
 
 
 # always a quick retest
-test_file_list = ["Islands of Insight Example.sav"]  # working!
+# test_file_list = ["Islands of Insight Example.sav"]  # working!
 # test_file_list = ["resources/test/vector2d.sav"]
-# test_file_list = ["resources/test/component8.sav"]
+# test_file_list = ["resources/test/SaveSlot_03.sav"]
 
 for test_file in test_file_list:
     # print(f"Loading {test_file}")

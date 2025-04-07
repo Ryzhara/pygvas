@@ -37,9 +37,9 @@ class FieldPathProperty(PropertyTrait):
 
     value: FieldPath
 
-    @classmethod
-    def new(cls, value: FieldPath) -> "FieldPathProperty":
-        return cls(value=value)
+    def __init__(self, value: Optional[FieldPath] = None):
+        self.type = "FieldPathProperty"
+        value = value
 
     def read(
         self,

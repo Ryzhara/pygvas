@@ -95,11 +95,9 @@ class MulticastScriptDelegate:
 @dataclass()
 class MulticastInlineDelegateProperty(PropertyTrait):
 
-    value: MulticastScriptDelegate = None
-
-    @classmethod
-    def new(cls, value: MulticastScriptDelegate) -> "MulticastInlineDelegateProperty":
-        return cls(value=value)
+    def __init__(self, value: MulticastScriptDelegate = None):
+        self.type = "MulticastInlineDelegateProperty"
+        self.value = value
 
     def read(
         self,

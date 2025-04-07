@@ -8,12 +8,8 @@ Key differences from Rust version:
 """
 
 from dataclasses import dataclass
-from email.base64mime import body_decode
-from io import BytesIO
-from typing import Dict, Optional, BinaryIO, Any
 
 from .property_base import Property, PropertyTrait, ContextScopeTracker
-from ..gvas_types import HashableIndexMap
 from ..utils import *
 
 
@@ -24,27 +20,14 @@ class MapProperty(PropertyTrait):
     key_type: str = ""
     value_type: str = ""
     allocation_flags: int = 0
-    values: HashableIndexMap | None = None
+    values: List[Tuple] = None
 
-    def __post_init__(self):
-        if self.values is None:
-            self.values = HashableIndexMap()
-
-    @classmethod
-    def new(cls, key_type: str, value_type: str) -> "MapProperty":
+    def __init__(self, key_type: str = None, value_type: str = None):
         """Create a new map property"""
-        return cls(key_type=key_type, value_type=value_type)
-
-    def read_header(self, stream: BinaryIO) -> (int, str):
-
-        # Read length and array index
-        length = read_uint32(stream)
-        _array_index = read_uint32(stream, 0)
-        self.key_type = read_string(stream)
-        self.value_type = read_string(stream)
-        _header_terminator = read_uint8(stream, 0)
-        # END OF HEADER FOR MAP PROPERTY
-        return length
+        self.type = "MapProperty"
+        self.key_type = key_type
+        self.value_type = value_type
+        self.allocation_flags = 0
 
     def read(
         self,
@@ -52,7 +35,7 @@ class MapProperty(PropertyTrait):
         include_header: bool = True,
     ) -> None:
         """Read map from stream"""
-
+        length = 0
         if include_header:
             # content_length = self.read_header(stream)
             length, self.key_type, self.value_type = read_standard_header(
@@ -67,7 +50,7 @@ class MapProperty(PropertyTrait):
             element_count = read_uint32(stream)
 
             # Read entries
-            self.values = {}
+            self.values: List[Tuple] = []
             for _ in range(element_count):
                 with ContextScopeTracker("Key") as _scope_tracker:
                     key_prop = Property.new(stream, self.key_type, include_header=False)
@@ -75,7 +58,10 @@ class MapProperty(PropertyTrait):
                     value_prop = Property.new(
                         stream, self.value_type, include_header=False
                     )
-                self.values[key_prop] = value_prop
+                try:
+                    self.values.append((key_prop, value_prop))
+                except Exception as e:
+                    print(f"error: {e}")
 
     def write(
         self,
@@ -90,21 +76,14 @@ class MapProperty(PropertyTrait):
         # START OF BODY
         body_start = body_buffer.tell()
         buffer_bytes_written += write_uint32(body_buffer, self.allocation_flags)
-        element_count = len(self.values.keys())
+        element_count = len(self.values)
         buffer_bytes_written += write_uint32(body_buffer, element_count)
 
         # Write entries
-        for key, value in self.values.items():
-            # wrap them with correct type, then write
-            key_property = Property(self.key_type, key)
-            buffer_bytes_written += key_property.write(
-                body_buffer, include_header=False
-            )
+        for key, value in self.values:
+            buffer_bytes_written += key.write(body_buffer, include_header=False)
+            buffer_bytes_written += value.write(body_buffer, include_header=False)
 
-            value_property = Property(self.value_type, value)
-            buffer_bytes_written += value_property.write(
-                body_buffer, include_header=False
-            )
         body_end = body_buffer.tell()
         body_bytes = body_end - body_start
         assert body_bytes == buffer_bytes_written

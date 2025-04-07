@@ -12,6 +12,7 @@ import enum
 import uuid
 from abc import ABC, abstractmethod
 from typing import Optional, Dict, Any, BinaryIO, List, Tuple
+from xml.sax.handler import property_encoding, property_dom_node
 
 from ..custom_versions import FEditorObjectVersion, FUE5ReleaseStreamObjectVersion
 from ..error import DeserializeError
@@ -101,6 +102,10 @@ class ContextScopeTracker:
             print(
                 f"An exception of type {exc_type} occurred: {exc_val} with context\n\t{SerializationTools.get_path()}"
             )
+            import traceback
+            import sys
+
+            traceback.print_exception(exc_type, exc_val, exc_tb, file=sys.stdout)
             return False
         # Don't pop so we can have deepest context for debugging
         SerializationTools.pop_path()
@@ -147,19 +152,11 @@ class Property:
     Python equivalent of the Property enum in Rust
     """
 
-    def __init__(self, type_name: str, value: Any):
-        self.type = type_name
-        self.value = value
+    def __init__(self):
+        pass
 
-    @classmethod
-    def new(
-        cls,
-        stream: BinaryIO,
-        property_type: str,
-        include_header: bool = True,
-        suggested_length: Optional[int] = None,
-    ) -> "Property":
-        """Create a new property instance from a binary stream"""
+    @staticmethod
+    def property_class_from_type(property_type: str) -> Any:
         from . import (
             ArrayProperty,
             BoolProperty,
@@ -218,29 +215,39 @@ class Property:
             "DoubleProperty": DoubleProperty,
         }
 
-        with ContextScopeTracker(property_type) as _scope_tracker:
-            # Get the appropriate property class
-            if property_type in type_map.keys():
-                prop_class = type_map.get(property_type)
-                prop = prop_class(property_type)
+        if property_type in type_map.keys():
+            property_instance = type_map[property_type]()
+            return property_instance
+        # else:
+        print(f"Unknown property type: {property_type}")
+        raise DeserializeError(f"Unknown property type: {property_type}")
 
-            else:
-                print(f"Unknown property type: {property_type}")
-                raise DeserializeError(f"Unknown property type: {property_type}")
+    @classmethod
+    def new(
+        cls,
+        stream: BinaryIO,
+        property_type: str,
+        include_header: bool = True,
+        suggested_length: Optional[int] = None,
+    ) -> "Property":
+        """Create a new property instance from a binary stream"""
+
+        with ContextScopeTracker(property_type) as _scope_tracker:
+            # Get the appropriate property class instance
+            property_instance = Property.property_class_from_type(property_type)
 
             # Handle special cases for properties that need suggested_length
             if (
                 property_type == "ByteProperty"
-                and hasattr(prop, "read")
-                and callable(getattr(prop, "read"))
+                and hasattr(property_instance, "read")
+                and callable(getattr(property_instance, "read"))
             ):
-                prop.read(stream, include_header, suggested_length)
+                property_instance.read(stream, include_header, suggested_length)
             else:
                 # Standard case
-                prop.read(stream, include_header)
+                property_instance.read(stream, include_header)
 
-        # print(f"Property read: {asdict(prop)}")
-        return cls(property_type, prop)
+        return property_instance
 
     def write(
         self,
