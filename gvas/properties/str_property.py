@@ -20,14 +20,11 @@ from ..utils import *
 
 @dataclass
 class StrProperty(PropertyTrait):
-    """A property that holds a string value"""
 
-    value: Optional[str] = None
-
-    @classmethod
-    def new(cls, value: Optional[str] = None) -> "StrProperty":
+    def __init__(self, type_name: str, value: Optional[str] = None):
         """Create a new string property"""
-        return cls(value=value)
+        self.type = type_name
+        self.value = value
 
     def read(
         self,

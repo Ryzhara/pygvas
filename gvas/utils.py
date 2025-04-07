@@ -2,14 +2,99 @@
 Common utility functions for GVAS
 """
 
-import struct
+import json
+import dataclasses
 import uuid
-import zlib
+import datetime
+import struct
 from io import BytesIO
 from typing import BinaryIO, Any, List, Tuple, Dict
 
 from .error import *
-from .game_version import GVAS_MAGIC, PLZ_MAGIC, CompressionType
+
+
+# ============================================
+class EnhancedJSONEncoder(json.JSONEncoder):
+
+    def default(self, obj):
+        # if isinstance(obj, (int, float, str, bool, type(None))):
+        #     return obj
+
+        if isinstance(obj, uuid.UUID):
+            # print(f"uuid: {obj}")
+            return str(obj)
+
+        if isinstance(obj, datetime.datetime):
+            return obj.isoformat()
+
+        # if isinstance(obj, list):
+        #     return [str(item) for item in obj]
+        #
+        # if isinstance(obj, tuple):
+        #     return [str(item) for item in obj]
+        #
+        # if isinstance(obj, dict):
+        #     return {key: str(value) for key, value in obj.items()}
+
+        if isinstance(obj, bytes):
+            return obj.hex()
+
+        if dataclasses.is_dataclass(obj):
+            return str(obj)
+            # return dataclasses.asdict(obj)
+
+        return super().default(obj)
+
+
+def to_json_structure(obj):
+    if isinstance(obj, (int, float, str, bool, type(None))):
+        return obj
+    if isinstance(obj, list):
+        return [to_json_structure(item) for item in obj]
+    if isinstance(obj, tuple):
+        return [to_json_structure(item) for item in obj]
+    if isinstance(obj, dict):
+        return {key: to_json_structure(value) for key, value in obj.items()}
+    if isinstance(obj, bytes):
+        return obj.hex()
+
+    if isinstance(obj, uuid.UUID):
+        return str(obj)
+
+    if isinstance(obj, datetime.datetime):
+        return obj.isoformat()
+
+    # Check if the object has a __dict__ attribute
+    if hasattr(obj, "__dict__"):
+        return {key: to_json_structure(value) for key, value in vars(obj).items()}
+
+    # Handle other cases (e.g., built-in types)
+    return str(obj)
+
+
+def sav_to_json(gvas_file, string=False):
+
+    savJSON = {
+        "header": to_json_structure(gvas_file.header),
+        "properties": {},  # use dictionary to simplify json path expressions
+    }
+    for prop_name, prpo_value in gvas_file.properties.items():
+        # print(f"{prop_name=} converting {prpo_value}")
+        print(f"converting {prop_name=}")
+        json_blob = to_json_structure(prpo_value)
+        print(f"saving {prop_name=}")
+        savJSON["properties"][prop_name] = json_blob
+
+    print(f"saving wat.json")
+    with open("wat.json", "w") as f:
+        f.write(str(savJSON))
+
+    if string:
+        json_string = json.dumps(savJSON, indent=2)
+        return json_string
+
+    else:
+        return savJSON
 
 
 # ============================================
@@ -37,14 +122,16 @@ class ByteCountValidator:
             return False
 
         if not self.do_validation:
-            return
+            return None
+
         self.end_byte = self.stream.tell()
-        found_bytes = self.end_byte - self.start_byte
-        if found_bytes != self.expected_byte_count:
+        read_byte_count = self.end_byte - self.start_byte
+
+        if read_byte_count != self.expected_byte_count:
             raise DeserializeError.invalid_read_count(
-                self.expected_byte_count, found_bytes, self.start_byte
+                self.expected_byte_count, read_byte_count, self.start_byte
             )
-        return False
+        return None
 
 
 # ============================================

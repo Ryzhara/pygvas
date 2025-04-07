@@ -132,6 +132,14 @@ class PropertyTrait(ABC):
         """Write property data to a binary stream"""
         pass
 
+    @classmethod
+    def from_json(cls, json_dict):
+        # Create a new instance without calling the constructor
+        instance = cls.__new__(cls)
+        # Update the instance attributes with the JSON dictionary
+        instance.__dict__.update(json_dict)
+        return instance
+
 
 class Property:
     """

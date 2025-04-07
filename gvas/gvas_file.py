@@ -16,7 +16,7 @@ from io import BytesIO
 
 from .error import DeserializeError, SerializeError
 from .engine_versions import EngineVersion, FEngineVersion
-from .game_version import GameVersion
+from .game_version import GameVersion, CompressionType, GVAS_MAGIC
 from .gvas_types import HashableIndexMap
 from .properties import Property
 from .properties.property_base import SerializationTools, ContextScopeTracker
