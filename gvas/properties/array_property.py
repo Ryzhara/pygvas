@@ -77,18 +77,6 @@ class ArrayProperty(PropertyTrait):
     guid: Optional[uuid] = None  # always ZEROS
     values: List[Any] = None
 
-    def __init__(
-        self,
-        field_name: Optional[str] = None,
-        type_name: Optional[str] = None,
-        property_type: Optional[str] = None,
-        guid: Optional[uuid] = None,
-    ):
-        self.field_name = field_name
-        self.type_name = type_name
-        self.property_type = property_type
-        self.guid = guid or uuid.UUID(int=0)
-
     def read(
         self,
         stream: BinaryIO,

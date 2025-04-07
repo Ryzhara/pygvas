@@ -21,26 +21,10 @@ from ..utils import *
 class SetProperty(PropertyTrait):
     """A property that stores a set of properties"""
 
-    property_type: str = ""
+    type: str = "SetProperty"
+    property_type: str = None
     allocation_flags: int = 0
     properties: List[Property] = None
-
-    def __post_init__(self):
-        if self.properties is None:
-            self.properties = []
-
-    @classmethod
-    def new(
-        cls,
-        property_type: str,
-        allocation_flags: int = 0,
-    ) -> "SetProperty":
-        """Create a new set property"""
-        return cls(
-            property_type=property_type,
-            allocation_flags=allocation_flags,
-            properties=properties or [],
-        )
 
     def read(
         self,

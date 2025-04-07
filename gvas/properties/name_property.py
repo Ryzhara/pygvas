@@ -19,18 +19,9 @@ from ..utils import *
 class NameProperty(PropertyTrait):
     """A property that holds a name"""
 
+    type = "NameProperty"
     array_index: int = 0
     value: Optional[str] = None
-
-    @classmethod
-    def new(cls, value: Optional[str] = None, array_index: int = 0) -> "NameProperty":
-        """Create a new name property"""
-        return cls(array_index=array_index, value=value)
-
-    @classmethod
-    def from_str(cls, value: str) -> "NameProperty":
-        """Create a name property from a string"""
-        return cls.new(value)
 
     def read(
         self,

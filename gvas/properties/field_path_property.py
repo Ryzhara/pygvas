@@ -35,11 +35,8 @@ class FieldPath:
 class FieldPathProperty(PropertyTrait):
     """A property that holds an FieldPath value"""
 
-    value: FieldPath
-
-    def __init__(self, value: Optional[FieldPath] = None):
-        self.type = "FieldPathProperty"
-        value = value
+    type = "FieldPathProperty"
+    value: FieldPath = None
 
     def read(
         self,

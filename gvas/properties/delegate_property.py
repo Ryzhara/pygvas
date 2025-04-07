@@ -12,8 +12,8 @@ from ..utils import *
 
 @dataclass
 class Delegate:
-    object: str
-    function_name: str
+    object: str = None
+    function_name: str = None
 
     def read(self, stream: BinaryIO):
         self.object = read_string(stream)
@@ -28,11 +28,8 @@ class Delegate:
 
 @dataclass
 class DelegateProperty(PropertyTrait):
-    value: Delegate
-
-    @classmethod
-    def new(cls, value: Delegate) -> "DelegateProperty":
-        return cls(value=value)
+    type: str = "DelegateProperty"
+    value: Delegate = None
 
     def read(
         self,
@@ -74,6 +71,7 @@ class DelegateProperty(PropertyTrait):
 
 @dataclass()
 class MulticastScriptDelegate:
+    type = "MulticastScriptDelegate"
     delegates: list[Delegate] = field(default_factory=list)
 
     def read(self, stream: BinaryIO) -> None:
@@ -94,10 +92,8 @@ class MulticastScriptDelegate:
 
 @dataclass()
 class MulticastInlineDelegateProperty(PropertyTrait):
-
-    def __init__(self, value: MulticastScriptDelegate = None):
-        self.type = "MulticastInlineDelegateProperty"
-        self.value = value
+    type = "MulticastInlineDelegateProperty"
+    value: MulticastScriptDelegate = None
 
     def read(
         self,

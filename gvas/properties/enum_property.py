@@ -14,14 +14,9 @@ from ..utils import *
 class EnumProperty(PropertyTrait):
     """A property that holds an enumeration value"""
 
+    type = "EnumProperty"
     enum_type: Optional[str] = None
     value: Optional[str] = None
-
-    def __init__(self, enum_type: Optional[str] = None, value: Optional[str] = None):
-        """Create a new enum property"""
-        self.type = "EnumProperty"
-        self.enum_type = enum_type
-        self.value = value
 
     def read(
         self,

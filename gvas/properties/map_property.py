@@ -17,17 +17,11 @@ from ..utils import *
 class MapProperty(PropertyTrait):
     """A property that holds a key-value mapping"""
 
+    type = "MapProperty"
     key_type: str = ""
     value_type: str = ""
     allocation_flags: int = 0
     values: List[Tuple] = None
-
-    def __init__(self, key_type: str = None, value_type: str = None):
-        """Create a new map property"""
-        self.type = "MapProperty"
-        self.key_type = key_type
-        self.value_type = value_type
-        self.allocation_flags = 0
 
     def read(
         self,

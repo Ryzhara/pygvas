@@ -42,18 +42,10 @@ class StructPropertyValue:
 class StructProperty(PropertyTrait):
     """A property that holds structured data"""
 
+    type = "StructProperty"
     type_name: str = ""
     guid: uuid = None
     value: Optional[StructPropertyValue] = None
-
-    def __post_init__(self):
-        if self.guid is None:
-            self.guid = uuid.UUID(int=0)
-
-    @classmethod
-    def new(cls, type_name: str, guid: Optional[uuid] = None) -> "StructProperty":
-        """Create a new struct property"""
-        return cls(type_name=type_name, guid=guid or uuid.UUID(int=0))
 
     def read(
         self,

@@ -21,9 +21,7 @@ from ..utils import *
 @dataclass
 class StrProperty(PropertyTrait):
     type = "StrProperty"
-
-    def __init__(self, value: Optional[str] = None):
-        self.value = value
+    value: Optional[str] = None
 
     def read(
         self,

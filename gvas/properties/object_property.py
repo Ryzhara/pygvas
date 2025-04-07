@@ -14,11 +14,8 @@ from ..utils import *
 class ObjectProperty(PropertyTrait):
     """A property that holds an object value"""
 
-    value: str = ""
-
-    @classmethod
-    def new(cls, value: str) -> "ObjectProperty":
-        return cls(value=value)
+    type: str = "ObjectProperty"
+    value: str = None
 
     def read(
         self,

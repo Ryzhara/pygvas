@@ -29,24 +29,20 @@ from .utils import *
 @dataclass
 class FCustomVersion:
     # Key
-    key: uuid = uuid.UUID(int=0)
+    key: str = None  # uuid = uuid.UUID(int=0)
     # Value
     version: int = 0
 
-    # Creates a new instance of `FCustomVersion`
-    @classmethod
-    def new(cls, key: uuid, version: int):
-        return cls(key=key, version=version)
-
     # Read FCustomVersion from a binary file
     def read(self, stream: BinaryIO) -> None:
-        self.key = read_guid(stream)
+        self.key = str(read_guid(stream))
         self.version = read_uint32(stream)
 
     # Write FCustomVersion to a binary file
     def write(self, stream: BinaryIO) -> int:
         bytes_written = 0
-        bytes_written += write_guid(stream, self.key)
+        guid = uuid.UUID(self.key)
+        bytes_written += write_guid(stream, guid)
         bytes_written += write_int32(stream, self.version)
         return bytes_written
 
@@ -119,7 +115,7 @@ class GvasHeader:
     package_file_version_ue5: Optional[int]
     engine_version: FEngineVersion
     custom_version_format: int
-    custom_versions: HashableIndexMap[uuid, int]
+    custom_versions: HashableIndexMap[str, int]
     save_game_class_name: str
 
     @classmethod

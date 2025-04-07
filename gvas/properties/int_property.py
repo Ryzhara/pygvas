@@ -78,18 +78,13 @@ class BoolProperty(PropertyTrait):
 class ByteProperty(PropertyTrait):
     """A property that holds a byte value or type_name"""
 
+    type = "ByteProperty"
     name: Optional[str] = None
     value: Union[int, bytes] = 0
 
-    @classmethod
-    def new_byte(cls, name: Optional[str], value: int) -> "ByteProperty":
-        """Create a new byte-type property"""
-        return cls(name=name, value=value)
-
-    @classmethod
-    def new_name(cls, name: Optional[str], value: str) -> "ByteProperty":
-        """Create a new type_name-type property"""
-        return cls(name=name, value=value)
+    def __init__(self, name: Optional[str] = None, value: Union[int, bytes] = None):
+        self.name = name
+        self.value = value
 
     def read(
         self, stream: BinaryIO, include_header: bool = True, suggested_length: int = 0
@@ -137,6 +132,7 @@ class ByteProperty(PropertyTrait):
 class FloatProperty(PropertyTrait):
     """A property that holds a 32-bit floating point value"""
 
+    type = "FloatProperty"
     value: float = 0.0
 
     def read(
@@ -170,6 +166,7 @@ class FloatProperty(PropertyTrait):
 class DoubleProperty(PropertyTrait):
     """A property that holds a 64-bit floating point value"""
 
+    type = "DoubleProperty"
     value: float = 0.0
 
     def read(
@@ -212,6 +209,7 @@ def create_int_property_class(type_name: str, size: int, signed: bool = True):
     class IntPropertyClass(PropertyTrait):
         """A property that holds a {size}-bit {signedness} integer value"""
 
+        type: str = type_name
         value: int = 0
 
         def read(

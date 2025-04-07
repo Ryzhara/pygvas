@@ -10,14 +10,10 @@ from ..utils import *
 class TextProperty(PropertyTrait):
     """A property that holds FText data"""
 
-    # needed for parent property writing this to a stream
-    actual_property_count: int = 0
+    type: str = "TextProperty"
+    actual_property_count: int = 0  # for correctly writing object during hack
     flags: int = 0
     byte_data: Optional[bytes] = None  # just scarf the bytes
-
-    def __init__(self, actual_property_count: Optional[int] = None):
-        self.type = "TextProperty"
-        self.actual_property_count = actual_property_count
 
     def read(
         self,

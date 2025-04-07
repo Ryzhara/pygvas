@@ -63,7 +63,7 @@ compression = CompressionType.NONE
 # always a quick retest
 # test_file_list = ["Islands of Insight Example.sav"]  # working!
 # test_file_list = ["resources/test/vector2d.sav"]
-# test_file_list = ["resources/test/SaveSlot_03.sav"]
+# test_file_list = ["resources/test/component8.sav"]
 
 for test_file in test_file_list:
     # print(f"Loading {test_file}")
@@ -77,13 +77,11 @@ for test_file in test_file_list:
             print(f"Failed to load {test_file}: {e}")
             continue
 
-    # # hack to test JSON conversion
-    # json_file = f"{test_file}.json"
-    # with open(json_file, "w") as f:
-    #     # json_content = json.dumps(gvas_file, cls=EnhancedJSONEncoder)
-    #     json_content = sav_to_json(gvas_file, True)
-    #     f.write(json_content)
-    #     # f.write(str(gvas_file))
+    # hack to test JSON conversion
+    json_file = f"{test_file}.json"
+    with open(json_file, "w") as f:
+        json_content = json.dumps(gvas_file, cls=EnhancedJSONEncoder, indent=2)
+        f.write(json_content)
 
     if compression != CompressionType.NONE:
         decompressed_data_file = f"{test_file}.decompressed"
