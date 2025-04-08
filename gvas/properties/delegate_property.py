@@ -12,6 +12,7 @@ from ..utils import *
 
 @dataclass
 class Delegate:
+    type: str = "Delegate"
     object: str = None
     function_name: str = None
 
@@ -71,7 +72,7 @@ class DelegateProperty(PropertyTrait):
 
 @dataclass()
 class MulticastScriptDelegate:
-    type = "MulticastScriptDelegate"
+    type: str = "MulticastScriptDelegate"
     delegates: list[Delegate] = field(default_factory=list)
 
     def read(self, stream: BinaryIO) -> None:
@@ -92,7 +93,7 @@ class MulticastScriptDelegate:
 
 @dataclass()
 class MulticastInlineDelegateProperty(PropertyTrait):
-    type = "MulticastInlineDelegateProperty"
+    type: str = "MulticastInlineDelegateProperty"
     value: MulticastScriptDelegate = None
 
     def read(
@@ -124,6 +125,46 @@ class MulticastInlineDelegateProperty(PropertyTrait):
         if include_header:
             bytes_written += write_standard_header(
                 stream, "MulticastInlineDelegateProperty", length=body_bytes
+            )
+
+        bytes_written += write_bytes(stream, body_buffer.getvalue())
+        return bytes_written
+
+
+@dataclass()
+class MulticastSparseDelegateProperty(PropertyTrait):
+    type: str = "MulticastSparseDelegateProperty"
+    value: MulticastScriptDelegate = None
+
+    def read(
+        self,
+        stream: BinaryIO,
+        include_header=True,
+    ) -> None:
+        length = 0
+        if include_header:
+            length, *_ = read_standard_header(stream)
+
+        self.value = MulticastScriptDelegate()
+        with ByteCountValidator(
+            stream, length, do_validation=include_header
+        ) as _validator:
+            self.value.read(stream)
+
+    def write(
+        self,
+        stream: BinaryIO,
+        include_header=True,
+    ) -> int:
+        # create temporary buffer for body
+        body_buffer = BytesIO()
+        body_bytes = self.value.write(body_buffer)
+        assert body_bytes == len(body_buffer.getvalue())
+
+        bytes_written = 0
+        if include_header:
+            bytes_written += write_standard_header(
+                stream, "MulticastSparseDelegateProperty", length=body_bytes
             )
 
         bytes_written += write_bytes(stream, body_buffer.getvalue())

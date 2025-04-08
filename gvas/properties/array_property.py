@@ -73,7 +73,7 @@ class ArrayProperty(PropertyTrait):
     type: str = "ArrayProperty"
     field_name: Optional[str] = None
     type_name: Optional[str] = None
-    property_type: str = ""
+    property_type: Optional[str] = None
     guid: Optional[uuid] = None  # always ZEROS
     values: List[Any] = None
 
@@ -124,8 +124,8 @@ class ArrayProperty(PropertyTrait):
                 expected_byte_count, self.type_name, self.guid = read_standard_header(
                     stream, stream_readers=[read_string, read_guid]
                 )
-                # TODO: come back and remove wasted storage for always-ZERO guid?
-                assert self.guid == uuid.UUID(int=0)
+                if self.guid == ZERO_GUID:
+                    self.guid = None
 
                 with ByteCountValidator(
                     stream, expected_byte_count, do_validation=True
@@ -148,15 +148,10 @@ class ArrayProperty(PropertyTrait):
             array_property = Property.new(
                 stream, self.property_type, include_header=False
             )
+            # We have must use actual_property_count because the sample files are inconsistent
+            # regarding whether it is byte count or property count, or 1
             array_property.actual_property_count = property_count
             self.values.append(array_property)
-
-            # for when this is fixed
-            # for _ in range(property_count):
-            #     array_property = Property.new(
-            #         stream, self.property_type, include_header=False
-            #     )
-            #     self.values.append(array_property.value)
 
         elif self.property_type == "ByteProperty":
             # read it all as one blob
@@ -168,6 +163,9 @@ class ArrayProperty(PropertyTrait):
                     include_header=False,
                     suggested_length=suggested_length,
                 )
+                # We have must use actual_property_count because the sample files are inconsistent
+                # regarding whether it is byte count or property count, or 1
+                array_property.actual_property_count = property_count
                 self.values.append(array_property)
 
         # some data types are read without any additional metadata
@@ -209,9 +207,7 @@ class ArrayProperty(PropertyTrait):
         # this method is MUCH better than serializing each byte independently. Who does that?!
         elif self.property_type == "ByteProperty" and property_count > 0:
             byte_property: ByteProperty = self.values[0]
-            property_count = (
-                1 if type(byte_property.value) is int else len(byte_property.value)
-            )
+            property_count = byte_property.actual_property_count
 
         properties_body_start = array_buffer.tell()
         array_bytes += write_uint32(array_buffer, property_count)
@@ -236,7 +232,7 @@ class ArrayProperty(PropertyTrait):
                 array_buffer,
                 self.property_type,
                 length=body_bytes,
-                data_to_write=[self.type_name, self.guid],
+                data_to_write=[self.type_name, self.guid or ZERO_GUID],
             )
 
             array_bytes += write_bytes(array_buffer, body_buffer.getvalue())

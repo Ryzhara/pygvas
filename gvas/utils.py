@@ -12,39 +12,52 @@ from typing import BinaryIO, Any, List, Tuple, Dict
 
 from .error import *
 
+ZERO_GUID = uuid.UUID(int=0)
+
 
 # ============================================
 class EnhancedJSONEncoder(json.JSONEncoder):
 
     def default(self, obj):
-        # if isinstance(obj, (int, float, str, bool, type(None))):
-        #     return obj
+
+        def is_not_empty(value):
+            if isinstance(value, (str, type(None))):
+                return not not value
+
+            if isinstance(value, uuid.UUID) and value == ZERO_GUID:
+                return False
+
+            return True
+
+        if isinstance(obj, (int, float, str, bool, type(None))):
+            return obj
 
         if isinstance(obj, uuid.UUID):
-            # print(f"uuid: {obj}")
-            return str(obj)
+            return str(obj).upper()
 
         if isinstance(obj, datetime.datetime):
             return obj.isoformat()
 
-        # if isinstance(obj, list):
-        #     return [str(item) for item in obj]
-        #
-        # if isinstance(obj, tuple):
-        #     return [str(item) for item in obj]
-        #
-        # if isinstance(obj, dict):
-        #     return {key: str(value) for key, value in obj.items()}
+        if isinstance(obj, list):
+            return [self.default(item) for item in obj]
+
+        if isinstance(obj, tuple):
+            return [self.default(item) for item in obj]
 
         if isinstance(obj, bytes):
             return obj.hex()
 
-        if dataclasses.is_dataclass(obj):
-            return dataclasses.asdict(obj)
-            # return str(obj)
-            # return dataclasses.asdict(obj)
+        if isinstance(obj, dict):
+            return {k: self.default(v) for k, v in obj.items() if is_not_empty(v)}
 
-        return super().default(obj)
+        if dataclasses.is_dataclass(obj):
+            return {
+                k: self.default(v)
+                for k, v in dataclasses.asdict(obj).items()
+                if is_not_empty(v)
+            }
+
+        return obj
 
 
 #
@@ -379,19 +392,33 @@ def guid_from_uint32x4(uint1: int, uint2: int, uint3: int, uint4: int) -> uuid:
     write_uint32(buffer, uint2)
     write_uint32(buffer, uint3)
     write_uint32(buffer, uint4)
-    return uuid.UUID(bytes_le=buffer.getvalue())
+    return uuid.UUID(bytes=buffer.getvalue())
+
+
+# ============================================
+#
+def guid_to_str(guid_uuid: uuid) -> str:
+    return str(guid_uuid).upper()
+
+
+# ============================================
+#
+def str_to_guid(guid_str: str) -> uuid:
+    return uuid.UUID(guid_str)
 
 
 # ============================================
 #
 def read_guid(stream: BinaryIO) -> uuid:
-    return uuid.UUID(bytes_le=stream.read(16))
+    return uuid.UUID(bytes=stream.read(16))
 
 
 # ============================================
 #
-def write_guid(stream: BinaryIO, guid: uuid) -> uuid:
-    return stream.write(guid.bytes_le)
+def write_guid(stream: BinaryIO, guid: [uuid, str]) -> uuid:
+    if type(guid) is str:
+        guid = str_to_guid(guid)
+    return stream.write(guid.bytes)
 
 
 # ============================================

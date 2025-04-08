@@ -12,8 +12,9 @@ from ..utils import *
 
 @dataclass
 class FieldPath:
+    type: str = "FieldPath"
     path: list[str] = field(default_factory=list)
-    resolved_owner: str = ""
+    resolved_owner: str = None
 
     def read(self, stream: BinaryIO):
         path_element_count: int = read_uint32(stream)

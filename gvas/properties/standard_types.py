@@ -30,8 +30,8 @@ class SpecialStructTrait(ABC):
 #
 @dataclass
 class GuidProperty(SpecialStructTrait):
-    # type_name: str = "Guid"
-    guid: uuid = None
+    type: str = "Guid"
+    guid: str = None
 
     @classmethod
     def new(cls) -> "GuidProperty":
@@ -39,7 +39,7 @@ class GuidProperty(SpecialStructTrait):
 
     def read(self, stream: BinaryIO) -> None:
         position = stream.tell()
-        self.guid = read_guid(stream)
+        self.guid = str(read_guid(stream)).upper()
 
     def write(self, stream: BinaryIO) -> int:
         bytes_written = write_guid(stream, self.guid)
@@ -51,9 +51,9 @@ class GuidProperty(SpecialStructTrait):
 #
 @dataclass
 class DateTimeProperty(SpecialStructTrait):
-    # type_name: str = "DateTime"
+    type: str = "DateTime"
     datetime: int = 0  # uint64
-    comment: str = ""
+    comment: str = None
 
     @classmethod
     def new(cls) -> "DateTimeProperty":
@@ -84,9 +84,9 @@ class DateTimeProperty(SpecialStructTrait):
 #
 @dataclass
 class TimespanProperty(SpecialStructTrait):
-    # type_name: str = "Timespan"
+    type: str = "Timespan"
     timespan: int = 0  # uint64
-    comment: str = ""
+    comment: str = None
 
     @classmethod
     def new(cls) -> "TimespanProperty":
@@ -107,7 +107,7 @@ class TimespanProperty(SpecialStructTrait):
 #
 @dataclass
 class IntPointProperty(SpecialStructTrait):
-    # type_name: str = "IntPoint"
+    type: str = "IntPoint"
     x: int = 0
     y: int = 0
 
@@ -132,7 +132,7 @@ class IntPointProperty(SpecialStructTrait):
 #
 @dataclass
 class LinearColorProperty(SpecialStructTrait):
-    # type_name: str = "LinearColor"
+    type: str = "LinearColor"
     a: float = 0
     b: float = 0
     g: float = 0
@@ -163,7 +163,7 @@ class LinearColorProperty(SpecialStructTrait):
 #
 @dataclass
 class RotatorProperty(SpecialStructTrait):
-    # type_name = "Rotator"
+    type: str = "Rotator"
     is_double: bool = False
     pitch: float = 0
     yaw: float = 0
@@ -195,7 +195,7 @@ class RotatorProperty(SpecialStructTrait):
 #
 @dataclass
 class QuatProperty(SpecialStructTrait):
-    # type_name = "Quat"
+    type: str = "Quat"
     is_double: bool = False
     x: float = 0
     y: float = 0
@@ -230,7 +230,7 @@ class QuatProperty(SpecialStructTrait):
 #
 @dataclass
 class VectorProperty(SpecialStructTrait):
-    # type_name: str = "Vector"
+    type: str = "Vector"
     is_double: bool = False
     x: float = 0
     y: float = 0
@@ -262,7 +262,7 @@ class VectorProperty(SpecialStructTrait):
 #
 @dataclass
 class Vector2DProperty(SpecialStructTrait):
-    # type_name: str = "Vector2D"
+    type: str = "Vector2D"
     is_double: bool = False
     x: float = 0
     y: float = 0

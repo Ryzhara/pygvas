@@ -43,8 +43,8 @@ class StructProperty(PropertyTrait):
     """A property that holds structured data"""
 
     type: str = "StructProperty"
+    guid: uuid = None
     type_name: str = None
-    # guid: uuid = None
     value: Optional[SpecialStructTrait | Dict | None] = None
 
     def read(
@@ -56,10 +56,11 @@ class StructProperty(PropertyTrait):
         length = 0
         type_name_override = None
         if include_header:
-            length, self.type_name, _guid = read_standard_header(
+            length, self.type_name, self.guid = read_standard_header(
                 stream, stream_readers=[read_string, read_guid]
             )
-            assert _guid == uuid.UUID(int=0)
+        if self.guid == ZERO_GUID:
+            self.guid = None
 
         #  This modelled after the line in RUST file struct_property.rs
         #  "StructProperty" => match include_header {
@@ -129,7 +130,7 @@ class StructProperty(PropertyTrait):
                 stream,
                 "StructProperty",
                 length=body_bytes,
-                data_to_write=[self.type_name, uuid.UUID(int=0)],
+                data_to_write=[self.type_name, self.guid or ZERO_GUID],
             )
 
         # Write buffer contents with optional header

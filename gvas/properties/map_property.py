@@ -56,6 +56,7 @@ class MapProperty(PropertyTrait):
                     self.values.append((key_prop, value_prop))
                 except Exception as e:
                     print(f"error: {e}")
+                    raise e
 
     def write(
         self,

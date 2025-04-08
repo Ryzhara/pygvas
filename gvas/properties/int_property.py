@@ -79,13 +79,9 @@ class BoolProperty(PropertyTrait):
 class ByteProperty(PropertyTrait):
     """A property that holds a byte value or type_name"""
 
-    type = "ByteProperty"
+    type: str = "ByteProperty"
     name: Optional[str] = None
     value: Union[int, bytes] = 0
-
-    def __init__(self, name: Optional[str] = None, value: Union[int, bytes] = None):
-        self.name = name
-        self.value = value
 
     def read(
         self, stream: BinaryIO, include_header: bool = True, suggested_length: int = 0
@@ -133,7 +129,7 @@ class ByteProperty(PropertyTrait):
 class FloatProperty(PropertyTrait):
     """A property that holds a 32-bit floating point value"""
 
-    type = "FloatProperty"
+    type: str = "FloatProperty"
     value: float = 0.0
 
     def read(
@@ -167,7 +163,7 @@ class FloatProperty(PropertyTrait):
 class DoubleProperty(PropertyTrait):
     """A property that holds a 64-bit floating point value"""
 
-    type = "DoubleProperty"
+    type: str = "DoubleProperty"
     value: float = 0.0
 
     def read(

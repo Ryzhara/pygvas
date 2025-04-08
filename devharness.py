@@ -10,8 +10,10 @@ from test_utilities import compare_binary_files
 
 
 test_file_list = [
-    "Islands of Insight Example.sav",
+    "resources/test/islands_of_insight.sav",
+    "resources/test/assert_failed.sav",
     "resources/test/component8.sav",
+    "resources/test/Delegate.sav",
     "resources/test/Options.sav",
     "resources/test/Profile_0.sav",
     "resources/test/enum_array.sav",
@@ -64,6 +66,8 @@ compression = CompressionType.NONE
 # test_file_list = ["Islands of Insight Example.sav"]  # working!
 # test_file_list = ["resources/test/vector2d.sav"]
 # test_file_list = ["resources/test/component8.sav"]
+# test_file_list = ["resources/test/assert_failed.sav"]
+# test_file_list = ["resources/test/Delegate.sav"]
 
 for test_file in test_file_list:
     # print(f"Loading {test_file}")

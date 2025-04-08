@@ -13,11 +13,15 @@ from .set_property import SetProperty
 from .str_property import StrProperty
 from .name_property import NameProperty
 from .text_property import TextProperty
-from .struct_property import StructProperty, StructPropertyValue
+from .struct_property import StructProperty
 from .text_property import TextProperty
 from .object_property import ObjectProperty
 from .field_path_property import FieldPath, FieldPathProperty
-from .delegate_property import MulticastInlineDelegateProperty
+from .delegate_property import (
+    MulticastInlineDelegateProperty,
+    MulticastSparseDelegateProperty,
+    DelegateProperty,
+)
 
 __all__ = [
     "Property",
@@ -35,9 +39,9 @@ __all__ = [
     "SetProperty",
     "StrProperty",
     "StructProperty",
-    "StructPropertyValue",
     "ObjectProperty",
     "FieldPath",
     "FieldPathProperty",
     "MulticastInlineDelegateProperty",
+    "DelegateProperty",
 ]

@@ -173,6 +173,8 @@ class Property:
             ObjectProperty,
             FieldPathProperty,
             MulticastInlineDelegateProperty,
+            MulticastSparseDelegateProperty,
+            DelegateProperty,
         )
         from .int_property import (
             Int8Property,
@@ -201,6 +203,8 @@ class Property:
             "ObjectProperty": ObjectProperty,
             "FieldPathProperty": FieldPathProperty,
             "MulticastInlineDelegateProperty": MulticastInlineDelegateProperty,
+            "MulticastSparseDelegateProperty": MulticastSparseDelegateProperty,
+            "DelegateProperty": DelegateProperty,
             # numerical stuff
             "BoolProperty": BoolProperty,
             "Int8Property": Int8Property,
