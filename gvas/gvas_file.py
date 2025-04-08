@@ -110,12 +110,13 @@ def looks_like_palworld(stream: BinaryIO) -> bool:
 class GvasHeader:
     """Header information for GVAS files"""
 
-    package_file_version: int
-    package_file_version_ue5: Optional[int]
-    engine_version: FEngineVersion
-    custom_version_format: int
-    custom_versions: HashableIndexMap[str, int]
-    save_game_class_name: str
+    type: str = "Unknown"
+    package_file_version: int = None
+    package_file_version_ue5: Optional[int] = None
+    engine_version: FEngineVersion = None
+    custom_version_format: int = None
+    custom_versions: HashableIndexMap[str, int] = None
+    save_game_class_name: str = None
 
     @classmethod
     def read(cls, stream: BinaryIO) -> "GvasHeader":
@@ -131,8 +132,10 @@ class GvasHeader:
 
         # Read UE5 version if present
         package_file_version_ue5 = None
+        format_version = "Version2"
         if save_game_version >= 3:  # SaveGameVersion::PackageFileSummaryVersionChange
             package_file_version_ue5 = read_uint32(stream)
+            format_version = "Version3"
 
         # Read engine version
         engine_version: FEngineVersion = FEngineVersion.read(stream)
@@ -151,6 +154,7 @@ class GvasHeader:
         save_game_class_name = read_string(stream)
 
         return cls(
+            type=format_version,
             package_file_version=package_file_version,
             package_file_version_ue5=package_file_version_ue5,
             engine_version=engine_version,

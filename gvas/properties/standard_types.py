@@ -10,7 +10,7 @@ from ..custom_versions import FUE5ReleaseStreamObjectVersion
 
 # ============================================
 #
-class SpecialStructTrait(ABC):
+class StandardStructTrait(ABC):
     """
     Base trait/interface for all structure types that could be in any environment
     """
@@ -29,7 +29,7 @@ class SpecialStructTrait(ABC):
 # ============================================
 #
 @dataclass
-class GuidProperty(SpecialStructTrait):
+class GuidProperty(StandardStructTrait):
     type: str = "Guid"
     guid: str = None
 
@@ -50,7 +50,7 @@ class GuidProperty(SpecialStructTrait):
 # ============================================
 #
 @dataclass
-class DateTimeProperty(SpecialStructTrait):
+class DateTimeProperty(StandardStructTrait):
     type: str = "DateTime"
     datetime: int = 0  # uint64
     comment: str = None
@@ -83,7 +83,7 @@ class DateTimeProperty(SpecialStructTrait):
 # ============================================
 #
 @dataclass
-class TimespanProperty(SpecialStructTrait):
+class TimespanProperty(StandardStructTrait):
     type: str = "Timespan"
     timespan: int = 0  # uint64
     comment: str = None
@@ -106,7 +106,7 @@ class TimespanProperty(SpecialStructTrait):
 # ============================================
 #
 @dataclass
-class IntPointProperty(SpecialStructTrait):
+class IntPointProperty(StandardStructTrait):
     type: str = "IntPoint"
     x: int = 0
     y: int = 0
@@ -131,7 +131,7 @@ class IntPointProperty(SpecialStructTrait):
 # ============================================
 #
 @dataclass
-class LinearColorProperty(SpecialStructTrait):
+class LinearColorProperty(StandardStructTrait):
     type: str = "LinearColor"
     a: float = 0
     b: float = 0
@@ -162,7 +162,7 @@ class LinearColorProperty(SpecialStructTrait):
 # ============================================
 #
 @dataclass
-class RotatorProperty(SpecialStructTrait):
+class RotatorProperty(StandardStructTrait):
     type: str = "Rotator"
     is_double: bool = False
     pitch: float = 0
@@ -194,7 +194,7 @@ class RotatorProperty(SpecialStructTrait):
 # ============================================
 #
 @dataclass
-class QuatProperty(SpecialStructTrait):
+class QuatProperty(StandardStructTrait):
     type: str = "Quat"
     is_double: bool = False
     x: float = 0
@@ -229,7 +229,7 @@ class QuatProperty(SpecialStructTrait):
 # ============================================
 #
 @dataclass
-class VectorProperty(SpecialStructTrait):
+class VectorProperty(StandardStructTrait):
     type: str = "Vector"
     is_double: bool = False
     x: float = 0
@@ -261,7 +261,7 @@ class VectorProperty(SpecialStructTrait):
 # ============================================
 #
 @dataclass
-class Vector2DProperty(SpecialStructTrait):
+class Vector2DProperty(StandardStructTrait):
     type: str = "Vector2D"
     is_double: bool = False
     x: float = 0
@@ -312,7 +312,7 @@ def is_special_struct(type_name: str) -> bool:
 #
 def get_special_struct_instance(
     type_name: str, use_lwc: bool = False
-) -> SpecialStructTrait:
+) -> StandardStructTrait:
     # Map property types to their classes
 
     if type_name in _special_struct_type_map.keys():

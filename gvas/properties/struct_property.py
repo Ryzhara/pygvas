@@ -14,7 +14,7 @@ from io import BytesIO
 from .standard_types import (
     is_special_struct,
     get_special_struct_instance,
-    SpecialStructTrait,
+    StandardStructTrait,
 )
 from .property_base import (
     Property,
@@ -30,7 +30,7 @@ class StructPropertyValue:
     """Value stored in a struct property"""
 
     type_name: str
-    properties: Dict[str, Property] | SpecialStructTrait
+    properties: Dict[str, Property] | StandardStructTrait
 
     @classmethod
     def new(cls, type_name: str, properties=None) -> "StructPropertyValue":
@@ -45,7 +45,7 @@ class StructProperty(PropertyTrait):
     type: str = "StructProperty"
     guid: uuid = None
     type_name: str = None
-    value: Optional[SpecialStructTrait | Dict | None] = None
+    value: Optional[StandardStructTrait | Dict | None] = None
 
     def read(
         self,
@@ -110,7 +110,7 @@ class StructProperty(PropertyTrait):
         body_bytes = 0
 
         if self.value:
-            if isinstance(self.value, SpecialStructTrait):
+            if isinstance(self.value, StandardStructTrait):
                 body_bytes += self.value.write(body_buffer)
             else:
                 for (

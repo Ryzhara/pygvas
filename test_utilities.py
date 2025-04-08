@@ -15,7 +15,7 @@ def compare_binary_files(file1_path: Path | str, file2_path: Path | str) -> bool
         print(f"Files {file1_path} and {file2_path} are identical.")
         return True
     else:
-        print(f"Files {file1_path} and {file2_path} are different.")
+        print(f"FAILED: Files {file1_path} and {file2_path} are different.")
         return False
 
         with open(file1_path, "rb") as f1, open(file2_path, "rb") as f2:

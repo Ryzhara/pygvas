@@ -7,7 +7,7 @@ Standard types in GVAS files represent common data structures used in Unreal Eng
 
 ### Common Header (when used as a property)
 ```
-Unlike the classes derived from PropertyTrait, classes derived from SpecialStructTrait do not have any common header. They are serialized and deserialized as "bare types" because they have deterministic structure.
+Unlike the classes derived from PropertyTrait, classes derived from StandardStructTrait do not have any common header. They are serialized and deserialized as "bare types" because they have deterministic structure.
 ```
 
 ### Guid Property

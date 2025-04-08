@@ -24,6 +24,7 @@ from ..utils import *
 from .standard_types import (
     is_special_struct,
     get_special_struct_instance,
+    StandardStructTrait,
 )
 from ..utils import read_int16, read_int64
 
@@ -105,7 +106,12 @@ class ArrayProperty(PropertyTrait):
         # Read number of elements in the array
         property_count = read_uint32(stream)
 
-        self.values = []  # prepare storage
+        self.values: [
+            str,
+            list,
+            PropertyTrait,
+            StandardStructTrait,
+        ] = []  # prepare storage
         # We do this for the individually handled items below with a for _ in <>: clause
         # if property_count == 0:
         #     return
@@ -155,8 +161,12 @@ class ArrayProperty(PropertyTrait):
 
         elif self.property_type == "ByteProperty":
             # read it all as one blob
+
             suggested_length = (length - 4) if length >= 4 else 0
-            if property_count > 0:
+            suggested_count = suggested_length / property_count if property_count else 1
+            if suggested_count == 1:
+                self.values = read_bytes(stream, suggested_length)
+            else:
                 array_property = Property.new(
                     stream,
                     self.property_type,
@@ -206,8 +216,11 @@ class ArrayProperty(PropertyTrait):
 
         # this method is MUCH better than serializing each byte independently. Who does that?!
         elif self.property_type == "ByteProperty" and property_count > 0:
-            byte_property: ByteProperty = self.values[0]
-            property_count = byte_property.actual_property_count
+            if type(self.values) is list:
+                byte_property: ByteProperty = self.values[0]
+                property_count = byte_property.actual_property_count
+            elif type(self.values) is bytes:
+                property_count = len(self.values)
 
         properties_body_start = array_buffer.tell()
         array_bytes += write_uint32(array_buffer, property_count)
@@ -236,6 +249,10 @@ class ArrayProperty(PropertyTrait):
             )
 
             array_bytes += write_bytes(array_buffer, body_buffer.getvalue())
+
+        elif self.property_type == "ByteProperty" and type(self.values) is bytes:
+            array_bytes += write_bytes(array_buffer, self.values)
+            # else we fall to the catchall
 
         elif self.property_type in g_bare_type_writers.keys():
             bare_type_writer = g_bare_type_writers[self.property_type]

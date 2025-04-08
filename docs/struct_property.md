@@ -32,7 +32,7 @@ For custom struct types, the body contains a series of properties until a "None"
 ```
 
 ## Special Struct Types
-Special struct types are predefined graphical structures that have their own specific binary format. These are handled by the `SpecialStructTrait` interface.
+Special struct types are predefined graphical structures that have their own specific binary format. These are handled by the `StandardStructTrait` interface.
 
 ## Custom Struct Types
 Custom struct types can contain any combination of GVAS properties:

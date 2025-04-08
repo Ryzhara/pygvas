@@ -81,7 +81,7 @@ class ByteProperty(PropertyTrait):
 
     type: str = "ByteProperty"
     name: Optional[str] = None
-    value: Union[int, bytes] = 0
+    value: Union[int, str] = 0
 
     def read(
         self, stream: BinaryIO, include_header: bool = True, suggested_length: int = 0
@@ -97,7 +97,8 @@ class ByteProperty(PropertyTrait):
             self.value = read_uint8(stream)
         else:  # indicates a type_name value
             # according to the RUST code, this is actually an FSTRING, with  int32 prefix of length. NOT raw bytes
-            self.value = read_bytes(stream, suggested_length)
+            # self.value = read_bytes(stream, suggested_length)
+            self.value = read_string(stream)
 
     def write(
         self,
@@ -116,9 +117,10 @@ class ByteProperty(PropertyTrait):
         # Write value
         if type(self.value) is int:
             bytes_written += write_uint8(stream, self.value)
-        elif type(self.value) is bytes:
+        elif type(self.value) is str:
             # according to the RUST code, this is actually an FSTRING, with  int32 prefix of length. NOT raw bytes
-            bytes_written += write_bytes(stream, self.value)
+            # bytes_written += write_bytes(stream, self.value)
+            bytes_written += write_string(stream, self.value)
         else:
             raise TypeError(f"Invalid type in ByteProperty: {type(self.value)}")
 
