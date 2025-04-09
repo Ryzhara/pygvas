@@ -1,9 +1,308 @@
 from typing import Optional
 from enum import IntEnum, auto
 from dataclasses import dataclass
+from unittest import case
 
 from .property_base import PropertyTrait
 from ..utils import *
+
+
+class DateTimeStyle(IntEnum):
+    # Default
+    Default = 0
+    # Short
+    Short = auto()
+    # Medium
+    Medium = auto()
+    # Long
+    Long = auto()
+    # Full
+    Full = auto()
+
+
+class TransformType(IntEnum):
+    # To lowercase
+    ToLower = 0
+    # To uppercase
+    ToUpper = auto()
+
+
+class RoundingMode(IntEnum):
+    # Rounds to the nearest place, equidistant ties go to the value which is closest to an even value: 1.5 becomes 2, 0.5 becomes 0
+    HalfToEven = 0
+    # Rounds to nearest place, equidistant ties go to the value which is further from zero: -0.5 becomes -1.0, 0.5 becomes 1.0
+    HalfFromZero = auto()
+    # Rounds to nearest place, equidistant ties go to the value which is closer to zero: -0.5 becomes 0, 0.5 becomes 0.
+    HalfToZero = auto()
+    # Rounds to the value which is further from zero, "larger" in absolute value: 0.1 becomes 1, -0.1 becomes -1
+    FromZero = auto()
+    # Rounds to the value which is closer to zero, "smaller" in absolute value: 0.1 becomes 0, -0.1 becomes 0
+    ToZero = auto()
+    # Rounds to the value which is more negative: 0.1 becomes 0, -0.1 becomes -1
+    ToNegativeInfinity = auto()
+    # Rounds to the value which is more positive: 0.1 becomes 1, -0.1 becomes 0
+    ToPositiveInfinity = auto()
+
+    @classmethod
+    def read_type(cls, stream: BinaryIO) -> "RoundingMode":
+        rounding_mode: int = read_int8(stream)
+        try:
+            rounding_mode: RoundingMode = RoundingMode(rounding_mode)
+        except ValueError:
+            raise ValueError(f"Unimplemented RoundingMode type {rounding_mode}")
+        return rounding_mode
+
+
+# Number formatting options
+class NumberFormattingOptions:
+    # Always include sign
+    always_include_sign: bool
+    # Use grouping
+    use_grouping: bool
+    # Rounding mode
+    # [cfg_attr(feature = "serde", serde(flatten))]
+    rounding_mode: RoundingMode
+    # Minimum integral digits
+    minimum_integral_digits: int
+    # Maximum integral digits
+    maximum_integral_digits: int
+    # Minimum fractional digits
+    minimum_fractional_digits: int
+    # Maximum fractional digits
+    maximum_fractional_digits: int
+
+    def read(self, stream: BinaryIO):
+        self.always_include_sign = read_bool32bit(stream)
+        self.use_grouping = read_bool32bit(stream)
+        self.rounding_mode = RoundingMode.read_type(stream)
+        self.minimum_integral_digits = read_int32(stream)
+        self.maximum_integral_digits = read_int32(stream)
+        self.minimum_fractional_digits = read_int32(stream)
+        self.maximum_fractional_digits = read_int32(stream)
+
+    def write(self, stream: BinaryIO) -> int:
+        bytes_written = 0
+        bytes_written += write_uint32(stream, 1 if self.always_include_sign else 0)
+        bytes_written += write_uint32(stream, 1 if self.use_grouping else 0)
+        bytes_written += write_uint32(stream, 1 if self.rounding_mode else 0)
+        bytes_written += write_int32(stream, self.minimum_integral_digits)
+        bytes_written += write_int32(stream, self.maximum_integral_digits)
+        bytes_written += write_int32(stream, self.minimum_fractional_digits)
+        bytes_written += write_int32(stream, self.maximum_fractional_digits)
+        return bytes_written
+
+
+class FormatArgumentValue(IntEnum):
+    # Integer
+    Int = 0
+    # Unsigned integer
+    UInt = auto()
+    # Float
+    Float = auto()
+    # Double
+    Double = auto()
+    # FText
+    Text = auto()
+    # 64-bit integer
+    Int64 = auto()
+    # 64-bit unsigned integer
+    UInt64 = auto()
+
+    @classmethod
+    def read_type(cls, stream: BinaryIO):
+        format_argument_type = read_int8(stream)
+        try:
+            format_argument_type = FormatArgumentValue(format_argument_type)
+        except ValueError:
+            raise ValueError(
+                f"Unimplemented FormatArgumentValue type {format_argument_type}"
+            )
+        return format_argument_type
+
+    @classmethod
+    def read(cls, stream: BinaryIO):
+        format_argument_type = cls.read_type(stream)
+        supports_64bit = SerializationTools.supports_version(
+            FUE5ReleaseStreamObjectVersion.TextFormatArgumentData64bitSupport
+        )
+
+        match format_argument_type:
+            case FormatArgumentValue.Int:
+                return read_int64(stream) if supports_64bit else read_int32(stream)
+
+            case FormatArgumentValue.UInt:
+                return read_uint64(stream) if supports_64bit else read_uint32(stream)
+
+            case FormatArgumentValue.Float:
+                return read_float(stream)
+
+            case FormatArgumentValue.Double:
+                return read_double(stream)
+
+            case FormatArgumentValue.Text:
+                ftext = FText()
+                ftext.read(stream)
+                return ftext
+
+            case FormatArgumentValue.Int64:
+                return read_int64(stream)
+
+            case FormatArgumentValue.UInt64:
+                return read_uint64(stream)
+
+            case FormatArgumentValue.Gender:
+                raise NotImplementedError()
+
+
+class TextHistoryType(IntEnum):
+    # None
+    # [default]
+    NoType = -1
+    # Base
+    Base = 0
+    # Named format
+    NamedFormat = auto()
+    # Ordered format
+    OrderedFormat = auto()
+    # Argument format
+    ArgumentFormat = auto()
+    # As number
+    AsNumber = auto()
+    # As percentage
+    AsPercent = auto()
+    # As currency
+    AsCurrency = auto()
+    # As date
+    AsDate = auto()
+    # As time
+    AsTime = auto()
+    # As datetime
+    AsDateTime = auto()
+    # Transform
+    Transform = auto()
+    # String table entry
+    StringTableEntry = auto()
+    # Text generator
+    TextGenerator = auto()
+    # Uncertain, Back 4 Blood specific serialization
+    RawText = auto()
+
+    @classmethod
+    def read_type(cls, stream: BinaryIO):
+        history_type = read_int8(stream)
+        try:
+            history_type = TextHistoryType(history_type)
+        except ValueError:
+            raise ValueError(f"Unimplemented FTextHistory type {history_type}")
+        return history_type
+
+
+class FTextHistory:
+    @classmethod
+    def read(cls, stream: BinaryIO):
+
+        result = {"history_type": TextHistoryType.read_type(stream)}
+
+        match result["history_type"]:
+            case TextHistoryType.NoType:
+                if SerializationTools.supports_version(
+                    FEditorObjectVersion.CultureInvariantTextSerializationKeyStability
+                ):
+                    has_culture_invariant_string = read_bool32bit
+                    result.update({"culture_invariant_string": read_string(stream)})
+                    return result
+
+            case TextHistoryType.Base:
+                result.update(
+                    {
+                        "namespace": read_string(stream),
+                        "key": read_string(stream),
+                        "source_string": read_string(stream),
+                    }
+                )
+                return result
+
+            case TextHistoryType.NamedFormat:
+                source_format = FText()
+                source_format.read(stream)
+                argument_count = read_int32(stream)
+                arguments: dict[str, Any] = {}
+                for _ in range(argument_count):
+                    key = read_string(stream)
+                    value = FormatArgumentValue.read(stream)
+                    arguments[key] = value
+                return {"source_format": source_format, "arguments": arguments}
+
+            case TextHistoryType.OrderedFormat:
+                source_format = FText()
+                source_format.read(stream)
+                argument_count = read_int32(stream)
+                arguments: list = []
+                for _ in range(argument_count):
+                    arguments.append(FormatArgumentValue.read(stream))
+                return {"source_format": source_format, "arguments": arguments}
+
+            # other than type, this is identical to NamedFormat :/
+            case TextHistoryType.ArgumentFormat:
+                source_format = FText()
+                source_format.read(stream)
+                argument_count = read_int32(stream)
+                arguments: dict[str, Any] = {}
+                for _ in range(argument_count):
+                    key = read_string(stream)
+                    value = FormatArgumentValue.read(stream)
+                    arguments[key] = value
+                return {"source_format": source_format, "arguments": arguments}
+
+            case TextHistoryType.AsNumber:
+                source_value = FormatArgumentValue.read(stream)
+                has_format_options = read_bool32bit(stream)
+                format_options = None
+                if has_format_options:
+                    format_options = NumberFormattingOptions()
+                    format_options.read(stream)
+                target_culture = read_string(stream)
+                return {
+                    "source_value": source_value,
+                    "format_options": format_options,
+                    "target_culture": target_culture,
+                }
+
+            case TextHistoryType.AsPercent:
+                pass
+
+            case TextHistoryType.AsCurrency:
+                pass
+
+            case TextHistoryType.AsDate:
+                pass
+
+            case TextHistoryType.AsTime:
+                pass
+
+            case TextHistoryType.AsDateTime:
+                pass
+
+            case TextHistoryType.Transform:
+                pass
+
+            case TextHistoryType.StringTableEntry:
+                pass
+
+            case TextHistoryType.TextGenerator:
+                pass
+
+            case TextHistoryType.RawText:
+                pass
+
+
+class FText:
+    flags: int = 0
+    history: FTextHistory = None
+
+    def read(self, stream: BinaryIO):
+        self.flags = read_uint32(stream)
+        self.history = FTextHistory.read(stream)
 
 
 @dataclass

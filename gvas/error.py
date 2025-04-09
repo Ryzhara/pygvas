@@ -15,24 +15,22 @@ class DeserializeError(Exception):
 
     @classmethod
     def invalid_header(cls, message: str) -> "DeserializeError":
-        """Create an invalid header error"""
         return cls(f"Invalid header: {message}")
 
     @classmethod
     def invalid_property(cls, message: str, position: int) -> "DeserializeError":
-        """Create an invalid property error"""
         return cls(f"Invalid property: {message}", position)
 
     @classmethod
-    def invalid_terminator(cls, terminator: int, position: int) -> "DeserializeError":
-        """Create an invalid terminator error"""
-        return cls(f"Invalid terminator: {terminator}", position)
+    def invalid_value(
+        cls, value: int, position: int, message: str
+    ) -> "DeserializeError":
+        return cls(f"Invalid value: {value} at {position}: {message}")
 
     @classmethod
     def missing_hint(
         cls, property_type: str, property_path: str, position: int
     ) -> "DeserializeError":
-        """Create a missing hint error"""
         return cls(
             f"Missing hint for {property_type} at path {property_path}", position
         )

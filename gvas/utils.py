@@ -256,6 +256,19 @@ def read_bool(stream: BinaryIO, assert_value=None, error_msg: str = None) -> boo
 
 # ============================================
 #
+def read_bool32bit(stream: BinaryIO) -> bool:
+    value = read_uint32(stream)
+    if not (0 <= value <= 1):
+        raise DeserializeError.invalid_value(
+            value,
+            stream.tell() - 4,
+            "read_bool32bit",
+        )
+    return True if value else False
+
+
+# ============================================
+#
 def write_bool(stream: BinaryIO, value) -> int:
     return stream.write(struct.pack("?", value))
 
