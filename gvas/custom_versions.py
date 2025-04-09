@@ -1,10 +1,19 @@
 # Custom version information
 import uuid
 import enum
-from dataclasses import dataclass
-from .utils import *
+import struct
+
+from .engine_versions import *
 
 
+# ============================================
+#
+def guid_from_uint32x4(uint1: int, uint2: int, uint3: int, uint4: int) -> uuid:
+    byte_buffer = struct.pack("<IIII", uint1, uint2, uint3, uint4)
+    return uuid.UUID(bytes=byte_buffer)
+
+
+# ============================================
 # Custom serialization version for changes made in Dev-Editor stream.
 class FEditorObjectVersion(enum.IntEnum):
 
@@ -208,6 +217,7 @@ class FEditorObjectVersion(enum.IntEnum):
     LatestVersion = enum.auto()
 
 
+# ============================================
 # Custom serialization version for changes made in //UE5/Release-* stream
 class FUE5ReleaseStreamObjectVersion(enum.IntEnum):
 

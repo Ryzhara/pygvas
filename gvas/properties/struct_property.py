@@ -19,8 +19,6 @@ from .standard_types import (
 from .property_base import (
     Property,
     PropertyTrait,
-    SerializationTools,
-    ContextScopeTracker,
 )
 from ..utils import *
 
@@ -67,7 +65,7 @@ class StructProperty(PropertyTrait):
         #    true => Ok(StructProperty::read(cursor, include_header, options)?.into()),
         else:
             # see if we have to override the type name
-            struct_path = SerializationTools.get_path()
+            struct_path = SerializationTools.get_context_path()
             type_name_override = SerializationTools.hints.get(struct_path, None)
 
         with ByteCountValidator(

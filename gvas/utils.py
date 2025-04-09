@@ -10,6 +10,7 @@ import struct
 from io import BytesIO
 from typing import BinaryIO, Any, List, Tuple, Dict
 
+from .custom_versions import FEditorObjectVersion, FUE5ReleaseStreamObjectVersion
 from .error import *
 
 ZERO_GUID = uuid.UUID(int=0)
@@ -29,11 +30,8 @@ class EnhancedJSONEncoder(json.JSONEncoder):
 
             return True
 
-        if isinstance(obj, (int, float, str, bool, type(None))):
-            return obj
-
         if isinstance(obj, uuid.UUID):
-            return str(obj).upper()
+            return guid_to_str(obj)
 
         if isinstance(obj, datetime.datetime):
             return obj.isoformat()
@@ -56,6 +54,9 @@ class EnhancedJSONEncoder(json.JSONEncoder):
                 for k, v in dataclasses.asdict(obj).items()
                 if is_not_empty(v)
             }
+
+        if isinstance(obj, (int, float, str, bool, type(None))):
+            return obj
 
         return obj
 
@@ -95,6 +96,95 @@ class ByteCountValidator:
                 self.expected_byte_count, read_byte_count, self.start_byte
             )
         return None
+
+
+# ============================================
+#
+class SerializationTools:
+    """
+    This class corresponds to the Rust package use of "options" and scoped property stacks.
+    It is never instantiated and avoids cluttering signatures with mostly unused parameters.
+
+    If your file fails while parsing with a DeserializeError::MissingHint error you need hints.
+    When a struct is stored inside ArrayProperty/SetProperty/MapProperty in GvasFile it does not
+    contain type annotations. This means that a library parsing the file must know the type
+    beforehand. That’s why you need hints.
+    """
+
+    # Hack for TextProperty;
+    body_bytes: Tuple[int, int] = (0, 0)  # tell child reader how big their blob is
+    custom_versions: dict[str, int]
+    hints: Dict[str, str] = {}
+    context_stack: List[str] = []
+    text_property_blob: int = 0  # temp hack for TextProperty as blob
+    engine_major: int = 4
+    engine_minor: int = 0
+
+    @classmethod
+    def set_engine_version(cls, engine_major: int, engine_minor: int) -> None:
+        cls.engine_major = engine_major
+        cls.engine_minor = engine_minor
+
+    @classmethod
+    def version_is_at_least(cls, engine_major: int, engine_minor: int):
+        return engine_major >= cls.engine_major and engine_minor >= cls.engine_minor
+
+    def version_is_less_than(cls, engine_major: int, engine_minor: int):
+        return engine_major < cls.engine_major and engine_minor < cls.engine_minor
+
+    # initialization requirements
+    @classmethod
+    def set_custom_versions(cls, custom_versions: dict[str, int]) -> None:
+        cls.custom_versions = custom_versions
+
+    # used for processing hints
+    @classmethod
+    def push_context_step(cls, step: str) -> None:
+        cls.context_stack.append(step)
+
+    @classmethod
+    def pop_context_step(cls) -> None:
+        cls.context_stack.pop()
+
+    @classmethod
+    def get_context_path(cls) -> str:
+        return ".".join(cls.context_stack)
+
+    @classmethod
+    def supports_version(
+        cls, required_version: FEditorObjectVersion | FUE5ReleaseStreamObjectVersion
+    ) -> bool:
+        guid_key_str = guid_to_str(required_version.custom_version_guid)
+        supported_version = cls.custom_versions.get(guid_key_str, 0)
+        return supported_version >= required_version.value
+
+
+# ============================================
+#
+class ContextScopeTracker:
+    parent_context = "unknown"
+    context = "unknown"
+
+    def __init__(self, context: str):
+        self.parent_context = SerializationTools.get_context_path()
+        self.context = context
+
+    def __enter__(self):
+        SerializationTools.push_context_step(self.context)
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        if exc_type is not None:
+            print(
+                f"An exception of type {exc_type} occurred: {exc_val} with context\n\t{SerializationTools.get_context_path()}"
+            )
+            import traceback
+            import sys
+
+            traceback.print_exception(exc_type, exc_val, exc_tb, file=sys.stdout)
+            return False
+        # Don't pop so we can have deepest context for debugging
+        SerializationTools.pop_context_step()
+        return True
 
 
 # ============================================
@@ -330,17 +420,6 @@ def write_string(stream: BinaryIO, value: str) -> int:
     bytes_written = write_uint32(stream, len(value_bytes))
     bytes_written += write_bytes(stream, value_bytes)
     return bytes_written  # 4 + len(value) + 1
-
-
-# ============================================
-#
-def guid_from_uint32x4(uint1: int, uint2: int, uint3: int, uint4: int) -> uuid:
-    buffer = BytesIO()
-    write_uint32(buffer, uint1)
-    write_uint32(buffer, uint2)
-    write_uint32(buffer, uint3)
-    write_uint32(buffer, uint4)
-    return uuid.UUID(bytes=buffer.getvalue())
 
 
 # ============================================

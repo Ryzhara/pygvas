@@ -8,15 +8,12 @@ Key differences from Rust version:
 """
 
 from dataclasses import dataclass
-from time import struct_time
 from typing import List, Optional, Any, BinaryIO
 from io import BytesIO
 
 from .property_base import (
     Property,
     PropertyTrait,
-    SerializationTools,
-    ContextScopeTracker,
 )
 from .struct_property import StructProperty
 from ..utils import *
@@ -94,10 +91,8 @@ class ArrayProperty(PropertyTrait):
         )
 
         start = stream.tell()
-        SerializationTools.set_byte_block_to_be_read(start, start + length)
         self.read_body(stream, length)
         end = stream.tell()
-        SerializationTools.set_byte_block_to_be_read(0, 0)
         if end - start != length:
             raise DeserializeError.invalid_value_size(length, end - start, start)
 

@@ -2,7 +2,7 @@ from typing import Optional
 from enum import IntEnum, auto
 from dataclasses import dataclass
 
-from .property_base import PropertyTrait, SerializationTools
+from .property_base import PropertyTrait
 from ..utils import *
 
 
@@ -21,7 +21,6 @@ class TextProperty(PropertyTrait):
         include_header: bool = True,
     ) -> None:
         """Read text from stream"""
-        # body_start, body_end = SerializationTools.get_byte_block_to_be_read()
         text_property_blob = SerializationTools.text_property_blob
         length = 0
         if include_header:

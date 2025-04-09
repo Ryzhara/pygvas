@@ -8,109 +8,11 @@ Key differences from Rust version:
 - Uses dataclasses for property options
 """
 
-import enum
-import uuid
 from abc import ABC, abstractmethod
 from typing import Optional, Dict, Any, BinaryIO, List, Tuple
-from xml.sax.handler import property_encoding, property_dom_node
 
-from ..custom_versions import FEditorObjectVersion, FUE5ReleaseStreamObjectVersion
 from ..error import DeserializeError
-from ..engine_versions import FEngineVersion, EngineVersion
-from ..gvas_types import HashableIndexMap
-
-
-# ============================================
-
-
-class SerializationTools:
-    """
-    This class corresponds to the Rust package use of "options" and scoped property stacks.
-    It is never instantiated and avoids cluttering signatures with mostly unused parameters.
-
-    If your file fails while parsing with a DeserializeError::MissingHint error you need hints.
-    When a struct is stored inside ArrayProperty/SetProperty/MapProperty in GvasFile it does not
-    contain type annotations. This means that a library parsing the file must know the type
-    beforehand. That’s why you need hints.
-    """
-
-    # Hack for TextProperty;
-    body_bytes: Tuple[int, int] = (0, 0)  # tell child reader how big their blob is
-    engine_version: FEngineVersion
-    custom_versions: HashableIndexMap[uuid, int]
-    hints: Dict[str, str] = {}
-    properties_stack: List[str] = []
-    text_property_blob: int = 0  # temp hack for TextProperty as blob
-
-    # initialization requirements
-    @classmethod
-    def set_header_and_custom_versions(
-        cls,
-        engine_version: FEngineVersion,
-        custom_versions: HashableIndexMap[uuid, int],
-    ) -> None:
-        cls.engine_version = engine_version
-        cls.custom_versions = custom_versions
-
-    # used for processing hints
-    @classmethod
-    def push_path(cls, step: str) -> None:
-        cls.properties_stack.append(step)
-
-    @classmethod
-    def pop_path(cls) -> None:
-        cls.properties_stack.pop()
-
-    @classmethod
-    def get_path(cls) -> str:
-        return ".".join(cls.properties_stack)
-
-    # hack for getting around unknown object byte count
-    @classmethod
-    def set_byte_block_to_be_read(cls, start: int, end: int) -> None:
-        cls.body_bytes = (start, end)
-
-    @classmethod
-    def get_byte_block_to_be_read(cls) -> Tuple[int, int]:
-        return cls.body_bytes
-
-    @classmethod
-    def supports_version(
-        cls, required_version: FEditorObjectVersion | FUE5ReleaseStreamObjectVersion
-    ) -> bool:
-        guid_key = required_version.custom_version_guid
-        guid_key_str = str(guid_key).upper()
-        supported_version = cls.custom_versions.get(guid_key_str, 0)
-        return supported_version >= required_version.value
-
-
-# ============================================
-#
-class ContextScopeTracker:
-    parent_context = "unknown"
-    context = "unknown"
-
-    def __init__(self, context: str):
-        self.parent_context = SerializationTools.get_path()
-        self.context = context
-
-    def __enter__(self):
-        SerializationTools.push_path(self.context)
-        # print(f"Entering scope: {SerializationTools.get_path()}")
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        if exc_type is not None:
-            print(
-                f"An exception of type {exc_type} occurred: {exc_val} with context\n\t{SerializationTools.get_path()}"
-            )
-            import traceback
-            import sys
-
-            traceback.print_exception(exc_type, exc_val, exc_tb, file=sys.stdout)
-            return False
-        # Don't pop so we can have deepest context for debugging
-        SerializationTools.pop_path()
-        return True
+from ..utils import ContextScopeTracker
 
 
 # ============================================
@@ -261,6 +163,3 @@ class Property:
     ) -> int:
         """Write property value to stream"""
         return self.value.write(stream, include_header)
-
-    def __repr__(self) -> str:
-        return f"Property({self.type}, {self.value})"

@@ -20,7 +20,6 @@ from .engine_versions import EngineVersion, FEngineVersion
 from .game_version import GameVersion, CompressionType, GVAS_MAGIC, PLZ_MAGIC
 from .gvas_types import HashableIndexMap
 from .properties import Property
-from .properties.property_base import SerializationTools, ContextScopeTracker
 from .utils import *
 
 
@@ -34,7 +33,7 @@ class FCustomVersion:
 
     # Read FCustomVersion from a binary file
     def read(self, stream: BinaryIO) -> None:
-        self.key = str(read_guid(stream)).upper()
+        self.key = guid_to_str(read_guid(stream))
         self.version = read_uint32(stream)
 
     # Write FCustomVersion to a binary file
@@ -268,9 +267,7 @@ class GVASFile:
         # print(header.engine_version)
 
         # set up hints for use during deserialization
-        SerializationTools.set_header_and_custom_versions(
-            header.engine_version, header.custom_versions
-        )
+        SerializationTools.set_custom_versions(header.custom_versions)
 
         # Read all the top level file properties
         properties = {}

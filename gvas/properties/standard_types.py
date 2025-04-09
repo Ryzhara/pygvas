@@ -1,11 +1,10 @@
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 import datetime
-from xml.sax.handler import property_encoding
+import uuid
 
 from ..utils import *
-from .property_base import SerializationTools
-from ..custom_versions import FUE5ReleaseStreamObjectVersion
+from ..custom_versions import FEditorObjectVersion, FUE5ReleaseStreamObjectVersion
 
 
 # ============================================
