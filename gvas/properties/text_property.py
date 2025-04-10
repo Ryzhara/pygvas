@@ -1,10 +1,43 @@
-from typing import Optional
+from abc import ABC, abstractmethod
+from typing import Optional, Self, TypeVar, Type
 from enum import IntEnum, auto
 from dataclasses import dataclass
 from unittest import case
 
+from .int_property import *
 from .property_base import PropertyTrait
+from ..gvas_types import HashableIndexMap
 from ..utils import *
+
+EnumT = TypeVar("EnumT", bound=IntEnum)
+
+
+def cast_to_type(enum_class: Type[EnumT], value: int) -> Any:
+    """Casts an integer to an IntEnum member.
+
+    Args:
+        enum_class: The IntEnum class to cast to.
+        value: The integer value to cast.
+
+    Returns:
+        The corresponding IntEnum member.
+
+    Raises:
+        ValueError: If the integer value is not a valid member of the IntEnum.
+    """
+    try:
+        return enum_class(value)
+    except ValueError:
+        raise ValueError(f"{value} is not a valid member of {enum_class.__name__}")
+
+
+def read_intenum_type(stream: BinaryIO, enum_class: Type[EnumT]) -> Any:
+    enum_value: int = read_int8(stream)
+    return cast_to_type(enum_class, enum_value)
+
+
+def write_intenum_type(stream: BinaryIO, enum_value: IntEnum) -> int:
+    return write_int8(stream, enum_value.value)
 
 
 class DateTimeStyle(IntEnum):
@@ -19,12 +52,26 @@ class DateTimeStyle(IntEnum):
     # Full
     Full = auto()
 
+    @classmethod
+    def read_type(cls, stream: BinaryIO) -> "DateTimeStyle":
+        return read_intenum_type(stream, DateTimeStyle)
+
+    def write_type(self, stream: BinaryIO) -> int:
+        return write_intenum_type(stream, self)
+
 
 class TransformType(IntEnum):
     # To lowercase
     ToLower = 0
     # To uppercase
     ToUpper = auto()
+
+    @classmethod
+    def read_type(cls, stream: BinaryIO) -> "TransformType":
+        return read_intenum_type(stream, TransformType)
+
+    def write_type(self, stream: BinaryIO) -> int:
+        return write_intenum_type(stream, self)
 
 
 class RoundingMode(IntEnum):
@@ -45,12 +92,10 @@ class RoundingMode(IntEnum):
 
     @classmethod
     def read_type(cls, stream: BinaryIO) -> "RoundingMode":
-        rounding_mode: int = read_int8(stream)
-        try:
-            rounding_mode: RoundingMode = RoundingMode(rounding_mode)
-        except ValueError:
-            raise ValueError(f"Unimplemented RoundingMode type {rounding_mode}")
-        return rounding_mode
+        return read_intenum_type(stream, RoundingMode)
+
+    def write_type(self, stream: BinaryIO) -> int:
+        return write_intenum_type(stream, self)
 
 
 # Number formatting options
@@ -71,7 +116,7 @@ class NumberFormattingOptions:
     # Maximum fractional digits
     maximum_fractional_digits: int
 
-    def read(self, stream: BinaryIO):
+    def read(self, stream: BinaryIO) -> Self:
         self.always_include_sign = read_bool32bit(stream)
         self.use_grouping = read_bool32bit(stream)
         self.rounding_mode = RoundingMode.read_type(stream)
@@ -79,12 +124,13 @@ class NumberFormattingOptions:
         self.maximum_integral_digits = read_int32(stream)
         self.minimum_fractional_digits = read_int32(stream)
         self.maximum_fractional_digits = read_int32(stream)
+        return self
 
     def write(self, stream: BinaryIO) -> int:
         bytes_written = 0
-        bytes_written += write_uint32(stream, 1 if self.always_include_sign else 0)
-        bytes_written += write_uint32(stream, 1 if self.use_grouping else 0)
-        bytes_written += write_uint32(stream, 1 if self.rounding_mode else 0)
+        bytes_written += write_bool32bit(stream, self.always_include_sign)
+        bytes_written += write_bool32bit(stream, self.use_grouping)
+        bytes_written += write_bool32bit(stream, self.rounding_mode)
         bytes_written += write_int32(stream, self.minimum_integral_digits)
         bytes_written += write_int32(stream, self.maximum_integral_digits)
         bytes_written += write_int32(stream, self.minimum_fractional_digits)
@@ -92,6 +138,30 @@ class NumberFormattingOptions:
         return bytes_written
 
 
+class FormatArgumentType(IntEnum):
+    # Integer (32 bit in most games, 64 bit in Hogwarts Legacy)
+    Int = 0
+    # Unsigned integer (32 bit)
+    UInt = auto()
+    # Floating point number (32 bit)
+    Float = auto()
+    # Floating point number (64 bit)
+    Double = auto()
+    # FText
+    Text = auto()
+    # ?
+    Gender = auto()
+
+    @classmethod
+    def read_type(cls, stream: BinaryIO) -> "FormatArgumentType":
+        return read_intenum_type(stream, FormatArgumentType)
+
+    def write_type(self, stream: BinaryIO) -> int:
+        return write_intenum_type(stream, self)
+
+
+# Argh. We are impedance matching FormatArgumentType to FormatArgumentValue so
+# we can accommodate an implicit type conversion on 64-bit support. :(
 class FormatArgumentValue(IntEnum):
     # Integer
     Int = 0
@@ -109,49 +179,99 @@ class FormatArgumentValue(IntEnum):
     UInt64 = auto()
 
     @classmethod
-    def read_type(cls, stream: BinaryIO):
-        format_argument_type = read_int8(stream)
-        try:
-            format_argument_type = FormatArgumentValue(format_argument_type)
-        except ValueError:
-            raise ValueError(
-                f"Unimplemented FormatArgumentValue type {format_argument_type}"
-            )
-        return format_argument_type
+    def read_type(cls, stream: BinaryIO) -> "FormatArgumentValue":
+        return read_intenum_type(stream, FormatArgumentValue)
+
+    def write_type(self, stream: BinaryIO) -> int:
+        return write_intenum_type(stream, self)
 
     @classmethod
     def read(cls, stream: BinaryIO):
-        format_argument_type = cls.read_type(stream)
+
+        format_argument_type = FormatArgumentType.read_type(stream)
+
         supports_64bit = SerializationTools.supports_version(
             FUE5ReleaseStreamObjectVersion.TextFormatArgumentData64bitSupport
         )
 
+        # Argh. We are impedance matching FormatArgumentType to FormatArgumentValue so
+        # we can accommodate an implicit type conversion on 64-bit support. :(
+        # We read one type, use a different type internally, then write the original type back out
         match format_argument_type:
+            case FormatArgumentType.Int:
+                property_instance = Int64Property() if supports_64bit else IntProperty()
+                return property_instance.read(stream, include_header=False)
+
+            case FormatArgumentType.UInt:
+                property_instance = (
+                    UInt64Property() if supports_64bit else UInt32Property()
+                )
+                return property_instance.read(stream, include_header=False)
+
+            case FormatArgumentType.Float:
+                property_instance = FloatProperty()
+                return property_instance.read(stream, include_header=False)
+
+            case FormatArgumentType.Double:
+                property_instance = DoubleProperty()
+                return property_instance.read(stream, include_header=False)
+
+            case FormatArgumentType.Text:
+                property_instance = FText()
+                return property_instance.read(stream)
+
+            case FormatArgumentType.Gender:
+                raise DeserializeError.invalid_value(
+                    format_argument_type, stream.tell(), "Gender is not implemented"
+                )
+
+            case _:
+                raise NotImplementedError()
+
+    def assert_64bit_support(self, *, expected: bool):
+        if expected == SerializationTools.supports_version(
+            FUE5ReleaseStreamObjectVersion.TextFormatArgumentData64bitSupport
+        ):
+            raise SerializeError.invalid_value(
+                f"{self.name} support {'required' if expected else 'prohibited'} with TextFormatArgumentData64bitSupport"
+            )
+
+    def write(self, stream: BinaryIO):
+        # Argh. We are impedance matching FormatArgumentType to FormatArgumentValue so
+        # we can accommodate an implicit type conversion on 64-bit support. :(
+        # We read one type, use a different type internally, then write the original type back out
+        match self:
             case FormatArgumentValue.Int:
-                return read_int64(stream) if supports_64bit else read_int32(stream)
-
-            case FormatArgumentValue.UInt:
-                return read_uint64(stream) if supports_64bit else read_uint32(stream)
-
-            case FormatArgumentValue.Float:
-                return read_float(stream)
-
-            case FormatArgumentValue.Double:
-                return read_double(stream)
-
-            case FormatArgumentValue.Text:
-                ftext = FText()
-                ftext.read(stream)
-                return ftext
+                self.assert_64bit_support(expected=False)
+                FormatArgumentType.Int.write_type(stream)
+                write_int32(stream, self.value)
 
             case FormatArgumentValue.Int64:
-                return read_int64(stream)
+                self.assert_64bit_support(expected=True)
+                FormatArgumentType.Int.write_type(stream)
+                write_int64(stream, self.value)
 
-            case FormatArgumentValue.UInt64:
-                return read_uint64(stream)
+            case FormatArgumentValue.UInt:
+                self.assert_64bit_support(expected=False)
+                FormatArgumentType.UInt.write_type(stream)
+                write_uint32(stream, self.value)
 
-            case FormatArgumentValue.Gender:
-                raise NotImplementedError()
+            case FormatArgumentValue.UInt:
+                self.assert_64bit_support(expected=True)
+                FormatArgumentType.UInt.write_type(stream)
+                write_uint64(stream, self.value)
+
+            case FormatArgumentValue.Float:
+                FormatArgumentType.Float.write_type(stream)
+                write_float(stream, self.value)
+
+            case FormatArgumentValue.Double:
+                FormatArgumentType.Double.write_type(stream)
+                write_double(stream, self.value)
+
+            case FormatArgumentValue.Text:
+                FormatArgumentType.Text.write_type(stream)
+                self.write(stream)
 
 
 class TextHistoryType(IntEnum):
@@ -188,121 +308,500 @@ class TextHistoryType(IntEnum):
     RawText = auto()
 
     @classmethod
-    def read_type(cls, stream: BinaryIO):
-        history_type = read_int8(stream)
-        try:
-            history_type = TextHistoryType(history_type)
-        except ValueError:
-            raise ValueError(f"Unimplemented FTextHistory type {history_type}")
-        return history_type
+    def read_type(cls, stream: BinaryIO) -> "TextHistoryType":
+        return read_intenum_type(stream, TextHistoryType)
+
+    def write_type(self, stream: BinaryIO) -> int:
+        return write_intenum_type(stream, self)
+
+
+@dataclass()
+class FText:
+    flags: int = 0
+    history: Any = None
+
+    def read(self, stream: BinaryIO) -> Self:
+        self.flags = read_uint32(stream)
+        self.history = FTextHistory.read(stream)
+        return self
+
+    def write(self, stream: BinaryIO):
+        bytes_written = 0
+        bytes_written += write_uint32(stream, self.flags)
+        bytes_written += self.history.write(stream)
+        return bytes_written
+
+
+# Lightweight version of DateTime
+@dataclass()
+class DateTime:
+    ticks: int = 0
+    comment: [None, str] = None
+
+    def read(self, stream: BinaryIO) -> Self:
+        self.ticks = read_uint64(stream)
+        self.comment = datetime_to_str(self.ticks)
+        return self
+
+    def write(self, stream: BinaryIO):
+        return write_uint64(stream, self.ticks)
+
+
+@dataclass()
+class Empty:
+    type: str = "Empty"
+
+    # Empty {},
+    def write(self, stream: BinaryIO) -> int:
+        bytes_written = 0
+        bytes_written += TextHistoryType.NoType.write_type(stream)
+
+        if SerializationTools.supports_version(
+            FEditorObjectVersion.CultureInvariantTextSerializationKeyStability
+        ):
+            bytes_written += write_bool32bit(stream, False)
+        return bytes_written
+
+
+@dataclass()
+class NoType:
+    type: TextHistoryType = TextHistoryType.NoType
+    # None
+    culture_invariant_string: Optional[str] = None
+
+    def read(self, stream: BinaryIO) -> Self:
+        if SerializationTools.supports_version(
+            FEditorObjectVersion.CultureInvariantTextSerializationKeyStability
+        ):
+            has_culture_invariant_string = read_bool32bit(stream)
+            if has_culture_invariant_string:
+                self.culture_invariant_string = read_string(stream)
+                return self
+            else:
+                return Empty()
+        else:
+            return Empty()
+
+    def write(self, stream: BinaryIO):
+        bytes_written = 0
+        bytes_written += self.type.write_type(stream)
+
+        if SerializationTools.supports_version(
+            FEditorObjectVersion.CultureInvariantTextSerializationKeyStability
+        ):
+            bytes_written += write_bool32bit(stream, True)
+            bytes_written += write_string(self.culture_invariant_string)
+        return bytes_written
+
+
+@dataclass()
+class Base:
+    type: TextHistoryType = TextHistoryType.Base
+    # Base text history
+    # Namespace
+    namespace: Optional[str] = None
+    # Key
+    key: Optional[str] = None
+    # Source string
+    source_string: Optional[str] = None
+
+    def read(self, stream: BinaryIO) -> Self:
+        self.namespace = read_string(stream)
+        self.key = read_string(stream)
+        self.source_string = read_string(stream)
+        return self
+
+    def write(self, stream: BinaryIO) -> int:
+        bytes_written = 0
+        bytes_written += self.type.write_type(stream)
+
+        bytes_written += write_string(stream, self.namespace)
+        bytes_written += write_string(stream, self.key)
+        bytes_written += write_string(stream, self.source_string)
+        return bytes_written
+
+
+@dataclass()
+class NamedFormat:
+    type: TextHistoryType = TextHistoryType.NamedFormat
+    # Named format text history
+    # Source format
+    source_format: Optional[FText] = None
+    # Arguments
+    arguments: HashableIndexMap[str, FormatArgumentValue] = None
+
+    def read(self, stream: BinaryIO) -> Self:
+        self.source_format = FText().read(stream)
+        argument_count = read_int32(stream)
+        self.arguments: HashableIndexMap = HashableIndexMap()
+        for _ in range(argument_count):
+            key = read_string(stream)
+            value = FormatArgumentValue.read(stream)
+            self.arguments[key] = value
+        return self
+
+    def write(self, stream: BinaryIO) -> int:
+        bytes_written = 0
+        bytes_written += self.type.write_type(stream)
+
+        bytes_written += self.source_format.write(stream)
+        bytes_written += write_int32(stream, len(self.arguments))
+        for key, value in self.arguments.items():
+            bytes_written += write_string(stream, key)
+            bytes_written += value.write(stream)
+        return bytes_written
+
+
+@dataclass()
+class OrderedFormat:
+    type: TextHistoryType = TextHistoryType.OrderedFormat
+    # Ordered format text history
+    # Source format
+    source_format: Optional[FText] = None
+    # Arguments
+    arguments: list[FormatArgumentValue] = None
+
+    def read(self, stream: BinaryIO) -> Self:
+        self.source_format = FText().read(stream)
+        argument_count = read_int32(stream)
+        self.arguments: list = []
+        for _ in range(argument_count):
+            value = FormatArgumentValue.read(stream)
+            self.arguments.append(value)
+        return self
+
+    def write(self, stream: BinaryIO) -> int:
+        bytes_written = 0
+        bytes_written += self.type.write_type(stream)
+
+        bytes_written += self.source_format.write(stream)
+        bytes_written += write_int32(stream, len(self.arguments))
+        for argument in self.arguments:
+            bytes_written += argument.write(stream)
+        return bytes_written
+
+
+@dataclass()
+class ArgumentFormat:
+    type: TextHistoryType = TextHistoryType.ArgumentFormat
+    # Argument format text history
+    # Source format
+    source_format: Optional[FText] = None
+    # Arguments
+    arguments: HashableIndexMap[str, FormatArgumentValue] = None
+
+    def read(self, stream: BinaryIO) -> Self:
+        self.source_format = FText().read(stream)
+        argument_count = read_int32(stream)
+        self.arguments: HashableIndexMap = HashableIndexMap()
+        for _ in range(argument_count):
+            key = read_string(stream)
+            value = FormatArgumentValue.read(stream)
+            self.arguments[key] = value
+        return self
+
+    def write(self, stream: BinaryIO) -> int:
+        bytes_written = 0
+        bytes_written += self.type.write_type(stream)
+
+        bytes_written += self.source_format.write(stream)
+        bytes_written += write_int32(stream, len(self.arguments))
+        for key, value in self.arguments.items():
+            bytes_written += write_string(stream, key)
+            bytes_written += value.write(stream)
+        return bytes_written
+
+
+@dataclass()
+class AsNumber:
+    type: TextHistoryType = TextHistoryType.AsNumber
+    # Convert to number
+    # Source value
+    source_value: Optional[FormatArgumentValue] = None
+    # Format options
+    format_options: Optional[NumberFormattingOptions] = None
+    # Target culture
+    target_culture: Optional[str] = None
+
+    def read(self, stream: BinaryIO) -> Self:
+        self.source_value = FormatArgumentValue.read(stream)
+        has_format_options = read_bool32bit(stream)
+        if has_format_options:
+            self.format_options = NumberFormattingOptions().read(stream)
+        self.target_culture = read_string(stream)
+        return self
+
+    def write(self, stream: BinaryIO) -> int:
+        bytes_written = 0
+        bytes_written += self.type.write_type(stream)
+
+        bytes_written += self.source_value.write(stream)
+        bytes_written += write_bool32bit(stream, True if self.format_options else False)
+        if self.format_options:
+            bytes_written += self.format_options.write(stream)
+        bytes_written += write_string(stream, self.target_culture)
+        return bytes_written
+
+
+@dataclass()
+class AsPercent:
+    type: TextHistoryType = TextHistoryType.AsPercent
+    # Convert to percentage
+    # Source value
+    source_value: Optional[FormatArgumentValue] = None
+    # Format options
+    format_options: Optional[NumberFormattingOptions] = None
+    # Target culture
+    target_culture: Optional[str] = None
+
+    def read(self, stream: BinaryIO) -> Self:
+        self.source_value = FormatArgumentValue.read(stream)
+        has_format_options = read_bool32bit(stream)
+        if has_format_options:
+            self.format_options = NumberFormattingOptions().read(stream)
+        self.target_culture = read_string(stream)
+        return self
+
+    def write(self, stream: BinaryIO) -> int:
+        bytes_written = 0
+        bytes_written += self.type.write_type(stream)
+
+        bytes_written += self.source_value.write(stream)
+        bytes_written += write_bool32bit(stream, True if self.format_options else False)
+        if self.format_options:
+            bytes_written += self.format_options.write(stream)
+        bytes_written += write_string(stream, self.target_culture)
+        return bytes_written
+
+
+@dataclass()
+class AsCurrency:
+    type: TextHistoryType = TextHistoryType.AsCurrency
+    # Convert to currency
+    # Currency code
+    currency_code: Optional[str] = None
+    # Source value
+    source_value: Optional[FormatArgumentValue] = None
+    # Format options
+    format_options: Optional[NumberFormattingOptions] = None
+    # Target culture
+    target_culture: Optional[str] = None
+
+    def read(self, stream: BinaryIO) -> Self:
+        self.currency_code = read_string(stream)
+        self.source_value = FormatArgumentValue.read(stream)
+        has_format_options = read_bool32bit(stream)
+        if has_format_options:
+            self.format_options = NumberFormattingOptions().read(stream)
+        self.target_culture = read_string(stream)
+        return self
+
+    def write(self, stream: BinaryIO) -> int:
+        bytes_written = 0
+        bytes_written += self.type.write_type(stream)
+
+        bytes_written += write_string(stream, self.currency_code)
+        bytes_written += self.source_value.write(stream)
+        bytes_written += write_bool32bit(stream, True if self.format_options else False)
+        if self.format_options:
+            bytes_written += self.format_options.write(stream)
+        bytes_written += write_string(stream, self.target_culture)
+        return bytes_written
+
+
+@dataclass()
+class AsDate:
+    type: TextHistoryType = TextHistoryType.AsDate
+    # Convert to date
+    # Date time as uint64
+    date_time: Optional[DateTime] = None
+    # Date style
+    date_style: Optional[DateTimeStyle] = None
+    # todo: FTEXT_HISTORY_DATE_TIMEZONE support (needs object version)
+    # Target culture
+    target_culture: Optional[str] = None
+
+    def read(self, stream: BinaryIO) -> Self:
+        self.date_time = DateTime().read(stream)
+        self.date_style = DateTimeStyle.read_type(stream)
+        self.target_culture = read_string(stream)
+        return self
+
+    def write(self, stream: BinaryIO) -> int:
+        bytes_written = 0
+        bytes_written += self.type.write_type(stream)
+
+        bytes_written += self.date_time.write(stream)
+        bytes_written += self.date_style.write_type(stream)
+        bytes_written += write_string(stream, self.target_culture)
+        return bytes_written
+
+
+@dataclass()
+class AsTime:
+    type: TextHistoryType = TextHistoryType.AsTime
+    # Convert to time
+    # Source date time as uint64
+    source_date_time: Optional[DateTime] = None
+    # Time style
+    time_style: Optional[DateTimeStyle] = None
+    # Time zone
+    time_zone: Optional[str] = None
+    # Target culture
+    target_culture: Optional[str] = None
+
+    def read(self, stream: BinaryIO) -> Self:
+        self.source_date_time = DateTime().read(stream)
+        self.time_style = DateTimeStyle.read_type(stream)
+        self.time_zone = read_string(stream)
+        self.target_culture = read_string(stream)
+        return self
+
+    def write(self, stream: BinaryIO) -> int:
+        bytes_written = 0
+        bytes_written += self.type.write_type(stream)
+
+        bytes_written += self.source_date_time.write(stream)
+        bytes_written += self.time_style.write_type(stream)
+        bytes_written += write_string(stream, self.time_zone)
+        bytes_written += write_string(stream, self.target_culture)
+        return bytes_written
+
+
+@dataclass()
+class AsDateTime:
+    type: TextHistoryType = TextHistoryType.AsDateTime
+    # Convert to date time
+    # Source date time
+    source_date_time: Optional[DateTime] = None
+    # Date style
+    date_style: Optional[DateTimeStyle] = None
+    # Time style
+    time_style: Optional[DateTimeStyle] = None
+    # Time zone
+    time_zone: Optional[str] = None
+    # Target culture
+    target_culture: Optional[str] = None
+
+    def read(self, stream: BinaryIO) -> Self:
+        self.source_date_time = DateTime().read(stream)
+        self.date_style = DateTimeStyle.read_type(stream)
+        self.time_style = DateTimeStyle.read_type(stream)
+        self.time_zone = read_string(stream)
+        self.target_culture = read_string(stream)
+        return self
+
+    def write(self, stream: BinaryIO) -> int:
+        bytes_written = 0
+        bytes_written += self.type.write_type(stream)
+
+        bytes_written += self.source_date_time.write(stream)
+        bytes_written += self.date_style.write_type(stream)
+        bytes_written += self.time_style.write_type(stream)
+        bytes_written += write_string(stream, self.time_zone)
+        bytes_written += write_string(stream, self.target_culture)
+        return bytes_written
+
+
+@dataclass()
+class Transform:
+    # Transform text
+    # Source text
+    source_text: Optional[FText] = None
+    # Transform type
+    # [cfg_attr(feature = "serde", serde(flatten))]
+    transform_type: Optional[TransformType] = None
+
+    def read(self, stream: BinaryIO) -> Self:
+        self.source_text = FText().read(stream)
+        self.transform_type = TransformType.read_type(stream)
+        return self
+
+    def write(self, stream: BinaryIO) -> int:
+        bytes_written = 0
+        bytes_written += self.type.write_type(stream)
+
+        bytes_written += self.source_text.write(stream)
+        bytes_written += self.transform_type.write_type(stream)
+        return bytes_written
+
+
+@dataclass()
+class StringTableEntry:
+    type: TextHistoryType = TextHistoryType.StringTableEntry
+    # String table entry
+    # Table id
+    table_id: Optional[FText] = None
+    # Key
+    key: Optional[str] = None
+
+    def read(self, stream: BinaryIO) -> Self:
+        self.table_id = FText().read(stream)
+        self.key = read_string(stream)
+        return self
+
+    def write(self, stream: BinaryIO) -> int:
+        bytes_written = 0
+        bytes_written += self.type.write_type(stream)
+
+        bytes_written += self.table_id.write(stream)
+        bytes_written += write_string(stream, self.key)
+        return bytes_written
 
 
 class FTextHistory:
     @classmethod
     def read(cls, stream: BinaryIO):
 
-        result = {"history_type": TextHistoryType.read_type(stream)}
+        text_history_type = TextHistoryType.read_type(stream)
 
-        match result["history_type"]:
+        match text_history_type:
             case TextHistoryType.NoType:
-                if SerializationTools.supports_version(
-                    FEditorObjectVersion.CultureInvariantTextSerializationKeyStability
-                ):
-                    has_culture_invariant_string = read_bool32bit
-                    result.update({"culture_invariant_string": read_string(stream)})
-                    return result
+                return NoType().read(stream)
 
             case TextHistoryType.Base:
-                result.update(
-                    {
-                        "namespace": read_string(stream),
-                        "key": read_string(stream),
-                        "source_string": read_string(stream),
-                    }
-                )
-                return result
+                return Base().read(stream)
 
             case TextHistoryType.NamedFormat:
-                source_format = FText()
-                source_format.read(stream)
-                argument_count = read_int32(stream)
-                arguments: dict[str, Any] = {}
-                for _ in range(argument_count):
-                    key = read_string(stream)
-                    value = FormatArgumentValue.read(stream)
-                    arguments[key] = value
-                return {"source_format": source_format, "arguments": arguments}
+                return NamedFormat().read(stream)
 
             case TextHistoryType.OrderedFormat:
-                source_format = FText()
-                source_format.read(stream)
-                argument_count = read_int32(stream)
-                arguments: list = []
-                for _ in range(argument_count):
-                    arguments.append(FormatArgumentValue.read(stream))
-                return {"source_format": source_format, "arguments": arguments}
+                return OrderedFormat().read(stream)
 
             # other than type, this is identical to NamedFormat :/
             case TextHistoryType.ArgumentFormat:
-                source_format = FText()
-                source_format.read(stream)
-                argument_count = read_int32(stream)
-                arguments: dict[str, Any] = {}
-                for _ in range(argument_count):
-                    key = read_string(stream)
-                    value = FormatArgumentValue.read(stream)
-                    arguments[key] = value
-                return {"source_format": source_format, "arguments": arguments}
+                return ArgumentFormat().read(stream)
 
             case TextHistoryType.AsNumber:
-                source_value = FormatArgumentValue.read(stream)
-                has_format_options = read_bool32bit(stream)
-                format_options = None
-                if has_format_options:
-                    format_options = NumberFormattingOptions()
-                    format_options.read(stream)
-                target_culture = read_string(stream)
-                return {
-                    "source_value": source_value,
-                    "format_options": format_options,
-                    "target_culture": target_culture,
-                }
+                return AsNumber().read(stream)
 
             case TextHistoryType.AsPercent:
-                pass
+                return AsPercent().read(stream)
 
             case TextHistoryType.AsCurrency:
-                pass
+                return AsCurrency().read(stream)
 
             case TextHistoryType.AsDate:
-                pass
+                return AsDate().read(stream)
 
             case TextHistoryType.AsTime:
-                pass
+                return AsTime().read(stream)
 
             case TextHistoryType.AsDateTime:
-                pass
+                return AsDateTime().read(stream)
 
             case TextHistoryType.Transform:
-                pass
+                return Transform().read(stream)
 
             case TextHistoryType.StringTableEntry:
-                pass
+                return StringTableEntry().read(stream)
 
-            case TextHistoryType.TextGenerator:
-                pass
-
-            case TextHistoryType.RawText:
-                pass
-
-
-class FText:
-    flags: int = 0
-    history: FTextHistory = None
-
-    def read(self, stream: BinaryIO):
-        self.flags = read_uint32(stream)
-        self.history = FTextHistory.read(stream)
+            case _:
+                raise DeserializeError.invalid_value(
+                    text_history_type.value,
+                    stream.tell(),
+                    f"Read unexpected type {text_history_type}",
+                )
 
 
 @dataclass
@@ -310,9 +809,11 @@ class TextProperty(PropertyTrait):
     """A property that holds FText data"""
 
     type: str = "TextProperty"
-    actual_property_count: int = 0  # for correctly writing object during hack
     flags: int = 0
-    byte_data: Optional[bytes] = None  # just scarf the bytes
+    history: Optional[FTextHistory] = None
+    # ftext: FText = None
+    # actual_property_count: int = 0  # for correctly writing object during hack
+    # byte_data: Optional[bytes] = None  # just scarf the bytes
 
     def read(
         self,
@@ -328,9 +829,9 @@ class TextProperty(PropertyTrait):
         with ByteCountValidator(
             stream, length, do_validation=include_header
         ) as _validator:
-            self.flags = read_uint32(stream)
-            bytes_remaining = text_property_blob - 4
-            self.byte_data = read_bytes(stream, bytes_remaining)
+            ftext = FText().read(stream)
+            self.flags = ftext.flags
+            self.history = ftext.history
 
     def write(
         self,
@@ -338,177 +839,18 @@ class TextProperty(PropertyTrait):
         include_header: bool = True,
     ) -> int:
         """Write text to stream"""
-        length = 4 + len(self.byte_data)
+        body_buffer = BytesIO()
+        ftext = FText()
+        ftext.flags = self.flags
+        ftext.history = self.history
+        ftext.write(body_buffer)
+
+        length = len(body_buffer.getvalue())
         bytes_written = 0
         if include_header:
             bytes_written += write_standard_header(
                 stream, "TextProperty", length=length
             )
 
-        bytes_written += write_uint32(stream, self.flags)
-        bytes_written += write_bytes(stream, self.byte_data)
-        return bytes_written
-
-
-@dataclass
-class TextProperty_GENERATED(PropertyTrait):
-    """A property that holds text data"""
-
-    value: "FText" = None
-
-    @classmethod
-    def new(cls, value: "FText") -> "TextProperty":
-        """Create a new text property"""
-        return cls(value=value)
-
-    def read(
-        self,
-        stream: BinaryIO,
-        include_header: bool = True,
-    ) -> None:
-        """Read text from stream"""
-        self.value = FText.read(stream, include_header=include_header)
-
-    def write(
-        self,
-        stream: BinaryIO,
-        include_header: bool = True,
-    ) -> int:
-        """Write text to stream"""
-        return self.value.write(stream, include_header=include_header)
-
-
-@dataclass
-class FText:
-    """Unreal Engine FText structure"""
-
-    flags: int = 0
-    history: "FTextHistory" = None
-
-    @classmethod
-    def new_none(
-        cls, flags: int = 0, culture_invariant_string: Optional[str] = None
-    ) -> "FText":
-        """Create a new None text"""
-        return cls(flags=flags, history=FTextHistory.none(culture_invariant_string))
-
-    @classmethod
-    def new_base(
-        cls,
-        flags: int = 0,
-        namespace: Optional[str] = None,
-        key: Optional[str] = None,
-        source_string: Optional[str] = None,
-    ) -> "FText":
-        """Create a new base text"""
-        return cls(
-            flags=flags, history=FTextHistory.base(namespace, key, source_string)
-        )
-
-    @classmethod
-    def read(cls, stream: BinaryIO) -> "FText":
-        """Read FText from stream"""
-        flags = read_uint32(stream)
-        history = FTextHistory.read(stream)
-        return cls(flags=flags, history=history)
-
-    def write(self, stream: BinaryIO) -> int:
-        """Write FText to stream"""
-        bytes_written = 0
-        bytes_written += write_uint32(stream, self.flags)
-        bytes_written += 4
-        bytes_written += self.history.write(stream)
-        return bytes_written
-
-
-class TextHistoryType(IntEnum):
-    """Types of text history"""
-
-    NONE = -1
-    BASE = 0
-    NAMED_FORMAT = auto()
-    ORDERED_FORMAT = auto()
-    ARGUMENT_FORMAT = auto()
-    AS_NUMBER = auto()
-    AS_PERCENT = auto()
-    AS_CURRENCY = auto()
-    AS_DATE = auto()
-    AS_TIME = auto()
-    AS_DATETIME = auto()
-    TRANSFORM = auto()
-    STRING_TABLE_ENTRY = auto()
-    TEXT_GENERATOR = auto()
-    RAW_TEXT = auto()
-
-
-@dataclass
-class FTextHistory:
-    """Text history data"""
-
-    type: TextHistoryType
-    data: dict = None
-
-    def __post_init__(self):
-        if self.data is None:
-            self.data = {}
-
-    @classmethod
-    def none(cls, culture_invariant_string: Optional[str] = None) -> "FTextHistory":
-        """Create None history"""
-        return cls(
-            type=TextHistoryType.NONE,
-            data={"culture_invariant_string": culture_invariant_string},
-        )
-
-    @classmethod
-    def base(
-        cls, namespace: Optional[str], key: Optional[str], source_string: Optional[str]
-    ) -> "FTextHistory":
-        """Create Base history"""
-        return cls(
-            type=TextHistoryType.BASE,
-            data={"namespace": namespace, "key": key, "source_string": source_string},
-        )
-
-    @classmethod
-    def read(cls, stream: BinaryIO) -> "FTextHistory":
-        """Read history from stream"""
-        history_type = TextHistoryType(struct.unpack("<i", stream.read(4))[0])
-
-        if history_type == TextHistoryType.NONE:
-            culture_invariant_string = read_string(stream)
-            return cls.none(culture_invariant_string)
-
-        elif history_type == TextHistoryType.BASE:
-            namespace = read_string(stream)
-            key = read_string(stream)
-            source_string = read_string(stream)
-            return cls.base(namespace, key, source_string)
-
-        else:
-            # Add other history types as needed
-            raise DeserializeError.invalid_value(
-                f"Unsupported text history type: {history_type}"
-            )
-
-    def write(self, stream: BinaryIO) -> int:
-        """Write history to stream"""
-        bytes_written = 0
-        stream.write(struct.pack("<i", self.type))
-        bytes_written += 4
-
-        if self.type == TextHistoryType.NONE:
-            bytes_written += write_string(
-                stream, self.data.get("culture_invariant_string")
-            )
-
-        elif self.type == TextHistoryType.BASE:
-            bytes_written += write_string(stream, self.data.get("namespace"))
-            bytes_written += write_string(stream, self.data.get("key"))
-            bytes_written += write_string(stream, self.data.get("source_string"))
-
-        else:
-            # Add other history types as needed
-            raise ValueError(f"Unsupported text history type: {self.type}")
-
+        bytes_written += write_bytes(stream, body_buffer.getvalue())
         return bytes_written

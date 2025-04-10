@@ -2,6 +2,7 @@
 Common utility functions for GVAS
 """
 
+import enum
 import json
 import dataclasses
 import uuid
@@ -14,6 +15,23 @@ from .custom_versions import FEditorObjectVersion, FUE5ReleaseStreamObjectVersio
 from .error import *
 
 ZERO_GUID = uuid.UUID(int=0)
+
+
+def datetime_to_str(dt: int) -> str:
+    # datetime.datetime.fromtimestamp takes time in seconds since January 1, 1970, 00:00:00 (UTC) as a floating-point number
+    # FDateTime type represents dates and times as ticks (0.1 microseconds) since January 1, 0001
+    # seconds_since_1_1_00001 = 6_392_264_799_600
+    try:
+        ticks_per_second = 10_000_000.0
+        seconds = dt / ticks_per_second
+        comment = (
+            datetime.datetime.min + datetime.timedelta(seconds=seconds)
+        ).strftime("%d/%m/%Y %H:%M:%S.%f")
+    except Exception as e:
+        print(f"Cant process {dt=} : {e}")
+        comment = str(dt)
+
+    return comment
 
 
 # ============================================
@@ -29,6 +47,9 @@ class EnhancedJSONEncoder(json.JSONEncoder):
                 return False
 
             return True
+
+        if isinstance(obj, enum.IntEnum):
+            return obj.name
 
         if isinstance(obj, uuid.UUID):
             return guid_to_str(obj)
@@ -256,9 +277,15 @@ def read_bool(stream: BinaryIO, assert_value=None, error_msg: str = None) -> boo
 
 # ============================================
 #
+def write_bool(stream: BinaryIO, value: bool) -> int:
+    return stream.write(struct.pack("?", value))
+
+
+# ============================================
+#
 def read_bool32bit(stream: BinaryIO) -> bool:
     value = read_uint32(stream)
-    if not (0 <= value <= 1):
+    if value not in [0, 1]:
         raise DeserializeError.invalid_value(
             value,
             stream.tell() - 4,
@@ -269,8 +296,12 @@ def read_bool32bit(stream: BinaryIO) -> bool:
 
 # ============================================
 #
-def write_bool(stream: BinaryIO, value) -> int:
-    return stream.write(struct.pack("?", value))
+def write_bool32bit(stream: BinaryIO, value: [int, bool]) -> int:
+    if value not in [0, 1, True, False]:
+        raise SerializeError.invalid_value(
+            f"Invalid bool32bit value {value} at {stream.tell()}"
+        )
+    return write_uint32(stream, 1 if value else 0)
 
 
 # ============================================
@@ -409,13 +440,13 @@ def write_bytes(stream: BinaryIO, value_bytes: bytes) -> int:
 
 # ============================================
 #
-def read_string(stream: BinaryIO) -> str:
+def read_string(stream: BinaryIO) -> str | None:
     """Read a string from the stream
     prefix is uint32: length, followed by UTF-8 byte encoded string
     """
 
     if (length := read_uint32(stream)) == 0:
-        return ""
+        return None  # ""
     value_bytes = read_bytes(stream, length)
     return value_bytes.decode("utf-8")[:-1]  # Remove included '\0'
 
@@ -426,7 +457,9 @@ def write_string(stream: BinaryIO, value: str) -> int:
     """Write a string to the stream
     prefix is uint32: length, followed by UTF-8 byte encoded string
     """
-    if not value:  # null | 0 | "" | ''
+    if (
+        value is None
+    ):  # null -- if we read an empty string, we write an empty string | "" | ''
         return write_uint32(stream, 0)
 
     value_bytes = (value + "\0").encode("utf-8")  # attach null terminator

@@ -141,18 +141,19 @@ class ArrayProperty(PropertyTrait):
                             array_property.read_body(stream)
                             self.values.append(array_property)
 
-        elif self.property_type in ["TextProperty"]:
+        elif self.property_type == "TextProperty":
             # capture the thing as a blob for now; ugly hack
-            SerializationTools.text_property_blob = (
-                length - 4
-            )  # minus 4 for property count read
-            array_property = Property.new(
-                stream, self.property_type, include_header=False
-            )
-            # We have must use actual_property_count because the sample files are inconsistent
-            # regarding whether it is byte count or property count, or 1
-            array_property.actual_property_count = property_count
-            self.values.append(array_property)
+            # SerializationTools.text_property_blob = (
+            #     length - 4
+            # )  # minus 4 for property count read
+            for _ in range(property_count):
+                array_property = Property.new(
+                    stream, self.property_type, include_header=False
+                )
+                # We have must use actual_property_count because the sample files are inconsistent
+                # regarding whether it is byte count or property count, or 1
+                # array_property.actual_property_count = property_count
+                self.values.append(array_property)
 
         elif self.property_type == "ByteProperty":
             # read it all as one blob
@@ -201,16 +202,11 @@ class ArrayProperty(PropertyTrait):
         array_buffer = BytesIO()
         array_bytes = 0
 
-        # Crap special handling
         # property_count, or number of elements in the array
         property_count = len(self.values)
-        # ugly, hacky fixup until we complete TextProperty implementation
-        if self.property_type == "TextProperty" and property_count > 0:
-            text_property: TextProperty = self.values[0]
-            property_count = text_property.actual_property_count
 
         # this method is MUCH better than serializing each byte independently. Who does that?!
-        elif self.property_type == "ByteProperty" and property_count > 0:
+        if self.property_type == "ByteProperty" and property_count > 0:
             if type(self.values) is list:
                 byte_property: ByteProperty = self.values[0]
                 property_count = byte_property.actual_property_count

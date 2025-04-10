@@ -66,7 +66,7 @@ compression = CompressionType.NONE
 # test_file_list = ["resources/test/vector2d.sav"]
 # test_file_list = ["resources/test/Delegate.sav"]
 # test_file_list = ["resources/test/assert_failed.sav"]
-# test_file_list = ["resources/test/component8.sav"]
+test_file_list = ["resources/test/component8.sav"]
 
 for test_file in test_file_list:
     # print(f"Loading {test_file}")
@@ -80,8 +80,12 @@ for test_file in test_file_list:
             print(f"Failed to load {test_file}: {e}")
             continue
 
-    # hack to test JSON conversion
     json_file = f"{test_file}.json"
+
+    # hack to test JSON conversion
+    # with open(json_file, "w") as f:
+    #     f.write(str(gvas_file))
+
     with open(json_file, "w") as f:
         json_content = json.dumps(gvas_file, cls=EnhancedJSONEncoder, indent=2)
         f.write(json_content)

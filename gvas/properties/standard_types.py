@@ -60,19 +60,7 @@ class DateTimeProperty(StandardStructTrait):
 
     def read(self, stream: BinaryIO) -> None:
         self.datetime = read_uint64(stream)
-        try:
-            # datetime.datetime.fromtimestamp takes time in seconds since January 1, 1970, 00:00:00 (UTC) as a floating-point number
-            # FDateTime type represents dates and times as ticks (0.1 microseconds) since January 1, 0001
-            # seconds_since_1_1_00001 = 6_392_264_799_600
-            ticks_per_second = 10_000_000.0
-            seconds = self.datetime / ticks_per_second
-            self.comment = (
-                datetime.datetime.min + datetime.timedelta(seconds=seconds)
-            ).strftime("%d/%m/%Y %H:%M:%S.%f")
-
-        except Exception as e:
-            print(f"Cant process {self.datetime=} : {e}")
-            self.comment = str(self.datetime)
+        self.comment = datetime_to_str(self.datetime)
 
     def write(self, stream: BinaryIO) -> int:
         bytes_written = write_uint64(stream, self.datetime)
