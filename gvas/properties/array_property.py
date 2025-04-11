@@ -103,13 +103,11 @@ class ArrayProperty(PropertyTrait):
 
         self.values: [
             str,
+            bytes,
             list,
             PropertyTrait,
             StandardStructTrait,
         ] = []  # prepare storage
-        # We do this for the individually handled items below with a for _ in <>: clause
-        # if property_count == 0:
-        #     return
 
         if self.property_type == "StructProperty":
 
@@ -142,17 +140,10 @@ class ArrayProperty(PropertyTrait):
                             self.values.append(array_property)
 
         elif self.property_type == "TextProperty":
-            # capture the thing as a blob for now; ugly hack
-            # SerializationTools.text_property_blob = (
-            #     length - 4
-            # )  # minus 4 for property count read
             for _ in range(property_count):
                 array_property = Property.new(
                     stream, self.property_type, include_header=False
                 )
-                # We have must use actual_property_count because the sample files are inconsistent
-                # regarding whether it is byte count or property count, or 1
-                # array_property.actual_property_count = property_count
                 self.values.append(array_property)
 
         elif self.property_type == "ByteProperty":

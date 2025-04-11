@@ -63,10 +63,10 @@ compression = CompressionType.NONE
 
 # always a quick retest
 # test_file_list = ["Islands of Insight Example.sav"]  # working!
-# test_file_list = ["resources/test/vector2d.sav"]
-# test_file_list = ["resources/test/Delegate.sav"]
+# test_file_list = ["resources/test/enum_array.sav"]
 # test_file_list = ["resources/test/assert_failed.sav"]
-test_file_list = ["resources/test/component8.sav"]
+# test_file_list = ["resources/test/component8.sav"]
+# test_file_list = ["resources/test/ro_64bit_fav.sav"]
 
 for test_file in test_file_list:
     # print(f"Loading {test_file}")

@@ -99,22 +99,24 @@ class RoundingMode(IntEnum):
 
 
 # Number formatting options
+@dataclass
 class NumberFormattingOptions:
+    # HAD TO INCLUDE DEFAULTS FOR default __init__
     # Always include sign
-    always_include_sign: bool
+    always_include_sign: bool = False
     # Use grouping
-    use_grouping: bool
+    use_grouping: bool = False
     # Rounding mode
     # [cfg_attr(feature = "serde", serde(flatten))]
-    rounding_mode: RoundingMode
+    rounding_mode: RoundingMode = RoundingMode.HalfToEven
     # Minimum integral digits
-    minimum_integral_digits: int
+    minimum_integral_digits: int = 1
     # Maximum integral digits
-    maximum_integral_digits: int
+    maximum_integral_digits: int = 324
     # Minimum fractional digits
-    minimum_fractional_digits: int
+    minimum_fractional_digits: int = 0
     # Maximum fractional digits
-    maximum_fractional_digits: int
+    maximum_fractional_digits: int = 3
 
     def read(self, stream: BinaryIO) -> Self:
         self.always_include_sign = read_bool32bit(stream)
@@ -130,7 +132,7 @@ class NumberFormattingOptions:
         bytes_written = 0
         bytes_written += write_bool32bit(stream, self.always_include_sign)
         bytes_written += write_bool32bit(stream, self.use_grouping)
-        bytes_written += write_bool32bit(stream, self.rounding_mode)
+        bytes_written += self.rounding_mode.write_type(stream)
         bytes_written += write_int32(stream, self.minimum_integral_digits)
         bytes_written += write_int32(stream, self.maximum_integral_digits)
         bytes_written += write_int32(stream, self.minimum_fractional_digits)
@@ -185,8 +187,13 @@ class FormatArgumentValue(IntEnum):
     def write_type(self, stream: BinaryIO) -> int:
         return write_intenum_type(stream, self)
 
-    @classmethod
-    def read(cls, stream: BinaryIO):
+
+@dataclass
+class FormatArgument:
+    type: Optional[FormatArgumentValue] = None
+    value: Any = None
+
+    def read(self, stream: BinaryIO) -> Self:
 
         format_argument_type = FormatArgumentType.read_type(stream)
 
@@ -199,26 +206,32 @@ class FormatArgumentValue(IntEnum):
         # We read one type, use a different type internally, then write the original type back out
         match format_argument_type:
             case FormatArgumentType.Int:
-                property_instance = Int64Property() if supports_64bit else IntProperty()
-                return property_instance.read(stream, include_header=False)
+                if supports_64bit:
+                    self.type = FormatArgumentValue(FormatArgumentValue.Int64)
+                    self.value = read_int64(stream)
+                else:
+                    self.type = FormatArgumentValue(FormatArgumentValue.Int)
+                    self.value = read_int32(stream)
 
             case FormatArgumentType.UInt:
-                property_instance = (
-                    UInt64Property() if supports_64bit else UInt32Property()
-                )
-                return property_instance.read(stream, include_header=False)
+                if supports_64bit:
+                    self.type = FormatArgumentValue(FormatArgumentValue.UInt64)
+                    self.value = read_uint64(stream)
+                else:
+                    self.type = FormatArgumentValue(FormatArgumentValue.UInt)
+                    self.value = read_uint32(stream)
 
             case FormatArgumentType.Float:
-                property_instance = FloatProperty()
-                return property_instance.read(stream, include_header=False)
+                self.type = FormatArgumentValue(FormatArgumentValue.Float)
+                self.value = read_float(stream)
 
             case FormatArgumentType.Double:
-                property_instance = DoubleProperty()
-                return property_instance.read(stream, include_header=False)
+                self.type = FormatArgumentValue(FormatArgumentValue.Double)
+                self.value = read_double(stream)
 
             case FormatArgumentType.Text:
-                property_instance = FText()
-                return property_instance.read(stream)
+                self.type = FormatArgumentValue(FormatArgumentValue.Text)
+                self.value = FText().read(stream)
 
             case FormatArgumentType.Gender:
                 raise DeserializeError.invalid_value(
@@ -228,50 +241,61 @@ class FormatArgumentValue(IntEnum):
             case _:
                 raise NotImplementedError()
 
+        return self
+
     def assert_64bit_support(self, *, expected: bool):
-        if expected == SerializationTools.supports_version(
+        if expected != SerializationTools.supports_version(
             FUE5ReleaseStreamObjectVersion.TextFormatArgumentData64bitSupport
         ):
             raise SerializeError.invalid_value(
-                f"{self.name} support {'required' if expected else 'prohibited'} with TextFormatArgumentData64bitSupport"
+                f"{self.type.name} support {'required' if expected else 'prohibited'} with TextFormatArgumentData64bitSupport"
             )
 
-    def write(self, stream: BinaryIO):
+    def write(self, stream: BinaryIO) -> int:
         # Argh. We are impedance matching FormatArgumentType to FormatArgumentValue so
         # we can accommodate an implicit type conversion on 64-bit support. :(
         # We read one type, use a different type internally, then write the original type back out
-        match self:
+        bytes_written = 0
+        match self.type:
             case FormatArgumentValue.Int:
                 self.assert_64bit_support(expected=False)
-                FormatArgumentType.Int.write_type(stream)
-                write_int32(stream, self.value)
+                # *sigh* convert back to other type
+                bytes_written += FormatArgumentType.Int.write_type(stream)
+                bytes_written += write_int32(stream, self.value)
 
             case FormatArgumentValue.Int64:
                 self.assert_64bit_support(expected=True)
-                FormatArgumentType.Int.write_type(stream)
-                write_int64(stream, self.value)
+                # *sigh* convert back to other type
+                bytes_written += FormatArgumentType.Int.write_type(stream)
+                bytes_written += write_int64(stream, self.value)
 
             case FormatArgumentValue.UInt:
                 self.assert_64bit_support(expected=False)
-                FormatArgumentType.UInt.write_type(stream)
-                write_uint32(stream, self.value)
+                # *sigh* convert back to other type
+                bytes_written += FormatArgumentType.UInt.write_type(stream)
+                bytes_written += write_uint32(stream, self.value)
 
-            case FormatArgumentValue.UInt:
+            case FormatArgumentValue.UInt64:
                 self.assert_64bit_support(expected=True)
-                FormatArgumentType.UInt.write_type(stream)
-                write_uint64(stream, self.value)
+                # *sigh* convert back to other type
+                bytes_written += FormatArgumentType.UInt.write_type(stream)
+                bytes_written += write_uint64(stream, self.value)
 
             case FormatArgumentValue.Float:
-                FormatArgumentType.Float.write_type(stream)
-                write_float(stream, self.value)
+                bytes_written += FormatArgumentType.Float.write_type(stream)
+                bytes_written += write_float(stream, self.value)
 
             case FormatArgumentValue.Double:
-                FormatArgumentType.Double.write_type(stream)
-                write_double(stream, self.value)
+                bytes_written += FormatArgumentType.Double.write_type(stream)
+                bytes_written += write_double(stream, self.value)
 
             case FormatArgumentValue.Text:
-                FormatArgumentType.Text.write_type(stream)
-                self.write(stream)
+                bytes_written += FormatArgumentType.Text.write_type(stream)
+                bytes_written += self.value.write(stream)
+
+            case _:
+                raise NotImplementedError()
+        return bytes_written
 
 
 class TextHistoryType(IntEnum):
@@ -390,7 +414,7 @@ class NoType:
             FEditorObjectVersion.CultureInvariantTextSerializationKeyStability
         ):
             bytes_written += write_bool32bit(stream, True)
-            bytes_written += write_string(self.culture_invariant_string)
+            bytes_written += write_string(stream, self.culture_invariant_string)
         return bytes_written
 
 
@@ -436,7 +460,7 @@ class NamedFormat:
         self.arguments: HashableIndexMap = HashableIndexMap()
         for _ in range(argument_count):
             key = read_string(stream)
-            value = FormatArgumentValue.read(stream)
+            value = FormatArgument().read(stream)
             self.arguments[key] = value
         return self
 
@@ -496,7 +520,7 @@ class ArgumentFormat:
         self.arguments: HashableIndexMap = HashableIndexMap()
         for _ in range(argument_count):
             key = read_string(stream)
-            value = FormatArgumentValue.read(stream)
+            value = FormatArgument().read(stream)
             self.arguments[key] = value
         return self
 
@@ -517,14 +541,14 @@ class AsNumber:
     type: TextHistoryType = TextHistoryType.AsNumber
     # Convert to number
     # Source value
-    source_value: Optional[FormatArgumentValue] = None
+    source_value: Optional[FormatArgument] = None
     # Format options
     format_options: Optional[NumberFormattingOptions] = None
     # Target culture
     target_culture: Optional[str] = None
 
     def read(self, stream: BinaryIO) -> Self:
-        self.source_value = FormatArgumentValue.read(stream)
+        self.source_value = FormatArgument().read(stream)
         has_format_options = read_bool32bit(stream)
         if has_format_options:
             self.format_options = NumberFormattingOptions().read(stream)
@@ -548,14 +572,14 @@ class AsPercent:
     type: TextHistoryType = TextHistoryType.AsPercent
     # Convert to percentage
     # Source value
-    source_value: Optional[FormatArgumentValue] = None
+    source_value: Optional[FormatArgument] = None
     # Format options
     format_options: Optional[NumberFormattingOptions] = None
     # Target culture
     target_culture: Optional[str] = None
 
     def read(self, stream: BinaryIO) -> Self:
-        self.source_value = FormatArgumentValue.read(stream)
+        self.source_value = FormatArgument().read(stream)
         has_format_options = read_bool32bit(stream)
         if has_format_options:
             self.format_options = NumberFormattingOptions().read(stream)
@@ -581,7 +605,7 @@ class AsCurrency:
     # Currency code
     currency_code: Optional[str] = None
     # Source value
-    source_value: Optional[FormatArgumentValue] = None
+    source_value: Optional[FormatArgument] = None
     # Format options
     format_options: Optional[NumberFormattingOptions] = None
     # Target culture
@@ -589,7 +613,7 @@ class AsCurrency:
 
     def read(self, stream: BinaryIO) -> Self:
         self.currency_code = read_string(stream)
-        self.source_value = FormatArgumentValue.read(stream)
+        self.source_value = FormatArgument().read(stream)
         has_format_options = read_bool32bit(stream)
         if has_format_options:
             self.format_options = NumberFormattingOptions().read(stream)
@@ -821,7 +845,6 @@ class TextProperty(PropertyTrait):
         include_header: bool = True,
     ) -> None:
         """Read text from stream"""
-        text_property_blob = SerializationTools.text_property_blob
         length = 0
         if include_header:
             length, *_ = read_standard_header(stream)

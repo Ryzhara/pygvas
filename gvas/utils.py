@@ -132,12 +132,9 @@ class SerializationTools:
     beforehand. That’s why you need hints.
     """
 
-    # Hack for TextProperty;
-    body_bytes: Tuple[int, int] = (0, 0)  # tell child reader how big their blob is
     custom_versions: dict[str, int]
     hints: Dict[str, str] = {}
     context_stack: List[str] = []
-    text_property_blob: int = 0  # temp hack for TextProperty as blob
     engine_major: int = 4
     engine_minor: int = 0
 
@@ -445,10 +442,43 @@ def read_string(stream: BinaryIO) -> str | None:
     prefix is uint32: length, followed by UTF-8 byte encoded string
     """
 
-    if (length := read_uint32(stream)) == 0:
+    if (length := read_int32(stream)) == 0:
         return None  # ""
-    value_bytes = read_bytes(stream, length)
-    return value_bytes.decode("utf-8")[:-1]  # Remove included '\0'
+
+    if not -131072 <= length <= 131072:
+        raise SerializeError.invalid_value(
+            f"String length {length} is out of range -131072 <= length <= 131072"
+        )
+
+    # UTF 16
+    position = stream.tell()
+    if length < 0:
+        length = 2 * abs(length)  # includes null terminator
+        encoding = "utf-16-le"
+        value_bytes = read_bytes(stream, length - 2)
+        _null_terminator = read_uint16(
+            stream, assert_value=0, error_msg="Invalid UTF-16 terminator"
+        )
+        if value_bytes.isascii():
+            raise ValueError(
+                f"Suspicous UTF-16 bytes are really ascii: {value_bytes} at {position=}"
+            )
+    else:
+        encoding = "utf-8"
+        value_bytes = read_bytes(stream, length - 1)
+        _null_terminator = read_uint8(
+            stream, assert_value=0, error_msg="Invalid UTF-8 terminator"
+        )
+        if not value_bytes.isascii():
+            raise ValueError(
+                f"Invalid UTF-8 bytes are not ASCII: {value_bytes} at {position=}"
+            )
+    try:
+        final_string = value_bytes.decode(encoding)
+    except UnicodeDecodeError as ude:
+        raise ude
+
+    return final_string
 
 
 # ============================================
@@ -462,10 +492,24 @@ def write_string(stream: BinaryIO, value: str) -> int:
     ):  # null -- if we read an empty string, we write an empty string | "" | ''
         return write_uint32(stream, 0)
 
-    value_bytes = (value + "\0").encode("utf-8")  # attach null terminator
-    bytes_written = write_uint32(stream, len(value_bytes))
-    bytes_written += write_bytes(stream, value_bytes)
-    return bytes_written  # 4 + len(value) + 1
+    bytes_written = 0
+    if value.isascii():
+        length = len(value) + 1
+        value_bytes = value.encode("utf-8")  # attach null terminator
+        bytes_written += write_int32(stream, length)
+        bytes_written += write_bytes(stream, value_bytes)
+        bytes_written += write_uint8(stream, 0)  # manual terminator
+    else:
+        value_words_as_bytes = value.encode("utf-16-le")  # attach null terminator
+        length = len(value) + 1
+        bytes_written += write_int32(stream, -length)
+        bytes_written += write_bytes(stream, value_words_as_bytes)
+        bytes_written += write_uint16(stream, 0)  # manual terminator
+
+    # value_bytes = (value + "\0").encode("utf-8")  # attach null terminator
+    # bytes_written = write_uint32(stream, len(value_bytes))
+    # bytes_written += write_bytes(stream, value_bytes)
+    return bytes_written
 
 
 # ============================================
