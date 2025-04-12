@@ -9,7 +9,7 @@ Key differences from Rust version:
 
 from pydantic import field_serializer
 from pydantic.dataclasses import dataclass
-from typing import List, Optional, Any, BinaryIO
+from typing import Optional
 from io import BytesIO
 
 from .property_base import (
@@ -73,7 +73,7 @@ class ArrayProperty(PropertyTrait):
     field_name: Optional[str] = None
     type_name: Optional[str] = None
     property_type: Optional[str] = None
-    guid: uuid.UUID = None  # often nothing but zeros
+    guid: Optional[uuid.UUID] = None  # often nothing but zeros
     values: Any = None  # [str, bytes, list, PropertyTrait, StandardStructTrait]
 
     @field_serializer("guid")
@@ -192,7 +192,7 @@ class ArrayProperty(PropertyTrait):
                 array_property = Property.new(
                     stream, self.property_type, include_header=False
                 )
-                self.values.append(array_property.value)
+                self.values.append(array_property)
 
     def write(
         self,

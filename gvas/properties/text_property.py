@@ -2,10 +2,10 @@ from abc import ABC, abstractmethod
 from typing import Optional, Self, TypeVar, Type
 from enum import IntEnum, auto
 from pydantic import field_serializer
+from io import BytesIO
 
 from .int_property import *
 from .property_base import PropertyTrait
-from ..gvas_types import HashableIndexMap
 from ..utils import *
 
 EnumT = TypeVar("EnumT", bound=IntEnum)
@@ -470,7 +470,7 @@ class NamedFormat:
     # Source format
     source_format: Optional[FText] = None
     # Arguments
-    arguments: dict[str, FormatArgument] = None
+    arguments: Optional[dict[str, FormatArgument]] = None
 
     @field_serializer("type")
     def serialize_items(self, type: TextHistoryType):
@@ -505,7 +505,7 @@ class OrderedFormat:
     # Source format
     source_format: Optional[FText] = None
     # Arguments
-    arguments: list[FormatArgument] = None
+    arguments: Optional[list[FormatArgument]] = None
 
     @field_serializer("type")
     def serialize_items(self, type: TextHistoryType):
@@ -538,7 +538,7 @@ class ArgumentFormat:
     # Source format
     source_format: Optional[FText] = None
     # Arguments
-    arguments: dict[str, FormatArgument] = None
+    arguments: Optional[dict[str, FormatArgument]] = None
 
     @field_serializer("type")
     def serialize_items(self, type: TextHistoryType):

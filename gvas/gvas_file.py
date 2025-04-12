@@ -15,10 +15,8 @@ from typing import Dict, Optional, BinaryIO, List
 
 from io import BytesIO
 
-from .error import DeserializeError, SerializeError
-from .engine_versions import EngineVersion, FEngineVersion
+from .engine_versions import FEngineVersion
 from .game_version import GameVersion, CompressionType, GVAS_MAGIC, PLZ_MAGIC
-from .gvas_types import HashableIndexMap
 from .properties import Property
 from .utils import *
 
@@ -144,7 +142,7 @@ class GvasHeader:
         custom_version_count = read_uint32(stream)
 
         custom_version_reader = FCustomVersion()
-        custom_versions = HashableIndexMap()
+        custom_versions = {}
         for _ in range(custom_version_count):
             custom_version_reader.read(stream)
             custom_versions[custom_version_reader.key] = custom_version_reader.version
@@ -211,11 +209,10 @@ class GVASFile:
             # we have to peek through custom file format. *sigh*
             decompressed_size = read_uint32(stream)
             compressed_size = read_uint32(stream)
-            print(f"Found: {decompressed_size=} and {compressed_size=}")
             magic_bytes = stream.read(3)
             if magic_bytes == PLZ_MAGIC:
                 print(
-                    f"Found PLZ MAGIC for PalWorld with {decompressed_size=} and {compressed_size=}"
+                    f"Found PalWorld file with {decompressed_size=} and {compressed_size=}"
                 )
                 enum_value = read_int8(stream)
                 match enum_value:
@@ -231,13 +228,13 @@ class GVASFile:
         # Handle compression options
         if compression_type == CompressionType.ZLIB_TWICE:
             compressed_data = stream.read()
-            print(f"Found compressed data: {len(compressed_data)=}")
+            # print(f"Found compressed data: {len(compressed_data)=}")
             decompressed_data = zlib.decompress(compressed_data)  # once
-            first_compressed_size = len(decompressed_data)
-            print(f"Found: {first_compressed_size=}")
+            # first_compressed_size = len(decompressed_data)
+            # print(f"Found: {first_compressed_size=}")
             decompressed_data = zlib.decompress(decompressed_data)  # twice
-            second_compressed_size = len(decompressed_data)
-            print(f"Found: {second_compressed_size=}")
+            # second_compressed_size = len(decompressed_data)
+            # print(f"Found: {second_compressed_size=}")
 
             assert decompressed_size == len(
                 decompressed_data
@@ -318,23 +315,23 @@ class GVASFile:
         if compression_type == CompressionType.ZLIB_TWICE:
             # hack to save uncompressed
             if ucompressed_file_name:
-                print(f"Writing {ucompressed_file_name}")
+                # print(f"Writing {ucompressed_file_name}")
                 with open(ucompressed_file_name, "wb") as f:
                     f.write(data_to_write)
 
             data_to_write = zlib.compress(data_to_write)  # once
             first_compressed_size = len(data_to_write)
-            print(f"We have: {first_compressed_size=}")
+            # print(f"We have: {first_compressed_size=}")
 
             data_to_write = zlib.compress(data_to_write)  # twice
             second_compressed_size = len(data_to_write)
-            print(f"We have: {second_compressed_size=}")
+            # print(f"We have: {second_compressed_size=}")
 
             # tricky folks; they store the first compressed size, not the final
             compressed_size = first_compressed_size
 
         elif compression_type == CompressionType.ZLIB:
-            print(f"Writing {ucompressed_file_name}")
+            # print(f"Writing {ucompressed_file_name}")
             with open(ucompressed_file_name, "wb") as f:
                 f.write(data_to_write)
             data_to_write = zlib.compress(data_to_write)  # once

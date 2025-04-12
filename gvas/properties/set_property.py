@@ -21,9 +21,9 @@ class SetProperty(PropertyTrait):
     """A property that stores a set of properties"""
 
     type: str = "SetProperty"
-    property_type: str = None
+    property_type: Optional[str] = None
     allocation_flags: int = 0
-    properties: List[Property] = None
+    properties: Optional[List[Property]] = None
 
     def read(
         self,

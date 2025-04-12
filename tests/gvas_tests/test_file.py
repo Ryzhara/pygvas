@@ -13,7 +13,6 @@ from gvas.game_version import GameVersion
 from gvas.properties.property_base import Property
 from gvas.properties.int_property import Int32Property, BoolProperty
 from gvas.properties.str_property import StrProperty
-from gvas.gvas_types import HashableIndexMap
 
 
 class TestGvasFile(unittest.TestCase):
@@ -31,7 +30,7 @@ class TestGvasFile(unittest.TestCase):
             engine_version_build=0,
             engine_version_branch="UE4",
             custom_version_format=0,
-            custom_versions=HashableIndexMap(),
+            custom_versions={},
             save_game_class_name="TestSaveGame",
         )
 
@@ -77,7 +76,7 @@ class TestGvasFile(unittest.TestCase):
             engine_version_build=12345,
             engine_version_branch="UE4",
             custom_version_format=5,
-            custom_versions=HashableIndexMap(),
+            custom_versions={},
             save_game_class_name="TestSaveGame",
         )
 

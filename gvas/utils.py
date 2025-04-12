@@ -8,7 +8,6 @@ import dataclasses
 import uuid
 import datetime
 import struct
-from io import BytesIO
 from typing import BinaryIO, Any, List, Tuple, Dict
 
 from .custom_versions import FEditorObjectVersion, FUE5ReleaseStreamObjectVersion
@@ -489,28 +488,25 @@ def write_string(stream: BinaryIO, value: str) -> int:
     """Write a string to the stream
     prefix is uint32: length, followed by UTF-8 byte encoded string
     """
-    if (
-        value is None
-    ):  # null -- if we read an empty string, we write an empty string | "" | ''
+    # null -- if we read an empty string, we write an empty string
+    if value is None:
         return write_uint32(stream, 0)
 
     bytes_written = 0
+    # Note: bytes have not null terminator
     if value.isascii():
         length = len(value) + 1
-        value_bytes = value.encode("utf-8")  # attach null terminator
+        value_bytes = value.encode("utf-8")
         bytes_written += write_int32(stream, length)
         bytes_written += write_bytes(stream, value_bytes)
         bytes_written += write_uint8(stream, 0)  # manual terminator
     else:
-        value_words_as_bytes = value.encode("utf-16-le")  # attach null terminator
+        value_words_as_bytes = value.encode("utf-16-le")
         length = len(value) + 1
         bytes_written += write_int32(stream, -length)
         bytes_written += write_bytes(stream, value_words_as_bytes)
         bytes_written += write_uint16(stream, 0)  # manual terminator
 
-    # value_bytes = (value + "\0").encode("utf-8")  # attach null terminator
-    # bytes_written = write_uint32(stream, len(value_bytes))
-    # bytes_written += write_bytes(stream, value_bytes)
     return bytes_written
 
 

@@ -134,8 +134,9 @@ def test_gvas_file(test_file: str):
 
     # now write it back out
     output_file_too = f"{test_file}.idempotent.too"
+    uncompressed_output_file = f"{test_file}.decompressed.idempotent.too"
     with open(output_file_too, "wb") as f:
-        gvas_file.write(f, game_version, compression)
+        gvas_file.write(f, game_version, compression, uncompressed_output_file)
 
     compare_binary_files(output_file_too, output_file)
 

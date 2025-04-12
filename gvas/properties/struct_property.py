@@ -9,7 +9,7 @@ Key differences from Rust version:
 
 from pydantic import field_serializer
 from pydantic.dataclasses import dataclass
-from typing import Optional, Dict, Any, BinaryIO, List
+from typing import Optional, BinaryIO
 from io import BytesIO
 
 from .standard_types import (
@@ -42,8 +42,8 @@ class StructProperty(PropertyTrait):
     """A property that holds structured data"""
 
     type: str = "StructProperty"
-    guid: uuid.UUID = None
-    type_name: str = None
+    guid: Optional[uuid.UUID] = None
+    type_name: Optional[str] = None
     value: Any = None
 
     @field_serializer("guid")

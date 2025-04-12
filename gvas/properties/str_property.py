@@ -9,6 +9,7 @@ Contains implementations for:
 
 from pydantic.dataclasses import dataclass
 from typing import Optional
+from io import BytesIO
 
 from .property_base import PropertyTrait
 from ..utils import *

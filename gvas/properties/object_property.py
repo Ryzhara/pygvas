@@ -15,7 +15,7 @@ class ObjectProperty(PropertyTrait):
     """A property that holds an object value"""
 
     type: str = "ObjectProperty"
-    value: str = None
+    value: Optional[str] = None
 
     def read(
         self,

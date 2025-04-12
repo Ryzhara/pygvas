@@ -8,6 +8,7 @@ Key differences from Rust version:
 """
 
 from pydantic.dataclasses import dataclass
+from io import BytesIO
 
 from .property_base import Property, PropertyTrait, ContextScopeTracker
 from ..utils import *

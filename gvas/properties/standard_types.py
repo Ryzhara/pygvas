@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
-from pydantic.dataclasses import dataclass
-import datetime
+from typing import Optional
 from pydantic.dataclasses import dataclass
 
 from ..utils import *
@@ -31,7 +30,7 @@ class StandardStructTrait(ABC):
 @dataclass
 class GuidProperty(StandardStructTrait):
     type: str = "Guid"
-    guid: str = None
+    guid: Optional[str] = None
 
     @classmethod
     def new(cls) -> "GuidProperty":

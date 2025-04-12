@@ -18,10 +18,8 @@ Contains implementations for:
 """
 
 from pydantic.dataclasses import dataclass
-from enum import Enum
 from typing import Optional, Union, BinaryIO
 import struct
-from io import BytesIO
 
 from .property_base import PropertyTrait
 from ..utils import *

@@ -5,7 +5,7 @@ Python port of field_path_property.rs
 
 from pydantic.dataclasses import dataclass
 from io import BytesIO
-from typing import Optional, Dict, Any, BinaryIO, List
+from typing import Optional, List, Dict, BinaryIO
 from .property_base import PropertyTrait
 from ..utils import *
 
@@ -13,8 +13,8 @@ from ..utils import *
 @dataclass
 class FieldPath:
     type: str = "FieldPath"
-    path: list[str] = None
-    resolved_owner: str = None
+    path: Optional[List[str]] = None
+    resolved_owner: Optional[str] = None
 
     def __post_init__(self):
         if self.path is None:

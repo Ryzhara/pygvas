@@ -5,7 +5,7 @@ Python port of field_path_property.rs
 
 from pydantic.dataclasses import dataclass
 from io import BytesIO
-from typing import Optional, Dict, Any, BinaryIO, List
+from typing import Optional
 from .property_base import PropertyTrait
 from ..utils import *
 
@@ -13,8 +13,8 @@ from ..utils import *
 @dataclass
 class Delegate:
     type: str = "Delegate"
-    object: str = None
-    function_name: str = None
+    object: Optional[str] = None
+    function_name: Optional[str] = None
 
     def read(self, stream: BinaryIO):
         self.object = read_string(stream)
@@ -30,7 +30,7 @@ class Delegate:
 @dataclass
 class DelegateProperty(PropertyTrait):
     type: str = "DelegateProperty"
-    value: Delegate = None
+    value: Optional[Delegate] = None
 
     def read(
         self,
