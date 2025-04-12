@@ -10,7 +10,7 @@ Key differences from Rust version:
 
 import os
 import zlib
-from dataclasses import dataclass, asdict
+from pydantic.dataclasses import dataclass
 from typing import Dict, Optional, BinaryIO, List
 
 from io import BytesIO
@@ -114,7 +114,7 @@ class GvasHeader:
     package_file_version_ue5: Optional[int] = None
     engine_version: FEngineVersion = None
     custom_version_format: int = None
-    custom_versions: HashableIndexMap[str, int] = None
+    custom_versions: dict[str, int] = None
     save_game_class_name: str = None
 
     @classmethod
@@ -197,7 +197,7 @@ class GVASFile:
     """Main GVAS file class"""
 
     header: GvasHeader
-    properties: Dict[str, Property]
+    properties: Dict[str, Any]
 
     @classmethod
     def read(

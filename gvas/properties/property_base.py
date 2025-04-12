@@ -10,6 +10,7 @@ Key differences from Rust version:
 
 from abc import ABC, abstractmethod
 from typing import Optional, Dict, Any, BinaryIO, List, Tuple
+from pydantic.dataclasses import dataclass
 
 from ..error import DeserializeError
 from ..utils import ContextScopeTracker
@@ -49,6 +50,7 @@ class PropertyTrait(ABC):
         return instance
 
 
+@dataclass
 class Property:
     """
     Base property class that holds a property value

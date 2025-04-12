@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
+from pydantic.dataclasses import dataclass
 import datetime
-import uuid
+from pydantic.dataclasses import dataclass
 
 from ..utils import *
 from ..custom_versions import FEditorObjectVersion, FUE5ReleaseStreamObjectVersion
@@ -9,6 +9,7 @@ from ..custom_versions import FEditorObjectVersion, FUE5ReleaseStreamObjectVersi
 
 # ============================================
 #
+@dataclass
 class StandardStructTrait(ABC):
     """
     Base trait/interface for all structure types that could be in any environment

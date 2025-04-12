@@ -7,14 +7,10 @@ Contains implementations for:
 - NameProperty
 """
 
-from dataclasses import dataclass
-from email.base64mime import body_decode
-from typing import Optional, BinaryIO
-import struct
-from io import BytesIO
+from pydantic.dataclasses import dataclass
+from typing import Optional
 
 from .property_base import PropertyTrait
-from ..error import DeserializeError
 from ..utils import *
 
 

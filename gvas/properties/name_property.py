@@ -7,7 +7,7 @@ Key differences from Rust version:
 - Simplified type handling
 """
 
-from dataclasses import dataclass
+from pydantic.dataclasses import dataclass
 from email.base64mime import body_decode
 from io import BytesIO
 from typing import Optional, BinaryIO

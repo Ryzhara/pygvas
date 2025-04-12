@@ -7,13 +7,14 @@ Key differences from Rust version:
 - Simplified implementations using Python built-ins
 """
 
-from dataclasses import dataclass
+from pydantic.dataclasses import dataclass
 from typing import Dict, TypeVar, Generic
 
 K = TypeVar("K")
 V = TypeVar("V")
 
 
+@dataclass
 class HashableIndexMap(Dict[K, V]):
     """
     A dictionary that maintains insertion order and can be hashed.

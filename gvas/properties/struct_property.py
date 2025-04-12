@@ -7,7 +7,7 @@ Key differences from Rust version:
 - Simplified type handling
 """
 
-from dataclasses import dataclass
+from pydantic.dataclasses import dataclass
 from typing import Optional, Dict, Any, BinaryIO, List
 from io import BytesIO
 
@@ -41,9 +41,9 @@ class StructProperty(PropertyTrait):
     """A property that holds structured data"""
 
     type: str = "StructProperty"
-    guid: uuid = None
+    guid: uuid.UUID = None
     type_name: str = None
-    value: Optional[StandardStructTrait | Dict | None] = None
+    value: Any = None
 
     def read(
         self,

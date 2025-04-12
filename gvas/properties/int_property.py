@@ -17,7 +17,7 @@ Contains implementations for:
 - UInt64Property
 """
 
-from dataclasses import dataclass
+from pydantic.dataclasses import dataclass
 from enum import Enum
 from typing import Optional, Union, BinaryIO
 import struct

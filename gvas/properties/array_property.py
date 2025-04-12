@@ -7,7 +7,7 @@ Key differences from Rust version:
 - Simplified type handling
 """
 
-from dataclasses import dataclass
+from pydantic.dataclasses import dataclass
 from typing import List, Optional, Any, BinaryIO
 from io import BytesIO
 
@@ -72,8 +72,8 @@ class ArrayProperty(PropertyTrait):
     field_name: Optional[str] = None
     type_name: Optional[str] = None
     property_type: Optional[str] = None
-    guid: Optional[uuid] = None  # always ZEROS
-    values: List[Any] = None
+    guid: uuid.UUID = None  # often nothing but zeros
+    values: Any = None
 
     def read(
         self,
@@ -199,7 +199,7 @@ class ArrayProperty(PropertyTrait):
         # this method is MUCH better than serializing each byte independently. Who does that?!
         if self.property_type == "ByteProperty" and property_count > 0:
             if type(self.values) is list:
-                byte_property: ByteProperty = self.values[0]
+                byte_property: "ByteProperty" = self.values[0]
                 property_count = byte_property.actual_property_count
             elif type(self.values) is bytes:
                 property_count = len(self.values)

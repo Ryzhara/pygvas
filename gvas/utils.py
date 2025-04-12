@@ -40,9 +40,10 @@ class EnhancedJSONEncoder(json.JSONEncoder):
     def default(self, obj):
 
         def is_not_empty(value):
-            if isinstance(value, (str, type(None))):
+            # if isinstance(value, (str, type(None))):
+            #     return not not value
+            if isinstance(value, (type(None))):
                 return not not value
-
             if isinstance(value, uuid.UUID) and value == ZERO_GUID:
                 return False
 

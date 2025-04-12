@@ -7,7 +7,7 @@ Key differences from Rust version:
 - Simplified type handling
 """
 
-from dataclasses import dataclass
+from pydantic.dataclasses import dataclass
 
 from .property_base import Property, PropertyTrait, ContextScopeTracker
 from ..utils import *

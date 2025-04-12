@@ -3,7 +3,7 @@ Enum property implementation for GVAS
 Python port of enum_property.rs
 """
 
-from dataclasses import dataclass
+from pydantic.dataclasses import dataclass
 from io import BytesIO
 from typing import Optional, BinaryIO
 from .property_base import PropertyTrait

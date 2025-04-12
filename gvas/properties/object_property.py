@@ -3,7 +3,7 @@ Object property implementation for GVAS
 Python port of object_property.rs
 """
 
-from dataclasses import dataclass
+from pydantic.dataclasses import dataclass
 from io import BytesIO
 from typing import Optional, BinaryIO
 from .property_base import PropertyTrait

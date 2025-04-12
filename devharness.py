@@ -1,5 +1,4 @@
 import json
-from dataclasses import dataclass
 
 from gvas import GVASFile, DeserializeError
 from gvas import GameVersion, CompressionType
@@ -65,7 +64,7 @@ compression = CompressionType.NONE
 # test_file_list = ["Islands of Insight Example.sav"]  # working!
 # test_file_list = ["resources/test/enum_array.sav"]
 # test_file_list = ["resources/test/assert_failed.sav"]
-# test_file_list = ["resources/test/component8.sav"]
+test_file_list = ["resources/test/component8.sav"]
 # test_file_list = ["resources/test/ro_64bit_fav.sav"]
 
 for test_file in test_file_list:
@@ -79,16 +78,6 @@ for test_file in test_file_list:
         except Exception as e:
             print(f"Failed to load {test_file}: {e}")
             continue
-
-    json_file = f"{test_file}.json"
-
-    # hack to test JSON conversion
-    # with open(json_file, "w") as f:
-    #     f.write(str(gvas_file))
-
-    with open(json_file, "w") as f:
-        json_content = json.dumps(gvas_file, cls=EnhancedJSONEncoder, indent=2)
-        f.write(json_content)
 
     if compression != CompressionType.NONE:
         decompressed_data_file = f"{test_file}.decompressed"
@@ -104,3 +93,52 @@ for test_file in test_file_list:
         gvas_file.write(f, game_version, compression, uncompressed_output_file)
 
     compare_binary_files(test_file, output_file)
+
+    # create json the old fashioned way
+    json_file = f"{test_file}.json"
+    json_content = json.dumps(gvas_file, cls=EnhancedJSONEncoder, indent=2)
+    with open(json_file, "w") as f:
+        f.write(json_content)
+
+    # create json with pydantic
+    pydantic_json_file = f"{test_file}.pydantic.json"
+    from pydantic import TypeAdapter
+
+    gvas_file_adaptor = TypeAdapter(GVASFile)
+    gvas_file_dict = gvas_file_adaptor.dump_python(gvas_file, exclude_none=True)
+    pydantic_json_content = json.dumps(
+        gvas_file_dict, cls=EnhancedJSONEncoder, indent=2
+    )
+    # json_content = gvas_file_adaptor.dump_json(gvas_file, indent=2)
+    with open(pydantic_json_file, "w") as f:
+        f.write(pydantic_json_content)
+
+    compare_binary_files(json_file, pydantic_json_file)
+
+    # from pydantic.dataclasses import dataclass
+    # from pydantic.tools import parse_obj_as
+    # import dataclasses
+    # import json
+    #
+    # @dataclass
+    # class User:
+    #   id: int
+    #   name: str
+    #
+    # user = User(id=123, name="James")
+    # user_json = json.dumps(dataclasses.asdict(user))
+    # print(user_json)  # '{"id": 123, "name": "James"}'
+    #
+    # user_dict = json.loads(user_json)
+    # user = parse_obj_as(User, user_dict)
+    # print(user)  # User(id=123, name='James')
+    # It works for recursively as well.
+
+    from pydantic import TypeAdapter
+
+    pydantic_json_content_dict = json.loads(pydantic_json_content)
+
+    print(type(pydantic_json_content_dict))
+
+    new_gvas = gvas_file_adaptor.validate_python(pydantic_json_content_dict)
+    print(type(new_gvas))

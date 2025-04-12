@@ -3,7 +3,7 @@ FieldPath property implementation for GVAS
 Python port of field_path_property.rs
 """
 
-from dataclasses import dataclass, field
+from pydantic.dataclasses import dataclass
 from io import BytesIO
 from typing import Optional, Dict, Any, BinaryIO, List
 from .property_base import PropertyTrait
@@ -73,7 +73,10 @@ class DelegateProperty(PropertyTrait):
 @dataclass()
 class MulticastScriptDelegate:
     type: str = "MulticastScriptDelegate"
-    delegates: list[Delegate] = field(default_factory=list)
+    delegates: list[Delegate] = None
+
+    def __post_init__(self):
+        self.delegates = []
 
     def read(self, stream: BinaryIO) -> None:
         delegate_count = read_uint32(stream)
