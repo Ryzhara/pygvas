@@ -1,11 +1,13 @@
 import json
+from xml.etree.ElementTree import indent
 
+import gvas
 from gvas import GVASFile, DeserializeError
 from gvas import GameVersion, CompressionType
 from gvas.utils import *
 
 from test_utilities import compare_binary_files
-
+from tests.common.utils import test_gvas_file
 
 test_file_list = [
     "resources/test/islands_of_insight.sav",
@@ -64,12 +66,12 @@ compression = CompressionType.NONE
 # test_file_list = ["Islands of Insight Example.sav"]  # working!
 # test_file_list = ["resources/test/enum_array.sav"]
 # test_file_list = ["resources/test/assert_failed.sav"]
-test_file_list = ["resources/test/component8.sav"]
+# test_file_list = ["resources/test/component8.sav"]
 # test_file_list = ["resources/test/ro_64bit_fav.sav"]
 
-for test_file in test_file_list:
-    # print(f"Loading {test_file}")
-    # Open and read a save file
+
+def test_gvas_file(test_file: str):
+    # Open and read a .sav file
     gvas_file = None
     with open(test_file, "rb") as f:
         # print(f"loading file with target: {game_version}")
@@ -77,7 +79,7 @@ for test_file in test_file_list:
             gvas_file, decompressed_data = GVASFile.read(f, game_version, compression)
         except Exception as e:
             print(f"Failed to load {test_file}: {e}")
-            continue
+            raise e
 
     if compression != CompressionType.NONE:
         decompressed_data_file = f"{test_file}.decompressed"
@@ -106,39 +108,49 @@ for test_file in test_file_list:
 
     gvas_file_adaptor = TypeAdapter(GVASFile)
     gvas_file_dict = gvas_file_adaptor.dump_python(gvas_file, exclude_none=True)
-    pydantic_json_content = json.dumps(
-        gvas_file_dict, cls=EnhancedJSONEncoder, indent=2
-    )
+    pydantic_json_content = json.dumps(gvas_file_dict, indent=2)
+
+    # by using @field_serializer("values") decorators and the exclude_none=True
+    # setting we don't need EnhancedJSONEncoder
+    # pydantic_json_content2 = json.dumps(
+    #     gvas_file_dict, cls=EnhancedJSONEncoder, indent=2
+    # )
+    # assert pydantic_json_content == pydantic_json_content2
+
     # json_content = gvas_file_adaptor.dump_json(gvas_file, indent=2)
     with open(pydantic_json_file, "w") as f:
         f.write(pydantic_json_content)
 
     compare_binary_files(json_file, pydantic_json_file)
 
-    # from pydantic.dataclasses import dataclass
-    # from pydantic.tools import parse_obj_as
-    # import dataclasses
-    # import json
-    #
-    # @dataclass
-    # class User:
-    #   id: int
-    #   name: str
-    #
-    # user = User(id=123, name="James")
-    # user_json = json.dumps(dataclasses.asdict(user))
-    # print(user_json)  # '{"id": 123, "name": "James"}'
-    #
-    # user_dict = json.loads(user_json)
-    # user = parse_obj_as(User, user_dict)
-    # print(user)  # User(id=123, name='James')
-    # It works for recursively as well.
+    # lets test the round tripo
+    with open(pydantic_json_file, "r") as f:
+        pydantic_json_content_dict = json.load(f)
 
-    from pydantic import TypeAdapter
-
-    pydantic_json_content_dict = json.loads(pydantic_json_content)
-
-    print(type(pydantic_json_content_dict))
+    # print(type(pydantic_json_content_dict))
 
     new_gvas = gvas_file_adaptor.validate_python(pydantic_json_content_dict)
-    print(type(new_gvas))
+    # print(type(new_gvas))
+
+    # now write it back out
+    output_file_too = f"{test_file}.idempotent.too"
+    with open(output_file_too, "wb") as f:
+        gvas_file.write(f, game_version, compression)
+
+    compare_binary_files(output_file_too, output_file)
+
+    # assert new_gvas == gvas_file
+    def compare_pydantic_objects(obj1: GVASFile, obj2: GVASFile):
+        obj1_adaptor = TypeAdapter(GVASFile)
+        obj2_adaptor = TypeAdapter(GVASFile)
+
+        dict1 = obj1_adaptor.dump_python(obj1, exclude_none=False)
+        dict2 = obj2_adaptor.dump_python(obj2, exclude_none=False)
+
+        print(f"\tGVas objects are{' NOT ' if dict1 != dict2 else ' '}identical")
+
+    compare_pydantic_objects(gvas_file, new_gvas)
+
+
+for test_file in test_file_list:
+    test_gvas_file(test_file)

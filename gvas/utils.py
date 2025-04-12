@@ -44,6 +44,7 @@ class EnhancedJSONEncoder(json.JSONEncoder):
             #     return not not value
             if isinstance(value, (type(None))):
                 return not not value
+
             if isinstance(value, uuid.UUID) and value == ZERO_GUID:
                 return False
 

@@ -7,6 +7,7 @@ Key differences from Rust version:
 - Simplified type handling
 """
 
+from pydantic import field_serializer
 from pydantic.dataclasses import dataclass
 from typing import Optional, Dict, Any, BinaryIO, List
 from io import BytesIO
@@ -44,6 +45,12 @@ class StructProperty(PropertyTrait):
     guid: uuid.UUID = None
     type_name: str = None
     value: Any = None
+
+    @field_serializer("guid")
+    def serialize_guid(self, value: uuid.UUID):
+        if type(value) is uuid.UUID:
+            return str(value)
+        return value
 
     def read(
         self,

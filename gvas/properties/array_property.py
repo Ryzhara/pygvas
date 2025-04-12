@@ -7,6 +7,7 @@ Key differences from Rust version:
 - Simplified type handling
 """
 
+from pydantic import field_serializer
 from pydantic.dataclasses import dataclass
 from typing import List, Optional, Any, BinaryIO
 from io import BytesIO
@@ -73,7 +74,22 @@ class ArrayProperty(PropertyTrait):
     type_name: Optional[str] = None
     property_type: Optional[str] = None
     guid: uuid.UUID = None  # often nothing but zeros
-    values: Any = None
+    values: Any = None  # [str, bytes, list, PropertyTrait, StandardStructTrait]
+
+    @field_serializer("guid")
+    def serialize_guid(self, value: uuid.UUID):
+        if type(value) is uuid.UUID:
+            return str(value)
+        return value
+
+    @field_serializer("values")
+    def serialize_items(
+        self, values: [str, bytes, list, PropertyTrait, StandardStructTrait]
+    ):
+        # print(f"ArrayProperty.serialize_items: {type(values)=}")
+        if type(values) is bytes:
+            return values.hex()
+        return values
 
     def read(
         self,
