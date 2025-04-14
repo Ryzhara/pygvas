@@ -1,4 +1,8 @@
 {
+  "game_file_format": {
+    "game_version": "PALWORLD",
+    "compression_type": "ZLIB"
+  },
   "header": {
     "type": "Version3",
     "package_file_version": 522,

@@ -1,10 +1,8 @@
+import dataclasses
 import enum
 import json
 
-import dataclasses
-
-
-from gvas import GVASFile
+from gvas import GVASFile, GameFileFormat
 from gvas import GameVersion, CompressionType
 from gvas.utils import *
 from test_utilities import compare_binary_files
@@ -25,6 +23,12 @@ class EnhancedJSONEncoder(json.JSONEncoder):
                 return False
 
             return True
+
+        if isinstance(obj, GameFileFormat):
+            return {
+                "game_version": obj.game_version,
+                "compression_type": obj.compression_type,
+            }
 
         if isinstance(obj, enum.IntEnum):
             return obj.name
@@ -53,6 +57,12 @@ class EnhancedJSONEncoder(json.JSONEncoder):
                 for k, v in dataclasses.asdict(obj).items()
                 if is_not_empty(v)
             }
+
+        if isinstance(obj, CompressionType):
+            return obj.name
+
+        if isinstance(obj, GameVersion):
+            return obj.name
 
         if isinstance(obj, (int, float, str, bool, type(None))):
             return obj
@@ -120,17 +130,22 @@ compression = CompressionType.NONE
 # test_file_list = ["resources/test/component8.sav"]
 # test_file_list = ["resources/test/ro_64bit_fav.sav"]
 
+# test shit
+
+# game_version = GameFileFormat(game_version, compression)
+# # create json the old fashioned way
+# json_content = json.dumps(game_version, cls=EnhancedJSONEncoder, indent=2)
+# print(f"json_content: {json_content}")
+
 
 def test_gvas_file(test_file: str):
     # Open and read a .sav file
     gvas_file = None
-    with open(test_file, "rb") as f:
-        # print(f"loading file with target: {game_version}")
-        try:
-            gvas_file, decompressed_data = GVASFile.read(f, game_version, compression)
-        except Exception as e:
-            print(f"Failed to load {test_file}: {e}")
-            raise e
+    try:
+        gvas_file, decompressed_data = GVASFile.read_file(test_file)
+    except Exception as e:
+        print(f"Failed to load {test_file}: {e}")
+        raise e
 
     if compression != CompressionType.NONE:
         decompressed_data_file = f"{test_file}.decompressed"
@@ -141,11 +156,9 @@ def test_gvas_file(test_file: str):
     # dump binary to work toward idempotence for read, write, rinse and repeat
     output_file = f"{test_file}.idempotent"
     uncompressed_output_file = f"{test_file}.decompressed.idempotent"
-    # print(f"Writing {output_file}")
-    with open(output_file, "wb") as f:
-        gvas_file.write(f, game_version, compression, uncompressed_output_file)
+    gvas_file.write_file(output_file, uncompressed_output_file)
 
-    compare_binary_files(test_file, output_file)
+    idempotent = compare_binary_files(test_file, output_file)
 
     # create json the old fashioned way
     json_file = f"{test_file}.json"
@@ -161,24 +174,15 @@ def test_gvas_file(test_file: str):
     gvas_file_dict = gvas_file_adaptor.dump_python(gvas_file, exclude_none=True)
     pydantic_json_content = json.dumps(gvas_file_dict, indent=2)
 
-    # by using @field_serializer("values") decorators and the exclude_none=True
-    # setting we don't need EnhancedJSONEncoder
-    # pydantic_json_content2 = json.dumps(
-    #     gvas_file_dict, cls=EnhancedJSONEncoder, indent=2
-    # )
-    # assert pydantic_json_content == pydantic_json_content2
-
     # json_content = gvas_file_adaptor.dump_json(gvas_file, indent=2)
     with open(pydantic_json_file, "w") as f:
         f.write(pydantic_json_content)
 
-    compare_binary_files(json_file, pydantic_json_file)
+    json_old_and_new = compare_binary_files(json_file, pydantic_json_file)
 
     # lets test the round tripo
     with open(pydantic_json_file, "r") as f:
         pydantic_json_content_dict = json.load(f)
-
-    # print(type(pydantic_json_content_dict))
 
     new_gvas = gvas_file_adaptor.validate_python(pydantic_json_content_dict)
     # print(type(new_gvas))
@@ -186,10 +190,9 @@ def test_gvas_file(test_file: str):
     # now write it back out
     output_file_too = f"{test_file}.idempotent.too"
     uncompressed_output_file = f"{test_file}.decompressed.idempotent.too"
-    with open(output_file_too, "wb") as f:
-        gvas_file.write(f, game_version, compression, uncompressed_output_file)
+    gvas_file.write_file(output_file_too, uncompressed_output_file)
 
-    compare_binary_files(output_file_too, output_file)
+    reread_and_rewrite = compare_binary_files(output_file_too, output_file)
 
     # assert new_gvas == gvas_file
     def compare_pydantic_objects(obj1: GVASFile, obj2: GVASFile):
@@ -201,7 +204,24 @@ def test_gvas_file(test_file: str):
 
         # print(f"\tGVas objects are{' NOT ' if dict1 != dict2 else ' '}identical")
 
-    compare_pydantic_objects(gvas_file, new_gvas)
+    pydantic_object_commpare = compare_pydantic_objects(gvas_file, new_gvas)
+
+    # if not idempotent:
+    #     print(f"FAILED: Reserialized gvas file is NOT IDENTICAL to original.")
+    #
+    # if not json_old_and_new:
+    #     print(f"FAILED: Reserialized JSON file is NOT IDENTICAL to original.")
+    #
+    # if not reread_and_rewrite:
+    #     print(
+    #         f"FAILED: Loaded JSON written as GVAS is NOT IDENTICAL to first serialization."
+    #     )
+    #
+    # # if not pydantic_object_commpare:
+    # #     print(f"FAILED: Reserialized gvas file is NOT IDENTICAL.")
+    #
+    # if idempotent and json_old_and_new and reread_and_rewrite:
+    #     print(f"SUCCESS testing {test_file}")
 
 
 for test_file in test_file_list:

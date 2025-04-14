@@ -1,20 +1,6 @@
 """
 Numeric property implementations for GVAS
 Python port of int_property.rs
-
-Contains implementations for:
-- BoolProperty
-- ByteProperty
-- FloatProperty
-- DoubleProperty
-- Int8Property
-- Int16Property
-- Int32Property
-- Int64Property
-- UInt8Property
-- UInt16Property
-- UInt32Property
-- UInt64Property
 """
 
 from typing import Optional
@@ -94,8 +80,7 @@ class ByteProperty(PropertyTrait):
         if suggested_length <= 1:  # indicates a byte value
             self.value = read_uint8(stream)
         else:  # indicates a type_name value
-            # according to the RUST code, this is actually an FSTRING, with  int32 prefix of length. NOT raw bytes
-            # self.value = read_bytes(stream, suggested_length)
+            # according to the RUST code, this is an FSTRING, with  int32 prefix of length. Not BYTES.
             self.value = read_string(stream)
 
     def write(
@@ -116,80 +101,12 @@ class ByteProperty(PropertyTrait):
         if type(self.value) is int:
             bytes_written += write_uint8(stream, self.value)
         elif type(self.value) is str:
-            # according to the RUST code, this is actually an FSTRING, with  int32 prefix of length. NOT raw bytes
-            # bytes_written += write_bytes(stream, self.value)
+            # according to the RUST code, this is an FSTRING, with  int32 prefix of length. Not BYTES.
             bytes_written += write_string(stream, self.value)
         else:
             raise TypeError(f"Invalid type in ByteProperty: {type(self.value)}")
 
         return bytes_written
-
-
-# @dataclass
-# class FloatProperty(PropertyTrait):
-#     """A property that holds a 32-bit floating point value"""
-#
-#     type: str = "FloatProperty"
-#     value: float = 0.0
-#
-#     def read(
-#         self,
-#         stream: BinaryIO,
-#         include_header: bool = True,
-#     ) -> None:
-#         """Read float value from stream"""
-#         if include_header:
-#             read_standard_header(stream, assert_length=4)
-#
-#         self.value = read_float(stream)
-#
-#     def write(
-#         self,
-#         stream: BinaryIO,
-#         include_header: bool = True,
-#     ) -> int:
-#         """Write float value to stream"""
-#         bytes_written = 0
-#
-#         if include_header:
-#             bytes_written += write_standard_header(stream, "FloatProperty", length=4)
-#
-#         bytes_written += write_float(stream, self.value)
-#
-#         return bytes_written
-#
-#
-# @dataclass
-# class DoubleProperty(PropertyTrait):
-#     """A property that holds a 64-bit floating point value"""
-#
-#     type: str = "DoubleProperty"
-#     value: float = 0.0
-#
-#     def read(
-#         self,
-#         stream: BinaryIO,
-#         include_header: bool = True,
-#     ) -> None:
-#         """Read double value from stream"""
-#         if include_header:
-#             read_standard_header(stream, assert_length=8)
-#
-#         self.value = read_double(stream)
-#
-#     def write(
-#         self,
-#         stream: BinaryIO,
-#         include_header: bool = True,
-#     ) -> int:
-#         """Write double value to stream"""
-#         bytes_written = 0
-#         if include_header:
-#             bytes_written += write_standard_header(stream, "DoubleProperty", length=8)
-#
-#         bytes_written += write_double(stream, self.value)
-#
-#         return bytes_written
 
 
 def create_numerical_property_class(

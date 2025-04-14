@@ -12,94 +12,13 @@ import zlib
 from io import BytesIO
 from typing import Optional
 
+from pydantic import field_serializer, field_validator
 from pydantic.dataclasses import dataclass
 
 from .engine_versions import FEngineVersion
 from .game_version import GameVersion, CompressionType, GVAS_MAGIC, PLZ_MAGIC
 from .properties import PropertyFactory
 from .utils import *
-
-
-# Stores CustomVersions serialized by UE4
-@dataclass
-class FCustomVersion:
-    # Key
-    key: str = None
-    # Value
-    version: int = 0
-
-    # Read FCustomVersion from a binary file
-    def read(self, stream: BinaryIO) -> None:
-        self.key = guid_to_str(read_guid(stream))
-        self.version = read_uint32(stream)
-
-    # Write FCustomVersion to a binary file
-    def write(self, stream: BinaryIO) -> int:
-        bytes_written = 0
-        guid = uuid.UUID(self.key)
-        bytes_written += write_guid(stream, guid)
-        bytes_written += write_int32(stream, self.version)
-        return bytes_written
-
-
-# ============================================
-#
-def is_zlib_compressed(data):
-    """
-    Checks if the data is likely zlib compressed based on the initial bytes.
-
-    Args:
-        data: The bytes-like object to check.
-
-    Returns:
-        True if the data is likely zlib compressed, False otherwise.
-    """
-    if len(data) < 2:
-        return False
-    return data[:2] in (b"\x78\x01", b"\x78\x9c", b"\x78\xda")
-
-
-def is_definitely_zlib_compressed(data):
-    """
-    Checks if the data is definitely zlib compressed by attempting decompression.
-
-    Args:
-        data: The bytes-like object to check.
-
-    Returns:
-        True if the data is definitely zlib compressed, False otherwise.
-    """
-    try:
-        zlib.decompress(data)
-        return True
-    except zlib.error:
-        return False
-
-
-# ============================================
-#
-def looks_like_gvas(stream: BinaryIO) -> bool:
-    peeked_bytes = peek(stream, 4)
-    return peeked_bytes == GVAS_MAGIC
-
-
-# ============================================
-#
-def looks_like_palworld(stream: BinaryIO) -> bool:
-
-    current_position = stream.tell()
-    # grab the elements
-    decompressed_size = read_uint32(stream)
-    compressed_size = read_uint32(stream)
-    plz_bytes = read_bytes(stream, len(PLZ_MAGIC))
-    enum_value = read_int8(stream)
-    stream.seek(current_position)
-
-    # tests:
-    sizes_ok = compressed_size <= decompressed_size < 1_000_000_000
-    magic_ok = plz_bytes == PLZ_MAGIC
-    enum_ok = enum_value in [member.value for member in CompressionType]
-    return sizes_ok and magic_ok and enum_ok
 
 
 @dataclass
@@ -113,6 +32,27 @@ class GvasHeader:
     custom_version_format: int = None
     custom_versions: dict[str, int] = None
     save_game_class_name: str = None
+
+    # Stores CustomVersions serialized by UE4
+    @dataclass
+    class FCustomVersion:
+        # Key
+        key: str = None
+        # Value
+        version: int = 0
+
+        # Read FCustomVersion from a binary file
+        def read(self, stream: BinaryIO) -> None:
+            self.key = guid_to_str(read_guid(stream))
+            self.version = read_uint32(stream)
+
+        # Write FCustomVersion to a binary file
+        def write(self, stream: BinaryIO) -> int:
+            bytes_written = 0
+            guid = uuid.UUID(self.key)
+            bytes_written += write_guid(stream, guid)
+            bytes_written += write_int32(stream, self.version)
+            return bytes_written
 
     @classmethod
     def read(cls, stream: BinaryIO) -> "GvasHeader":
@@ -140,7 +80,7 @@ class GvasHeader:
         custom_version_format = read_uint32(stream)
         custom_version_count = read_uint32(stream)
 
-        custom_version_reader = FCustomVersion()
+        custom_version_reader = cls.FCustomVersion()
         custom_versions = {}
         for _ in range(custom_version_count):
             custom_version_reader.read(stream)
@@ -182,7 +122,7 @@ class GvasHeader:
         bytes_written += write_uint32(stream, len(self.custom_versions))
 
         for guid, version in self.custom_versions.items():
-            bytes_written += FCustomVersion(guid, version).write(stream)
+            bytes_written += self.FCustomVersion(guid, version).write(stream)
 
         bytes_written += write_string(stream, self.save_game_class_name)
 
@@ -190,11 +130,152 @@ class GvasHeader:
 
 
 @dataclass
-class GVASFile:
-    """Main GVAS file class"""
+class GameFileFormat:
+    """
+    Holds information about the deserialized game version
 
+    This is used to track what game version was used during deserialization,
+    which may affect how the file is handled.
+    """
+
+    game_version: GameVersion = GameVersion.UNKNOWN
+    compression_type: CompressionType = CompressionType.UNKNOWN
+
+    @field_serializer("game_version")
+    def serialize_game_version(self, game_version: GameVersion):
+        return game_version.name
+
+    @field_validator("game_version", mode="before")
+    def validate_game_version(cls, value: GameVersion):
+        if type(value) is str:
+            return GameVersion.__getitem__(value)
+        return value
+
+    @field_serializer("compression_type")
+    def serialize_compression_type(self, compression_type: CompressionType):
+        return compression_type.name
+
+    @field_validator("compression_type", mode="before")
+    def validate_compression_type(cls, value: CompressionType):
+        if type(value) is str:
+            return CompressionType.__getitem__(value)
+        return value
+
+    @classmethod
+    def has_gvas_header(cls, stream: BinaryIO) -> bool:
+        peeked_bytes = peek(stream, 4)
+        return peeked_bytes == GVAS_MAGIC
+
+    @classmethod
+    def has_palworld_header(cls, stream: BinaryIO) -> bool:
+        peeked_bytes = peek(stream, 4)
+        return peeked_bytes == PLZ_MAGIC
+
+    @classmethod
+    def has_zlib_header(cls, stream: BinaryIO) -> bool:
+        magic_bytes: bytes = peek(stream, 2)
+        return magic_bytes in [b"\x78\x01", b"\x78\x9c", b"\x78\xda"]
+
+    @classmethod
+    def is_definitely_zlib_compressed(cls, stream: BinaryIO):
+        position = stream.tell()
+        try:
+            zlib.decompress(stream.read())
+            return True
+        except zlib.error:
+            return False
+        finally:
+            stream.seek(position)
+
+    def check_for_palworld(self, stream: BinaryIO) -> bool:
+
+        current_position = stream.tell()
+        try:
+            # grab the elements
+            decompressed_size = read_uint32(stream)
+            compressed_size = read_uint32(stream)
+
+            # sanity test
+            sizes_ok = compressed_size <= decompressed_size < 1_000_000_000
+            if not sizes_ok:
+                return False
+
+            if (_plz_bytes := read_bytes(stream, len(PLZ_MAGIC))) != PLZ_MAGIC:
+                return False
+
+            self.game_version = GameVersion.PALWORLD
+
+            # read the compression indicator
+            compression_enum = read_int8(stream)
+            try:
+                self.compression_type = CompressionType(compression_enum)
+                if self.compression_type not in [
+                    CompressionType.NONE,
+                    CompressionType.ZLIB,
+                    CompressionType.ZLIB_TWICE,
+                ]:
+                    return False
+
+            except ValueError:
+                raise DeserializeError.invalid_value(
+                    compression_enum,
+                    current_position,
+                    f"Unknown compression type found for file with Palworld MAGIC.",
+                )
+
+            if (
+                self.compression_type == CompressionType.ZLIB
+                and not self.has_zlib_header(stream)
+            ):
+                return False
+
+            # NONE is fine, and ZLIP_TWICE will be caught later
+
+            return True
+
+        except zlib.error:
+            return False
+
+        finally:
+            stream.seek(current_position)
+
+    def deserialize_game_version(self, stream: BinaryIO):
+        is_palworld = False
+        if self.has_gvas_header(stream):
+            self.game_version = GameVersion.DEFAULT
+            self.compression_type = CompressionType.NONE
+        else:
+            is_palworld = self.check_for_palworld(stream)
+
+        # print(
+        #     f"Found a {'PALWORLD' if is_palworld else 'GVAS'} file with compression type of '{self.compression_type.name}'."
+        # )
+
+
+@dataclass
+class GVASFile:
+
+    game_file_format: GameFileFormat
     header: GvasHeader
     properties: Dict[str, Any]
+
+    @classmethod
+    def print_game_file_format(cls, file_path: str):
+        with open(file_path, "rb") as stream:
+            game_file_format = GameFileFormat()
+            game_file_format.deserialize_game_version(stream)
+            print(
+                f"Found {file_path=} has version={game_file_format.game_version} and compression={game_file_format.compression_type}"
+            )
+
+    @classmethod
+    def read_file(cls, file_path: str) -> ("GVASFile", BinaryIO):
+        with open(file_path, "rb") as stream:
+            game_file_format = GameFileFormat()
+            game_file_format.deserialize_game_version(stream)
+            return cls.read(
+                stream, game_file_format.game_version, game_file_format.compression_type
+            )
 
     @classmethod
     def read(
@@ -204,6 +285,8 @@ class GVASFile:
         compression_type: CompressionType,
     ) -> ("GVASFile", BinaryIO):
 
+        decompressed_size = 0
+        compressed_size = 0
         if game_version == GameVersion.PALWORLD:
             # we have to peek through custom file format. *sigh*
             decompressed_size = read_uint32(stream)
@@ -227,13 +310,8 @@ class GVASFile:
         # Handle compression options
         if compression_type == CompressionType.ZLIB_TWICE:
             compressed_data = stream.read()
-            # print(f"Found compressed data: {len(compressed_data)=}")
             decompressed_data = zlib.decompress(compressed_data)  # once
-            # first_compressed_size = len(decompressed_data)
-            # print(f"Found: {first_compressed_size=}")
             decompressed_data = zlib.decompress(decompressed_data)  # twice
-            # second_compressed_size = len(decompressed_data)
-            # print(f"Found: {second_compressed_size=}")
 
             assert decompressed_size == len(
                 decompressed_data
@@ -281,13 +359,22 @@ class GVASFile:
                 properties[property_name] = property_value
 
         stream.seek(0)
-        return cls(header=header, properties=properties), stream
+        return (
+            cls(
+                game_file_format=GameFileFormat(game_version, compression_type),
+                header=header,
+                properties=properties,
+            ),
+            stream,
+        )
+
+    def write_file(self, output_file, uncompressed_output_file) -> None:
+        with open(output_file, "wb") as f:
+            self.write(f, uncompressed_output_file)
 
     def write(
         self,
         stream: BinaryIO,
-        game_version: GameVersion,
-        compression_type: CompressionType,
         ucompressed_file_name: str = None,
     ) -> None:
         """Write GVAS file to stream"""
@@ -311,7 +398,7 @@ class GVASFile:
 
         # ====================================
         # Handle compression options
-        if compression_type == CompressionType.ZLIB_TWICE:
+        if self.game_file_format.compression_type == CompressionType.ZLIB_TWICE:
             # hack to save uncompressed
             if ucompressed_file_name:
                 # print(f"Writing {ucompressed_file_name}")
@@ -329,14 +416,14 @@ class GVASFile:
             # tricky folks; they store the first compressed size, not the final
             compressed_size = first_compressed_size
 
-        elif compression_type == CompressionType.ZLIB:
+        elif self.game_file_format.compression_type == CompressionType.ZLIB:
             # print(f"Writing {ucompressed_file_name}")
             with open(ucompressed_file_name, "wb") as f:
                 f.write(data_to_write)
             data_to_write = zlib.compress(data_to_write)  # once
             compressed_size = len(data_to_write)
 
-        elif compression_type == CompressionType.NONE:
+        elif self.game_file_format.compression_type == CompressionType.NONE:
             compressed_size = decompressed_size
 
         else:
@@ -344,13 +431,13 @@ class GVASFile:
 
         # ====================================
         # Handle PalWorld special prefix
-        if game_version == GameVersion.PALWORLD:
+        if self.game_file_format.game_version == GameVersion.PALWORLD:
             print(
                 f"Writing PalWorld file with {decompressed_size=} and {compressed_size=}"
             )
             write_uint32(stream, decompressed_size)
             write_uint32(stream, compressed_size)
             write_bytes(stream, PLZ_MAGIC)
-            write_int8(stream, compression_type.value)
+            write_int8(stream, self.game_file_format.compression_type.value)
 
         stream.write(data_to_write)

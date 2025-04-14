@@ -1,4 +1,8 @@
 {
+  "game_file_format": {
+    "game_version": "DEFAULT",
+    "compression_type": "NONE"
+  },
   "header": {
     "type": "Version2",
     "package_file_version": 522,

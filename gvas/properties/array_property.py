@@ -86,7 +86,7 @@ class ArrayProperty(PropertyTrait):
 
     # Guidance to pydantic
     @field_serializer("values")
-    def serialize_items(
+    def serialize_values(
         self, values: [str, bytes, list, PropertyTrait, StandardStructTrait]
     ):
         # print(f"ArrayProperty.serialize_items: {type(values)=}")

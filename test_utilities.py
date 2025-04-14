@@ -12,7 +12,7 @@ def compare_binary_files(file1_path: Path | str, file2_path: Path | str) -> bool
         file2_path (str): Path to the second file.
     """
     if filecmp.cmp(file1_path, file2_path, shallow=False):
-        print(f"Files {file1_path} and {file2_path} are identical.")
+        print(f"SUCCESS: Files {file1_path} and {file2_path} are identical.")
         return True
     else:
         print(f"FAILED: Files {file1_path} and {file2_path} are different.")

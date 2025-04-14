@@ -118,7 +118,7 @@ class NumberFormattingOptions:
     maximum_fractional_digits: int = 3
 
     @field_serializer("rounding_mode")
-    def serialize_items(self, rounding_mode: RoundingMode):
+    def serialize_rounding_mode(self, rounding_mode: RoundingMode):
         return rounding_mode.name
 
     def read(self, stream: BinaryIO) -> Self:
@@ -197,7 +197,7 @@ class FormatArgument:
     value: Any = None
 
     @field_serializer("type")
-    def serialize_items(self, type: FormatArgumentValue):
+    def serialize_type(self, type: FormatArgumentValue):
         return type.name
 
     def read(self, stream: BinaryIO) -> Self:
@@ -383,7 +383,7 @@ class Empty:
     type: str = "Empty"
 
     @field_serializer("type")
-    def serialize_items(self, type: str):
+    def serialize_type(self, type: str):
         return type
 
     def write(self, stream: BinaryIO) -> int:
@@ -404,7 +404,7 @@ class NoType:
     culture_invariant_string: Optional[str] = None
 
     @field_serializer("type")
-    def serialize_items(self, type: TextHistoryType):
+    def serialize_type(self, type: TextHistoryType):
         return type.name
 
     def read(self, stream: BinaryIO) -> Self:
@@ -444,7 +444,7 @@ class Base:
     source_string: Optional[str] = None
 
     @field_serializer("type")
-    def serialize_items(self, type: TextHistoryType):
+    def serialize_type(self, type: TextHistoryType):
         return type.name
 
     def read(self, stream: BinaryIO) -> Self:
@@ -473,7 +473,7 @@ class NamedFormat:
     arguments: Optional[dict[str, FormatArgument]] = None
 
     @field_serializer("type")
-    def serialize_items(self, type: TextHistoryType):
+    def serialize_type(self, type: TextHistoryType):
         return type.name
 
     def read(self, stream: BinaryIO) -> Self:
@@ -508,7 +508,7 @@ class OrderedFormat:
     arguments: Optional[list[FormatArgument]] = None
 
     @field_serializer("type")
-    def serialize_items(self, type: TextHistoryType):
+    def serialize_type(self, type: TextHistoryType):
         return type.name
 
     def read(self, stream: BinaryIO) -> Self:
@@ -541,7 +541,7 @@ class ArgumentFormat:
     arguments: Optional[dict[str, FormatArgument]] = None
 
     @field_serializer("type")
-    def serialize_items(self, type: TextHistoryType):
+    def serialize_type(self, type: TextHistoryType):
         return type.name
 
     def read(self, stream: BinaryIO) -> Self:
@@ -578,7 +578,7 @@ class AsNumber:
     target_culture: Optional[str] = None
 
     @field_serializer("type")
-    def serialize_items(self, type: TextHistoryType):
+    def serialize_type(self, type: TextHistoryType):
         return type.name
 
     def read(self, stream: BinaryIO) -> Self:
@@ -613,7 +613,7 @@ class AsPercent:
     target_culture: Optional[str] = None
 
     @field_serializer("type")
-    def serialize_items(self, type: TextHistoryType):
+    def serialize_type(self, type: TextHistoryType):
         return type.name
 
     def read(self, stream: BinaryIO) -> Self:
@@ -650,7 +650,7 @@ class AsCurrency:
     target_culture: Optional[str] = None
 
     @field_serializer("type")
-    def serialize_items(self, type: TextHistoryType):
+    def serialize_type(self, type: TextHistoryType):
         return type.name
 
     def read(self, stream: BinaryIO) -> Self:
@@ -688,7 +688,7 @@ class AsDate:
     target_culture: Optional[str] = None
 
     @field_serializer("type")
-    def serialize_items(self, type: TextHistoryType):
+    def serialize_type(self, type: TextHistoryType):
         return type.name
 
     def read(self, stream: BinaryIO) -> Self:
@@ -721,7 +721,7 @@ class AsTime:
     target_culture: Optional[str] = None
 
     @field_serializer("type")
-    def serialize_items(self, type: TextHistoryType):
+    def serialize_type(self, type: TextHistoryType):
         return type.name
 
     def read(self, stream: BinaryIO) -> Self:
@@ -758,7 +758,7 @@ class AsDateTime:
     target_culture: Optional[str] = None
 
     @field_serializer("type")
-    def serialize_items(self, type: TextHistoryType):
+    def serialize_type(self, type: TextHistoryType):
         return type.name
 
     def read(self, stream: BinaryIO) -> Self:
@@ -791,7 +791,7 @@ class Transform:
     transform_type: Optional[TransformType] = None
 
     @field_serializer("type")
-    def serialize_items(self, type: TextHistoryType):
+    def serialize_type(self, type: TextHistoryType):
         return type.name
 
     def read(self, stream: BinaryIO) -> Self:
@@ -818,7 +818,7 @@ class StringTableEntry:
     key: Optional[str] = None
 
     @field_serializer("type")
-    def serialize_items(self, type: TextHistoryType):
+    def serialize_type(self, type: TextHistoryType):
         return type.name
 
     def read(self, stream: BinaryIO) -> Self:
