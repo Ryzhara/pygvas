@@ -148,7 +148,7 @@ def test_gvas_file(test_file: str):
         dict1 = obj1_adaptor.dump_python(obj1, exclude_none=False)
         dict2 = obj2_adaptor.dump_python(obj2, exclude_none=False)
 
-        print(f"\tGVas objects are{' NOT ' if dict1 != dict2 else ' '}identical")
+        # print(f"\tGVas objects are{' NOT ' if dict1 != dict2 else ' '}identical")
 
     compare_pydantic_objects(gvas_file, new_gvas)
 

@@ -17,8 +17,10 @@ Contains implementations for:
 - UInt64Property
 """
 
+from abc import ABC
+
 from pydantic.dataclasses import dataclass
-from typing import Optional, Union, BinaryIO
+from typing import Optional, Union, BinaryIO, Self, Callable
 import struct
 
 from .property_base import PropertyTrait
@@ -125,134 +127,124 @@ class ByteProperty(PropertyTrait):
         return bytes_written
 
 
-@dataclass
-class FloatProperty(PropertyTrait):
-    """A property that holds a 32-bit floating point value"""
+# @dataclass
+# class FloatProperty(PropertyTrait):
+#     """A property that holds a 32-bit floating point value"""
+#
+#     type: str = "FloatProperty"
+#     value: float = 0.0
+#
+#     def read(
+#         self,
+#         stream: BinaryIO,
+#         include_header: bool = True,
+#     ) -> None:
+#         """Read float value from stream"""
+#         if include_header:
+#             read_standard_header(stream, assert_length=4)
+#
+#         self.value = read_float(stream)
+#
+#     def write(
+#         self,
+#         stream: BinaryIO,
+#         include_header: bool = True,
+#     ) -> int:
+#         """Write float value to stream"""
+#         bytes_written = 0
+#
+#         if include_header:
+#             bytes_written += write_standard_header(stream, "FloatProperty", length=4)
+#
+#         bytes_written += write_float(stream, self.value)
+#
+#         return bytes_written
+#
+#
+# @dataclass
+# class DoubleProperty(PropertyTrait):
+#     """A property that holds a 64-bit floating point value"""
+#
+#     type: str = "DoubleProperty"
+#     value: float = 0.0
+#
+#     def read(
+#         self,
+#         stream: BinaryIO,
+#         include_header: bool = True,
+#     ) -> None:
+#         """Read double value from stream"""
+#         if include_header:
+#             read_standard_header(stream, assert_length=8)
+#
+#         self.value = read_double(stream)
+#
+#     def write(
+#         self,
+#         stream: BinaryIO,
+#         include_header: bool = True,
+#     ) -> int:
+#         """Write double value to stream"""
+#         bytes_written = 0
+#         if include_header:
+#             bytes_written += write_standard_header(stream, "DoubleProperty", length=8)
+#
+#         bytes_written += write_double(stream, self.value)
+#
+#         return bytes_written
 
-    type: str = "FloatProperty"
-    value: float = 0.0
 
-    def read(
-        self,
-        stream: BinaryIO,
-        include_header: bool = True,
-    ) -> None:
-        """Read float value from stream"""
-        if include_header:
-            read_standard_header(stream, assert_length=4)
-
-        self.value = read_float(stream)
-
-    def write(
-        self,
-        stream: BinaryIO,
-        include_header: bool = True,
-    ) -> int:
-        """Write float value to stream"""
-        bytes_written = 0
-
-        if include_header:
-            bytes_written += write_standard_header(stream, "FloatProperty", length=4)
-
-        bytes_written += write_float(stream, self.value)
-
-        return bytes_written
-
-
-@dataclass
-class DoubleProperty(PropertyTrait):
-    """A property that holds a 64-bit floating point value"""
-
-    type: str = "DoubleProperty"
-    value: float = 0.0
-
-    def read(
-        self,
-        stream: BinaryIO,
-        include_header: bool = True,
-    ) -> None:
-        """Read double value from stream"""
-        if include_header:
-            read_standard_header(stream, assert_length=8)
-
-        self.value = read_double(stream)
-
-    def write(
-        self,
-        stream: BinaryIO,
-        include_header: bool = True,
-    ) -> int:
-        """Write double value to stream"""
-        bytes_written = 0
-        if include_header:
-            bytes_written += write_standard_header(stream, "DoubleProperty", length=8)
-
-        bytes_written += write_double(stream, self.value)
-
-        return bytes_written
-
-
-def create_int_property_class(type_name: str, size: int, signed: bool = True):
+def create_numerical_property_class(
+    type_name: str,
+    storage_type,
+    size: int,
+    read_function: Callable[[BinaryIO], Any],
+    write_function: Callable[[BinaryIO, Any], int],
+):
     """
-    Create an integer property class with the specified size and signedness
+    Create a property class to read/write number type with the specified size and type
     """
-    # It is cleaner to use struct functions rather than read/write wrappers
-    # tuple of (unsigned-str, signed-str)
-    parameter_map = {1: ("B", "b"), 2: ("<H", "<h"), 4: ("<I", "<i"), 8: ("<Q", "<q")}
-    assert size in parameter_map.keys()
-    encoding_string = parameter_map[size][1 if signed else 0]
 
     @dataclass
-    class IntPropertyClass(PropertyTrait):
+    class NumericalPropertyClass(PropertyTrait):
         """A property that holds a {size}-bit {signedness} integer value"""
 
         type: str = type_name
-        value: int = 0
+        value: storage_type = 0
 
-        def read(
-            self,
-            stream: BinaryIO,
-            include_header: bool = True,
-        ) -> None:
-            """
-            Read integer value from stream
-            """
+        def read(self, stream: BinaryIO, include_header: bool = True) -> None:
             if include_header:
                 read_standard_header(stream, assert_length=size)
+            self.value = read_function(stream)
 
-            self.value = struct.unpack(encoding_string, stream.read(size))[0]
-
-        def write(
-            self,
-            stream: BinaryIO,
-            include_header: bool = True,
-        ) -> int:
-            """
-            Write integer value to stream
-            """
+        def write(self, stream: BinaryIO, include_header: bool = True) -> int:
             bytes_written = 0
 
             if include_header:
                 bytes_written += write_standard_header(stream, type_name, length=size)
-
-            bytes_written += stream.write(struct.pack(encoding_string, self.value))
-
+            bytes_written += write_function(stream, self.value)
             return bytes_written
 
-    IntPropertyClass.__name__ = type_name
-    IntPropertyClass.__doc__ = f"A property that holds a {size}-bit {'signed' if signed else 'unsigned'} integer value"
-    return IntPropertyClass
+    NumericalPropertyClass.__name__ = type_name
+    NumericalPropertyClass.__doc__ = (
+        f"A property that holds a {size}-bit numerical value of type {storage_type}"
+    )
+    return NumericalPropertyClass
 
 
 # Create all integer property classes
-Int8Property = create_int_property_class("Int8Property", 1, True)
-UInt8Property = create_int_property_class("UInt8Property", 1, False)
-Int16Property = create_int_property_class("Int16Property", 2, True)
-UInt16Property = create_int_property_class("UInt16Property", 2, False)
-Int32Property = create_int_property_class("Int32Property", 4, True)
-UInt32Property = create_int_property_class("UInt32Property", 4, False)
-Int64Property = create_int_property_class("Int64Property", 8, True)
-UInt64Property = create_int_property_class("UInt64Property", 8, False)
+# fmt: off
+Int8Property = create_numerical_property_class("Int8Property", int, 1, read_int8, write_int8)
+UInt8Property = create_numerical_property_class("UInt8Property", int, 1, read_uint8, write_uint8)
+Int16Property = create_numerical_property_class("Int16Property", int, 2, read_int16, write_int16)
+UInt16Property = create_numerical_property_class("UInt16Property", int, 2, read_uint16, write_uint16)
+Int32Property = create_numerical_property_class("Int32Property", int, 4, read_int32, write_int32)
+UInt32Property = create_numerical_property_class("UInt32Property", int, 4, read_uint32, write_uint32)
+Int64Property = create_numerical_property_class("Int64Property", int, 8, read_int64, write_int64)
+UInt64Property = create_numerical_property_class("UInt64Property", int, 8, read_uint64, write_uint64)
 
 # For backward compatibility
-IntProperty = create_int_property_class("IntProperty", 4, True)
+IntProperty = create_numerical_property_class("IntProperty", int, 4, read_int32, write_int32)
+
+FloatProperty = create_numerical_property_class("FloatProperty", float, 4, read_float, write_float)
+DoubleProperty = create_numerical_property_class("DoubleProperty", float, 8, read_double, write_double)

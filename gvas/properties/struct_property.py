@@ -49,7 +49,7 @@ class StructProperty(PropertyTrait):
     @field_serializer("guid")
     def serialize_guid(self, value: uuid.UUID):
         if type(value) is uuid.UUID:
-            return str(value)
+            return guid_to_str(value)
         return value
 
     def read(
