@@ -10,7 +10,7 @@ from typing import Dict, List
 from gvas import CompressionType
 from gvas.gvas_file import GVASFile, GvasHeader
 from gvas.game_version import GameVersion
-from gvas.properties.property_base import Property
+from gvas.properties.property_base import PropertyFactory
 from gvas.properties.int_property import Int32Property, BoolProperty
 from gvas.properties.str_property import StrProperty
 
@@ -38,13 +38,13 @@ class TestGvasFile(unittest.TestCase):
         file = GVASFile(header=header, properties={})
 
         # Set some properties
-        file.properties["IntProperty"] = Property(
+        file.properties["IntProperty"] = PropertyFactory(
             type_name="Int32Property", value=Int32Property(42)
         )
-        file.properties["StringProperty"] = Property(
+        file.properties["StringProperty"] = PropertyFactory(
             type_name="StrProperty", value=StrProperty("Hello, world!")
         )
-        file.properties["BoolProperty"] = Property(
+        file.properties["BoolProperty"] = PropertyFactory(
             type_name="BoolProperty", value=BoolProperty(True)
         )
 
@@ -121,7 +121,7 @@ class TestGvasFile(unittest.TestCase):
 
         # Create a file with default game version
         file = GVASFile(header=header, properties={})
-        file.properties["TestProperty"] = Property(
+        file.properties["TestProperty"] = PropertyFactory(
             type_name="Int32Property", value=Int32Property(42)
         )
 

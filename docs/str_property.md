@@ -1,4 +1,4 @@
-# String Property Binary Format
+# String PropertyFactory Binary Format
 
 ## Overview
 String properties in GVAS files store text values. The format supports both null and non-null string values with proper length tracking.
@@ -25,7 +25,7 @@ For null values:
 
 ## Example
 
-### Non-Null String Property
+### Non-Null String PropertyFactory
 ```
 [property_type: "StrProperty"]
 [length: uint32]
@@ -34,7 +34,7 @@ For null values:
 [value: "Hello, World!"]
 ```
 
-### Null String Property
+### Null String PropertyFactory
 ```
 [property_type: "StrProperty"]
 [length: 0]

@@ -1,5 +1,5 @@
 """
-Base Property implementation for GVAS
+Base PropertyFactory implementation for GVAS
 Python port of properties/mod.rs
 
 Key differences from Rust version:
@@ -51,17 +51,14 @@ class PropertyTrait(ABC):
 
 
 @dataclass
-class Property:
+class PropertyFactory:
     """
     Base property class that holds a property value
-    Python equivalent of the Property enum in Rust
+    Python equivalent of the PropertyFactory enum in Rust
     """
 
-    def __init__(self):
-        pass
-
     @staticmethod
-    def property_class_from_type(property_type: str) -> Any:
+    def property_class_from_type(property_type: str) -> PropertyTrait:
         from . import (
             ArrayProperty,
             BoolProperty,
@@ -138,12 +135,12 @@ class Property:
         property_type: str,
         include_header: bool = True,
         suggested_length: Optional[int] = None,
-    ) -> "Property":
+    ) -> PropertyTrait:
         """Create a new property instance from a binary stream"""
 
         with ContextScopeTracker(property_type) as _scope_tracker:
             # Get the appropriate property class instance
-            property_instance = Property.property_class_from_type(property_type)
+            property_instance = PropertyFactory.property_class_from_type(property_type)
 
             # Handle special cases for properties that need suggested_length
             if (
@@ -157,11 +154,3 @@ class Property:
                 property_instance.read(stream, include_header)
 
         return property_instance
-
-    def write(
-        self,
-        stream: BinaryIO,
-        include_header: bool = True,
-    ) -> int:
-        """Write property value to stream"""
-        return self.value.write(stream, include_header)

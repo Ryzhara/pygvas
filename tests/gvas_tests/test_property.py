@@ -7,7 +7,7 @@ from io import BytesIO
 import struct
 from typing import Dict, List, Optional
 
-from gvas.properties.property_base import Property, PropertyTrait
+from gvas.properties.property_base import PropertyFactory, PropertyTrait
 from gvas.properties.int_property import (
     BoolProperty,
     ByteProperty,
@@ -50,7 +50,7 @@ class TestProperty(unittest.TestCase):
         writer.seek(0)
 
         # Create a property wrapper
-        prop = Property(property_type, property_obj)
+        prop = PropertyFactory(property_type, property_obj)
 
         # Import the property from a byte array
         reader = BytesIO()
@@ -73,8 +73,8 @@ class TestProperty(unittest.TestCase):
             f"Expected {property_type}, got {imported_type}",
         )
 
-        # Skip the test for now until we fix the Property.new method
-        # imported_prop = Property.new(reader, imported_type, options)
+        # Skip the test for now until we fix the PropertyFactory.new method
+        # imported_prop = PropertyFactory.new(reader, imported_type, options)
         # self.assertEqual(property_obj.value, imported_prop.value.value,
         #                 f"Properties don't match: {property_obj.value} != {imported_prop.value.value}")
 

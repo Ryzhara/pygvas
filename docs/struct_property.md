@@ -1,4 +1,4 @@
-# Struct Property Binary Format
+# Struct PropertyFactory Binary Format
 
 ## Overview
 Struct properties in GVAS files store structured data that can be either a special graphical structure type or a custom structure with arbitrary properties. The format supports both predefined special structs and fully custom structs.
@@ -26,7 +26,7 @@ For custom struct types, the body contains a series of properties until a "None"
 ```
 [property_name: string]
 [property_type: string]
-[property_value: Property]  // Varies by property type
+[property_value: PropertyFactory]  // Varies by property type
 ...                        // Additional properties
 [terminator: "None"]       // End of properties
 ```
@@ -73,5 +73,5 @@ Custom struct types can contain any combination of GVAS properties:
 - Custom structs can contain nested properties of any type
 - Special structs have their own specific binary format
 - The GUID field is used to uniquely identify struct types
-- Property names and types are strings
+- PropertyFactory names and types are strings
 - The "None" terminator indicates the end of property list in custom structs 

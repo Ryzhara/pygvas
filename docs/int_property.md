@@ -1,4 +1,4 @@
-# Integer Property Binary Format
+# Integer PropertyFactory Binary Format
 
 ## Overview
 Integer properties in GVAS files store various numeric values, including boolean, byte, floating-point, and integer values of different sizes and signedness. The format supports multiple numeric types with specific size and encoding requirements.
@@ -13,7 +13,7 @@ Integer properties in GVAS files store various numeric values, including boolean
 [terminator: uint8]         // Always 0
 ```
 
-### Boolean Property
+### Boolean PropertyFactory
 ```
 [property_type: "BoolProperty"]
 [length: 0]                 // Always 0 for boolean
@@ -22,7 +22,7 @@ Integer properties in GVAS files store various numeric values, including boolean
 [value: uint8]             // 0 or 1
 ```
 
-### Byte Property
+### Byte PropertyFactory
 ```
 [property_type: "ByteProperty"]
 [length: uint32]           // 1 for byte value, >1 for type_name
@@ -33,7 +33,7 @@ Integer properties in GVAS files store various numeric values, including boolean
 [value: bytes]           // For type_name (FString with length prefix)
 ```
 
-### Float Property (32-bit)
+### Float PropertyFactory (32-bit)
 ```
 [property_type: "FloatProperty"]
 [length: 4]               // Always 4 bytes
@@ -42,7 +42,7 @@ Integer properties in GVAS files store various numeric values, including boolean
 [value: float32]         // 32-bit floating point value
 ```
 
-### Double Property (64-bit)
+### Double PropertyFactory (64-bit)
 ```
 [property_type: "DoubleProperty"]
 [length: 8]               // Always 8 bytes
@@ -73,7 +73,7 @@ Format for all integer properties:
 
 ## Examples
 
-### Boolean Property
+### Boolean PropertyFactory
 ```
 [property_type: "BoolProperty"]
 [length: 0]
@@ -82,7 +82,7 @@ Format for all integer properties:
 [value: 1]                // true
 ```
 
-### Byte Property (as byte)
+### Byte PropertyFactory (as byte)
 ```
 [property_type: "ByteProperty"]
 [length: 1]
@@ -92,7 +92,7 @@ Format for all integer properties:
 [value: 42]               // Byte value
 ```
 
-### Byte Property (as type_name)
+### Byte PropertyFactory (as type_name)
 ```
 [property_type: "ByteProperty"]
 [length: 12]

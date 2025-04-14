@@ -1,4 +1,4 @@
-# Array Property Binary Format
+# Array PropertyFactory Binary Format
 
 ## Overview
 Array properties in GVAS files store collections of values of the same type. The format supports both primitive types and complex property types.
@@ -17,8 +17,8 @@ Array properties in GVAS files store collections of values of the same type. The
 ### Array Data
 ```
 [array_length: uint32]      // Number of elements in the array
-[element_1: Property]       // First element (type depends on array_type)
-[element_2: Property]       // Second element
+[element_1: PropertyFactory]       // First element (type depends on array_type)
+[element_2: PropertyFactory]       // Second element
 ...                        // Additional elements
 ```
 

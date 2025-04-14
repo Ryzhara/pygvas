@@ -68,7 +68,7 @@ The Python port maintains a similar structure to the Rust version:
   - `error.py` - Error types and handling
   - `game_version.py` - Game version information
   - `types.py` - Basic type definitions
-  - `properties/` - Property type implementations
+  - `properties/` - PropertyFactory type implementations
 
 ## Requirements
 

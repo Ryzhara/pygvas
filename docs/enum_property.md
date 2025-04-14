@@ -1,4 +1,4 @@
-# Enum Property Binary Format
+# Enum PropertyFactory Binary Format
 
 ## Overview
 Enum properties in GVAS files store enumeration values with their associated type. The format includes both the enum type name and the specific enum value.
@@ -21,7 +21,7 @@ Enum properties in GVAS files store enumeration values with their associated typ
 
 ## Example
 
-### Enum Property
+### Enum PropertyFactory
 ```
 [property_type: "EnumProperty"]
 [length: uint32]

@@ -1,4 +1,4 @@
-# Object Property Binary Format
+# Object PropertyFactory Binary Format
 
 ## Overview
 Object properties in GVAS files store references to game objects using string identifiers. The format includes a header with length information and a string value that represents the object reference.

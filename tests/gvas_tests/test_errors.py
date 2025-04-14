@@ -10,7 +10,7 @@ import zlib
 from gvas.error import DeserializeError
 from gvas.gvas_file import GVASFile, GVAS_MAGIC
 from gvas.game_version import GameVersion
-from gvas.properties.property_base import Property, PropertyOptions
+from gvas.properties.property_base import PropertyFactory, PropertyOptions
 from gvas.properties.int_property import BoolProperty
 
 
@@ -37,7 +37,7 @@ class TestErrors(unittest.TestCase):
 
         # Attempt to read a property with an invalid type
         with self.assertRaises(DeserializeError) as context:
-            Property.new(BytesIO(), "InvalidProperty", options)
+            PropertyFactory.new(BytesIO(), "InvalidProperty", options)
 
         self.assertIn("Unknown property type", str(context.exception))
 

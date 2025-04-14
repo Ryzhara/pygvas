@@ -1,11 +1,11 @@
-# Delegate Property Binary Format
+# Delegate PropertyFactory Binary Format
 
 ## Overview
 Delegate properties in GVAS files store function references that can be used for event handling and callbacks. The format supports both single delegates and multicast delegates (which can have multiple function references).
 
 ## Binary Structure
 
-### Single Delegate Property
+### Single Delegate PropertyFactory
 #### Header (when include_header is true)
 ```
 [property_type: string]      // "DelegateProperty"
@@ -20,7 +20,7 @@ Delegate properties in GVAS files store function references that can be used for
 [function_name: string]     // Name of the function to call
 ```
 
-### Multicast Delegate Property
+### Multicast Delegate PropertyFactory
 #### Header (when include_header is true)
 ```
 [property_type: string]      // "MulticastInlineDelegateProperty"

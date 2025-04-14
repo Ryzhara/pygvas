@@ -7,7 +7,11 @@ from io import BytesIO
 import struct
 from typing import Dict, Optional
 
-from gvas.properties.property_base import Property, PropertyTrait, PropertyOptions
+from gvas.properties.property_base import (
+    PropertyFactory,
+    PropertyTrait,
+    PropertyOptions,
+)
 from gvas.properties.struct_property import StructProperty, StructPropertyValue
 from gvas.properties.int_property import Int32Property, BoolProperty
 from gvas.properties.str_property import StrProperty
@@ -47,13 +51,13 @@ class TestStructProperty(unittest.TestCase):
         struct_value = StructPropertyValue.new("TestStruct")
 
         # Add some properties to the struct value
-        struct_value.properties["IntValue"] = Property(
+        struct_value.properties["IntValue"] = PropertyFactory(
             type_name="Int32Property", value=Int32Property(value=42)
         )
-        struct_value.properties["BoolValue"] = Property(
+        struct_value.properties["BoolValue"] = PropertyFactory(
             type_name="BoolProperty", value=BoolProperty(value=True)
         )
-        struct_value.properties["StringValue"] = Property(
+        struct_value.properties["StringValue"] = PropertyFactory(
             type_name="StrProperty", value=StrProperty(value="Hello, world!")
         )
 
@@ -78,13 +82,13 @@ class TestStructProperty(unittest.TestCase):
         struct_value = StructPropertyValue.new("TestStruct")
 
         # Add some properties to the struct value
-        struct_value.properties["IntValue"] = Property(
+        struct_value.properties["IntValue"] = PropertyFactory(
             type_name="Int32Property", value=Int32Property(value=42)
         )
-        struct_value.properties["BoolValue"] = Property(
+        struct_value.properties["BoolValue"] = PropertyFactory(
             type_name="BoolProperty", value=BoolProperty(value=True)
         )
-        struct_value.properties["StringValue"] = Property(
+        struct_value.properties["StringValue"] = PropertyFactory(
             type_name="StrProperty", value=StrProperty(value="Hello, world!")
         )
 
@@ -130,7 +134,7 @@ class TestStructProperty(unittest.TestCase):
         inner_value = StructPropertyValue.new("InnerStruct")
 
         # Add a property to the inner struct
-        inner_value.properties["Value"] = Property(
+        inner_value.properties["Value"] = PropertyFactory(
             type_name="Int32Property", value=Int32Property(value=42)
         )
 
@@ -138,12 +142,12 @@ class TestStructProperty(unittest.TestCase):
         inner_struct.value = inner_value
 
         # Add the inner struct to the outer struct
-        outer_value.properties["InnerStruct"] = Property(
+        outer_value.properties["InnerStruct"] = PropertyFactory(
             type_name="StructProperty", value=inner_struct
         )
 
         # Add a simple property to the outer struct
-        outer_value.properties["Name"] = Property(
+        outer_value.properties["Name"] = PropertyFactory(
             type_name="StrProperty", value=StrProperty(value="Test")
         )
 

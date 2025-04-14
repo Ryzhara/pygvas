@@ -13,7 +13,7 @@ from typing import Optional
 from io import BytesIO
 
 from .property_base import (
-    Property,
+    PropertyFactory,
     PropertyTrait,
 )
 from .struct_property import StructProperty
@@ -134,7 +134,7 @@ class ArrayProperty(PropertyTrait):
                 member_type = read_string(stream)
                 assert (
                     member_type == self.property_type
-                ), f"Property array member type mismatch: {member_type} != {self.property_type}"
+                ), f"PropertyFactory array member type mismatch: {member_type} != {self.property_type}"
 
                 expected_byte_count, self.type_name, self.guid = read_standard_header(
                     stream, stream_readers=[read_string, read_guid]
@@ -157,7 +157,7 @@ class ArrayProperty(PropertyTrait):
 
         elif self.property_type == "TextProperty":
             for _ in range(property_count):
-                array_property = Property.new(
+                array_property = PropertyFactory.new(
                     stream, self.property_type, include_header=False
                 )
                 self.values.append(array_property)
@@ -170,7 +170,7 @@ class ArrayProperty(PropertyTrait):
             if suggested_count == 1:
                 self.values = read_bytes(stream, suggested_length)
             else:
-                array_property = Property.new(
+                array_property = PropertyFactory.new(
                     stream,
                     self.property_type,
                     include_header=False,
@@ -189,7 +189,7 @@ class ArrayProperty(PropertyTrait):
 
         else:  # catchall
             for _ in range(property_count):
-                array_property = Property.new(
+                array_property = PropertyFactory.new(
                     stream, self.property_type, include_header=False
                 )
                 self.values.append(array_property)

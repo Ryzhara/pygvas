@@ -1,4 +1,4 @@
-# Name Property Binary Format
+# Name PropertyFactory Binary Format
 
 ## Overview
 Name properties in GVAS files store string values that represent names. The format is similar to string properties but with specific handling for name values.
@@ -20,7 +20,7 @@ Name properties in GVAS files store string values that represent names. The form
 
 ## Example
 
-### Simple Name Property
+### Simple Name PropertyFactory
 ```
 [property_type: "NameProperty"]
 [length: uint32]

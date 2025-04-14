@@ -12,7 +12,7 @@ from typing import List, Optional, BinaryIO, Any
 from io import BytesIO
 import struct
 
-from .property_base import Property, PropertyTrait
+from .property_base import PropertyFactory, PropertyTrait
 from ..utils import *
 
 
@@ -23,7 +23,7 @@ class SetProperty(PropertyTrait):
     type: str = "SetProperty"
     property_type: Optional[str] = None
     allocation_flags: int = 0
-    properties: Optional[List[Property]] = None
+    properties: Optional[List[PropertyFactory]] = None
 
     def read(
         self,
@@ -48,7 +48,7 @@ class SetProperty(PropertyTrait):
             if element_count > 0:
                 total_bytes_per_property = (length - 8) // element_count
                 for _ in range(element_count):
-                    prop = Property.new(
+                    prop = PropertyFactory.new(
                         stream,
                         self.property_type,
                         include_header=False,

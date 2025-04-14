@@ -10,28 +10,28 @@ Standard types in GVAS files represent common data structures used in Unreal Eng
 Unlike the classes derived from PropertyTrait, classes derived from StandardStructTrait do not have any common header. They are serialized and deserialized as "bare types" because they have deterministic structure.
 ```
 
-### Guid Property
+### Guid PropertyFactory
 ```
 [guid: bytes]              // 16 bytes, little-endian UUID
 ```
 
-### DateTime Property
+### DateTime PropertyFactory
 ```
 [datetime: uint64]         // Ticks since January 1, 0001 (0.1 microseconds)
 ```
 
-### Timespan Property
+### Timespan PropertyFactory
 ```
 [timespan: uint64]         // Duration in milliseconds
 ```
 
-### IntPoint Property
+### IntPoint PropertyFactory
 ```
 [x: int32]                // X coordinate
 [y: int32]                // Y coordinate
 ```
 
-### LinearColor Property
+### LinearColor PropertyFactory
 ```
 [a: float32]              // Alpha component (0.0 to 1.0)
 [b: float32]              // Blue component (0.0 to 1.0)
@@ -39,14 +39,14 @@ Unlike the classes derived from PropertyTrait, classes derived from StandardStru
 [r: float32]              // Red component (0.0 to 1.0)
 ```
 
-### Rotator Property
+### Rotator PropertyFactory
 ```
 [pitch: float32/float64]  // Pitch angle in degrees (float32 for UE4, float64 for UE5+)
 [yaw: float32/float64]    // Yaw angle in degrees (float32 for UE4, float64 for UE5+)
 [roll: float32/float64]   // Roll angle in degrees (float32 for UE4, float64 for UE5+)
 ```
 
-### Quat Property
+### Quat PropertyFactory
 ```
 [x: float32/float64]      // X component of quaternion (float32 for UE4, float64 for UE5+)
 [y: float32/float64]      // Y component of quaternion (float32 for UE4, float64 for UE5+)
@@ -54,14 +54,14 @@ Unlike the classes derived from PropertyTrait, classes derived from StandardStru
 [w: float32/float64]      // W component of quaternion (float32 for UE4, float64 for UE5+)
 ```
 
-### Vector Property
+### Vector PropertyFactory
 ```
 [x: float32/float64]      // X coordinate (float32 for UE4, float64 for UE5+)
 [y: float32/float64]      // Y coordinate (float32 for UE4, float64 for UE5+)
 [z: float32/float64]      // Z coordinate (float32 for UE4, float64 for UE5+)
 ```
 
-### Vector2D Property
+### Vector2D PropertyFactory
 ```
 [x: float32/float64]      // X coordinate (float32 for UE4, float64 for UE5+)
 [y: float32/float64]      // Y coordinate (float32 for UE4, float64 for UE5+)
@@ -69,7 +69,7 @@ Unlike the classes derived from PropertyTrait, classes derived from StandardStru
 
 ## Examples
 
-### Guid Property
+### Guid PropertyFactory
 ```
 [property_type: "Guid"]
 [length: 16]
@@ -78,7 +78,7 @@ Unlike the classes derived from PropertyTrait, classes derived from StandardStru
 [guid: 16 bytes]          // e.g., "550e8400-e29b-41d4-a716-446655440000"
 ```
 
-### DateTime Property
+### DateTime PropertyFactory
 ```
 [property_type: "DateTime"]
 [length: 8]
@@ -87,7 +87,7 @@ Unlike the classes derived from PropertyTrait, classes derived from StandardStru
 [datetime: 63822647996000] // Example: "2024-03-15 12:34:56.789"
 ```
 
-### LinearColor Property
+### LinearColor PropertyFactory
 ```
 [property_type: "LinearColor"]
 [length: 16]
@@ -99,7 +99,7 @@ Unlike the classes derived from PropertyTrait, classes derived from StandardStru
 [r: 1.0]                  // Red
 ```
 
-### Vector Property (UE4)
+### Vector PropertyFactory (UE4)
 ```
 [property_type: "Vector"]
 [length: 12]
@@ -110,7 +110,7 @@ Unlike the classes derived from PropertyTrait, classes derived from StandardStru
 [z: 300.0]                // Z coordinate (float32)
 ```
 
-### Vector Property (UE5+)
+### Vector PropertyFactory (UE5+)
 ```
 [property_type: "Vector"]
 [length: 24]

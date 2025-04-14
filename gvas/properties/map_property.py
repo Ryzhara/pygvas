@@ -10,7 +10,7 @@ Key differences from Rust version:
 from pydantic.dataclasses import dataclass
 from io import BytesIO
 
-from .property_base import Property, PropertyTrait, ContextScopeTracker
+from .property_base import PropertyFactory, PropertyTrait, ContextScopeTracker
 from ..utils import *
 
 
@@ -48,9 +48,11 @@ class MapProperty(PropertyTrait):
             self.values: List[Tuple] = []
             for _ in range(element_count):
                 with ContextScopeTracker("Key") as _scope_tracker:
-                    key_prop = Property.new(stream, self.key_type, include_header=False)
+                    key_prop = PropertyFactory.new(
+                        stream, self.key_type, include_header=False
+                    )
                 with ContextScopeTracker("Value") as _scope_tracker:
-                    value_prop = Property.new(
+                    value_prop = PropertyFactory.new(
                         stream, self.value_type, include_header=False
                     )
                 try:

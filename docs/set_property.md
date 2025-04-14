@@ -1,4 +1,4 @@
-# Set Property Binary Format
+# Set PropertyFactory Binary Format
 
 ## Overview
 Set properties in GVAS files store collections of unique values of the same type. Unlike arrays, sets ensure uniqueness of elements and are not supported in arrays themselves.
@@ -18,8 +18,8 @@ Set properties in GVAS files store collections of unique values of the same type
 ```
 [allocation_flags: uint32]  // Set allocation flags
 [element_count: uint32]     // Number of elements in the set
-[element_1: Property]       // First element (type specified by element_type)
-[element_2: Property]       // Second element
+[element_1: PropertyFactory]       // First element (type specified by element_type)
+[element_2: PropertyFactory]       // Second element
 ...                        // Additional elements
 ```
 

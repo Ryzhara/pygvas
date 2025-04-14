@@ -49,7 +49,7 @@ The properties section contains a series of property entries until a "None" prop
 ```
 [property_name: string]
 [property_type: string]
-[property_value: Property]  // Varies by property type
+[property_value: PropertyFactory]  // Varies by property type
 ... (repeats until property_name == "None")
 [NULL: uint32]  // 0 byte terminator
 ```
@@ -92,6 +92,6 @@ The file ends with:
 
 ## Notes
 - The format is designed for backward compatibility
-- Property values can vary in structure based on their type
+- PropertyFactory values can vary in structure based on their type
 - The format supports both compressed and uncompressed data
 - Game-specific extensions (like PalWorld's header) are handled transparently 

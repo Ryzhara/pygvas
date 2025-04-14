@@ -1,4 +1,4 @@
-# Map Property Binary Format
+# Map PropertyFactory Binary Format
 
 ## Overview
 Map properties in GVAS files store key-value pairs where both keys and values can be of any GVAS property type. The format supports dynamic key and value types specified in the header.
@@ -19,10 +19,10 @@ Map properties in GVAS files store key-value pairs where both keys and values ca
 ```
 [allocation_flags: uint32]  // Map allocation flags
 [element_count: uint32]     // Number of key-value pairs
-[key_1: Property]          // First key (type specified by key_type)
-[value_1: Property]        // First value (type specified by value_type)
-[key_2: Property]          // Second key
-[value_2: Property]        // Second value
+[key_1: PropertyFactory]          // First key (type specified by key_type)
+[value_1: PropertyFactory]        // First value (type specified by value_type)
+[key_2: PropertyFactory]          // Second key
+[value_2: PropertyFactory]        // Second value
 ...                        // Additional key-value pairs
 ```
 

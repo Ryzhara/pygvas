@@ -18,7 +18,7 @@ from .standard_types import (
     StandardStructTrait,
 )
 from .property_base import (
-    Property,
+    PropertyFactory,
     PropertyTrait,
 )
 from ..utils import *
@@ -29,7 +29,7 @@ class StructPropertyValue:
     """Value stored in a struct property"""
 
     type_name: str
-    properties: Dict[str, Property] | StandardStructTrait
+    properties: Dict[str, PropertyFactory] | StandardStructTrait
 
     @classmethod
     def new(cls, type_name: str, properties=None) -> "StructPropertyValue":
@@ -99,7 +99,7 @@ class StructProperty(PropertyTrait):
                     break
                 with ContextScopeTracker(property_name) as _scope_tracker:
                     property_type = read_string(stream)
-                    property_value = Property.new(
+                    property_value = PropertyFactory.new(
                         stream, property_type, include_header=True
                     )
                     self.value[property_name] = property_value

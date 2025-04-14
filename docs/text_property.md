@@ -1,4 +1,4 @@
-# Text Property Binary Format
+# Text PropertyFactory Binary Format
 
 ## Overview
 Text properties in GVAS files store Unreal Engine FText data, which supports localization and various text formatting options. The format includes both raw text data and structured FText history information.
@@ -62,7 +62,7 @@ The format supports various text history types:
 
 ## Example
 
-### Simple Text Property
+### Simple Text PropertyFactory
 ```
 [property_type: "TextProperty"]
 [length: uint32]
@@ -72,7 +72,7 @@ The format supports various text history types:
 [byte_data: "Hello, World!"]
 ```
 
-### Localized Text Property
+### Localized Text PropertyFactory
 ```
 [property_type: "TextProperty"]
 [length: uint32]

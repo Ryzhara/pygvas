@@ -17,7 +17,7 @@ from io import BytesIO
 
 from .engine_versions import FEngineVersion
 from .game_version import GameVersion, CompressionType, GVAS_MAGIC, PLZ_MAGIC
-from .properties import Property
+from .properties import PropertyFactory
 from .utils import *
 
 
@@ -276,7 +276,7 @@ class GVASFile:
                 break
             with ContextScopeTracker(property_name):
                 property_type = read_string(stream)
-                property_value = Property.new(
+                property_value = PropertyFactory.new(
                     stream, property_type, include_header=True
                 )
                 properties[property_name] = property_value

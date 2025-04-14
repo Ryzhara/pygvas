@@ -1,4 +1,4 @@
-# Field Path Property Binary Format
+# Field Path PropertyFactory Binary Format
 
 ## Overview
 Field path properties in GVAS files store references to object fields or properties in the game's object hierarchy. The format includes a list of path elements that describe how to navigate to a specific field, along with the resolved owner of the field.

@@ -3,7 +3,7 @@ Expected values for delegate test
 """
 
 from gvas.gvas_file import GVASFile
-from gvas.properties.property_base import Property
+from gvas.properties.property_base import PropertyFactory
 from gvas.properties.delegate_property import (
     DelegateProperty,
     Delegate,
@@ -34,7 +34,7 @@ def expected() -> GVASFile:
     file.custom_format_data = {}
 
     # Add delegate property
-    file.properties["DelegateProperty"] = Property(
+    file.properties["DelegateProperty"] = PropertyFactory(
         type="DelegateProperty",
         value=DelegateProperty(
             value=Delegate(object="/Game/TestObject", function_name="TestFunction")
@@ -47,7 +47,7 @@ def expected() -> GVASFile:
         Delegate(object="/Game/TestObject2", function_name="TestFunction2"),
     ]
 
-    file.properties["MulticastInlineDelegateProperty"] = Property(
+    file.properties["MulticastInlineDelegateProperty"] = PropertyFactory(
         type="MulticastInlineDelegateProperty",
         value=MulticastInlineDelegateProperty(
             value=MulticastScriptDelegate(delegates=delegates)
@@ -55,7 +55,7 @@ def expected() -> GVASFile:
     )
 
     # Add multicast sparse delegate property
-    file.properties["MulticastSparseDelegateProperty"] = Property(
+    file.properties["MulticastSparseDelegateProperty"] = PropertyFactory(
         type="MulticastSparseDelegateProperty",
         value=MulticastSparseDelegateProperty(
             value=MulticastScriptDelegate(delegates=delegates)
