@@ -13,7 +13,7 @@ from gvas.properties.property_base import (
     PropertyOptions,
 )
 from gvas.properties.struct_property import StructProperty, StructPropertyValue
-from gvas.properties.int_property import Int32Property, BoolProperty
+from gvas.properties.numerical_property import Int32Property, BoolProperty
 from gvas.properties.str_property import StrProperty
 from gvas.gvas_types import Guid
 from gvas.utils import read_string, write_string

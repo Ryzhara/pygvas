@@ -60,7 +60,7 @@ class PropertyFactory:
             MulticastSparseDelegateProperty,
             DelegateProperty,
         )
-        from .int_property import (
+        from .numerical_property import (
             Int8Property,
             UInt8Property,
             Int16Property,

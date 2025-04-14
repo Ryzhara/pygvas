@@ -2,7 +2,7 @@
 PropertyFactory type implementations for GVAS
 """
 
-from .int_property import (
+from .numerical_property import (
     BoolProperty,
     ByteProperty,
     FloatProperty,

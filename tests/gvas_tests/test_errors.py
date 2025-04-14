@@ -11,7 +11,7 @@ from gvas.error import DeserializeError
 from gvas.gvas_file import GVASFile, GVAS_MAGIC
 from gvas.game_version import GameVersion
 from gvas.properties.property_base import PropertyFactory, PropertyOptions
-from gvas.properties.int_property import BoolProperty
+from gvas.properties.numerical_property import BoolProperty
 
 
 class TestErrors(unittest.TestCase):

@@ -11,7 +11,7 @@ from gvas import CompressionType
 from gvas.gvas_file import GVASFile, GvasHeader
 from gvas.game_version import GameVersion
 from gvas.properties.property_base import PropertyFactory
-from gvas.properties.int_property import Int32Property, BoolProperty
+from gvas.properties.numerical_property import Int32Property, BoolProperty
 from gvas.properties.str_property import StrProperty
 
 

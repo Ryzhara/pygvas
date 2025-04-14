@@ -4,7 +4,7 @@ from typing import Self, TypeVar, Type
 
 from pydantic import field_serializer
 
-from .int_property import *
+from .numerical_property import *
 from .property_base import PropertyTrait
 from ..utils import *
 

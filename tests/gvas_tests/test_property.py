@@ -8,7 +8,7 @@ import struct
 from typing import Dict, List, Optional
 
 from gvas.properties.property_base import PropertyFactory, PropertyTrait
-from gvas.properties.int_property import (
+from gvas.properties.numerical_property import (
     BoolProperty,
     ByteProperty,
     BytePropertyValue,
