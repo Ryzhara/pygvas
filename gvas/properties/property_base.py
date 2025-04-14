@@ -12,8 +12,7 @@ from abc import ABC, abstractmethod
 from typing import Optional, Dict, Any, BinaryIO, List, Tuple
 from pydantic.dataclasses import dataclass
 
-from ..error import DeserializeError
-from ..utils import ContextScopeTracker
+from ..utils import *
 
 
 # ============================================
@@ -24,30 +23,14 @@ class PropertyTrait(ABC):
     """
 
     @abstractmethod
-    def read(
-        self,
-        stream: BinaryIO,
-        include_header: bool = True,
-    ) -> None:
+    def read(self, stream: BinaryIO, include_header: bool = True) -> None:
         """Read property data from a binary stream"""
         pass
 
     @abstractmethod
-    def write(
-        self,
-        stream: BinaryIO,
-        include_header: bool = True,
-    ) -> int:
+    def write(self, stream: BinaryIO, include_header: bool = True) -> int:
         """Write property data to a binary stream"""
         pass
-
-    @classmethod
-    def from_json(cls, json_dict):
-        # Create a new instance without calling the constructor
-        instance = cls.__new__(cls)
-        # Update the instance attributes with the JSON dictionary
-        instance.__dict__.update(json_dict)
-        return instance
 
 
 @dataclass
@@ -88,6 +71,7 @@ class PropertyFactory:
             UInt64Property,
             FloatProperty,
             DoubleProperty,
+            BoolProperty,
         )
 
         # Map property types to their classes

@@ -3,9 +3,10 @@ Enum property implementation for GVAS
 Python port of enum_property.rs
 """
 
-from pydantic.dataclasses import dataclass
 from io import BytesIO
-from typing import Optional, BinaryIO
+from typing import Optional
+
+from pydantic.dataclasses import dataclass
 
 from .property_base import PropertyTrait
 from ..utils import *

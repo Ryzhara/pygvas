@@ -38,7 +38,7 @@ class GuidProperty(StandardStructTrait):
 
     def read(self, stream: BinaryIO) -> None:
         position = stream.tell()
-        self.guid = str(read_guid(stream)).upper()
+        self.guid = guid_to_str(read_guid(stream))
 
     def write(self, stream: BinaryIO) -> int:
         bytes_written = write_guid(stream, self.guid)

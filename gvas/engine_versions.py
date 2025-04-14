@@ -1,4 +1,6 @@
 # Engine version information
+import enum
+
 from pydantic.dataclasses import dataclass
 
 from .utils import *

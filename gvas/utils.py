@@ -2,16 +2,13 @@
 Common utility functions for GVAS
 """
 
-import enum
-import json
-import dataclasses
-import uuid
 import datetime
 import struct
-from typing import BinaryIO, Any, List, Tuple, Dict
+import uuid
+from typing import BinaryIO, Any, List, Dict, Callable, Union
 
 from .custom_versions import FEditorObjectVersion, FUE5ReleaseStreamObjectVersion
-from .error import *
+from .error import DeserializeError, SerializeError
 
 ZERO_GUID = uuid.UUID(int=0)
 
@@ -31,56 +28,6 @@ def datetime_to_str(dt: int) -> str:
         comment = str(dt)
 
     return comment
-
-
-# ============================================
-class EnhancedJSONEncoder(json.JSONEncoder):
-
-    def default(self, obj):
-
-        def is_not_empty(value):
-            # if isinstance(value, (str, type(None))):
-            #     return not not value
-            if isinstance(value, (type(None))):
-                return not not value
-
-            if isinstance(value, uuid.UUID) and value == ZERO_GUID:
-                return False
-
-            return True
-
-        if isinstance(obj, enum.IntEnum):
-            return obj.name
-
-        if isinstance(obj, uuid.UUID):
-            return guid_to_str(obj)
-
-        if isinstance(obj, datetime.datetime):
-            return obj.isoformat()
-
-        if isinstance(obj, list):
-            return [self.default(item) for item in obj]
-
-        if isinstance(obj, tuple):
-            return [self.default(item) for item in obj]
-
-        if isinstance(obj, bytes):
-            return obj.hex()
-
-        if isinstance(obj, dict):
-            return {k: self.default(v) for k, v in obj.items() if is_not_empty(v)}
-
-        if dataclasses.is_dataclass(obj):
-            return {
-                k: self.default(v)
-                for k, v in dataclasses.asdict(obj).items()
-                if is_not_empty(v)
-            }
-
-        if isinstance(obj, (int, float, str, bool, type(None))):
-            return obj
-
-        return obj
 
 
 # ============================================
@@ -419,13 +366,6 @@ def write_double(stream: BinaryIO, value) -> int:
 
 # ============================================
 #
-def read_null_byte_terminator(stream: BinaryIO) -> None:
-    # Read terminator
-    read_uint8(stream, assert_value=0, error_msg="Invalid terminator")
-
-
-# ============================================
-#
 def read_bytes(stream: BinaryIO, byte_count: int) -> bytes:
     return stream.read(byte_count)
 
@@ -541,9 +481,11 @@ def write_guid(stream: BinaryIO, guid: [uuid, str]) -> uuid:
 def read_standard_header(
     stream: BinaryIO,
     *,
-    assert_length=None,
-    assert_array_index=0,
-    stream_readers=None,  # read after array index and before terminator
+    assert_length: int = None,
+    assert_array_index: int = 0,
+    stream_readers: List[
+        Callable[[BinaryIO], Any]
+    ] = None,  # read after array index and before terminator
 ) -> List[Any]:
     """
     Args:
@@ -556,7 +498,7 @@ def read_standard_header(
         UINT32 - length
         UINT32 - array_index
         [TYPE_1, ... TYPE_N] - as requested
-        UINT8 -- REUQIRED, NOT RETURENED
+        UINT8 -- REQUIRED BUT NOT RETURNED
 
     Returns:
         [
@@ -590,9 +532,11 @@ def write_standard_header(
     stream: BinaryIO,
     property_type,
     *,
-    length=None,
-    array_index=0,
-    data_to_write=None,  # read after array index and before terminator
+    length: int = None,
+    array_index: int = 0,
+    data_to_write: List[
+        Union[str, uuid.UUID]
+    ] = None,  # only accommodate str and guid for now
 ) -> int:
     bytes_written = 0
     bytes_written += write_string(stream, property_type)

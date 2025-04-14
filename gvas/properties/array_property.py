@@ -7,67 +7,68 @@ Key differences from Rust version:
 - Simplified type handling
 """
 
+from io import BytesIO
+from typing import Optional, ClassVar
+
 from pydantic import field_serializer
 from pydantic.dataclasses import dataclass
-from typing import Optional
-from io import BytesIO
 
 from .property_base import (
     PropertyFactory,
     PropertyTrait,
 )
-from .struct_property import StructProperty
-from ..utils import *
-
 from .standard_types import (
     is_special_struct,
     get_special_struct_instance,
     StandardStructTrait,
 )
-from ..utils import read_int16, read_int64
-
-g_bare_type_readers = {
-    "StrProperty": read_string,
-    "NameProperty": read_string,
-    "EnumProperty": read_string,
-    "GuidProperty": read_guid,
-    "BoolProperty": read_bool,
-    "Int8Property": read_int8,
-    "UInt8Property": read_uint8,
-    "Int16Property": read_int16,
-    "UInt16Property": read_uint16,
-    "Int32Property": read_int32,
-    "UInt32Property": read_uint32,
-    "IntProperty": read_int32,  # backward compatibility
-    "Int64Property": read_int64,
-    "UInt64Property": read_uint64,
-    "FloatProperty": read_float,
-    "DoubleProperty": read_double,
-}
-
-g_bare_type_writers = {
-    "StrProperty": write_string,
-    "NameProperty": write_string,
-    "EnumProperty": write_string,
-    "GuidProperty": write_guid,
-    "BoolProperty": write_bool,
-    "Int8Property": write_int8,
-    "UInt8Property": write_uint8,
-    "Int16Property": write_int16,
-    "UInt16Property": write_uint16,
-    "Int32Property": write_int32,
-    "UInt32Property": write_uint32,
-    "IntProperty": write_int32,  # backward compatibility
-    "Int64Property": write_int64,
-    "UInt64Property": write_uint64,
-    "FloatProperty": write_float,
-    "DoubleProperty": write_double,
-}
+from .struct_property import StructProperty
+from ..utils import *
 
 
 @dataclass
 class ArrayProperty(PropertyTrait):
     """A property that holds an array of values"""
+
+    # class variable is not serialized
+    bare_readers: ClassVar[Dict[str, Callable[[BinaryIO], Any]]] = {
+        "StrProperty": read_string,
+        "NameProperty": read_string,
+        "EnumProperty": read_string,
+        "GuidProperty": read_guid,
+        "BoolProperty": read_bool,
+        "Int8Property": read_int8,
+        "UInt8Property": read_uint8,
+        "Int16Property": read_int16,
+        "UInt16Property": read_uint16,
+        "Int32Property": read_int32,
+        "UInt32Property": read_uint32,
+        "IntProperty": read_int32,  # backward compatibility
+        "Int64Property": read_int64,
+        "UInt64Property": read_uint64,
+        "FloatProperty": read_float,
+        "DoubleProperty": read_double,
+    }
+
+    # class variable is not serialized
+    bare_writers: ClassVar[Dict[str, Callable[[BinaryIO, Any], int]]] = {
+        "StrProperty": write_string,
+        "NameProperty": write_string,
+        "EnumProperty": write_string,
+        "GuidProperty": write_guid,
+        "BoolProperty": write_bool,
+        "Int8Property": write_int8,
+        "UInt8Property": write_uint8,
+        "Int16Property": write_int16,
+        "UInt16Property": write_uint16,
+        "Int32Property": write_int32,
+        "UInt32Property": write_uint32,
+        "IntProperty": write_int32,  # backward compatibility
+        "Int64Property": write_int64,
+        "UInt64Property": write_uint64,
+        "FloatProperty": write_float,
+        "DoubleProperty": write_double,
+    }
 
     type: str = "ArrayProperty"
     field_name: Optional[str] = None
@@ -76,12 +77,14 @@ class ArrayProperty(PropertyTrait):
     guid: Optional[uuid.UUID] = None  # often nothing but zeros
     values: Any = None  # [str, bytes, list, PropertyTrait, StandardStructTrait]
 
+    # Guidance to pydantic
     @field_serializer("guid")
     def serialize_guid(self, value: uuid.UUID):
         if type(value) is uuid.UUID:
             return guid_to_str(value)
         return value
 
+    # Guidance to pydantic
     @field_serializer("values")
     def serialize_items(
         self, values: [str, bytes, list, PropertyTrait, StandardStructTrait]
@@ -91,11 +94,7 @@ class ArrayProperty(PropertyTrait):
             return values.hex()
         return values
 
-    def read(
-        self,
-        stream: BinaryIO,
-        include_header: bool = True,
-    ) -> None:
+    def read(self, stream: BinaryIO, include_header: bool = True) -> None:
         """Read array from stream"""
         if not include_header:
             raise DeserializeError.invalid_property(
@@ -117,13 +116,9 @@ class ArrayProperty(PropertyTrait):
         # Read number of elements in the array
         property_count = read_uint32(stream)
 
-        self.values: [
-            str,
-            bytes,
-            list,
-            PropertyTrait,
-            StandardStructTrait,
-        ] = []  # prepare storage
+        self.values: [str, bytes, list, PropertyTrait, StandardStructTrait] = (
+            []
+        )  # prepare storage
 
         if self.property_type == "StructProperty":
 
@@ -182,8 +177,8 @@ class ArrayProperty(PropertyTrait):
                 self.values.append(array_property)
 
         # some data types are read without any additional metadata
-        elif self.property_type in g_bare_type_readers.keys():
-            bare_type_reader = g_bare_type_readers[self.property_type]
+        elif self.property_type in self.bare_readers.keys():
+            bare_type_reader = self.bare_readers[self.property_type]
             for _ in range(property_count):
                 self.values.append(bare_type_reader(stream))
 
@@ -238,7 +233,6 @@ class ArrayProperty(PropertyTrait):
 
             # WRITE HEADER extra part
             array_bytes += write_string(array_buffer, self.field_name)
-            # write standard header
             array_bytes += write_standard_header(
                 array_buffer,
                 self.property_type,
@@ -252,8 +246,8 @@ class ArrayProperty(PropertyTrait):
             array_bytes += write_bytes(array_buffer, self.values)
             # else we fall to the catchall
 
-        elif self.property_type in g_bare_type_writers.keys():
-            bare_type_writer = g_bare_type_writers[self.property_type]
+        elif self.property_type in self.bare_writers.keys():
+            bare_type_writer = self.bare_writers[self.property_type]
             for value in self.values:
                 array_bytes += bare_type_writer(array_buffer, value)
 

@@ -1,8 +1,8 @@
-from abc import ABC, abstractmethod
-from typing import Optional, Self, TypeVar, Type
 from enum import IntEnum, auto
-from pydantic import field_serializer
 from io import BytesIO
+from typing import Self, TypeVar, Type
+
+from pydantic import field_serializer
 
 from .int_property import *
 from .property_base import PropertyTrait

@@ -7,10 +7,10 @@ Key differences from Rust version:
 - Simplified type handling
 """
 
-from pydantic.dataclasses import dataclass
-from typing import List, Optional, BinaryIO, Any
 from io import BytesIO
-import struct
+from typing import Optional
+
+from pydantic.dataclasses import dataclass
 
 from .property_base import PropertyFactory, PropertyTrait
 from ..utils import *

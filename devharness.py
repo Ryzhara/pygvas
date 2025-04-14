@@ -1,13 +1,64 @@
+import enum
 import json
-from xml.etree.ElementTree import indent
 
-import gvas
-from gvas import GVASFile, DeserializeError
+import dataclasses
+
+
+from gvas import GVASFile
 from gvas import GameVersion, CompressionType
 from gvas.utils import *
-
 from test_utilities import compare_binary_files
-from tests.common.utils import test_gvas_file
+
+
+# ============================================
+class EnhancedJSONEncoder(json.JSONEncoder):
+
+    def default(self, obj):
+
+        def is_not_empty(value):
+            # if isinstance(value, (str, type(None))):
+            #     return not not value
+            if isinstance(value, (type(None))):
+                return not not value
+
+            if isinstance(value, uuid.UUID) and value == ZERO_GUID:
+                return False
+
+            return True
+
+        if isinstance(obj, enum.IntEnum):
+            return obj.name
+
+        if isinstance(obj, uuid.UUID):
+            return guid_to_str(obj)
+
+        if isinstance(obj, datetime.datetime):
+            return obj.isoformat()
+
+        if isinstance(obj, list):
+            return [self.default(item) for item in obj]
+
+        if isinstance(obj, tuple):
+            return [self.default(item) for item in obj]
+
+        if isinstance(obj, bytes):
+            return obj.hex()
+
+        if isinstance(obj, dict):
+            return {k: self.default(v) for k, v in obj.items() if is_not_empty(v)}
+
+        if dataclasses.is_dataclass(obj):
+            return {
+                k: self.default(v)
+                for k, v in dataclasses.asdict(obj).items()
+                if is_not_empty(v)
+            }
+
+        if isinstance(obj, (int, float, str, bool, type(None))):
+            return obj
+
+        return obj
+
 
 test_file_list = [
     "resources/test/islands_of_insight.sav",

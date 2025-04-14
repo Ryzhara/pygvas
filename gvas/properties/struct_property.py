@@ -7,19 +7,20 @@ Key differences from Rust version:
 - Simplified type handling
 """
 
+from io import BytesIO
+from typing import Optional
+
 from pydantic import field_serializer
 from pydantic.dataclasses import dataclass
-from typing import Optional, BinaryIO
-from io import BytesIO
 
+from .property_base import (
+    PropertyFactory,
+    PropertyTrait,
+)
 from .standard_types import (
     is_special_struct,
     get_special_struct_instance,
     StandardStructTrait,
-)
-from .property_base import (
-    PropertyFactory,
-    PropertyTrait,
 )
 from ..utils import *
 

@@ -17,11 +17,9 @@ Contains implementations for:
 - UInt64Property
 """
 
-from abc import ABC
+from typing import Optional
 
 from pydantic.dataclasses import dataclass
-from typing import Optional, Union, BinaryIO, Self, Callable
-import struct
 
 from .property_base import PropertyTrait
 from ..utils import *

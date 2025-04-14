@@ -8,12 +8,11 @@ Key differences from Rust version:
 - Uses dataclasses for structured data
 """
 
-import os
 import zlib
-from pydantic.dataclasses import dataclass
-from typing import Dict, Optional, BinaryIO, List
-
 from io import BytesIO
+from typing import Optional
+
+from pydantic.dataclasses import dataclass
 
 from .engine_versions import FEngineVersion
 from .game_version import GameVersion, CompressionType, GVAS_MAGIC, PLZ_MAGIC
@@ -93,7 +92,7 @@ def looks_like_palworld(stream: BinaryIO) -> bool:
     decompressed_size = read_uint32(stream)
     compressed_size = read_uint32(stream)
     plz_bytes = read_bytes(stream, len(PLZ_MAGIC))
-    enum_value = read_uint8(stream)
+    enum_value = read_int8(stream)
     stream.seek(current_position)
 
     # tests:
@@ -352,6 +351,6 @@ class GVASFile:
             write_uint32(stream, decompressed_size)
             write_uint32(stream, compressed_size)
             write_bytes(stream, PLZ_MAGIC)
-            write_uint8(stream, compression_type.value)
+            write_int8(stream, compression_type.value)
 
         stream.write(data_to_write)
