@@ -71,7 +71,6 @@ class PropertyFactory:
             UInt64Property,
             FloatProperty,
             DoubleProperty,
-            BoolProperty,
         )
 
         # Map property types to their classes

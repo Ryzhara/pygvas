@@ -95,8 +95,8 @@ test_file_list = [
 # See gvas/tests/common/palworld.rs in hints() hashmap for testing sequence
 # test_file_list = ["resources/test/palworld_zlib_twice.sav"]  # Working!
 
-game_version = GameVersion.DEFAULT
-compression = CompressionType.NONE
+# game_version = GameVersion.DEFAULT
+# compression = CompressionType.NONE
 
 # test_file_list = ["resources/test/palworld_zlib.sav"]  # working!
 # game_version = GameVersion.PALWORLD
@@ -137,12 +137,13 @@ def test_gvas_file(test_file: str):
     # Open and read a .sav file
     gvas_file = None
     try:
+        gvas_file: GVASFile
         gvas_file, decompressed_data = GVASFile.read_file(test_file)
     except Exception as e:
         print(f"Failed to load {test_file}: {e}")
         raise e
 
-    if compression != CompressionType.NONE:
+    if gvas_file.game_file_format.compression_type != CompressionType.NONE:
         decompressed_data_file = f"{test_file}.decompressed"
         # print(f"Saving decompressed data {decompressed_data_file}")
         with open(decompressed_data_file, "wb") as f:
@@ -186,10 +187,13 @@ def test_gvas_file(test_file: str):
         pydantic_json_content_dict = json.load(f)
 
     new_gvas = gvas_file_adaptor.validate_python(pydantic_json_content_dict)
-    # print(type(new_gvas))
+    # new_gvas = GVASFile(**pydantic_json_content_dict)  # this way is better? or does it not validate?
 
     # Now write that GVAS file back out for round trip test
     output_file_too = f"{test_file}.idempotent.too"
+    with open(output_file_too, "wb") as f:
+        new_gvas.write(f)
+
     uncompressed_output_file = f"{test_file}.decompressed.idempotent.too"
     gvas_file.write_file(output_file_too, uncompressed_output_file)
 

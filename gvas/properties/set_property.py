@@ -12,18 +12,82 @@ from typing import Optional
 
 from pydantic.dataclasses import dataclass
 
-from .property_base import PropertyFactory, PropertyTrait
 from ..utils import *
+
+from gvas.properties import *
 
 
 @dataclass
 class SetProperty(PropertyTrait):
     """A property that stores a set of properties"""
 
+    from gvas.properties import (
+        BoolProperty,
+        ByteProperty,
+        FloatProperty,
+        DoubleProperty,
+        IntProperty,
+        Int8Property,
+        Int16Property,
+        Int32Property,
+        Int64Property,
+        UInt8Property,
+        UInt16Property,
+        UInt32Property,
+        UInt64Property,
+        ArrayProperty,
+        EnumProperty,
+        TextProperty,
+        MapProperty,
+        NameProperty,
+        # StrProperty,
+        # ObjectProperty,
+        # FieldPath,
+        # FieldPathProperty,
+        # MulticastSparseDelegateProperty,
+        # MulticastInlineDelegateProperty,
+        # DelegateProperty,
+    )
+
     type: str = "SetProperty"
     property_type: Optional[str] = None
     allocation_flags: int = 0
-    properties: Optional[List[PropertyFactory]] = None
+    properties: Optional[
+        List[
+            Union[
+                BoolProperty,
+                ByteProperty,
+                FloatProperty,
+                DoubleProperty,
+                IntProperty,
+                Int8Property,
+                UInt8Property,
+                Int16Property,
+                UInt16Property,
+                Int32Property,
+                UInt32Property,
+                Int64Property,
+                UInt64Property,
+                ArrayProperty,
+                EnumProperty,
+                TextProperty,
+                MapProperty,
+                NameProperty,
+                # StrProperty,
+                # StructProperty,
+                # ObjectProperty,
+                # FieldPath,
+                # FieldPathProperty,
+                # MulticastSparseDelegateProperty,
+                # MulticastInlineDelegateProperty,
+                # DelegateProperty,
+            ],
+        ]
+    ] = None
+
+    def __post_init__(self):
+        if self.properties is None:
+            self.properties = []
 
     def read(
         self,

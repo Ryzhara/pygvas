@@ -12,8 +12,8 @@ def parse_arguments():
     parser = argparse.ArgumentParser(
         description="Read an Unreal Engine .sav (GVAS) and serialize to a JSON output file."
     )
-    parser.add_argument("input_file", type=str, help="Path to the input file")
-    parser.add_argument("output_file", type=str, help="Path to the output file")
+    parser.add_argument("input_file", type=str, help="Path to the GVAS input file")
+    parser.add_argument("output_file", type=str, help="Path to the JSON output file")
     return parser.parse_args()
 
 
@@ -42,7 +42,7 @@ def main():
         sys.exit(1)
 
     print(
-        f"Successfully wrote content from '{args.input_file}' to '{args.output_file}'."
+        f"Successfully processed the UE GVAS file '{args.input_file}' into '{args.output_file}'."
     )
 
 

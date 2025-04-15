@@ -94,7 +94,10 @@ class ByteProperty(PropertyTrait):
         if include_header:
             total_bytes = 1 if type(self.value) is int else len(self.value)
             bytes_written += write_standard_header(
-                stream, "ByteProperty", length=total_bytes, data_to_write=[self.name]
+                stream,
+                "ByteProperty",
+                length=total_bytes,
+                data_to_write=[self.name or ""],
             )
 
         # Write value

@@ -23,19 +23,7 @@ from .standard_types import (
     StandardStructTrait,
 )
 from ..utils import *
-
-
-@dataclass
-class StructPropertyValue:
-    """Value stored in a struct property"""
-
-    type_name: str
-    properties: Dict[str, PropertyFactory] | StandardStructTrait
-
-    @classmethod
-    def new(cls, type_name: str, properties=None) -> "StructPropertyValue":
-        """Create a new struct property value"""
-        return cls(type_name=type_name, properties=properties or {})
+from gvas.properties import *
 
 
 @dataclass
@@ -45,7 +33,35 @@ class StructProperty(PropertyTrait):
     type: str = "StructProperty"
     guid: Optional[uuid.UUID] = None
     type_name: Optional[str] = None
-    value: Any = None
+    value: Union[
+        BoolProperty,
+        ByteProperty,
+        FloatProperty,
+        DoubleProperty,
+        IntProperty,
+        Int8Property,
+        UInt8Property,
+        Int16Property,
+        UInt16Property,
+        Int32Property,
+        UInt32Property,
+        Int64Property,
+        UInt64Property,
+        ArrayProperty,
+        EnumProperty,
+        TextProperty,
+        MapProperty,
+        NameProperty,
+        SetProperty,
+        StrProperty,
+        "StructProperty",
+        # ObjectProperty,
+        # FieldPath,
+        # FieldPathProperty,
+        # MulticastInlineDelegateProperty,
+        # MulticastSparseDelegateProperty,
+        # DelegateProperty,
+    ] = None
 
     @field_serializer("guid")
     def serialize_guid(self, value: uuid.UUID):
@@ -91,7 +107,6 @@ class StructProperty(PropertyTrait):
             property_value = get_special_struct_instance(deserialize_type)
             property_value.read(stream)
             self.value = property_value
-            # self.value = StructPropertyValue(deserialize_type, property_value)
 
         else:  # fully custom
             self.value = {}

@@ -15,9 +15,13 @@ from typing import Optional
 from pydantic import field_serializer, field_validator
 from pydantic.dataclasses import dataclass
 
+
 from .engine_versions import FEngineVersion
 from .game_version import GameVersion, CompressionType, GVAS_MAGIC, PLZ_MAGIC
-from .properties import PropertyFactory
+from .properties import PropertyFactory, PropertyTrait, StrProperty, BoolProperty
+from .properties.standard_types import StandardStructTrait
+from .properties import *
+
 from .utils import *
 
 
@@ -258,7 +262,37 @@ class GVASFile:
 
     game_file_format: GameFileFormat
     header: GvasHeader
-    properties: Dict[str, Any]
+    properties: Dict[
+        str,
+        Union[
+            BoolProperty,
+            ByteProperty,
+            FloatProperty,
+            DoubleProperty,
+            IntProperty,
+            Int8Property,
+            UInt8Property,
+            Int16Property,
+            UInt16Property,
+            Int32Property,
+            UInt32Property,
+            Int64Property,
+            UInt64Property,
+            ArrayProperty,
+            EnumProperty,
+            TextProperty,
+            MapProperty,
+            NameProperty,
+            SetProperty,
+            StrProperty,
+            StructProperty,
+            ObjectProperty,
+            FieldPath,
+            FieldPathProperty,
+            MulticastInlineDelegateProperty,
+            DelegateProperty,
+        ],
+    ]
 
     @classmethod
     def print_game_file_format(cls, file_path: str):

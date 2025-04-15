@@ -9,25 +9,23 @@ from .numerical_property import (
     DoubleProperty,
     IntProperty,
     Int8Property,
-    Int16Property,
-    Int32Property,
-    Int64Property,
     UInt8Property,
+    Int16Property,
     UInt16Property,
+    Int32Property,
     UInt32Property,
+    Int64Property,
     UInt64Property,
 )
 from .property_base import PropertyFactory, PropertyTrait
 from .array_property import ArrayProperty
+from .struct_property import StructProperty
+from .set_property import SetProperty
+from .map_property import MapProperty
 from .enum_property import EnumProperty
 from .text_property import TextProperty
 from .name_property import NameProperty
-from .map_property import MapProperty
-from .set_property import SetProperty
 from .str_property import StrProperty
-from .name_property import NameProperty
-from .text_property import TextProperty
-from .struct_property import StructProperty
 from .object_property import ObjectProperty
 from .field_path_property import FieldPath, FieldPathProperty
 from .delegate_property import (
@@ -53,18 +51,17 @@ __all__ = [
     "PropertyFactory",
     "PropertyTrait",
     "ArrayProperty",
-    "BoolProperty",
-    "ByteProperty",
+    "StructProperty",
+    "SetProperty",
+    "MapProperty",
     "EnumProperty",
     "TextProperty",
-    "MapProperty",
     "NameProperty",
-    "SetProperty",
     "StrProperty",
-    "StructProperty",
     "ObjectProperty",
     "FieldPath",
     "FieldPathProperty",
     "MulticastInlineDelegateProperty",
+    "MulticastSparseDelegateProperty",
     "DelegateProperty",
 ]

@@ -9,7 +9,6 @@ Key differences from Rust version:
 
 from io import BytesIO
 from typing import Optional, ClassVar
-
 from pydantic import field_serializer, ConfigDict, AliasGenerator
 from pydantic.dataclasses import dataclass
 
@@ -22,13 +21,43 @@ from .standard_types import (
     get_special_struct_instance,
     StandardStructTrait,
 )
-from .struct_property import StructProperty
 from ..utils import *
 
 
 @dataclass
 class ArrayProperty(PropertyTrait):
     """A property that holds an array of values"""
+
+    from .struct_property import StructProperty
+
+    from gvas.properties import (
+        BoolProperty,
+        ByteProperty,
+        FloatProperty,
+        DoubleProperty,
+        IntProperty,
+        Int8Property,
+        Int16Property,
+        Int32Property,
+        Int64Property,
+        UInt8Property,
+        UInt16Property,
+        UInt32Property,
+        UInt64Property,
+        ArrayProperty,
+        EnumProperty,
+        TextProperty,
+        MapProperty,
+        NameProperty,
+        SetProperty,
+        StrProperty,
+        # ObjectProperty,
+        # FieldPath,
+        # FieldPathProperty,
+        # MulticastSparseDelegateProperty,
+        # MulticastInlineDelegateProperty,
+        # DelegateProperty,
+    )
 
     # class variable is not serialized
     bare_readers: ClassVar[Dict[str, Callable[[BinaryIO], Any]]] = {
@@ -75,7 +104,21 @@ class ArrayProperty(PropertyTrait):
     type_name: Optional[str] = None
     property_type: Optional[str] = None
     guid: Optional[uuid.UUID] = None  # often nothing but zeros
-    values: Any = None  # [str, bytes, list, PropertyTrait, StandardStructTrait]
+    values: List[
+        Union[
+            str,
+            bytes,
+            int,
+            float,
+            bool,
+            uuid.UUID,
+            StructProperty,
+        ]
+    ] = None  # [str, bytes, list, PropertyTrait, StandardStructTrait]
+
+    def __post_init__(self):
+        if self.values is None:
+            self.values = []
 
     # @field_serializer("*")
     # def serialize_all(self, value: Any, field_info):
