@@ -10,7 +10,7 @@ Key differences from Rust version:
 from io import BytesIO
 from typing import Optional, ClassVar
 
-from pydantic import field_serializer
+from pydantic import field_serializer, ConfigDict, AliasGenerator
 from pydantic.dataclasses import dataclass
 
 from .property_base import (
@@ -77,6 +77,11 @@ class ArrayProperty(PropertyTrait):
     guid: Optional[uuid.UUID] = None  # often nothing but zeros
     values: Any = None  # [str, bytes, list, PropertyTrait, StandardStructTrait]
 
+    # @field_serializer("*")
+    # def serialize_all(self, value: Any, field_info):
+    #     print(f"{field_info.field_name}")
+    #     return value
+
     # Guidance to pydantic
     @field_serializer("guid")
     def serialize_guid(self, value: uuid.UUID):
@@ -87,9 +92,8 @@ class ArrayProperty(PropertyTrait):
     # Guidance to pydantic
     @field_serializer("values")
     def serialize_values(
-        self, values: [str, bytes, list, PropertyTrait, StandardStructTrait]
+        self, values: [str, bytes, list, PropertyTrait, StandardStructTrait], field_info
     ):
-        # print(f"ArrayProperty.serialize_items: {type(values)=}")
         if type(values) is bytes:
             return values.hex()
         return values

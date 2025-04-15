@@ -132,11 +132,6 @@ compression = CompressionType.NONE
 
 # test shit
 
-# game_version = GameFileFormat(game_version, compression)
-# # create json the old fashioned way
-# json_content = json.dumps(game_version, cls=EnhancedJSONEncoder, indent=2)
-# print(f"json_content: {json_content}")
-
 
 def test_gvas_file(test_file: str):
     # Open and read a .sav file
@@ -173,21 +168,27 @@ def test_gvas_file(test_file: str):
     gvas_file_adaptor = TypeAdapter(GVASFile)
     gvas_file_dict = gvas_file_adaptor.dump_python(gvas_file, exclude_none=True)
     pydantic_json_content = json.dumps(gvas_file_dict, indent=2)
-
-    # json_content = gvas_file_adaptor.dump_json(gvas_file, indent=2)
     with open(pydantic_json_file, "w") as f:
         f.write(pydantic_json_content)
 
+    # THIS METHOD WORKS, TOO.
+    # Note that this method writes out float values differently.
+    # pydantic_json_content = gvas_file_adaptor.dump_json(
+    #     gvas_file, exclude_none=True, indent=2, round_trip=False
+    # )
+    # with open(f"{pydantic_json_file}.too", "wb") as f:
+    #     f.write(pydantic_json_content)
+
     json_old_and_new = compare_binary_files(json_file, pydantic_json_file)
 
-    # lets test the round tripo
+    # Re-load and deserialize that JSON
     with open(pydantic_json_file, "r") as f:
         pydantic_json_content_dict = json.load(f)
 
     new_gvas = gvas_file_adaptor.validate_python(pydantic_json_content_dict)
     # print(type(new_gvas))
 
-    # now write it back out
+    # Now write that GVAS file back out for round trip test
     output_file_too = f"{test_file}.idempotent.too"
     uncompressed_output_file = f"{test_file}.decompressed.idempotent.too"
     gvas_file.write_file(output_file_too, uncompressed_output_file)
@@ -206,22 +207,23 @@ def test_gvas_file(test_file: str):
 
     pydantic_object_commpare = compare_pydantic_objects(gvas_file, new_gvas)
 
-    # if not idempotent:
-    #     print(f"FAILED: Reserialized gvas file is NOT IDENTICAL to original.")
-    #
-    # if not json_old_and_new:
-    #     print(f"FAILED: Reserialized JSON file is NOT IDENTICAL to original.")
-    #
-    # if not reread_and_rewrite:
-    #     print(
-    #         f"FAILED: Loaded JSON written as GVAS is NOT IDENTICAL to first serialization."
-    #     )
-    #
-    # # if not pydantic_object_commpare:
-    # #     print(f"FAILED: Reserialized gvas file is NOT IDENTICAL.")
-    #
-    # if idempotent and json_old_and_new and reread_and_rewrite:
-    #     print(f"SUCCESS testing {test_file}")
+    if idempotent and json_old_and_new and reread_and_rewrite:
+        print(f"SUCCESS testing {test_file}")
+        return
+
+    if not idempotent:
+        print(f"\tFAILED: Reserialized gvas file is NOT IDENTICAL to original.")
+
+    if not json_old_and_new:
+        print(f"\tFAILED: Reserialized JSON file is NOT IDENTICAL to original.")
+
+    if not reread_and_rewrite:
+        print(
+            f"\tFAILED: Loaded JSON written as GVAS is NOT IDENTICAL to first serialization."
+        )
+
+    # if not pydantic_object_commpare:
+    #     print(f"FAILED: Reserialized gvas file is NOT IDENTICAL.")
 
 
 for test_file in test_file_list:

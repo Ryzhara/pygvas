@@ -239,7 +239,7 @@ class GameFileFormat:
         finally:
             stream.seek(current_position)
 
-    def deserialize_game_version(self, stream: BinaryIO):
+    def deserialize_game_version(self, stream: BinaryIO, verbose: bool = False):
         is_palworld = False
         if self.has_gvas_header(stream):
             self.game_version = GameVersion.DEFAULT
@@ -247,9 +247,10 @@ class GameFileFormat:
         else:
             is_palworld = self.check_for_palworld(stream)
 
-        # print(
-        #     f"Found a {'PALWORLD' if is_palworld else 'GVAS'} file with compression type of '{self.compression_type.name}'."
-        # )
+        if verbose:
+            print(
+                f"Found a {'PALWORLD' if is_palworld else 'GVAS'} file with compression type of '{self.compression_type.name}'."
+            )
 
 
 @dataclass
@@ -358,6 +359,8 @@ class GVASFile:
                 )
                 properties[property_name] = property_value
 
+        read_uint32(stream, 0)
+
         stream.seek(0)
         return (
             cls(
@@ -388,7 +391,7 @@ class GVASFile:
 
         # Write None + NULL byte terminator for file end
         write_string(buffer, "None")
-        buffer.write(struct.pack("<I", 0))
+        write_uint32(buffer, 0)
 
         # Get buffer contents
         data_to_write = buffer.getvalue()
