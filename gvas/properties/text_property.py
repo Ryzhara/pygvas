@@ -194,7 +194,7 @@ class FormatArgumentValue(IntEnum):
 @dataclass
 class FormatArgument:
     type: Optional[FormatArgumentValue] = None
-    value: Any = None
+    value: Optional[Union[int, float, "FText"]] = None
 
     @field_serializer("type")
     def serialize_type(self, type: FormatArgumentValue):
@@ -349,7 +349,24 @@ class TextHistoryType(IntEnum):
 @dataclass()
 class FText:
     flags: int = 0
-    history: Any = None
+    history: Optional[
+        Union[
+            "Empty",
+            "NoType",
+            "Base",
+            "NamedFormat",
+            "OrderedFormat",
+            "ArgumentFormat",
+            "AsNumber",
+            "AsPercent",
+            "AsCurrency",
+            "AsDate",
+            "AsTime",
+            "AsDateTime",
+            "Transform",
+            "StringTableEntry",
+        ]
+    ] = None
 
     def read(self, stream: BinaryIO) -> Self:
         self.flags = read_uint32(stream)
@@ -400,7 +417,6 @@ class Empty:
 @dataclass()
 class NoType:
     type: TextHistoryType = TextHistoryType.NoType
-    # None
     culture_invariant_string: Optional[str] = None
 
     @field_serializer("type")
@@ -435,12 +451,8 @@ class NoType:
 @dataclass()
 class Base:
     type: TextHistoryType = TextHistoryType.Base
-    # Base text history
-    # Namespace
     namespace: Optional[str] = None
-    # Key
     key: Optional[str] = None
-    # Source string
     source_string: Optional[str] = None
 
     @field_serializer("type")
@@ -466,10 +478,7 @@ class Base:
 @dataclass()
 class NamedFormat:
     type: TextHistoryType = TextHistoryType.NamedFormat
-    # Named format text history
-    # Source format
     source_format: Optional[FText] = None
-    # Arguments
     arguments: Optional[dict[str, FormatArgument]] = None
 
     @field_serializer("type")
@@ -501,10 +510,7 @@ class NamedFormat:
 @dataclass()
 class OrderedFormat:
     type: TextHistoryType = TextHistoryType.OrderedFormat
-    # Ordered format text history
-    # Source format
     source_format: Optional[FText] = None
-    # Arguments
     arguments: Optional[list[FormatArgument]] = None
 
     @field_serializer("type")
@@ -534,10 +540,7 @@ class OrderedFormat:
 @dataclass()
 class ArgumentFormat:
     type: TextHistoryType = TextHistoryType.ArgumentFormat
-    # Argument format text history
-    # Source format
     source_format: Optional[FText] = None
-    # Arguments
     arguments: Optional[dict[str, FormatArgument]] = None
 
     @field_serializer("type")
@@ -569,12 +572,8 @@ class ArgumentFormat:
 @dataclass()
 class AsNumber:
     type: TextHistoryType = TextHistoryType.AsNumber
-    # Convert to number
-    # Source value
     source_value: Optional[FormatArgument] = None
-    # Format options
     format_options: Optional[NumberFormattingOptions] = None
-    # Target culture
     target_culture: Optional[str] = None
 
     @field_serializer("type")
@@ -604,12 +603,8 @@ class AsNumber:
 @dataclass()
 class AsPercent:
     type: TextHistoryType = TextHistoryType.AsPercent
-    # Convert to percentage
-    # Source value
     source_value: Optional[FormatArgument] = None
-    # Format options
     format_options: Optional[NumberFormattingOptions] = None
-    # Target culture
     target_culture: Optional[str] = None
 
     @field_serializer("type")
@@ -639,14 +634,9 @@ class AsPercent:
 @dataclass()
 class AsCurrency:
     type: TextHistoryType = TextHistoryType.AsCurrency
-    # Convert to currency
-    # Currency code
     currency_code: Optional[str] = None
-    # Source value
     source_value: Optional[FormatArgument] = None
-    # Format options
     format_options: Optional[NumberFormattingOptions] = None
-    # Target culture
     target_culture: Optional[str] = None
 
     @field_serializer("type")
@@ -678,13 +668,9 @@ class AsCurrency:
 @dataclass()
 class AsDate:
     type: TextHistoryType = TextHistoryType.AsDate
-    # Convert to date
-    # Date time as uint64
     date_time: Optional[DateTime] = None
-    # Date style
     date_style: Optional[DateTimeStyle] = None
     # todo: FTEXT_HISTORY_DATE_TIMEZONE support (needs object version)
-    # Target culture
     target_culture: Optional[str] = None
 
     @field_serializer("type")
@@ -710,14 +696,9 @@ class AsDate:
 @dataclass()
 class AsTime:
     type: TextHistoryType = TextHistoryType.AsTime
-    # Convert to time
-    # Source date time as uint64
     source_date_time: Optional[DateTime] = None
-    # Time style
     time_style: Optional[DateTimeStyle] = None
-    # Time zone
     time_zone: Optional[str] = None
-    # Target culture
     target_culture: Optional[str] = None
 
     @field_serializer("type")
@@ -745,16 +726,10 @@ class AsTime:
 @dataclass()
 class AsDateTime:
     type: TextHistoryType = TextHistoryType.AsDateTime
-    # Convert to date time
-    # Source date time
     source_date_time: Optional[DateTime] = None
-    # Date style
     date_style: Optional[DateTimeStyle] = None
-    # Time style
     time_style: Optional[DateTimeStyle] = None
-    # Time zone
     time_zone: Optional[str] = None
-    # Target culture
     target_culture: Optional[str] = None
 
     @field_serializer("type")
@@ -783,11 +758,7 @@ class AsDateTime:
 
 @dataclass()
 class Transform:
-    # Transform text
-    # Source text
     source_text: Optional[FText] = None
-    # Transform type
-    # [cfg_attr(feature = "serde", serde(flatten))]
     transform_type: Optional[TransformType] = None
 
     @field_serializer("type")
@@ -897,10 +868,24 @@ class TextProperty(PropertyTrait):
 
     type: str = "TextProperty"
     flags: int = 0
-    history: Optional[Any] = None
-    # ftext: FText = None
-    # actual_property_count: int = 0  # for correctly writing object during hack
-    # byte_data: Optional[bytes] = None  # just scarf the bytes
+    history: Optional[
+        Union[
+            Empty,
+            NoType,
+            Base,
+            NamedFormat,
+            OrderedFormat,
+            ArgumentFormat,
+            AsNumber,
+            AsPercent,
+            AsCurrency,
+            AsDate,
+            AsTime,
+            AsDateTime,
+            Transform,
+            StringTableEntry,
+        ]
+    ] = None
 
     def read(
         self,

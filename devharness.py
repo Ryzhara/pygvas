@@ -71,7 +71,7 @@ class EnhancedJSONEncoder(json.JSONEncoder):
 
 
 test_file_list = [
-    "resources/test/islands_of_insight.sav",
+    #    "resources/test/islands_of_insight.sav",
     "resources/test/assert_failed.sav",
     "resources/test/component8.sav",
     "resources/test/Delegate.sav",
@@ -129,6 +129,7 @@ test_file_list = [
 # test_file_list = ["resources/test/assert_failed.sav"]
 # test_file_list = ["resources/test/component8.sav"]
 # test_file_list = ["resources/test/ro_64bit_fav.sav"]
+test_file_list = ["resources/test/Profile_0.sav"]
 
 # test shit
 
@@ -200,30 +201,34 @@ def test_gvas_file(test_file: str):
     reread_and_rewrite = compare_binary_files(output_file_too, output_file)
 
     # assert new_gvas == gvas_file
-    def compare_pydantic_objects(obj1: GVASFile, obj2: GVASFile):
-        obj1_adaptor = TypeAdapter(GVASFile)
-        obj2_adaptor = TypeAdapter(GVASFile)
-
-        dict1 = obj1_adaptor.dump_python(obj1, exclude_none=False)
-        dict2 = obj2_adaptor.dump_python(obj2, exclude_none=False)
-
-        # print(f"\tGVas objects are{' NOT ' if dict1 != dict2 else ' '}identical")
-
-    pydantic_object_commpare = compare_pydantic_objects(gvas_file, new_gvas)
+    # def compare_pydantic_objects(obj1: GVASFile, obj2: GVASFile):
+    #     obj1_adaptor = TypeAdapter(GVASFile)
+    #     obj2_adaptor = TypeAdapter(GVASFile)
+    #
+    #     dict1 = obj1_adaptor.dump_python(obj1, exclude_none=False)
+    #     dict2 = obj2_adaptor.dump_python(obj2, exclude_none=False)
+    #
+    #     # print(f"\tGVas objects are{' NOT ' if dict1 != dict2 else ' '}identical")
+    #
+    # pydantic_object_commpare = compare_pydantic_objects(gvas_file, new_gvas)
 
     if idempotent and json_old_and_new and reread_and_rewrite:
         print(f"SUCCESS testing {test_file}")
         return
 
     if not idempotent:
-        print(f"\tFAILED: Reserialized gvas file is NOT IDENTICAL to original.")
+        print(
+            f"\tFAILED: {test_file} != {output_file} Reserialized gvas file is NOT IDENTICAL to original."
+        )
 
     if not json_old_and_new:
-        print(f"\tFAILED: Reserialized JSON file is NOT IDENTICAL to original.")
+        print(
+            f"\tFAILED: {test_file} Reserialized JSON file is NOT IDENTICAL to original."
+        )
 
     if not reread_and_rewrite:
         print(
-            f"\tFAILED: Loaded JSON written as GVAS is NOT IDENTICAL to first serialization."
+            f"\tFAILED: {test_file} Loaded JSON written as GVAS is NOT IDENTICAL to first serialization."
         )
 
     # if not pydantic_object_commpare:

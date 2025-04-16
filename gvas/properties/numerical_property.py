@@ -64,7 +64,7 @@ class ByteProperty(PropertyTrait):
     """A property that holds a byte value or type_name"""
 
     type: str = "ByteProperty"
-    name: Optional[str] = None
+    name: Optional[str] = ""
     value: Union[int, str] = 0
 
     def read(
@@ -112,57 +112,259 @@ class ByteProperty(PropertyTrait):
         return bytes_written
 
 
-def create_numerical_property_class(
-    type_name: str,
-    storage_type,
-    size: int,
-    read_function: Callable[[BinaryIO], Any],
-    write_function: Callable[[BinaryIO, Any], int],
-):
-    """
-    Create a property class to read/write number type with the specified size and type
-    """
+@dataclass
+class Int8Property(PropertyTrait):
+    type: str = "Int8Property"
+    value: int = 0
 
-    @dataclass
-    class NumericalPropertyClass(PropertyTrait):
-        """A property that holds a {size}-bit {signedness} integer value"""
+    def read(self, stream: BinaryIO, include_header: bool = True) -> None:
+        if include_header:
+            read_standard_header(stream, assert_length=1)
+        self.value = read_int8(stream)
 
-        type: str = type_name
-        value: storage_type = 0
+    def write(self, stream: BinaryIO, include_header: bool = True) -> int:
+        bytes_written = 0
+        if include_header:
+            bytes_written += write_standard_header(stream, self.type, length=1)
+        bytes_written += write_int8(stream, self.value)
+        return bytes_written
 
-        def read(self, stream: BinaryIO, include_header: bool = True) -> None:
-            if include_header:
-                read_standard_header(stream, assert_length=size)
-            self.value = read_function(stream)
 
-        def write(self, stream: BinaryIO, include_header: bool = True) -> int:
-            bytes_written = 0
+@dataclass
+class UInt8Property(PropertyTrait):
+    type: str = "UInt8Property"
+    value: int = 0
 
-            if include_header:
-                bytes_written += write_standard_header(stream, type_name, length=size)
-            bytes_written += write_function(stream, self.value)
-            return bytes_written
+    def read(self, stream: BinaryIO, include_header: bool = True) -> None:
+        if include_header:
+            read_standard_header(stream, assert_length=1)
+        self.value = read_uint8(stream)
 
-    NumericalPropertyClass.__name__ = type_name
-    NumericalPropertyClass.__doc__ = (
-        f"A property that holds a {size}-bit numerical value of type {storage_type}"
-    )
-    return NumericalPropertyClass
+    def write(self, stream: BinaryIO, include_header: bool = True) -> int:
+        bytes_written = 0
+        if include_header:
+            bytes_written += write_standard_header(stream, self.type, length=1)
+        bytes_written += write_uint8(stream, self.value)
+        return bytes_written
 
+
+@dataclass
+class Int16Property(PropertyTrait):
+    type: str = "Int16Property"
+    value: int = 0
+
+    def read(self, stream: BinaryIO, include_header: bool = True) -> None:
+        if include_header:
+            read_standard_header(stream, assert_length=2)
+        self.value = read_int16(stream)
+
+    def write(self, stream: BinaryIO, include_header: bool = True) -> int:
+        bytes_written = 0
+        if include_header:
+            bytes_written += write_standard_header(stream, self.type, length=2)
+        bytes_written += write_int16(stream, self.value)
+        return bytes_written
+
+
+@dataclass
+class UInt16Property(PropertyTrait):
+    type: str = "UInt16Property"
+    value: int = 0
+
+    def read(self, stream: BinaryIO, include_header: bool = True) -> None:
+        if include_header:
+            read_standard_header(stream, assert_length=2)
+        self.value = read_uint16(stream)
+
+    def write(self, stream: BinaryIO, include_header: bool = True) -> int:
+        bytes_written = 0
+        if include_header:
+            bytes_written += write_standard_header(stream, self.type, length=2)
+        bytes_written += write_uint16(stream, self.value)
+        return bytes_written
+
+
+# For backward compatibility
+@dataclass
+class Int32Property(PropertyTrait):
+    type: str = "Int32Property"
+    value: int = 0
+
+    def read(self, stream: BinaryIO, include_header: bool = True) -> None:
+        if include_header:
+            read_standard_header(stream, assert_length=4)
+        self.value = read_int32(stream)
+
+    def write(self, stream: BinaryIO, include_header: bool = True) -> int:
+        bytes_written = 0
+        if include_header:
+            bytes_written += write_standard_header(stream, self.type, length=4)
+        bytes_written += write_int32(stream, self.value)
+        return bytes_written
+
+
+# for backward compatibility
+@dataclass
+class IntProperty(PropertyTrait):
+    type: str = "IntProperty"
+    value: int = 0
+
+    def read(self, stream: BinaryIO, include_header: bool = True) -> None:
+        if include_header:
+            read_standard_header(stream, assert_length=4)
+        self.value = read_int32(stream)
+
+    def write(self, stream: BinaryIO, include_header: bool = True) -> int:
+        bytes_written = 0
+        if include_header:
+            bytes_written += write_standard_header(stream, self.type, length=4)
+        bytes_written += write_int32(stream, self.value)
+        return bytes_written
+
+
+@dataclass
+class UInt32Property(PropertyTrait):
+    type: str = "UInt32Property"
+    value: int = 0
+
+    def read(self, stream: BinaryIO, include_header: bool = True) -> None:
+        if include_header:
+            read_standard_header(stream, assert_length=4)
+        self.value = read_uint32(stream)
+
+    def write(self, stream: BinaryIO, include_header: bool = True) -> int:
+        bytes_written = 0
+        if include_header:
+            bytes_written += write_standard_header(stream, self.type, length=4)
+        bytes_written += write_uint32(stream, self.value)
+        return bytes_written
+
+
+@dataclass
+class Int64Property(PropertyTrait):
+    type: str = "Int64Property"
+    value: Union[int, float] = 0
+
+    def read(self, stream: BinaryIO, include_header: bool = True) -> None:
+        if include_header:
+            read_standard_header(stream, assert_length=8)
+        self.value = read_int64(stream)
+
+    def write(self, stream: BinaryIO, include_header: bool = True) -> int:
+        bytes_written = 0
+        if include_header:
+            bytes_written += write_standard_header(stream, self.type, length=8)
+        bytes_written += write_int64(stream, self.value)
+        return bytes_written
+
+
+@dataclass
+class UInt64Property(PropertyTrait):
+    type: str = "UInt64Property"
+    value: Union[int, float] = 0
+
+    def read(self, stream: BinaryIO, include_header: bool = True) -> None:
+        if include_header:
+            read_standard_header(stream, assert_length=8)
+        self.value = read_uint64(stream)
+
+    def write(self, stream: BinaryIO, include_header: bool = True) -> int:
+        bytes_written = 0
+        if include_header:
+            bytes_written += write_standard_header(stream, self.type, length=8)
+        bytes_written += write_uint64(stream, self.value)
+        return bytes_written
+
+
+@dataclass
+class FloatProperty(PropertyTrait):
+    type: str = "FloatProperty"
+    value: float = 0
+
+    def read(self, stream: BinaryIO, include_header: bool = True) -> None:
+        if include_header:
+            read_standard_header(stream, assert_length=4)
+        self.value = read_float(stream)
+
+    def write(self, stream: BinaryIO, include_header: bool = True) -> int:
+        bytes_written = 0
+        if include_header:
+            bytes_written += write_standard_header(stream, self.type, length=4)
+        bytes_written += write_float(stream, self.value)
+        return bytes_written
+
+
+@dataclass
+class DoubleProperty(PropertyTrait):
+    type: str = "DoubleProperty"
+    value: float = 0
+
+    def read(self, stream: BinaryIO, include_header: bool = True) -> None:
+        if include_header:
+            read_standard_header(stream, assert_length=8)
+        self.value = read_double(stream)
+
+    def write(self, stream: BinaryIO, include_header: bool = True) -> int:
+        bytes_written = 0
+        if include_header:
+            bytes_written += write_standard_header(stream, self.type, length=8)
+        bytes_written += write_double(stream, self.value)
+        return bytes_written
+
+
+#
+#
+# def create_numerical_property_class(
+#     type_name: str,
+#     storage_type,
+#     size: int,
+#     read_function: Callable[[BinaryIO], Any],
+#     write_function: Callable[[BinaryIO, Any], int],
+# ):
+#     """
+#     Create a property class to read/write number type with the specified size and type
+#     """
+#
+#     @dataclass
+#     class NumericalPropertyClass(PropertyTrait):
+#         """A property that holds a {size}-bit {signedness} integer value"""
+#
+#         type: str = type_name
+#         value: storage_type = 0
+#
+#         def read(self, stream: BinaryIO, include_header: bool = True) -> None:
+#             if include_header:
+#                 read_standard_header(stream, assert_length=size)
+#             self.value = read_function(stream)
+#
+#         def write(self, stream: BinaryIO, include_header: bool = True) -> int:
+#             bytes_written = 0
+#
+#             if include_header:
+#                 bytes_written += write_standard_header(stream, type_name, length=size)
+#             bytes_written += write_function(stream, self.value)
+#             return bytes_written
+#
+#     NumericalPropertyClass.__name__ = type_name
+#     NumericalPropertyClass.__doc__ = (
+#         f"A property that holds a {size}-bit numerical value of type {storage_type}"
+#     )
+#     return NumericalPropertyClass
+#
 
 # Create all integer property classes
 # fmt: off
-Int8Property = create_numerical_property_class("Int8Property", int, 1, read_int8, write_int8)
-UInt8Property = create_numerical_property_class("UInt8Property", int, 1, read_uint8, write_uint8)
-Int16Property = create_numerical_property_class("Int16Property", int, 2, read_int16, write_int16)
-UInt16Property = create_numerical_property_class("UInt16Property", int, 2, read_uint16, write_uint16)
-Int32Property = create_numerical_property_class("Int32Property", int, 4, read_int32, write_int32)
-UInt32Property = create_numerical_property_class("UInt32Property", int, 4, read_uint32, write_uint32)
-Int64Property = create_numerical_property_class("Int64Property", int, 8, read_int64, write_int64)
-UInt64Property = create_numerical_property_class("UInt64Property", int, 8, read_uint64, write_uint64)
+# Int8Property = create_numerical_property_class("Int8Property", int, 1, read_int8, write_int8)
+# UInt8Property = create_numerical_property_class("UInt8Property", int, 1, read_uint8, write_uint8)
+# Int16Property = create_numerical_property_class("Int16Property", int, 2, read_int16, write_int16)
+# UInt16Property = create_numerical_property_class("UInt16Property", int, 2, read_uint16, write_uint16)
+# Int32Property = create_numerical_property_class("Int32Property", int, 4, read_int32, write_int32)
+# UInt32Property = create_numerical_property_class("UInt32Property", int, 4, read_uint32, write_uint32)
+# Int64Property = create_numerical_property_class("Int64Property", int, 8, read_int64, write_int64)
+# UInt64Property = create_numerical_property_class("UInt64Property", int, 8, read_uint64, write_uint64)
 
-# For backward compatibility
-IntProperty = create_numerical_property_class("IntProperty", int, 4, read_int32, write_int32)
+# # For backward compatibility
+# IntProperty = create_numerical_property_class("IntProperty", int, 4, read_int32, write_int32)
 
-FloatProperty = create_numerical_property_class("FloatProperty", float, 4, read_float, write_float)
-DoubleProperty = create_numerical_property_class("DoubleProperty", float, 8, read_double, write_double)
+# FloatProperty = create_numerical_property_class("FloatProperty", float, 4, read_float, write_float)
+# DoubleProperty = create_numerical_property_class("DoubleProperty", float, 8, read_double, write_double)

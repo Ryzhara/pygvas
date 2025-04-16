@@ -74,7 +74,7 @@ class DelegateProperty(PropertyTrait):
 @dataclass()
 class MulticastScriptDelegate:
     type: str = "MulticastScriptDelegate"
-    delegates: list[Delegate] = None
+    delegates: Optional[List[Delegate]] = None
 
     def __post_init__(self):
         self.delegates = []
@@ -98,7 +98,7 @@ class MulticastScriptDelegate:
 @dataclass()
 class MulticastInlineDelegateProperty(PropertyTrait):
     type: str = "MulticastInlineDelegateProperty"
-    value: MulticastScriptDelegate = None
+    value: Optional[MulticastScriptDelegate] = None
 
     def read(
         self,
@@ -138,7 +138,7 @@ class MulticastInlineDelegateProperty(PropertyTrait):
 @dataclass()
 class MulticastSparseDelegateProperty(PropertyTrait):
     type: str = "MulticastSparseDelegateProperty"
-    value: MulticastScriptDelegate = None
+    value: Optional[MulticastScriptDelegate] = None
 
     def read(
         self,

@@ -9,7 +9,8 @@ Key differences from Rust version:
 
 from io import BytesIO
 from typing import Optional, ClassVar
-from pydantic import field_serializer, ConfigDict, AliasGenerator
+
+from pydantic import field_serializer
 from pydantic.dataclasses import dataclass
 
 from .property_base import (
@@ -22,42 +23,12 @@ from .standard_types import (
     StandardStructTrait,
 )
 from ..utils import *
+from .struct_property import StructProperty
 
 
 @dataclass
 class ArrayProperty(PropertyTrait):
     """A property that holds an array of values"""
-
-    from .struct_property import StructProperty
-
-    from gvas.properties import (
-        BoolProperty,
-        ByteProperty,
-        FloatProperty,
-        DoubleProperty,
-        IntProperty,
-        Int8Property,
-        Int16Property,
-        Int32Property,
-        Int64Property,
-        UInt8Property,
-        UInt16Property,
-        UInt32Property,
-        UInt64Property,
-        ArrayProperty,
-        EnumProperty,
-        TextProperty,
-        MapProperty,
-        NameProperty,
-        SetProperty,
-        StrProperty,
-        # ObjectProperty,
-        # FieldPath,
-        # FieldPathProperty,
-        # MulticastSparseDelegateProperty,
-        # MulticastInlineDelegateProperty,
-        # DelegateProperty,
-    )
 
     # class variable is not serialized
     bare_readers: ClassVar[Dict[str, Callable[[BinaryIO], Any]]] = {

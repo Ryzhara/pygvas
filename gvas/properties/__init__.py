@@ -18,10 +18,9 @@ from .numerical_property import (
     UInt64Property,
 )
 from .property_base import PropertyFactory, PropertyTrait
-from .array_property import ArrayProperty
-from .struct_property import StructProperty
-from .set_property import SetProperty
-from .map_property import MapProperty
+
+from .aggregators import SetProperty, MapProperty, ArrayProperty, StructProperty
+
 from .enum_property import EnumProperty
 from .text_property import TextProperty
 from .name_property import NameProperty

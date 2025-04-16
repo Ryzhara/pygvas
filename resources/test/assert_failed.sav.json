@@ -127,6 +127,7 @@
           "values": [
             {
               "type": "ByteProperty",
+              "name": "",
               "value": "E_Books::NewEnumerator0"
             }
           ]
@@ -141,6 +142,7 @@
           "values": [
             {
               "type": "ByteProperty",
+              "name": "",
               "value": "E_Figurines::NewEnumerator19"
             }
           ]
