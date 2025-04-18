@@ -30,7 +30,7 @@ from gvas.properties import *
 class StructProperty(PropertyTrait):
     """A property that holds structured data"""
 
-    type: str = "StructProperty"
+    type: Literal["StructProperty"] = "StructProperty"
     guid: Optional[uuid.UUID] = None
     type_name: Optional[str] = None
     value: Union[

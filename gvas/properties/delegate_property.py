@@ -5,7 +5,7 @@ Python port of field_path_property.rs
 
 from pydantic.dataclasses import dataclass
 from io import BytesIO
-from typing import Optional
+from typing import Optional, Literal
 
 from .property_base import PropertyTrait
 from ..utils import *
@@ -13,7 +13,7 @@ from ..utils import *
 
 @dataclass
 class Delegate:
-    type: str = "Delegate"
+    type: Literal["Delegate"] = "Delegate"
     object: Optional[str] = None
     function_name: Optional[str] = None
 
@@ -30,7 +30,7 @@ class Delegate:
 
 @dataclass
 class DelegateProperty(PropertyTrait):
-    type: str = "DelegateProperty"
+    type: Literal["DelegateProperty"] = "DelegateProperty"
     value: Optional[Delegate] = None
 
     def read(
@@ -73,7 +73,7 @@ class DelegateProperty(PropertyTrait):
 
 @dataclass()
 class MulticastScriptDelegate:
-    type: str = "MulticastScriptDelegate"
+    type: Literal["MulticastScriptDelegate"] = "MulticastScriptDelegate"
     delegates: Optional[List[Delegate]] = None
 
     def __post_init__(self):
@@ -97,7 +97,7 @@ class MulticastScriptDelegate:
 
 @dataclass()
 class MulticastInlineDelegateProperty(PropertyTrait):
-    type: str = "MulticastInlineDelegateProperty"
+    type: Literal["MulticastInlineDelegateProperty"] = "MulticastInlineDelegateProperty"
     value: Optional[MulticastScriptDelegate] = None
 
     def read(
@@ -137,7 +137,7 @@ class MulticastInlineDelegateProperty(PropertyTrait):
 
 @dataclass()
 class MulticastSparseDelegateProperty(PropertyTrait):
-    type: str = "MulticastSparseDelegateProperty"
+    type: Literal["MulticastSparseDelegateProperty"] = "MulticastSparseDelegateProperty"
     value: Optional[MulticastScriptDelegate] = None
 
     def read(

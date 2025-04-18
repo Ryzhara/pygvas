@@ -4,7 +4,7 @@ Python port of enum_property.rs
 """
 
 from io import BytesIO
-from typing import Optional
+from typing import Optional, Literal
 
 from pydantic.dataclasses import dataclass
 
@@ -16,7 +16,7 @@ from ..utils import *
 class EnumProperty(PropertyTrait):
     """A property that holds an enumeration value"""
 
-    type: str = "EnumProperty"
+    type: Literal["EnumProperty"] = "EnumProperty"
     enum_type: Optional[str] = None
     value: Optional[str] = None
 
@@ -54,7 +54,7 @@ class EnumProperty(PropertyTrait):
                 stream,
                 "EnumProperty",
                 length=body_bytes,
-                data_to_write=[self.enum_type],
+                data_to_write=[self.enum_type or ""],
             )
 
         bytes_written += write_bytes(stream, body_buffer.getvalue())

@@ -8,7 +8,7 @@ Key differences from Rust version:
 """
 
 from io import BytesIO
-from typing import Optional
+from typing import Optional, Literal
 
 from pydantic.dataclasses import dataclass
 
@@ -20,7 +20,7 @@ from ..utils import *
 class NameProperty(PropertyTrait):
     """A property that holds a name"""
 
-    type: str = "NameProperty"
+    type: Literal["NameProperty"] = "NameProperty"
     array_index: int = 0
     value: Optional[str] = None
 

@@ -1,14 +1,10 @@
 """
 String property implementations for GVAS
 Python port of str_property.rs and name_property.rs
-
-Contains implementations for:
-- StrProperty
-- NameProperty
 """
 
 from pydantic.dataclasses import dataclass
-from typing import Optional
+from typing import Optional, Literal
 from io import BytesIO
 
 from .property_base import PropertyTrait
@@ -18,6 +14,7 @@ from ..utils import *
 @dataclass
 class StrProperty(PropertyTrait):
 
+    # type: Literal["StrProperty"] = "StrProperty"
     type: str = "StrProperty"
     value: Optional[str] = None
 

@@ -1,7 +1,7 @@
 from io import BytesIO
-from typing import Optional, ClassVar, Tuple
+from typing import Optional, ClassVar, Tuple, Annotated, Type, Literal
 
-from pydantic import field_serializer
+from pydantic import field_serializer, Discriminator
 from pydantic.dataclasses import dataclass
 
 from .property_base import (
@@ -53,16 +53,51 @@ from .delegate_property import (
     DelegateProperty,
 )
 
+UEPropertyType = Annotated[
+    Union[
+        BoolProperty,
+        ByteProperty,
+        FloatProperty,
+        DoubleProperty,
+        IntProperty,
+        Int8Property,
+        UInt8Property,
+        Int16Property,
+        UInt16Property,
+        Int32Property,
+        UInt32Property,
+        Int64Property,
+        UInt64Property,
+        FloatProperty,
+        DoubleProperty,
+        "SetProperty",
+        "MapProperty",
+        "StructProperty",
+        "ArrayProperty",
+        EnumProperty,
+        TextProperty,
+        NameProperty,
+        StrProperty,
+        ObjectProperty,
+        FieldPath,
+        FieldPathProperty,
+        MulticastInlineDelegateProperty,
+        MulticastSparseDelegateProperty,
+        DelegateProperty,
+    ],
+    Discriminator("type"),
+]
+
 
 @dataclass
 class MapProperty(PropertyTrait):
     """A property that holds a key-value mapping"""
 
-    type: str = "MapProperty"
-    key_type: str = ""
-    value_type: str = ""
+    type: Literal["MapProperty"] = "MapProperty"
+    key_type: Union[str, "StructProperty"] = ""
+    value_type: Union[bool, int, str, "StructProperty"] = ""
     allocation_flags: int = 0
-    values: List[Tuple] = None
+    values: List[Type[UEPropertyType]] = None
 
     def read(
         self,
@@ -145,51 +180,10 @@ class MapProperty(PropertyTrait):
 class SetProperty(PropertyTrait):
     """A property that stores a set of properties"""
 
-    type: str = "SetProperty"
+    type: Literal["SetProperty"] = "SetProperty"
     property_type: Optional[str] = None
     allocation_flags: int = 0
-    properties: Optional[
-        List[
-            Union[
-                BoolProperty,
-                ByteProperty,
-                FloatProperty,
-                DoubleProperty,
-                IntProperty,
-                Int8Property,
-                UInt8Property,
-                Int16Property,
-                UInt16Property,
-                Int32Property,
-                UInt32Property,
-                Int64Property,
-                UInt64Property,
-                DateTimeProperty,
-                GuidProperty,
-                TimespanProperty,
-                IntPointProperty,
-                LinearColorProperty,
-                RotatorProperty,
-                QuatProperty,
-                VectorProperty,
-                Vector2DProperty,
-                "SetProperty",
-                "MapProperty",
-                "StructProperty",
-                "ArrayProperty",
-                EnumProperty,
-                TextProperty,
-                NameProperty,
-                StrProperty,
-                ObjectProperty,
-                FieldPath,
-                FieldPathProperty,
-                MulticastSparseDelegateProperty,
-                MulticastInlineDelegateProperty,
-                DelegateProperty,
-            ],
-        ]
-    ] = None
+    properties: Optional[List[Type[UEPropertyType],]] = None
 
     def __post_init__(self):
         if self.properties is None:
@@ -265,7 +259,7 @@ class SetProperty(PropertyTrait):
 class StructProperty(PropertyTrait):
     """A property that holds structured data"""
 
-    type: str = "StructProperty"
+    type: Literal["StructProperty"] = "StructProperty"
     guid: Optional[uuid.UUID] = None
     type_name: Optional[str] = None
     value: Union[
@@ -278,39 +272,9 @@ class StructProperty(PropertyTrait):
         QuatProperty,
         VectorProperty,
         Vector2DProperty,
-        dict[
+        Dict[
             str,
-            Union[
-                BoolProperty,
-                ByteProperty,
-                FloatProperty,
-                DoubleProperty,
-                IntProperty,
-                Int8Property,
-                UInt8Property,
-                Int16Property,
-                UInt16Property,
-                Int32Property,
-                UInt32Property,
-                Int64Property,
-                UInt64Property,
-                FloatProperty,
-                DoubleProperty,
-                SetProperty,
-                MapProperty,
-                "StructProperty",
-                "ArrayProperty",
-                EnumProperty,
-                TextProperty,
-                NameProperty,
-                StrProperty,
-                ObjectProperty,
-                FieldPath,
-                FieldPathProperty,
-                MulticastInlineDelegateProperty,
-                MulticastSparseDelegateProperty,
-                DelegateProperty,
-            ],
+            Type[UEPropertyType],
         ],
     ] = None
 
@@ -455,7 +419,7 @@ class ArrayProperty(PropertyTrait):
         "DoubleProperty": write_double,
     }
 
-    type: str = "ArrayProperty"
+    type: Literal["ArrayProperty"] = "ArrayProperty"
     field_name: Optional[str] = None
     type_name: Optional[str] = None
     property_type: Optional[str] = None
@@ -469,45 +433,7 @@ class ArrayProperty(PropertyTrait):
             float,
             bool,
             uuid.UUID,
-            # numerical types
-            BoolProperty,
-            ByteProperty,
-            FloatProperty,
-            DoubleProperty,
-            IntProperty,
-            Int8Property,
-            UInt8Property,
-            Int16Property,
-            UInt16Property,
-            Int32Property,
-            UInt32Property,
-            Int64Property,
-            UInt64Property,
-            # standard types
-            DateTimeProperty,
-            GuidProperty,
-            TimespanProperty,
-            IntPointProperty,
-            LinearColorProperty,
-            RotatorProperty,
-            QuatProperty,
-            VectorProperty,
-            Vector2DProperty,
-            # Property types
-            SetProperty,
-            MapProperty,
-            StructProperty,
-            # "ArrayProperty",
-            EnumProperty,
-            TextProperty,
-            NameProperty,
-            StrProperty,
-            ObjectProperty,
-            FieldPath,
-            FieldPathProperty,
-            MulticastInlineDelegateProperty,
-            MulticastSparseDelegateProperty,
-            DelegateProperty,
+            Type[UEPropertyType],
         ]
     ] = None  # [str, bytes, list, PropertyTrait, StandardStructTrait]
 

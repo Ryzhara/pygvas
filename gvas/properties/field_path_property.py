@@ -5,14 +5,14 @@ Python port of field_path_property.rs
 
 from pydantic.dataclasses import dataclass
 from io import BytesIO
-from typing import Optional, List, Dict, BinaryIO
+from typing import Optional, List, Dict, BinaryIO, Literal
 from .property_base import PropertyTrait
 from ..utils import *
 
 
 @dataclass
 class FieldPath:
-    type: str = "FieldPath"
+    type: Literal["FieldPath"] = "FieldPath"
     path: Optional[List[str]] = None
     resolved_owner: Optional[str] = None
 
@@ -40,7 +40,7 @@ class FieldPath:
 class FieldPathProperty(PropertyTrait):
     """A property that holds an FieldPath value"""
 
-    type: str = "FieldPathProperty"
+    type: Literal["FieldPathProperty"] = "FieldPathProperty"
     value: FieldPath = None
 
     def read(

@@ -4,7 +4,7 @@ Python port of object_property.rs
 """
 
 from io import BytesIO
-from typing import Optional
+from typing import Optional, Literal
 
 from pydantic.dataclasses import dataclass
 
@@ -16,7 +16,7 @@ from ..utils import *
 class ObjectProperty(PropertyTrait):
     """A property that holds an object value"""
 
-    type: str = "ObjectProperty"
+    type: Literal["ObjectProperty"] = "ObjectProperty"
     value: Optional[str] = None
 
     def read(

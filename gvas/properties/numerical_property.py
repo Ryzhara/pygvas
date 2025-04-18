@@ -3,8 +3,9 @@ Numeric property implementations for GVAS
 Python port of int_property.rs
 """
 
-from typing import Optional
+from typing import Optional, Literal
 
+from pydantic import field_validator, field_serializer
 from pydantic.dataclasses import dataclass
 
 from .property_base import PropertyTrait
@@ -15,7 +16,7 @@ from ..utils import *
 class BoolProperty(PropertyTrait):
     """A property that holds a boolean value"""
 
-    type: str = "BoolProperty"
+    type: Literal["BoolProperty"] = "BoolProperty"
     value: bool = False
 
     def read(
@@ -63,7 +64,7 @@ class BoolProperty(PropertyTrait):
 class ByteProperty(PropertyTrait):
     """A property that holds a byte value or type_name"""
 
-    type: str = "ByteProperty"
+    type: Literal["ByteProperty"] = "ByteProperty"
     name: Optional[str] = ""
     value: Union[int, str] = 0
 
@@ -114,7 +115,7 @@ class ByteProperty(PropertyTrait):
 
 @dataclass
 class Int8Property(PropertyTrait):
-    type: str = "Int8Property"
+    type: Literal["Int8Property"] = "Int8Property"
     value: int = 0
 
     def read(self, stream: BinaryIO, include_header: bool = True) -> None:
@@ -132,7 +133,7 @@ class Int8Property(PropertyTrait):
 
 @dataclass
 class UInt8Property(PropertyTrait):
-    type: str = "UInt8Property"
+    type: Literal["UInt8Property"] = "UInt8Property"
     value: int = 0
 
     def read(self, stream: BinaryIO, include_header: bool = True) -> None:
@@ -150,7 +151,7 @@ class UInt8Property(PropertyTrait):
 
 @dataclass
 class Int16Property(PropertyTrait):
-    type: str = "Int16Property"
+    type: Literal["Int16Property"] = "Int16Property"
     value: int = 0
 
     def read(self, stream: BinaryIO, include_header: bool = True) -> None:
@@ -168,7 +169,7 @@ class Int16Property(PropertyTrait):
 
 @dataclass
 class UInt16Property(PropertyTrait):
-    type: str = "UInt16Property"
+    type: Literal["UInt16Property"] = "UInt16Property"
     value: int = 0
 
     def read(self, stream: BinaryIO, include_header: bool = True) -> None:
@@ -187,7 +188,7 @@ class UInt16Property(PropertyTrait):
 # For backward compatibility
 @dataclass
 class Int32Property(PropertyTrait):
-    type: str = "Int32Property"
+    type: Literal["Int32Property"] = "Int32Property"
     value: int = 0
 
     def read(self, stream: BinaryIO, include_header: bool = True) -> None:
@@ -206,7 +207,7 @@ class Int32Property(PropertyTrait):
 # for backward compatibility
 @dataclass
 class IntProperty(PropertyTrait):
-    type: str = "IntProperty"
+    type: Literal["IntProperty"] = "IntProperty"
     value: int = 0
 
     def read(self, stream: BinaryIO, include_header: bool = True) -> None:
@@ -224,7 +225,7 @@ class IntProperty(PropertyTrait):
 
 @dataclass
 class UInt32Property(PropertyTrait):
-    type: str = "UInt32Property"
+    type: Literal["UInt32Property"] = "UInt32Property"
     value: int = 0
 
     def read(self, stream: BinaryIO, include_header: bool = True) -> None:
@@ -242,7 +243,7 @@ class UInt32Property(PropertyTrait):
 
 @dataclass
 class Int64Property(PropertyTrait):
-    type: str = "Int64Property"
+    type: Literal["Int64Property"] = "Int64Property"
     value: Union[int, float] = 0
 
     def read(self, stream: BinaryIO, include_header: bool = True) -> None:
@@ -260,7 +261,7 @@ class Int64Property(PropertyTrait):
 
 @dataclass
 class UInt64Property(PropertyTrait):
-    type: str = "UInt64Property"
+    type: Literal["UInt64Property"] = "UInt64Property"
     value: Union[int, float] = 0
 
     def read(self, stream: BinaryIO, include_header: bool = True) -> None:
@@ -278,7 +279,7 @@ class UInt64Property(PropertyTrait):
 
 @dataclass
 class FloatProperty(PropertyTrait):
-    type: str = "FloatProperty"
+    type: Literal["FloatProperty"] = "FloatProperty"
     value: float = 0
 
     def read(self, stream: BinaryIO, include_header: bool = True) -> None:
@@ -296,7 +297,7 @@ class FloatProperty(PropertyTrait):
 
 @dataclass
 class DoubleProperty(PropertyTrait):
-    type: str = "DoubleProperty"
+    type: Literal["DoubleProperty"] = "DoubleProperty"
     value: float = 0
 
     def read(self, stream: BinaryIO, include_header: bool = True) -> None:

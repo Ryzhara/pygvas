@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Optional
+from typing import Optional, Literal
 from pydantic.dataclasses import dataclass
 
 from ..utils import *
@@ -29,7 +29,7 @@ class StandardStructTrait(ABC):
 #
 @dataclass
 class GuidProperty(StandardStructTrait):
-    type: str = "Guid"
+    type: Literal["Guid"] = "Guid"
     guid: Optional[str] = None
 
     @classmethod
@@ -50,7 +50,7 @@ class GuidProperty(StandardStructTrait):
 #
 @dataclass
 class DateTimeProperty(StandardStructTrait):
-    type: str = "DateTime"
+    type: Literal["DateTime"] = "DateTime"
     datetime: int = 0  # uint64
     comment: str = None
 
@@ -71,7 +71,7 @@ class DateTimeProperty(StandardStructTrait):
 #
 @dataclass
 class TimespanProperty(StandardStructTrait):
-    type: str = "Timespan"
+    type: Literal["Timespan"] = "Timespan"
     timespan: int = 0  # uint64
     comment: str = None
 
@@ -94,7 +94,7 @@ class TimespanProperty(StandardStructTrait):
 #
 @dataclass
 class IntPointProperty(StandardStructTrait):
-    type: str = "IntPoint"
+    type: Literal["IntPoint"] = "IntPoint"
     x: int = 0
     y: int = 0
 
@@ -119,7 +119,7 @@ class IntPointProperty(StandardStructTrait):
 #
 @dataclass
 class LinearColorProperty(StandardStructTrait):
-    type: str = "LinearColor"
+    type: Literal["LinearColor"] = "LinearColor"
     a: float = 0
     b: float = 0
     g: float = 0
@@ -150,7 +150,7 @@ class LinearColorProperty(StandardStructTrait):
 #
 @dataclass
 class RotatorProperty(StandardStructTrait):
-    type: str = "Rotator"
+    type: Literal["Rotator"] = "Rotator"
     is_double: bool = False
     pitch: float = 0
     yaw: float = 0
@@ -182,7 +182,7 @@ class RotatorProperty(StandardStructTrait):
 #
 @dataclass
 class QuatProperty(StandardStructTrait):
-    type: str = "Quat"
+    type: Literal["Quat"] = "Quat"
     is_double: bool = False
     x: float = 0
     y: float = 0
@@ -217,7 +217,7 @@ class QuatProperty(StandardStructTrait):
 #
 @dataclass
 class VectorProperty(StandardStructTrait):
-    type: str = "Vector"
+    type: Literal["Vector"] = "Vector"
     is_double: bool = False
     x: float = 0
     y: float = 0
@@ -249,7 +249,7 @@ class VectorProperty(StandardStructTrait):
 #
 @dataclass
 class Vector2DProperty(StandardStructTrait):
-    type: str = "Vector2D"
+    type: Literal["Vector2D"] = "Vector2D"
     is_double: bool = False
     x: float = 0
     y: float = 0
