@@ -11,22 +11,7 @@ from test_utilities import compare_binary_files
 # ============================================
 class EnhancedJSONEncoder(json.JSONEncoder):
 
-    def __init__(self, *args, **kwargs):
-        self._visited_ids = set()
-        self.visited_object = dict()
-        super().__init__(*args, **kwargs)
-
     def default(self, obj):
-
-        if isinstance(obj, (int, float, str, bool, type(None))):
-            return obj
-
-        if id(obj) in self._visited_ids:
-            raise ValueError(
-                f"Circular reference detected: {id(obj)} {repr(obj)} for {self.visited_object[id(obj)]}"
-            )
-        self._visited_ids.add(id(obj))
-        self.visited_object[id(obj)] = obj
 
         def is_not_empty(value):
             # if isinstance(value, (str, type(None))):
@@ -78,6 +63,9 @@ class EnhancedJSONEncoder(json.JSONEncoder):
 
         if isinstance(obj, GameVersion):
             return obj.name
+
+        if isinstance(obj, (int, float, str, bool, type(None))):
+            return obj
 
         return obj
 
@@ -136,10 +124,10 @@ test_file_list = [
 
 
 # always a quick retest
-test_file_list = ["Islands of Insight Example.sav"]  # working!
+# test_file_list = ["Islands of Insight Example.sav"]  # working!
 # test_file_list = ["resources/test/enum_array.sav"]
-# test_file_list = ["resources/test/assert_failed.sav"]
-# test_file_list = ["resources/test/component8.sav"]
+# test_file_list = ["resources/test/assert_failed.sav"]#working
+# test_file_list = ["resources/test/component8.sav"]  # working
 # test_file_list = ["resources/test/ro_64bit_fav.sav"]
 # test_file_list = ["resources/test/Profile_0.sav"]
 
@@ -169,18 +157,6 @@ def test_gvas_file(test_file: str):
 
     idempotent = compare_binary_files(test_file, output_file)
 
-    # create json the old fashioned way
-    json_file = f"{test_file}.json"
-    try:
-        # we get a lot of circular references from the Literal["TypeNameString"] used for Pydantic
-        json_content = json.dumps(
-            gvas_file, cls=EnhancedJSONEncoder, indent=2, check_circular=False
-        )
-        with open(json_file, "w") as f:
-            f.write(json_content)
-    except OverflowError as e:
-        print(f"Circular reference detected: {e}")
-
     # create json with pydantic
     pydantic_json_file = f"{test_file}.pydantic.json"
     from pydantic import TypeAdapter
@@ -190,6 +166,18 @@ def test_gvas_file(test_file: str):
     pydantic_json_content = json.dumps(gvas_file_dict, indent=2)
     with open(pydantic_json_file, "w") as f:
         f.write(pydantic_json_content)
+
+    # create json the old fashioned way
+    json_file = f"{test_file}.json"
+    try:
+        # we get a lot of circular references from the Literal["TypeNameString"] used for Pydantic
+        json_content = json.dumps(
+            gvas_file, cls=EnhancedJSONEncoder, indent=2, check_circular=True
+        )
+        with open(json_file, "w") as f:
+            f.write(json_content)
+    except OverflowError as e:
+        print(f"Circular reference detected: {e}")
 
     # THIS METHOD WORKS, TOO.
     # Note that this method writes out float values differently.

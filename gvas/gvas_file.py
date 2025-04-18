@@ -458,8 +458,9 @@ class GVASFile:
 
         elif self.game_file_format.compression_type == CompressionType.ZLIB:
             # print(f"Writing {ucompressed_file_name}")
-            with open(ucompressed_file_name, "wb") as f:
-                f.write(data_to_write)
+            if ucompressed_file_name:
+                with open(ucompressed_file_name, "wb") as f:
+                    f.write(data_to_write)
             data_to_write = zlib.compress(data_to_write)  # once
             compressed_size = len(data_to_write)
 

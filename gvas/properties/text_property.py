@@ -305,6 +305,7 @@ class FormatArgument:
 
 
 class TextHistoryType(IntEnum):
+    Empty = -2
     # None
     # [default]
     NoType = -1
@@ -363,7 +364,7 @@ UETextHistoryType = Union[
 ]
 
 
-@dataclass()
+@dataclass
 class FText:
     flags: int = 0
     history: Optional[UETextHistoryType] = None
@@ -381,7 +382,7 @@ class FText:
 
 
 # Lightweight version of DateTime
-@dataclass()
+@dataclass
 class DateTime:
     ticks: int = 0
     comment: str = None
@@ -395,13 +396,14 @@ class DateTime:
         return write_uint64(stream, self.ticks)
 
 
-@dataclass()
+@dataclass
 class Empty:
-    type: Literal["Empty"] = "Empty"
+    #     type: str = "Empty"
+    type: TextHistoryType = TextHistoryType.Empty
 
     @field_serializer("type")
-    def serialize_type(self, value: str):
-        return value
+    def serialize_type(self, value: TextHistoryType):
+        return value.name
 
     def write(self, stream: BinaryIO) -> int:
         bytes_written = 0
@@ -414,7 +416,7 @@ class Empty:
         return bytes_written
 
 
-@dataclass()
+@dataclass
 class NoType:
     type: TextHistoryType = TextHistoryType.NoType
     culture_invariant_string: Optional[str] = None
@@ -448,7 +450,7 @@ class NoType:
         return bytes_written
 
 
-@dataclass()
+@dataclass
 class Base:
     type: TextHistoryType = TextHistoryType.Base
     namespace: Optional[str] = None
@@ -475,7 +477,7 @@ class Base:
         return bytes_written
 
 
-@dataclass()
+@dataclass
 class NamedFormat:
     type: TextHistoryType = TextHistoryType.NamedFormat
     source_format: Optional[FText] = None
@@ -507,7 +509,7 @@ class NamedFormat:
         return bytes_written
 
 
-@dataclass()
+@dataclass
 class OrderedFormat:
     type: TextHistoryType = TextHistoryType.OrderedFormat
     source_format: Optional[FText] = None
@@ -537,7 +539,7 @@ class OrderedFormat:
         return bytes_written
 
 
-@dataclass()
+@dataclass
 class ArgumentFormat:
     type: TextHistoryType = TextHistoryType.ArgumentFormat
     source_format: Optional[FText] = None
@@ -569,7 +571,7 @@ class ArgumentFormat:
         return bytes_written
 
 
-@dataclass()
+@dataclass
 class AsNumber:
     type: TextHistoryType = TextHistoryType.AsNumber
     source_value: Optional[FormatArgument] = None
@@ -600,7 +602,7 @@ class AsNumber:
         return bytes_written
 
 
-@dataclass()
+@dataclass
 class AsPercent:
     type: TextHistoryType = TextHistoryType.AsPercent
     source_value: Optional[FormatArgument] = None
@@ -631,7 +633,7 @@ class AsPercent:
         return bytes_written
 
 
-@dataclass()
+@dataclass
 class AsCurrency:
     type: TextHistoryType = TextHistoryType.AsCurrency
     currency_code: Optional[str] = None
@@ -665,7 +667,7 @@ class AsCurrency:
         return bytes_written
 
 
-@dataclass()
+@dataclass
 class AsDate:
     type: TextHistoryType = TextHistoryType.AsDate
     date_time: Optional[DateTime] = None
@@ -693,7 +695,7 @@ class AsDate:
         return bytes_written
 
 
-@dataclass()
+@dataclass
 class AsTime:
     type: TextHistoryType = TextHistoryType.AsTime
     source_date_time: Optional[DateTime] = None
@@ -723,7 +725,7 @@ class AsTime:
         return bytes_written
 
 
-@dataclass()
+@dataclass
 class AsDateTime:
     type: TextHistoryType = TextHistoryType.AsDateTime
     source_date_time: Optional[DateTime] = None
@@ -756,7 +758,7 @@ class AsDateTime:
         return bytes_written
 
 
-@dataclass()
+@dataclass
 class Transform:
     source_text: Optional[FText] = None
     transform_type: Optional[TransformType] = None
@@ -779,7 +781,7 @@ class Transform:
         return bytes_written
 
 
-@dataclass()
+@dataclass
 class StringTableEntry:
     type: TextHistoryType = TextHistoryType.StringTableEntry
     # String table entry

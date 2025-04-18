@@ -433,6 +433,7 @@ class ArrayProperty(PropertyTrait):
             float,
             bool,
             uuid.UUID,
+            # property types
             Type[UEPropertyType],
         ]
     ] = None  # [str, bytes, list, PropertyTrait, StandardStructTrait]
@@ -576,12 +577,12 @@ class ArrayProperty(PropertyTrait):
         property_count = len(self.values)
 
         # this method is MUCH better than serializing each byte independently. Who does that?!
-        if self.property_type == "ByteProperty" and property_count > 0:
-            if type(self.values) is list:
-                byte_property: "ByteProperty" = self.values[0]
-                # property_count = byte_property.actual_property_count
-            elif type(self.values) is bytes:
-                property_count = len(self.values)
+        # if self.property_type == "ByteProperty" and property_count > 0:
+        #     if type(self.values) is list:
+        #         byte_property: "ByteProperty" = self.values[0]
+        #         # property_count = byte_property.actual_property_count
+        #     elif type(self.values) is bytes:
+        #         property_count = len(self.values)
 
         properties_body_start = array_buffer.tell()
         array_bytes += write_uint32(array_buffer, property_count)
