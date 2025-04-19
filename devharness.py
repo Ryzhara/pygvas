@@ -1,9 +1,13 @@
+from pydantic import ValidationError
 from pydantic.dataclasses import dataclasses
+from pydantic import TypeAdapter
+from pydantic import BaseModel
 import enum
 import json
 
 from gvas.gvas_file import GVASFile, GameFileFormat
 from gvas.game_version import GameVersion, CompressionType
+from gvas.properties.aggregators import ArrayProperty
 from gvas.utils import *
 from test_utilities import compare_binary_files
 
@@ -23,6 +27,12 @@ class EnhancedJSONEncoder(json.JSONEncoder):
                 return False
 
             return True
+
+        if isinstance(obj, BaseModel):
+            field_dict = obj.model_dump()
+            return {
+                k: self.default(v) for k, v in field_dict.items() if is_not_empty(v)
+            }
 
         if isinstance(obj, GameFileFormat):
             return {
@@ -124,25 +134,24 @@ test_file_list = [
 
 
 # always a quick retest
-# test_file_list = ["resources/test/islands_of_insight.sav"]
 # test_file_list = ["resources/test/assert_failed.sav"]
-# test_file_list = ["resources/test/component8.sav"]
-# test_file_list = ["resources/test/Delegate.sav"]
 # test_file_list = ["resources/test/Options.sav"]
-# test_file_list = ["resources/test/Profile_0.sav"]
-# test_file_list = ["resources/test/enum_array.sav"]
-# test_file_list = ["resources/test/package_version_525.sav"]
-# test_file_list = ["resources/test/package_version_524.sav"]
+# test_file_list = ["resources/test/Delegate.sav"]
 # test_file_list = ["resources/test/Slot1.sav"]
+# test_file_list = ["resources/test/vector2d.sav"]
+# test_file_list = ["resources/test/package_version_525.sav"]
+# test_file_list = ["resources/test/islands_of_insight.sav"]
+# test_file_list = ["resources/test/SaveSlot_03.sav"]
+# test_file_list = ["resources/test/Profile_0.sav"]
 # test_file_list = ["resources/test/Slot2.sav"]
+# test_file_list = ["resources/test/component8.sav"]
+# ABOVE WORKS
+
+# test_file_list = ["resources/test/enum_array.sav"]
+# test_file_list = ["resources/test/package_version_524.sav"]
 # test_file_list = ["resources/test/Slot3.sav"]
 # test_file_list = ["resources/test/transform.sav"]
 # test_file_list = ["resources/test/ro_64bit_fav.sav"]
-# test_file_list = ["resources/test/SaveSlot_03.sav"]
-test_file_list = ["resources/test/vector2d.sav"]
-
-
-# test shit
 
 
 def test_gvas_file(test_file: str):
@@ -170,7 +179,6 @@ def test_gvas_file(test_file: str):
 
     # create json with pydantic
     pydantic_json_file = f"{test_file}.pydantic.json"
-    from pydantic import TypeAdapter
 
     gvas_file_adaptor = TypeAdapter(GVASFile)
     gvas_file_dict = gvas_file_adaptor.dump_python(gvas_file, exclude_none=True)
@@ -190,8 +198,8 @@ def test_gvas_file(test_file: str):
     except OverflowError as e:
         print(f"Circular reference detected: {e}")
 
-    # THIS METHOD WORKS, TOO.
-    # Note that this method writes out float values differently.
+    # # THIS METHOD WORKS, TOO.
+    # # Note that this method writes out float values differently.
     # pydantic_json_content = gvas_file_adaptor.dump_json(
     #     gvas_file, exclude_none=True, indent=2, round_trip=False
     # )
@@ -204,7 +212,14 @@ def test_gvas_file(test_file: str):
     with open(pydantic_json_file, "r") as f:
         pydantic_json_content_dict = json.load(f)
 
-    new_gvas = gvas_file_adaptor.validate_python(pydantic_json_content_dict)
+    try:
+        new_gvas = gvas_file_adaptor.validate_python(pydantic_json_content_dict)
+        # new_gvas2 = GVASFile.model_validate(pydantic_json_content_dict)
+    except ValidationError as e:
+        # print(e)
+        print(e.errors())  # JSON-style breakdown
+        raise e
+
     # this way is better? or does it not validate?
     # new_gvas = GVASFile(**pydantic_json_content_dict)
 
@@ -249,6 +264,20 @@ def test_gvas_file(test_file: str):
     # if not pydantic_object_commpare:
     #     print(f"FAILED: Reserialized gvas file is NOT IDENTICAL.")
 
+
+# print(GVASFile.model_json_schema())
+
+typearray = TypeAdapter(ArrayProperty)
+arraytest = typearray.validate_python(
+    {
+        "type": "ArrayProperty",
+        "property_type": "StrProperty",
+        "values": [
+            None,
+            None,
+        ],
+    }
+)
 
 for test_file in test_file_list:
     test_gvas_file(test_file)

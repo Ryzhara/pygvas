@@ -48,7 +48,7 @@ from gvas.properties.delegate_property import (
     DelegateProperty,
 )
 
-UEPropertyTypeUnion = Annotated[
+ANNOTATED_GROUP = Annotated[
     Union[
         BoolProperty,
         ByteProperty,
@@ -97,11 +97,14 @@ UEPropertyTypeUnion = Annotated[
 class MapProperty(PropertyTrait):
     """A property that holds a key-value mapping"""
 
+    KEY_TYPE = Union[str, ANNOTATED_GROUP]
+    VALUE_TYPE = Union[bool, int, str, ANNOTATED_GROUP]
+
     type: Literal["MapProperty"] = "MapProperty"
-    key_type: Union[str, "StructProperty"] = ""
-    value_type: Union[bool, int, str, "StructProperty"] = ""
+    key_type: KEY_TYPE = ""
+    value_type: VALUE_TYPE = ""
     allocation_flags: int = 0
-    values: List[Type[UEPropertyTypeUnion]] = None
+    values: List[Tuple[KEY_TYPE, VALUE_TYPE]] = None
 
     def read(
         self,
@@ -124,7 +127,7 @@ class MapProperty(PropertyTrait):
             element_count = read_uint32(stream)
 
             # Read entries
-            self.values: List[Tuple] = []
+            self.values = []
             for _ in range(element_count):
                 with ContextScopeTracker("Key") as _scope_tracker:
                     key_prop = PropertyFactory.new(
@@ -187,7 +190,7 @@ class SetProperty(PropertyTrait):
     type: Literal["SetProperty"] = "SetProperty"
     property_type: Optional[str] = None
     allocation_flags: int = 0
-    properties: Optional[List[Type[UEPropertyTypeUnion],]] = None
+    properties: Optional[List[ANNOTATED_GROUP]] = None
 
     def __post_init__(self):
         if self.properties is None:
@@ -267,6 +270,7 @@ class StructProperty(PropertyTrait):
     guid: Optional[uuid.UUID] = None
     type_name: Optional[str] = None
     value: Union[
+        Dict[str, ANNOTATED_GROUP],
         # these must be here because they can be "special" types.
         # These can also appear inside the dictionary.
         DateTimeProperty,
@@ -278,10 +282,6 @@ class StructProperty(PropertyTrait):
         QuatProperty,
         VectorProperty,
         Vector2DProperty,
-        Dict[
-            str,
-            Type[UEPropertyTypeUnion],
-        ],
     ] = None
 
     @field_serializer("guid")
@@ -430,23 +430,29 @@ class ArrayProperty(PropertyTrait):
     type_name: Optional[str] = None
     property_type: Optional[str] = None
     guid: Optional[uuid.UUID] = None  # often nothing but zeros
-    values: List[
-        Union[
-            # bare types
-            str,
-            bytes,
-            int,
-            float,
-            bool,
-            uuid.UUID,
-            # property types
-            Type[UEPropertyTypeUnion],
-        ]
-    ] = None  # [str, bytes, list, PropertyTrait, StandardStructTrait]
+    values: Union[
+        str,
+        List[
+            Union[
+                # property types
+                ANNOTATED_GROUP,
+                # bare types
+                str,
+                int,
+                float,
+                bool,
+                bytes,
+                uuid.UUID,
+                None,
+            ],
+        ],
+    ] = None
 
     def __post_init__(self):
         if self.values is None:
             self.values = []
+        elif type(self.values) is str:
+            self.values = bytes.fromhex(self.values)
 
     # Guidance to pydantic
     @field_serializer("guid")
@@ -486,9 +492,7 @@ class ArrayProperty(PropertyTrait):
         # Read number of elements in the array
         property_count = read_uint32(stream)
 
-        self.values: [str, bytes, list, PropertyTrait, StandardStructTrait] = (
-            []
-        )  # prepare storage
+        self.values = []  # prepare storage
 
         if self.property_type == "StructProperty":
 
@@ -520,12 +524,12 @@ class ArrayProperty(PropertyTrait):
                             array_property.read_body(stream)
                             self.values.append(array_property)
 
-        elif self.property_type == "TextProperty":
-            for _ in range(property_count):
-                array_property = PropertyFactory.new(
-                    stream, self.property_type, include_header=False
-                )
-                self.values.append(array_property)
+        # elif self.property_type == "TextProperty":
+        #     for _ in range(property_count):
+        #         array_property = PropertyFactory.new(
+        #             stream, self.property_type, include_header=False
+        #         )
+        #         self.values.append(array_property)
 
         elif self.property_type == "ByteProperty":
             # read it all as one blob

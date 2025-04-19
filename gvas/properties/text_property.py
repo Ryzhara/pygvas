@@ -1,7 +1,7 @@
 from enum import IntEnum, auto
 from io import BytesIO
-from typing import Self, TypeVar, Type
-from pydantic import field_serializer
+from typing import Self, TypeVar, Type, Annotated
+from pydantic import field_serializer, Discriminator
 from pydantic.dataclasses import dataclass
 
 from .numerical_property import *
@@ -168,6 +168,7 @@ class FormatArgumentType(IntEnum):
 # Argh. We are impedance matching FormatArgumentType to FormatArgumentValue so
 # we can accommodate an implicit type conversion on 64-bit support. :(
 class FormatArgumentValue(IntEnum):
+    Unknown = -1
     # Integer
     Int = 0
     # Unsigned integer
@@ -193,12 +194,11 @@ class FormatArgumentValue(IntEnum):
 
 @dataclass
 class FormatArgument:
-    type: Optional[FormatArgumentValue] = None
+    type: str = FormatArgumentValue.Unknown.name
     value: Optional[Union[int, float, "FText"]] = None
 
-    @field_serializer("type")
-    def serialize_type(self, type: FormatArgumentValue):
-        return type.name
+    def __post_init__(self):
+        pass
 
     def read(self, stream: BinaryIO) -> Self:
 
@@ -214,7 +214,7 @@ class FormatArgument:
         match format_argument_type:
             case FormatArgumentType.Int:
                 if supports_64bit:
-                    self.type = FormatArgumentValue(FormatArgumentValue.Int64)
+                    self.type = FormatArgumentValue.Int64.name
                     self.value = read_int64(stream)
                 else:
                     self.type = FormatArgumentValue(FormatArgumentValue.Int)
@@ -222,22 +222,22 @@ class FormatArgument:
 
             case FormatArgumentType.UInt:
                 if supports_64bit:
-                    self.type = FormatArgumentValue(FormatArgumentValue.UInt64)
+                    self.type = FormatArgumentValue.UInt64.name
                     self.value = read_uint64(stream)
                 else:
-                    self.type = FormatArgumentValue(FormatArgumentValue.UInt)
+                    self.type = FormatArgumentValue.UInt.name
                     self.value = read_uint32(stream)
 
             case FormatArgumentType.Float:
-                self.type = FormatArgumentValue(FormatArgumentValue.Float)
+                self.type = FormatArgumentValue.Float.name
                 self.value = read_float(stream)
 
             case FormatArgumentType.Double:
-                self.type = FormatArgumentValue(FormatArgumentValue.Double)
+                self.type = FormatArgumentValue.Double.name
                 self.value = read_double(stream)
 
             case FormatArgumentType.Text:
-                self.type = FormatArgumentValue(FormatArgumentValue.Text)
+                self.type = FormatArgumentValue.Text.name
                 self.value = FText().read(stream)
 
             case FormatArgumentType.Gender:
@@ -264,39 +264,39 @@ class FormatArgument:
         # We read one type, use a different type internally, then write the original type back out
         bytes_written = 0
         match self.type:
-            case FormatArgumentValue.Int:
+            case FormatArgumentValue.Int.name:
                 self.assert_64bit_support(expected=False)
                 # *sigh* convert back to other type
                 bytes_written += FormatArgumentType.Int.write_type(stream)
                 bytes_written += write_int32(stream, self.value)
 
-            case FormatArgumentValue.Int64:
+            case FormatArgumentValue.Int64.name:
                 self.assert_64bit_support(expected=True)
                 # *sigh* convert back to other type
                 bytes_written += FormatArgumentType.Int.write_type(stream)
                 bytes_written += write_int64(stream, self.value)
 
-            case FormatArgumentValue.UInt:
+            case FormatArgumentValue.UInt.name:
                 self.assert_64bit_support(expected=False)
                 # *sigh* convert back to other type
                 bytes_written += FormatArgumentType.UInt.write_type(stream)
                 bytes_written += write_uint32(stream, self.value)
 
-            case FormatArgumentValue.UInt64:
+            case FormatArgumentValue.UInt64.name:
                 self.assert_64bit_support(expected=True)
                 # *sigh* convert back to other type
                 bytes_written += FormatArgumentType.UInt.write_type(stream)
                 bytes_written += write_uint64(stream, self.value)
 
-            case FormatArgumentValue.Float:
+            case FormatArgumentValue.Float.name:
                 bytes_written += FormatArgumentType.Float.write_type(stream)
                 bytes_written += write_float(stream, self.value)
 
-            case FormatArgumentValue.Double:
+            case FormatArgumentValue.Double.name:
                 bytes_written += FormatArgumentType.Double.write_type(stream)
                 bytes_written += write_double(stream, self.value)
 
-            case FormatArgumentValue.Text:
+            case FormatArgumentValue.Text.name:
                 bytes_written += FormatArgumentType.Text.write_type(stream)
                 bytes_written += self.value.write(stream)
 
@@ -347,21 +347,24 @@ class TextHistoryType(IntEnum):
         return write_intenum_type(stream, self)
 
 
-UETextHistoryTypeUnion = Union[
-    "Empty",
-    "NoType",
-    "Base",
-    "NamedFormat",
-    "OrderedFormat",
-    "ArgumentFormat",
-    "AsNumber",
-    "AsPercent",
-    "AsCurrency",
-    "AsDate",
-    "AsTime",
-    "AsDateTime",
-    "Transform",
-    "StringTableEntry",
+UETextHistoryTypeUnion = Annotated[
+    Union[
+        "Empty",
+        "NoType",
+        "Base",
+        "NamedFormat",
+        "OrderedFormat",
+        "ArgumentFormat",
+        "AsNumber",
+        "AsPercent",
+        "AsCurrency",
+        "AsDate",
+        "AsTime",
+        "AsDateTime",
+        "Transform",
+        "StringTableEntry",
+    ],
+    Discriminator("type"),
 ]
 
 
@@ -400,15 +403,11 @@ class DateTime:
 @dataclass
 class Empty:
     #     type: str = "Empty"
-    # type: Literal[TextHistoryType.Empty.name] = TextHistoryType.Empty.name
-    type: Literal["Empty"] = "Empty"
+    type: Literal[TextHistoryType.Empty.name] = TextHistoryType.Empty.name
+    # type: Literal["Empty"] = "Empty"
 
     def __post_init__(self):
         pass
-
-    # @field_serializer("type")
-    # def serialize_type(self, value: TextHistoryType):
-    #     return value.name
 
     def write(self, stream: BinaryIO) -> int:
         bytes_written = 0
@@ -427,10 +426,6 @@ class NoType:
     # type: str = "NoType"
     type: Literal[TextHistoryType.NoType.name] = TextHistoryType.NoType.name
     culture_invariant_string: Optional[str] = None
-
-    # @field_serializer("type")
-    # def serialize_type(self, value: TextHistoryType):
-    #     return value.name
 
     def read(self, stream: BinaryIO) -> Self:
         if SerializationTools.supports_version(
@@ -464,10 +459,6 @@ class Base:
     key: Optional[str] = None
     source_string: Optional[str] = None
 
-    # @field_serializer("type")
-    # def serialize_type(self, value: TextHistoryType):
-    #     return value.name
-
     def read(self, stream: BinaryIO) -> Self:
         self.namespace = read_string(stream)
         self.key = read_string(stream)
@@ -489,10 +480,6 @@ class NamedFormat:
     type: Literal[TextHistoryType.NamedFormat.name] = TextHistoryType.NamedFormat.name
     source_format: Optional[FText] = None
     arguments: Optional[dict[str, FormatArgument]] = None
-
-    # @field_serializer("type")
-    # def serialize_type(self, value: TextHistoryType):
-    #     return value.name
 
     def read(self, stream: BinaryIO) -> Self:
         self.source_format = FText().read(stream)
@@ -524,10 +511,6 @@ class OrderedFormat:
     source_format: Optional[FText] = None
     arguments: Optional[list[FormatArgument]] = None
 
-    # @field_serializer("type")
-    # def serialize_type(self, value: TextHistoryType):
-    #     return value.name
-
     def read(self, stream: BinaryIO) -> Self:
         self.source_format = FText().read(stream)
         argument_count = read_int32(stream)
@@ -555,10 +538,6 @@ class ArgumentFormat:
     )
     source_format: Optional[FText] = None
     arguments: Optional[dict[str, FormatArgument]] = None
-
-    # @field_serializer("type")
-    # def serialize_type(self, value: TextHistoryType):
-    #     return value.name
 
     def read(self, stream: BinaryIO) -> Self:
         self.source_format = FText().read(stream)
@@ -589,10 +568,6 @@ class AsNumber:
     format_options: Optional[NumberFormattingOptions] = None
     target_culture: Optional[str] = None
 
-    # @field_serializer("type")
-    # def serialize_type(self, value: TextHistoryType):
-    #     return value.name
-
     def read(self, stream: BinaryIO) -> Self:
         self.source_value = FormatArgument().read(stream)
         has_format_options = read_bool32bit(stream)
@@ -619,10 +594,6 @@ class AsPercent:
     source_value: Optional[FormatArgument] = None
     format_options: Optional[NumberFormattingOptions] = None
     target_culture: Optional[str] = None
-
-    # @field_serializer("type")
-    # def serialize_type(self, value: TextHistoryType):
-    #     return value.name
 
     def read(self, stream: BinaryIO) -> Self:
         self.source_value = FormatArgument().read(stream)
@@ -651,10 +622,6 @@ class AsCurrency:
     source_value: Optional[FormatArgument] = None
     format_options: Optional[NumberFormattingOptions] = None
     target_culture: Optional[str] = None
-
-    # @field_serializer("type")
-    # def serialize_type(self, value: TextHistoryType):
-    #     return value.name
 
     def read(self, stream: BinaryIO) -> Self:
         self.currency_code = read_string(stream)
@@ -686,10 +653,6 @@ class AsDate:
     # todo: FTEXT_HISTORY_DATE_TIMEZONE support (needs object version)
     target_culture: Optional[str] = None
 
-    # @field_serializer("type")
-    # def serialize_type(self, value: TextHistoryType):
-    #     return value.name
-
     def read(self, stream: BinaryIO) -> Self:
         self.date_time = DateTime().read(stream)
         self.date_style = DateTimeStyle.read_type(stream)
@@ -713,10 +676,6 @@ class AsTime:
     time_style: Optional[DateTimeStyle] = None
     time_zone: Optional[str] = None
     target_culture: Optional[str] = None
-
-    # @field_serializer("type")
-    # def serialize_type(self, value: TextHistoryType):
-    #     return value.name
 
     def read(self, stream: BinaryIO) -> Self:
         self.source_date_time = DateTime().read(stream)
@@ -745,10 +704,6 @@ class AsDateTime:
     time_zone: Optional[str] = None
     target_culture: Optional[str] = None
 
-    # @field_serializer("type")
-    # def serialize_type(self, value: TextHistoryType):
-    #     return value.name
-
     def read(self, stream: BinaryIO) -> Self:
         self.source_date_time = DateTime().read(stream)
         self.date_style = DateTimeStyle.read_type(stream)
@@ -775,10 +730,6 @@ class Transform:
     source_text: Optional[FText] = None
     transform_type: Optional[TransformType] = None
 
-    # @field_serializer("type")
-    # def serialize_type(self, value: TextHistoryType):
-    #     return value.name
-
     def read(self, stream: BinaryIO) -> Self:
         self.source_text = FText().read(stream)
         self.transform_type = TransformType.read_type(stream)
@@ -800,10 +751,6 @@ class StringTableEntry:
     )
     table_id: Optional[FText] = None
     key: Optional[str] = None
-
-    # @field_serializer("type")
-    # def serialize_type(self, value: TextHistoryType):
-    #     return value.name
 
     def read(self, stream: BinaryIO) -> Self:
         self.table_id = FText().read(stream)

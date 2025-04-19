@@ -14,6 +14,7 @@ from typing import Optional, Annotated
 
 from pydantic import field_serializer, field_validator, Discriminator
 from pydantic.dataclasses import dataclass
+from pydantic import BaseModel
 
 from .engine_versions import FEngineVersion
 from .game_version import GameVersion, CompressionType, GVAS_MAGIC, PLZ_MAGIC
@@ -66,50 +67,6 @@ from gvas.properties.numerical_property import (
     DoubleProperty,
 )
 
-UEPropertyTypeUnion = Annotated[
-    Union[
-        BoolProperty,
-        ByteProperty,
-        FloatProperty,
-        DoubleProperty,
-        IntProperty,
-        Int8Property,
-        UInt8Property,
-        Int16Property,
-        UInt16Property,
-        Int32Property,
-        UInt32Property,
-        Int64Property,
-        UInt64Property,
-        FloatProperty,
-        DoubleProperty,
-        DateTimeProperty,
-        GuidProperty,
-        TimespanProperty,
-        IntPointProperty,
-        LinearColorProperty,
-        RotatorProperty,
-        QuatProperty,
-        VectorProperty,
-        Vector2DProperty,
-        SetProperty,
-        MapProperty,
-        StructProperty,
-        ArrayProperty,
-        EnumProperty,
-        TextProperty,
-        NameProperty,
-        StrProperty,
-        ObjectProperty,
-        FieldPath,
-        FieldPathProperty,
-        MulticastInlineDelegateProperty,
-        MulticastSparseDelegateProperty,
-        DelegateProperty,
-    ],
-    Discriminator("type"),
-]
-
 
 @dataclass
 class GvasHeader:
@@ -122,6 +79,9 @@ class GvasHeader:
     custom_version_format: int = None
     custom_versions: dict[str, int] = None
     save_game_class_name: str = None
+
+    def __post_init__(self):
+        pass
 
     # Stores CustomVersions serialized by UE4
     @dataclass
@@ -230,6 +190,9 @@ class GameFileFormat:
 
     game_version: GameVersion = GameVersion.UNKNOWN
     compression_type: CompressionType = CompressionType.UNKNOWN
+
+    def __post_init__(self):
+        pass
 
     @field_serializer("game_version")
     def serialize_game_version(self, game_version: GameVersion):
@@ -343,12 +306,61 @@ class GameFileFormat:
             )
 
 
-@dataclass
-class GVASFile:
+# @dataclass
+class GVASFile(BaseModel):
 
     game_file_format: GameFileFormat
     header: GvasHeader
-    properties: Dict[str, UEPropertyTypeUnion]
+    properties: Dict[
+        str,
+        Annotated[
+            Union[
+                # numerical types
+                BoolProperty,
+                ByteProperty,
+                FloatProperty,
+                DoubleProperty,
+                IntProperty,
+                Int8Property,
+                UInt8Property,
+                Int16Property,
+                UInt16Property,
+                Int32Property,
+                UInt32Property,
+                Int64Property,
+                UInt64Property,
+                FloatProperty,
+                DoubleProperty,
+                # standard types
+                DateTimeProperty,
+                GuidProperty,
+                TimespanProperty,
+                IntPointProperty,
+                LinearColorProperty,
+                RotatorProperty,
+                QuatProperty,
+                VectorProperty,
+                Vector2DProperty,
+                # aggregator property types
+                SetProperty,
+                MapProperty,
+                StructProperty,
+                ArrayProperty,
+                # terminal property types
+                EnumProperty,
+                TextProperty,
+                NameProperty,
+                StrProperty,
+                ObjectProperty,
+                FieldPath,
+                FieldPathProperty,
+                MulticastInlineDelegateProperty,
+                MulticastSparseDelegateProperty,
+                DelegateProperty,
+            ],
+            Discriminator("type"),
+        ],
+    ]
 
     def __post_init__(self):
         pass
