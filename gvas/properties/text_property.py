@@ -101,30 +101,26 @@ class RoundingMode(IntEnum):
 @dataclass
 class NumberFormattingOptions:
     # HAD TO INCLUDE DEFAULTS FOR default __init__
-    # Always include sign
     always_include_sign: bool = False
-    # Use grouping
     use_grouping: bool = False
-    # Rounding mode
-    # [cfg_attr(feature = "serde", serde(flatten))]
-    rounding_mode: RoundingMode = RoundingMode.HalfToEven
-    # Minimum integral digits
+    rounding_mode: str = RoundingMode.HalfToEven.name
     minimum_integral_digits: int = 1
-    # Maximum integral digits
     maximum_integral_digits: int = 324
-    # Minimum fractional digits
     minimum_fractional_digits: int = 0
-    # Maximum fractional digits
     maximum_fractional_digits: int = 3
 
-    @field_serializer("rounding_mode")
-    def serialize_rounding_mode(self, rounding_mode: RoundingMode):
-        return rounding_mode.name
+    def __post_init__(self):
+        if self.rounding_mode is not None:
+            pass
+
+    # @field_serializer("rounding_mode")
+    # def serialize_rounding_mode(self, rounding_mode: RoundingMode):
+    #     return rounding_mode.name
 
     def read(self, stream: BinaryIO) -> Self:
         self.always_include_sign = read_bool32bit(stream)
         self.use_grouping = read_bool32bit(stream)
-        self.rounding_mode = RoundingMode.read_type(stream)
+        self.rounding_mode = RoundingMode.read_type(stream).name
         self.minimum_integral_digits = read_int32(stream)
         self.maximum_integral_digits = read_int32(stream)
         self.minimum_fractional_digits = read_int32(stream)
@@ -135,7 +131,7 @@ class NumberFormattingOptions:
         bytes_written = 0
         bytes_written += write_bool32bit(stream, self.always_include_sign)
         bytes_written += write_bool32bit(stream, self.use_grouping)
-        bytes_written += self.rounding_mode.write_type(stream)
+        bytes_written += RoundingMode[self.rounding_mode].write_type(stream)
         bytes_written += write_int32(stream, self.minimum_integral_digits)
         bytes_written += write_int32(stream, self.maximum_integral_digits)
         bytes_written += write_int32(stream, self.minimum_fractional_digits)

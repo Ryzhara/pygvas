@@ -145,13 +145,12 @@ test_file_list = [
 # test_file_list = ["resources/test/Profile_0.sav"]
 # test_file_list = ["resources/test/Slot2.sav"]
 # test_file_list = ["resources/test/component8.sav"]
-# ABOVE WORKS
-
 # test_file_list = ["resources/test/enum_array.sav"]
 # test_file_list = ["resources/test/package_version_524.sav"]
 # test_file_list = ["resources/test/Slot3.sav"]
 # test_file_list = ["resources/test/transform.sav"]
 # test_file_list = ["resources/test/ro_64bit_fav.sav"]
+# ABOVE WORKS
 
 
 def test_gvas_file(test_file: str):
@@ -271,10 +270,25 @@ typearray = TypeAdapter(ArrayProperty)
 arraytest = typearray.validate_python(
     {
         "type": "ArrayProperty",
-        "property_type": "StrProperty",
+        "property_type": "TextProperty",
         "values": [
-            None,
-            None,
+            {
+                "type": "TextProperty",
+                "flags": 1,
+                "history": {
+                    "type": "AsNumber",
+                    "source_value": {"type": "Int64", "value": 1},
+                    "format_options": {
+                        "always_include_sign": False,
+                        "use_grouping": True,
+                        "rounding_mode": "HalfToEven",
+                        "minimum_integral_digits": 1,
+                        "maximum_integral_digits": 324,
+                        "minimum_fractional_digits": 0,
+                        "maximum_fractional_digits": 3,
+                    },
+                },
+            }
         ],
     }
 )
