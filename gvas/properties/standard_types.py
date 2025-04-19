@@ -32,6 +32,9 @@ class GuidProperty(StandardStructTrait):
     type: Literal["Guid"] = "Guid"
     guid: Optional[str] = None
 
+    def __post_init__(self):
+        pass
+
     @classmethod
     def new(cls) -> "GuidProperty":
         return cls()
@@ -54,6 +57,9 @@ class DateTimeProperty(StandardStructTrait):
     datetime: int = 0  # uint64
     comment: str = None
 
+    def __post_init__(self):
+        pass
+
     @classmethod
     def new(cls) -> "DateTimeProperty":
         return cls()
@@ -74,6 +80,9 @@ class TimespanProperty(StandardStructTrait):
     type: Literal["Timespan"] = "Timespan"
     timespan: int = 0  # uint64
     comment: str = None
+
+    def __post_init__(self):
+        pass
 
     @classmethod
     def new(cls) -> "TimespanProperty":
@@ -97,6 +106,9 @@ class IntPointProperty(StandardStructTrait):
     type: Literal["IntPoint"] = "IntPoint"
     x: int = 0
     y: int = 0
+
+    def __post_init__(self):
+        pass
 
     @classmethod
     def new(cls) -> "IntPointProperty":
@@ -124,6 +136,9 @@ class LinearColorProperty(StandardStructTrait):
     b: float = 0
     g: float = 0
     r: float = 0
+
+    def __post_init__(self):
+        pass
 
     @classmethod
     def new(cls) -> "LinearColorProperty":
@@ -155,6 +170,9 @@ class RotatorProperty(StandardStructTrait):
     pitch: float = 0
     yaw: float = 0
     roll: float = 0
+
+    def __post_init__(self):
+        pass
 
     @classmethod
     def new(cls) -> "RotatorProperty":
@@ -188,6 +206,9 @@ class QuatProperty(StandardStructTrait):
     y: float = 0
     z: float = 0
     w: float = 0
+
+    def __post_init__(self):
+        pass
 
     @classmethod
     def new(cls) -> "QuatProperty":
@@ -223,6 +244,9 @@ class VectorProperty(StandardStructTrait):
     y: float = 0
     z: float = 0
 
+    def __post_init__(self):
+        pass
+
     @classmethod
     def new(cls, use_lwc=False) -> "VectorProperty":
         uses_lwc = SerializationTools.supports_version(
@@ -248,11 +272,21 @@ class VectorProperty(StandardStructTrait):
 # ============================================
 #
 @dataclass
+# from pydantic import BaseModel
 class Vector2DProperty(StandardStructTrait):
     type: Literal["Vector2D"] = "Vector2D"
     is_double: bool = False
     x: float = 0
     y: float = 0
+
+    def __post_init__(self):
+        pass
+
+    @classmethod
+    def from_json(cls, json_obj: dict) -> "Vector2DProperty":
+        # Custom parsing logic goes here
+        # json_obj["value"] = int(json_obj["value"])
+        return cls(**json_obj)
 
     @classmethod
     def new(cls) -> "Vector2DProperty":

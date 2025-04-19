@@ -17,6 +17,9 @@ class Delegate:
     object: Optional[str] = None
     function_name: Optional[str] = None
 
+    def __post_init__(self):
+        pass
+
     def read(self, stream: BinaryIO):
         self.object = read_string(stream)
         self.function_name = read_string(stream)
@@ -32,6 +35,9 @@ class Delegate:
 class DelegateProperty(PropertyTrait):
     type: Literal["DelegateProperty"] = "DelegateProperty"
     value: Optional[Delegate] = None
+
+    def __post_init__(self):
+        pass
 
     def read(
         self,
@@ -71,16 +77,17 @@ class DelegateProperty(PropertyTrait):
         return bytes_written
 
 
-@dataclass()
+@dataclass
 class MulticastScriptDelegate:
     type: Literal["MulticastScriptDelegate"] = "MulticastScriptDelegate"
     delegates: Optional[List[Delegate]] = None
 
     def __post_init__(self):
-        self.delegates = []
+        pass
 
     def read(self, stream: BinaryIO) -> None:
         delegate_count = read_uint32(stream)
+        self.delegates = []
         for _ in range(delegate_count):
             delegate = Delegate(object="", function_name="")
             delegate.read(stream)
@@ -95,10 +102,13 @@ class MulticastScriptDelegate:
         return bytes_written
 
 
-@dataclass()
+@dataclass
 class MulticastInlineDelegateProperty(PropertyTrait):
     type: Literal["MulticastInlineDelegateProperty"] = "MulticastInlineDelegateProperty"
     value: Optional[MulticastScriptDelegate] = None
+
+    def __post_init__(self):
+        pass
 
     def read(
         self,
@@ -135,10 +145,13 @@ class MulticastInlineDelegateProperty(PropertyTrait):
         return bytes_written
 
 
-@dataclass()
+@dataclass
 class MulticastSparseDelegateProperty(PropertyTrait):
     type: Literal["MulticastSparseDelegateProperty"] = "MulticastSparseDelegateProperty"
     value: Optional[MulticastScriptDelegate] = None
+
+    def __post_init__(self):
+        pass
 
     def read(
         self,

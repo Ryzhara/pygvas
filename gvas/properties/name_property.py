@@ -1,10 +1,6 @@
 """
 Name property implementation for GVAS
 Python port of name_property.rs
-
-Key differences from Rust version:
-- Uses dataclasses for struct types
-- Simplified type handling
 """
 
 from io import BytesIO

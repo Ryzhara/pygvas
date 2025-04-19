@@ -1,11 +1,6 @@
 """
 Base PropertyFactory implementation for GVAS
 Python port of properties/mod.rs
-
-Key differences from Rust version:
-- Uses Python abstract base classes
-- Implements property interface using Python protocols
-- Uses dataclasses for property options
 """
 
 from abc import ABC, abstractmethod
@@ -42,31 +37,35 @@ class PropertyFactory:
 
     @staticmethod
     def property_class_from_type(property_type: str) -> PropertyTrait:
-        from . import (
-            ArrayProperty,
-            BoolProperty,
-            ByteProperty,
-            EnumProperty,
-            IntProperty,
-            TextProperty,
-            MapProperty,
-            NameProperty,
-            SetProperty,
-            StrProperty,
-            StructProperty,
-            ObjectProperty,
-            FieldPathProperty,
+
+        from gvas.properties.enum_property import EnumProperty
+        from gvas.properties.text_property import TextProperty
+        from gvas.properties.str_property import StrProperty
+        from gvas.properties.name_property import NameProperty
+        from gvas.properties.object_property import ObjectProperty
+        from gvas.properties.field_path_property import FieldPathProperty
+        from gvas.properties.delegate_property import (
             MulticastInlineDelegateProperty,
             MulticastSparseDelegateProperty,
             DelegateProperty,
         )
-        from .numerical_property import (
+
+        from gvas.properties.aggregators import (
+            SetProperty,
+            MapProperty,
+            ArrayProperty,
+            StructProperty,
+        )
+        from gvas.properties.numerical_property import (
+            BoolProperty,
+            ByteProperty,
             Int8Property,
             UInt8Property,
             Int16Property,
             UInt16Property,
             Int32Property,
             UInt32Property,
+            IntProperty,
             Int64Property,
             UInt64Property,
             FloatProperty,

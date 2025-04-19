@@ -2,6 +2,7 @@ from enum import IntEnum, auto
 from io import BytesIO
 from typing import Self, TypeVar, Type
 from pydantic import field_serializer
+from pydantic.dataclasses import dataclass
 
 from .numerical_property import *
 from .property_base import PropertyTrait
@@ -346,7 +347,7 @@ class TextHistoryType(IntEnum):
         return write_intenum_type(stream, self)
 
 
-UETextHistoryType = Union[
+UETextHistoryTypeUnion = Union[
     "Empty",
     "NoType",
     "Base",
@@ -367,7 +368,7 @@ UETextHistoryType = Union[
 @dataclass
 class FText:
     flags: int = 0
-    history: Optional[UETextHistoryType] = None
+    history: Optional[UETextHistoryTypeUnion] = None
 
     def read(self, stream: BinaryIO) -> Self:
         self.flags = read_uint32(stream)
@@ -399,11 +400,15 @@ class DateTime:
 @dataclass
 class Empty:
     #     type: str = "Empty"
-    type: TextHistoryType = TextHistoryType.Empty
+    # type: Literal[TextHistoryType.Empty.name] = TextHistoryType.Empty.name
+    type: Literal["Empty"] = "Empty"
 
-    @field_serializer("type")
-    def serialize_type(self, value: TextHistoryType):
-        return value.name
+    def __post_init__(self):
+        pass
+
+    # @field_serializer("type")
+    # def serialize_type(self, value: TextHistoryType):
+    #     return value.name
 
     def write(self, stream: BinaryIO) -> int:
         bytes_written = 0
@@ -418,12 +423,14 @@ class Empty:
 
 @dataclass
 class NoType:
-    type: TextHistoryType = TextHistoryType.NoType
+
+    # type: str = "NoType"
+    type: Literal[TextHistoryType.NoType.name] = TextHistoryType.NoType.name
     culture_invariant_string: Optional[str] = None
 
-    @field_serializer("type")
-    def serialize_type(self, value: TextHistoryType):
-        return value.name
+    # @field_serializer("type")
+    # def serialize_type(self, value: TextHistoryType):
+    #     return value.name
 
     def read(self, stream: BinaryIO) -> Self:
         if SerializationTools.supports_version(
@@ -440,7 +447,7 @@ class NoType:
 
     def write(self, stream: BinaryIO):
         bytes_written = 0
-        bytes_written += self.type.write_type(stream)
+        bytes_written += TextHistoryType.NoType.write_type(stream)
 
         if SerializationTools.supports_version(
             FEditorObjectVersion.CultureInvariantTextSerializationKeyStability
@@ -452,14 +459,14 @@ class NoType:
 
 @dataclass
 class Base:
-    type: TextHistoryType = TextHistoryType.Base
+    type: Literal[TextHistoryType.Base.name] = TextHistoryType.Base.name
     namespace: Optional[str] = None
     key: Optional[str] = None
     source_string: Optional[str] = None
 
-    @field_serializer("type")
-    def serialize_type(self, value: TextHistoryType):
-        return value.name
+    # @field_serializer("type")
+    # def serialize_type(self, value: TextHistoryType):
+    #     return value.name
 
     def read(self, stream: BinaryIO) -> Self:
         self.namespace = read_string(stream)
@@ -469,7 +476,7 @@ class Base:
 
     def write(self, stream: BinaryIO) -> int:
         bytes_written = 0
-        bytes_written += self.type.write_type(stream)
+        bytes_written += TextHistoryType.Base.write_type(stream)
 
         bytes_written += write_string(stream, self.namespace)
         bytes_written += write_string(stream, self.key)
@@ -479,13 +486,13 @@ class Base:
 
 @dataclass
 class NamedFormat:
-    type: TextHistoryType = TextHistoryType.NamedFormat
+    type: Literal[TextHistoryType.NamedFormat.name] = TextHistoryType.NamedFormat.name
     source_format: Optional[FText] = None
     arguments: Optional[dict[str, FormatArgument]] = None
 
-    @field_serializer("type")
-    def serialize_type(self, value: TextHistoryType):
-        return value.name
+    # @field_serializer("type")
+    # def serialize_type(self, value: TextHistoryType):
+    #     return value.name
 
     def read(self, stream: BinaryIO) -> Self:
         self.source_format = FText().read(stream)
@@ -499,7 +506,7 @@ class NamedFormat:
 
     def write(self, stream: BinaryIO) -> int:
         bytes_written = 0
-        bytes_written += self.type.write_type(stream)
+        bytes_written += TextHistoryType.NamedFormat.write_type(stream)
 
         bytes_written += self.source_format.write(stream)
         bytes_written += write_int32(stream, len(self.arguments))
@@ -511,13 +518,15 @@ class NamedFormat:
 
 @dataclass
 class OrderedFormat:
-    type: TextHistoryType = TextHistoryType.OrderedFormat
+    type: Literal[TextHistoryType.OrderedFormat.name] = (
+        TextHistoryType.OrderedFormat.name
+    )
     source_format: Optional[FText] = None
     arguments: Optional[list[FormatArgument]] = None
 
-    @field_serializer("type")
-    def serialize_type(self, value: TextHistoryType):
-        return value.name
+    # @field_serializer("type")
+    # def serialize_type(self, value: TextHistoryType):
+    #     return value.name
 
     def read(self, stream: BinaryIO) -> Self:
         self.source_format = FText().read(stream)
@@ -530,7 +539,7 @@ class OrderedFormat:
 
     def write(self, stream: BinaryIO) -> int:
         bytes_written = 0
-        bytes_written += self.type.write_type(stream)
+        bytes_written += TextHistoryType.OrderedFormat.write_type(stream)
 
         bytes_written += self.source_format.write(stream)
         bytes_written += write_int32(stream, len(self.arguments))
@@ -541,13 +550,15 @@ class OrderedFormat:
 
 @dataclass
 class ArgumentFormat:
-    type: TextHistoryType = TextHistoryType.ArgumentFormat
+    type: Literal[TextHistoryType.ArgumentFormat.name] = (
+        TextHistoryType.ArgumentFormat.name
+    )
     source_format: Optional[FText] = None
     arguments: Optional[dict[str, FormatArgument]] = None
 
-    @field_serializer("type")
-    def serialize_type(self, value: TextHistoryType):
-        return value.name
+    # @field_serializer("type")
+    # def serialize_type(self, value: TextHistoryType):
+    #     return value.name
 
     def read(self, stream: BinaryIO) -> Self:
         self.source_format = FText().read(stream)
@@ -561,7 +572,7 @@ class ArgumentFormat:
 
     def write(self, stream: BinaryIO) -> int:
         bytes_written = 0
-        bytes_written += self.type.write_type(stream)
+        bytes_written += TextHistoryType.ArgumentFormat.write_type(stream)
 
         bytes_written += self.source_format.write(stream)
         bytes_written += write_int32(stream, len(self.arguments))
@@ -573,14 +584,14 @@ class ArgumentFormat:
 
 @dataclass
 class AsNumber:
-    type: TextHistoryType = TextHistoryType.AsNumber
+    type: Literal[TextHistoryType.AsNumber.name] = TextHistoryType.AsNumber.name
     source_value: Optional[FormatArgument] = None
     format_options: Optional[NumberFormattingOptions] = None
     target_culture: Optional[str] = None
 
-    @field_serializer("type")
-    def serialize_type(self, value: TextHistoryType):
-        return value.name
+    # @field_serializer("type")
+    # def serialize_type(self, value: TextHistoryType):
+    #     return value.name
 
     def read(self, stream: BinaryIO) -> Self:
         self.source_value = FormatArgument().read(stream)
@@ -592,7 +603,7 @@ class AsNumber:
 
     def write(self, stream: BinaryIO) -> int:
         bytes_written = 0
-        bytes_written += self.type.write_type(stream)
+        bytes_written += TextHistoryType.AsNumber.write_type(stream)
 
         bytes_written += self.source_value.write(stream)
         bytes_written += write_bool32bit(stream, True if self.format_options else False)
@@ -604,14 +615,14 @@ class AsNumber:
 
 @dataclass
 class AsPercent:
-    type: TextHistoryType = TextHistoryType.AsPercent
+    type: Literal[TextHistoryType.AsPercent.name] = TextHistoryType.AsPercent.name
     source_value: Optional[FormatArgument] = None
     format_options: Optional[NumberFormattingOptions] = None
     target_culture: Optional[str] = None
 
-    @field_serializer("type")
-    def serialize_type(self, value: TextHistoryType):
-        return value.name
+    # @field_serializer("type")
+    # def serialize_type(self, value: TextHistoryType):
+    #     return value.name
 
     def read(self, stream: BinaryIO) -> Self:
         self.source_value = FormatArgument().read(stream)
@@ -623,7 +634,7 @@ class AsPercent:
 
     def write(self, stream: BinaryIO) -> int:
         bytes_written = 0
-        bytes_written += self.type.write_type(stream)
+        bytes_written += TextHistoryType.AsPercent.write_type(stream)
 
         bytes_written += self.source_value.write(stream)
         bytes_written += write_bool32bit(stream, True if self.format_options else False)
@@ -635,15 +646,15 @@ class AsPercent:
 
 @dataclass
 class AsCurrency:
-    type: TextHistoryType = TextHistoryType.AsCurrency
+    type: Literal[TextHistoryType.AsCurrency.name] = TextHistoryType.AsCurrency.name
     currency_code: Optional[str] = None
     source_value: Optional[FormatArgument] = None
     format_options: Optional[NumberFormattingOptions] = None
     target_culture: Optional[str] = None
 
-    @field_serializer("type")
-    def serialize_type(self, value: TextHistoryType):
-        return value.name
+    # @field_serializer("type")
+    # def serialize_type(self, value: TextHistoryType):
+    #     return value.name
 
     def read(self, stream: BinaryIO) -> Self:
         self.currency_code = read_string(stream)
@@ -656,7 +667,7 @@ class AsCurrency:
 
     def write(self, stream: BinaryIO) -> int:
         bytes_written = 0
-        bytes_written += self.type.write_type(stream)
+        bytes_written += TextHistoryType.AsCurrency.write_type(stream)
 
         bytes_written += write_string(stream, self.currency_code)
         bytes_written += self.source_value.write(stream)
@@ -669,15 +680,15 @@ class AsCurrency:
 
 @dataclass
 class AsDate:
-    type: TextHistoryType = TextHistoryType.AsDate
+    type: Literal[TextHistoryType.AsDate.name] = TextHistoryType.AsDate.name
     date_time: Optional[DateTime] = None
     date_style: Optional[DateTimeStyle] = None
     # todo: FTEXT_HISTORY_DATE_TIMEZONE support (needs object version)
     target_culture: Optional[str] = None
 
-    @field_serializer("type")
-    def serialize_type(self, value: TextHistoryType):
-        return value.name
+    # @field_serializer("type")
+    # def serialize_type(self, value: TextHistoryType):
+    #     return value.name
 
     def read(self, stream: BinaryIO) -> Self:
         self.date_time = DateTime().read(stream)
@@ -687,7 +698,7 @@ class AsDate:
 
     def write(self, stream: BinaryIO) -> int:
         bytes_written = 0
-        bytes_written += self.type.write_type(stream)
+        bytes_written += TextHistoryType.AsDate.write_type(stream)
 
         bytes_written += self.date_time.write(stream)
         bytes_written += self.date_style.write_type(stream)
@@ -697,15 +708,15 @@ class AsDate:
 
 @dataclass
 class AsTime:
-    type: TextHistoryType = TextHistoryType.AsTime
+    type: Literal[TextHistoryType.AsTime.name] = TextHistoryType.AsTime.name
     source_date_time: Optional[DateTime] = None
     time_style: Optional[DateTimeStyle] = None
     time_zone: Optional[str] = None
     target_culture: Optional[str] = None
 
-    @field_serializer("type")
-    def serialize_type(self, value: TextHistoryType):
-        return value.name
+    # @field_serializer("type")
+    # def serialize_type(self, value: TextHistoryType):
+    #     return value.name
 
     def read(self, stream: BinaryIO) -> Self:
         self.source_date_time = DateTime().read(stream)
@@ -716,7 +727,7 @@ class AsTime:
 
     def write(self, stream: BinaryIO) -> int:
         bytes_written = 0
-        bytes_written += self.type.write_type(stream)
+        bytes_written += TextHistoryType.AsTime.write_type(stream)
 
         bytes_written += self.source_date_time.write(stream)
         bytes_written += self.time_style.write_type(stream)
@@ -727,16 +738,16 @@ class AsTime:
 
 @dataclass
 class AsDateTime:
-    type: TextHistoryType = TextHistoryType.AsDateTime
+    type: Literal[TextHistoryType.AsDateTime.name] = TextHistoryType.AsDateTime.name
     source_date_time: Optional[DateTime] = None
     date_style: Optional[DateTimeStyle] = None
     time_style: Optional[DateTimeStyle] = None
     time_zone: Optional[str] = None
     target_culture: Optional[str] = None
 
-    @field_serializer("type")
-    def serialize_type(self, value: TextHistoryType):
-        return value.name
+    # @field_serializer("type")
+    # def serialize_type(self, value: TextHistoryType):
+    #     return value.name
 
     def read(self, stream: BinaryIO) -> Self:
         self.source_date_time = DateTime().read(stream)
@@ -748,7 +759,7 @@ class AsDateTime:
 
     def write(self, stream: BinaryIO) -> int:
         bytes_written = 0
-        bytes_written += self.type.write_type(stream)
+        bytes_written += TextHistoryType.AsDateTime.write_type(stream)
 
         bytes_written += self.source_date_time.write(stream)
         bytes_written += self.date_style.write_type(stream)
@@ -760,12 +771,13 @@ class AsDateTime:
 
 @dataclass
 class Transform:
+    type: Literal[TextHistoryType.Transform.name] = TextHistoryType.Transform.name
     source_text: Optional[FText] = None
     transform_type: Optional[TransformType] = None
 
-    @field_serializer("type")
-    def serialize_type(self, value: TextHistoryType):
-        return value.name
+    # @field_serializer("type")
+    # def serialize_type(self, value: TextHistoryType):
+    #     return value.name
 
     def read(self, stream: BinaryIO) -> Self:
         self.source_text = FText().read(stream)
@@ -774,7 +786,7 @@ class Transform:
 
     def write(self, stream: BinaryIO) -> int:
         bytes_written = 0
-        bytes_written += self.type.write_type(stream)
+        bytes_written += TextHistoryType.Transform.write_type(stream)
 
         bytes_written += self.source_text.write(stream)
         bytes_written += self.transform_type.write_type(stream)
@@ -783,16 +795,15 @@ class Transform:
 
 @dataclass
 class StringTableEntry:
-    type: TextHistoryType = TextHistoryType.StringTableEntry
-    # String table entry
-    # Table id
+    type: Literal[TextHistoryType.StringTableEntry.name] = (
+        TextHistoryType.StringTableEntry.name
+    )
     table_id: Optional[FText] = None
-    # Key
     key: Optional[str] = None
 
-    @field_serializer("type")
-    def serialize_type(self, value: TextHistoryType):
-        return value.name
+    # @field_serializer("type")
+    # def serialize_type(self, value: TextHistoryType):
+    #     return value.name
 
     def read(self, stream: BinaryIO) -> Self:
         self.table_id = FText().read(stream)
@@ -801,7 +812,7 @@ class StringTableEntry:
 
     def write(self, stream: BinaryIO) -> int:
         bytes_written = 0
-        bytes_written += self.type.write_type(stream)
+        bytes_written += TextHistoryType.StringTableEntry.write_type(stream)
 
         bytes_written += self.table_id.write(stream)
         bytes_written += write_string(stream, self.key)
@@ -811,7 +822,7 @@ class StringTableEntry:
 @dataclass
 class FTextHistory:
     @classmethod
-    def read(cls, stream: BinaryIO) -> UETextHistoryType:
+    def read(cls, stream: BinaryIO) -> UETextHistoryTypeUnion:
 
         text_history_type = TextHistoryType.read_type(stream)
 
@@ -870,7 +881,7 @@ class TextProperty(PropertyTrait):
 
     type: Literal["TextProperty"] = "TextProperty"
     flags: int = 0
-    history: Optional[UETextHistoryType] = None
+    history: Optional[UETextHistoryTypeUnion] = None
 
     def read(
         self,
@@ -896,9 +907,9 @@ class TextProperty(PropertyTrait):
     ) -> int:
         """Write text to stream"""
         body_buffer = BytesIO()
-        ftext = FText()
-        ftext.flags = self.flags
-        ftext.history = self.history
+        ftext = FText(flags=self.flags, history=self.history)
+        # ftext.flags = self.flags
+        # ftext.history = self.history
         ftext.write(body_buffer)
 
         length = len(body_buffer.getvalue())

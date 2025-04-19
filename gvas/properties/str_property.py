@@ -14,9 +14,12 @@ from ..utils import *
 @dataclass
 class StrProperty(PropertyTrait):
 
-    # type: Literal["StrProperty"] = "StrProperty"
-    type: str = "StrProperty"
+    type: Literal["StrProperty"] = "StrProperty"
+    # type: str = "StrProperty"
     value: Optional[str] = None
+
+    def __post_init__(self):
+        pass
 
     def read(
         self,

@@ -10,19 +10,105 @@ Key differences from Rust version:
 
 import zlib
 from io import BytesIO
-from typing import Optional
+from typing import Optional, Annotated
 
-from pydantic import field_serializer, field_validator
+from pydantic import field_serializer, field_validator, Discriminator
 from pydantic.dataclasses import dataclass
-
 
 from .engine_versions import FEngineVersion
 from .game_version import GameVersion, CompressionType, GVAS_MAGIC, PLZ_MAGIC
-from .properties import PropertyFactory, PropertyTrait, StrProperty, BoolProperty
-from .properties.standard_types import StandardStructTrait
-from .properties import *
-
 from .utils import *
+
+from gvas.properties.standard_types import (
+    DateTimeProperty,
+    GuidProperty,
+    TimespanProperty,
+    IntPointProperty,
+    LinearColorProperty,
+    RotatorProperty,
+    QuatProperty,
+    VectorProperty,
+    Vector2DProperty,
+)
+
+from gvas.properties.property_base import PropertyFactory
+from gvas.properties.enum_property import EnumProperty
+from gvas.properties.text_property import TextProperty
+from gvas.properties.str_property import StrProperty
+from gvas.properties.name_property import NameProperty
+from gvas.properties.object_property import ObjectProperty
+from gvas.properties.field_path_property import FieldPathProperty, FieldPath
+from gvas.properties.delegate_property import (
+    MulticastInlineDelegateProperty,
+    MulticastSparseDelegateProperty,
+    DelegateProperty,
+)
+
+from gvas.properties.aggregators import (
+    SetProperty,
+    MapProperty,
+    ArrayProperty,
+    StructProperty,
+)
+from gvas.properties.numerical_property import (
+    BoolProperty,
+    ByteProperty,
+    Int8Property,
+    UInt8Property,
+    Int16Property,
+    UInt16Property,
+    Int32Property,
+    UInt32Property,
+    IntProperty,
+    Int64Property,
+    UInt64Property,
+    FloatProperty,
+    DoubleProperty,
+)
+
+UEPropertyTypeUnion = Annotated[
+    Union[
+        BoolProperty,
+        ByteProperty,
+        FloatProperty,
+        DoubleProperty,
+        IntProperty,
+        Int8Property,
+        UInt8Property,
+        Int16Property,
+        UInt16Property,
+        Int32Property,
+        UInt32Property,
+        Int64Property,
+        UInt64Property,
+        FloatProperty,
+        DoubleProperty,
+        DateTimeProperty,
+        GuidProperty,
+        TimespanProperty,
+        IntPointProperty,
+        LinearColorProperty,
+        RotatorProperty,
+        QuatProperty,
+        VectorProperty,
+        Vector2DProperty,
+        SetProperty,
+        MapProperty,
+        StructProperty,
+        ArrayProperty,
+        EnumProperty,
+        TextProperty,
+        NameProperty,
+        StrProperty,
+        ObjectProperty,
+        FieldPath,
+        FieldPathProperty,
+        MulticastInlineDelegateProperty,
+        MulticastSparseDelegateProperty,
+        DelegateProperty,
+    ],
+    Discriminator("type"),
+]
 
 
 @dataclass
@@ -262,40 +348,10 @@ class GVASFile:
 
     game_file_format: GameFileFormat
     header: GvasHeader
-    properties: Dict[
-        str,
-        Union[
-            BoolProperty,
-            ByteProperty,
-            FloatProperty,
-            DoubleProperty,
-            IntProperty,
-            Int8Property,
-            UInt8Property,
-            Int16Property,
-            UInt16Property,
-            Int32Property,
-            UInt32Property,
-            Int64Property,
-            UInt64Property,
-            FloatProperty,
-            DoubleProperty,
-            SetProperty,
-            MapProperty,
-            StructProperty,
-            ArrayProperty,
-            EnumProperty,
-            TextProperty,
-            NameProperty,
-            StrProperty,
-            ObjectProperty,
-            FieldPath,
-            FieldPathProperty,
-            MulticastInlineDelegateProperty,
-            MulticastSparseDelegateProperty,
-            DelegateProperty,
-        ],
-    ]
+    properties: Dict[str, UEPropertyTypeUnion]
+
+    def __post_init__(self):
+        pass
 
     @classmethod
     def print_game_file_format(cls, file_path: str):

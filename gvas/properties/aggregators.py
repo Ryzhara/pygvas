@@ -1,14 +1,11 @@
 from io import BytesIO
 from typing import Optional, ClassVar, Tuple, Annotated, Type, Literal
-
 from pydantic import field_serializer, Discriminator
 from pydantic.dataclasses import dataclass
 
-from .property_base import (
-    PropertyFactory,
-    PropertyTrait,
-)
-from .standard_types import (
+from gvas.utils import *
+
+from gvas.properties.standard_types import (
     is_special_struct,
     get_special_struct_instance,
     StandardStructTrait,
@@ -22,9 +19,7 @@ from .standard_types import (
     VectorProperty,
     Vector2DProperty,
 )
-from ..utils import *
-
-from .numerical_property import (
+from gvas.properties.numerical_property import (
     BoolProperty,
     ByteProperty,
     FloatProperty,
@@ -39,21 +34,21 @@ from .numerical_property import (
     Int64Property,
     UInt64Property,
 )
-from .property_base import PropertyFactory, PropertyTrait
+from gvas.properties.property_base import PropertyFactory, PropertyTrait
 
-from .enum_property import EnumProperty
-from .text_property import TextProperty
-from .name_property import NameProperty
-from .str_property import StrProperty
-from .object_property import ObjectProperty
-from .field_path_property import FieldPath, FieldPathProperty
-from .delegate_property import (
+from gvas.properties.enum_property import EnumProperty
+from gvas.properties.text_property import TextProperty
+from gvas.properties.name_property import NameProperty
+from gvas.properties.str_property import StrProperty
+from gvas.properties.object_property import ObjectProperty
+from gvas.properties.field_path_property import FieldPath, FieldPathProperty
+from gvas.properties.delegate_property import (
     MulticastInlineDelegateProperty,
     MulticastSparseDelegateProperty,
     DelegateProperty,
 )
 
-UEPropertyType = Annotated[
+UEPropertyTypeUnion = Annotated[
     Union[
         BoolProperty,
         ByteProperty,
@@ -70,6 +65,15 @@ UEPropertyType = Annotated[
         UInt64Property,
         FloatProperty,
         DoubleProperty,
+        DateTimeProperty,
+        GuidProperty,
+        TimespanProperty,
+        IntPointProperty,
+        LinearColorProperty,
+        RotatorProperty,
+        QuatProperty,
+        VectorProperty,
+        Vector2DProperty,
         "SetProperty",
         "MapProperty",
         "StructProperty",
@@ -97,7 +101,7 @@ class MapProperty(PropertyTrait):
     key_type: Union[str, "StructProperty"] = ""
     value_type: Union[bool, int, str, "StructProperty"] = ""
     allocation_flags: int = 0
-    values: List[Type[UEPropertyType]] = None
+    values: List[Type[UEPropertyTypeUnion]] = None
 
     def read(
         self,
@@ -183,7 +187,7 @@ class SetProperty(PropertyTrait):
     type: Literal["SetProperty"] = "SetProperty"
     property_type: Optional[str] = None
     allocation_flags: int = 0
-    properties: Optional[List[Type[UEPropertyType],]] = None
+    properties: Optional[List[Type[UEPropertyTypeUnion],]] = None
 
     def __post_init__(self):
         if self.properties is None:
@@ -263,6 +267,8 @@ class StructProperty(PropertyTrait):
     guid: Optional[uuid.UUID] = None
     type_name: Optional[str] = None
     value: Union[
+        # these must be here because they can be "special" types.
+        # These can also appear inside the dictionary.
         DateTimeProperty,
         GuidProperty,
         TimespanProperty,
@@ -274,7 +280,7 @@ class StructProperty(PropertyTrait):
         Vector2DProperty,
         Dict[
             str,
-            Type[UEPropertyType],
+            Type[UEPropertyTypeUnion],
         ],
     ] = None
 
@@ -434,18 +440,13 @@ class ArrayProperty(PropertyTrait):
             bool,
             uuid.UUID,
             # property types
-            Type[UEPropertyType],
+            Type[UEPropertyTypeUnion],
         ]
     ] = None  # [str, bytes, list, PropertyTrait, StandardStructTrait]
 
     def __post_init__(self):
         if self.values is None:
             self.values = []
-
-    # @field_serializer("*")
-    # def serialize_all(self, value: Any, field_info):
-    #     print(f"{field_info.field_name}")
-    #     return value
 
     # Guidance to pydantic
     @field_serializer("guid")

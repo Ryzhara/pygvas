@@ -1,9 +1,9 @@
-import dataclasses
+from pydantic.dataclasses import dataclasses
 import enum
 import json
 
-from gvas import GVASFile, GameFileFormat
-from gvas import GameVersion, CompressionType
+from gvas.gvas_file import GVASFile, GameFileFormat
+from gvas.game_version import GameVersion, CompressionType
 from gvas.utils import *
 from test_utilities import compare_binary_files
 
@@ -71,7 +71,7 @@ class EnhancedJSONEncoder(json.JSONEncoder):
 
 
 test_file_list = [
-    #    "resources/test/islands_of_insight.sav",
+    "resources/test/islands_of_insight.sav",
     "resources/test/assert_failed.sav",
     "resources/test/component8.sav",
     "resources/test/Delegate.sav",
@@ -99,8 +99,8 @@ test_file_list = [
 # compression = CompressionType.NONE
 
 # test_file_list = ["resources/test/palworld_zlib.sav"]  # working!
-# game_version = GameVersion.PALWORLD
-# compression = CompressionType.ZLIB
+# # game_version = GameVersion.PALWORLD
+# # compression = CompressionType.ZLIB
 # SerializationTools.hints = {
 #     "worldSaveData.StructProperty.MapObjectSpawnerInStageSaveData.MapProperty.Value.StructProperty.SpawnerDataMapByLevelObjectInstanceId.MapProperty.Key.StructProperty": "Guid",
 #     "worldSaveData.StructProperty.BaseCampSaveData.MapProperty.Key.StructProperty": "Guid",
@@ -108,8 +108,8 @@ test_file_list = [
 # }
 
 # test_file_list = ["resources/test/palworld_zlib_twice.sav"]  # working!
-# game_version = GameVersion.PALWORLD
-# compression = CompressionType.ZLIB_TWICE
+# # game_version = GameVersion.PALWORLD
+# # compression = CompressionType.ZLIB_TWICE
 # SerializationTools.hints = {
 #     "worldSaveData.StructProperty.MapObjectSpawnerInStageSaveData.MapProperty.Value.StructProperty.SpawnerDataMapByLevelObjectInstanceId.MapProperty.Key.StructProperty": "Guid",
 #     "worldSaveData.StructProperty.BaseCampSaveData.MapProperty.Key.StructProperty": "Guid",
@@ -124,12 +124,23 @@ test_file_list = [
 
 
 # always a quick retest
-# test_file_list = ["Islands of Insight Example.sav"]  # working!
-# test_file_list = ["resources/test/enum_array.sav"]
-# test_file_list = ["resources/test/assert_failed.sav"]#working
-# test_file_list = ["resources/test/component8.sav"]  # working
-# test_file_list = ["resources/test/ro_64bit_fav.sav"]
+# test_file_list = ["resources/test/islands_of_insight.sav"]
+# test_file_list = ["resources/test/assert_failed.sav"]
+# test_file_list = ["resources/test/component8.sav"]
+# test_file_list = ["resources/test/Delegate.sav"]
+# test_file_list = ["resources/test/Options.sav"]
 # test_file_list = ["resources/test/Profile_0.sav"]
+# test_file_list = ["resources/test/enum_array.sav"]
+# test_file_list = ["resources/test/package_version_525.sav"]
+# test_file_list = ["resources/test/package_version_524.sav"]
+# test_file_list = ["resources/test/Slot1.sav"]
+# test_file_list = ["resources/test/Slot2.sav"]
+# test_file_list = ["resources/test/Slot3.sav"]
+# test_file_list = ["resources/test/transform.sav"]
+# test_file_list = ["resources/test/ro_64bit_fav.sav"]
+# test_file_list = ["resources/test/SaveSlot_03.sav"]
+test_file_list = ["resources/test/vector2d.sav"]
+
 
 # test shit
 
@@ -194,15 +205,13 @@ def test_gvas_file(test_file: str):
         pydantic_json_content_dict = json.load(f)
 
     new_gvas = gvas_file_adaptor.validate_python(pydantic_json_content_dict)
-    # new_gvas = GVASFile(**pydantic_json_content_dict)  # this way is better? or does it not validate?
+    # this way is better? or does it not validate?
+    # new_gvas = GVASFile(**pydantic_json_content_dict)
 
     # Now write that GVAS file back out for round trip test
     output_file_too = f"{test_file}.idempotent.too"
-    with open(output_file_too, "wb") as f:
-        new_gvas.write(f)
-
     uncompressed_output_file = f"{test_file}.decompressed.idempotent.too"
-    gvas_file.write_file(output_file_too, uncompressed_output_file)
+    new_gvas.write_file(output_file_too, uncompressed_output_file)
 
     reread_and_rewrite = compare_binary_files(output_file_too, output_file)
 
@@ -234,7 +243,7 @@ def test_gvas_file(test_file: str):
 
     if not reread_and_rewrite:
         print(
-            f"\tFAILED: {test_file} Loaded JSON written as GVAS is NOT IDENTICAL to first serialization."
+            f"\tFAILED: {test_file} Deserialized of JSON FAILED. The saved GVAS is NOT IDENTICAL to first serialization."
         )
 
     # if not pydantic_object_commpare:
