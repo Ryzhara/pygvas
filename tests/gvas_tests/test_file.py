@@ -4,14 +4,17 @@ Tests for GVASFile functionality
 
 import unittest
 from io import BytesIO
-import struct
-from typing import Dict, List
+from typing import Dict, List, Union
 
-from gvas import CompressionType
-from gvas.gvas_file import GVASFile, GvasHeader
-from gvas.game_version import GameVersion
-from gvas.properties.property_base import PropertyFactory
-from gvas.properties.numerical_property import Int32Property, BoolProperty
+from gvas.engine_tools import FEngineVersion, CompressionType, GameVersion
+from gvas.gvas_file import GVASFile, GvasHeader, GameFileFormat
+from gvas.properties.property_base import PropertyFactory, PropertyTrait
+from gvas.properties.numerical_property import (
+    Int32Property,
+    BoolProperty,
+    IntProperty,
+    DoubleProperty,
+)
 from gvas.properties.str_property import StrProperty
 
 
@@ -20,114 +23,169 @@ class TestGvasFile(unittest.TestCase):
 
     def test_create_file(self):
         """Test creating a GVASFile from scratch"""
+
+        # create a game file format
+        game_file_format = GameFileFormat(
+            game_version=GameVersion.DEFAULT, compression_type=CompressionType.NONE
+        )
+
         # Create a header
         header = GvasHeader(
             package_file_version=522,
             package_file_version_ue5=None,
-            engine_version_major=4,
-            engine_version_minor=27,
-            engine_version_patch=2,
-            engine_version_build=0,
-            engine_version_branch="UE4",
+            engine_version=FEngineVersion(
+                major=4, minor=27, patch=2, change_list=0, branch="UE4"
+            ),
             custom_version_format=0,
             custom_versions={},
             save_game_class_name="TestSaveGame",
         )
 
         # Create a new GVASFile
-        file = GVASFile(header=header, properties={})
+        file = GVASFile(game_file_format=game_file_format, header=header, properties={})
 
         # Set some properties
-        file.properties["IntProperty"] = PropertyFactory(
-            type_name="Int32Property", value=Int32Property(42)
+        int_property: Union[IntProperty, PropertyTrait] = (
+            PropertyFactory.property_class_from_type("IntProperty")
         )
-        file.properties["StringProperty"] = PropertyFactory(
-            type_name="StrProperty", value=StrProperty("Hello, world!")
+        int_property.value = 42
+        file.properties["IntProperty"] = int_property
+
+        file.properties["DoubleProperty"] = DoubleProperty(value=3.14)
+
+        str_property: Union[StrProperty, PropertyTrait] = (
+            PropertyFactory.property_class_from_type("StrProperty")
         )
-        file.properties["BoolProperty"] = PropertyFactory(
-            type_name="BoolProperty", value=BoolProperty(True)
+        str_property.value = "Hello, world!"
+        file.properties["StringProperty"] = str_property
+
+        bool_property: Union[BoolProperty, PropertyTrait] = (
+            PropertyFactory.property_class_from_type("BoolProperty")
         )
+        bool_property.value = True
+        file.properties["BoolProperty"] = bool_property
+
+        expected_property_count = len(file.properties)
 
         # Serialize the file
         stream = BytesIO()
-        file.write(stream, GameVersion.DEFAULT)
+        file.write(stream)
 
         # Deserialize the file
         stream.seek(0)
-        loaded_file = GVASFile.read(stream, GameVersion.DEFAULT, CompressionType.NONE)
+        loaded_file = GVASFile.read(
+            stream,
+            game_version=GameVersion.DEFAULT,
+            compression_type=CompressionType.NONE,
+        )
 
         # Check that the properties match
-        self.assertEqual(len(loaded_file.properties), 3)
-        self.assertEqual(loaded_file.properties["IntProperty"].value.value, 42)
+        self.assertEqual(len(loaded_file.properties), expected_property_count)
         self.assertEqual(
-            loaded_file.properties["StringProperty"].value.value, "Hello, world!"
+            loaded_file.properties["IntProperty"].value,
+            file.properties["IntProperty"].value,
         )
-        self.assertEqual(loaded_file.properties["BoolProperty"].value.value, True)
+        self.assertEqual(
+            loaded_file.properties["DoubleProperty"].value,
+            file.properties["DoubleProperty"].value,
+        )
+        self.assertEqual(
+            loaded_file.properties["StringProperty"].value,
+            file.properties["StringProperty"].value,
+        )
+        self.assertEqual(
+            loaded_file.properties["BoolProperty"].value,
+            file.properties["BoolProperty"].value,
+        )
 
     def test_file_header(self):
         """Test GVASFile header serialization"""
+
+        # create a game file format
+        game_file_format = GameFileFormat(
+            game_version=GameVersion.DEFAULT, compression_type=CompressionType.NONE
+        )
+
         # Create a header with custom values
         header = GvasHeader(
             package_file_version=123,
             package_file_version_ue5=None,
-            engine_version_major=4,
-            engine_version_minor=27,
-            engine_version_patch=2,
-            engine_version_build=12345,
-            engine_version_branch="UE4",
+            engine_version=FEngineVersion(
+                major=4, minor=27, patch=2, change_list=12345, branch="UE4"
+            ),
             custom_version_format=5,
             custom_versions={},
             save_game_class_name="TestSaveGame",
         )
 
         # Create a new GVASFile
-        file = GVASFile(header=header, properties={})
+        file = GVASFile(game_file_format=game_file_format, header=header, properties={})
 
         # Add custom format data if needed
         # Note: This would need to be added to the actual implementation
 
         # Serialize the file
         stream = BytesIO()
-        file.write(stream, GameVersion.DEFAULT)
+        file.write(stream)
 
         # Deserialize the file
         stream.seek(0)
         loaded_file = GVASFile.read(stream, GameVersion.DEFAULT, CompressionType.NONE)
 
         # Check that the header values match
-        self.assertEqual(loaded_file.header.package_file_version, 123)
-        self.assertEqual(loaded_file.header.engine_version_major, 4)
-        self.assertEqual(loaded_file.header.engine_version_minor, 27)
-        self.assertEqual(loaded_file.header.engine_version_patch, 2)
-        self.assertEqual(loaded_file.header.engine_version_build, 12345)
-        self.assertEqual(loaded_file.header.engine_version_branch, "UE4")
-        self.assertEqual(loaded_file.header.custom_version_format, 5)
+        self.assertEqual(
+            loaded_file.header.package_file_version, header.package_file_version
+        )
+        self.assertEqual(
+            loaded_file.header.engine_version.major, header.engine_version.major
+        )
+        self.assertEqual(
+            loaded_file.header.engine_version.minor, header.engine_version.minor
+        )
+        self.assertEqual(
+            loaded_file.header.engine_version.patch, header.engine_version.patch
+        )
+        self.assertEqual(
+            loaded_file.header.engine_version.change_list,
+            header.engine_version.change_list,
+        )
+        self.assertEqual(
+            loaded_file.header.engine_version.branch, header.engine_version.branch
+        )
+        self.assertEqual(
+            loaded_file.header.custom_version_format, header.custom_version_format
+        )
+        self.assertEqual(
+            loaded_file.header.save_game_class_name, header.save_game_class_name
+        )
 
     def test_game_version_handling(self):
         """Test handling different game versions"""
-        # Create a header
+        # create a game file format
+        game_file_format = GameFileFormat(
+            game_version=GameVersion.DEFAULT, compression_type=CompressionType.NONE
+        )
+
+        # Create a header with custom values
         header = GvasHeader(
             package_file_version=522,
             package_file_version_ue5=None,
-            engine_version_major=4,
-            engine_version_minor=27,
-            engine_version_patch=2,
-            engine_version_build=0,
-            engine_version_branch="UE4",
+            engine_version=FEngineVersion(
+                major=4, minor=27, patch=2, change_list=0, branch="UE4"
+            ),
             custom_version_format=0,
-            custom_versions=HashableIndexMap(),
+            custom_versions={},
             save_game_class_name="TestSaveGame",
         )
 
         # Create a file with default game version
-        file = GVASFile(header=header, properties={})
-        file.properties["TestProperty"] = PropertyFactory(
-            type_name="Int32Property", value=Int32Property(42)
-        )
+        file = GVASFile(game_file_format=game_file_format, header=header, properties={})
+
+        file.properties["TestProperty"] = Int32Property(value=42)
 
         # Serialize with default game version
         default_stream = BytesIO()
-        file.write(default_stream, GameVersion.DEFAULT)
+        file.write(default_stream)
 
         # Deserialize with default game version
         default_stream.seek(0)
@@ -136,7 +194,7 @@ class TestGvasFile(unittest.TestCase):
         )
 
         # Check that the property was loaded correctly
-        self.assertEqual(default_file.properties["TestProperty"].value.value, 42)
+        self.assertEqual(default_file.properties["TestProperty"].value, 42)
 
 
 if __name__ == "__main__":

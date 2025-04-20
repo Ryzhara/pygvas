@@ -8,7 +8,8 @@ from io import BytesIO
 from typing import Optional, Literal
 
 from .property_base import PropertyTrait
-from ..utils import *
+from ..engine_tools import ByteCountValidator
+from ..gvas_utils import *
 
 
 @dataclass

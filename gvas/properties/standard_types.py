@@ -2,8 +2,8 @@ from abc import ABC, abstractmethod
 from typing import Optional, Literal
 from pydantic.dataclasses import dataclass
 
-from ..utils import *
-from ..custom_versions import FEditorObjectVersion, FUE5ReleaseStreamObjectVersion
+from gvas.gvas_utils import *
+from gvas.engine_tools import FUE5ReleaseStreamObjectVersion, SerializationTools
 
 
 # ============================================

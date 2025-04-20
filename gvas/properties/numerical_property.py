@@ -9,7 +9,7 @@ from pydantic import field_validator, field_serializer
 from pydantic.dataclasses import dataclass
 
 from .property_base import PropertyTrait
-from ..utils import *
+from ..gvas_utils import *
 
 
 @dataclass

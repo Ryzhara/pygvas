@@ -6,9 +6,9 @@ import enum
 import json
 
 from gvas.gvas_file import GVASFile, GameFileFormat
-from gvas.game_version import GameVersion, CompressionType
+from gvas.engine_tools import GameVersion, CompressionType
 from gvas.properties.aggregators import ArrayProperty
-from gvas.utils import *
+from gvas.gvas_utils import *
 from test_utilities import compare_binary_files
 
 
@@ -109,13 +109,8 @@ test_file_list = [
 # compression = CompressionType.NONE
 
 # test_file_list = ["resources/test/palworld_zlib.sav"]  # working!
-# # game_version = GameVersion.PALWORLD
-# # compression = CompressionType.ZLIB
-# SerializationTools.hints = {
-#     "worldSaveData.StructProperty.MapObjectSpawnerInStageSaveData.MapProperty.Value.StructProperty.SpawnerDataMapByLevelObjectInstanceId.MapProperty.Key.StructProperty": "Guid",
-#     "worldSaveData.StructProperty.BaseCampSaveData.MapProperty.Key.StructProperty": "Guid",
-#     "worldSaveData.StructProperty.GroupSaveDataMap.MapProperty.Key.StructProperty": "Guid",
-# }
+# game_version = GameVersion.PALWORLD
+# compression = CompressionType.ZLIB
 
 # test_file_list = ["resources/test/palworld_zlib_twice.sav"]  # working!
 # # game_version = GameVersion.PALWORLD

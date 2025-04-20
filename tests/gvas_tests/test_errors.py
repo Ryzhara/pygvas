@@ -7,15 +7,21 @@ from io import BytesIO
 import struct
 import zlib
 
+from typing_extensions import override
+
 from gvas.error import DeserializeError
 from gvas.gvas_file import GVASFile, GVAS_MAGIC
-from gvas.game_version import GameVersion
-from gvas.properties.property_base import PropertyFactory, PropertyOptions
-from gvas.properties.numerical_property import BoolProperty
+from gvas.engine_tools import GameVersion, CompressionType, SerializationTools
+from gvas.properties.property_base import PropertyFactory
 
 
 class TestErrors(unittest.TestCase):
     """Test error handling"""
+
+    @classmethod
+    @override
+    def setUpClass(cls) -> None:
+        SerializationTools.set_inside_unit_tests()
 
     def test_invalid_magic(self):
         """Test handling of invalid magic bytes"""
@@ -24,7 +30,11 @@ class TestErrors(unittest.TestCase):
 
         # Attempt to read the file
         with self.assertRaises(Exception) as context:
-            GVASFile.read(stream, GameVersion.Default)
+            GVASFile.read(
+                stream,
+                game_version=GameVersion.DEFAULT,
+                compression_type=CompressionType.NONE,
+            )
 
         # The exact error will depend on implementation details
         # but we should get some kind of error
@@ -32,12 +42,10 @@ class TestErrors(unittest.TestCase):
 
     def test_invalid_property_type(self):
         """Test handling of invalid property type"""
-        # Create options
-        options = PropertyOptions()
 
         # Attempt to read a property with an invalid type
         with self.assertRaises(DeserializeError) as context:
-            PropertyFactory.new(BytesIO(), "InvalidProperty", options)
+            PropertyFactory.new(BytesIO(), "InvalidProperty")
 
         self.assertIn("Unknown property type", str(context.exception))
 
@@ -51,7 +59,11 @@ class TestErrors(unittest.TestCase):
 
         # Attempt to read the file
         with self.assertRaises(Exception) as context:
-            GVASFile.read(stream, GameVersion.Default)
+            GVASFile.read(
+                stream,
+                game_version=GameVersion.DEFAULT,
+                compression_type=CompressionType.NONE,
+            )
 
         # The exact error will depend on implementation details
         # but we should get some kind of error

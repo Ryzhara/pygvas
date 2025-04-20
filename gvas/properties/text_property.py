@@ -6,7 +6,13 @@ from pydantic.dataclasses import dataclass
 
 from .numerical_property import *
 from .property_base import PropertyTrait
-from ..utils import *
+from ..engine_tools import (
+    ByteCountValidator,
+    SerializationTools,
+    FEditorObjectVersion,
+    FUE5ReleaseStreamObjectVersion,
+)
+from ..gvas_utils import *
 
 EnumT = TypeVar("EnumT", bound=IntEnum)
 
@@ -343,7 +349,7 @@ class TextHistoryType(IntEnum):
         return write_intenum_type(stream, self)
 
 
-UETextHistoryTypeUnion = Annotated[
+UNREAL_ENGINE_TEXT_PROPERTY_TYPES = Annotated[
     Union[
         "Empty",
         "NoType",
@@ -367,7 +373,7 @@ UETextHistoryTypeUnion = Annotated[
 @dataclass
 class FText:
     flags: int = 0
-    history: Optional[UETextHistoryTypeUnion] = None
+    history: Optional[UNREAL_ENGINE_TEXT_PROPERTY_TYPES] = None
 
     def read(self, stream: BinaryIO) -> Self:
         self.flags = read_uint32(stream)
@@ -765,7 +771,7 @@ class StringTableEntry:
 @dataclass
 class FTextHistory:
     @classmethod
-    def read(cls, stream: BinaryIO) -> UETextHistoryTypeUnion:
+    def read(cls, stream: BinaryIO) -> UNREAL_ENGINE_TEXT_PROPERTY_TYPES:
 
         text_history_type = TextHistoryType.read_type(stream)
 
@@ -824,7 +830,7 @@ class TextProperty(PropertyTrait):
 
     type: Literal["TextProperty"] = "TextProperty"
     flags: int = 0
-    history: Optional[UETextHistoryTypeUnion] = None
+    history: Optional[UNREAL_ENGINE_TEXT_PROPERTY_TYPES] = None
 
     def read(
         self,

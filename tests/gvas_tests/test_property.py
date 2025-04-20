@@ -42,15 +42,10 @@ class TestProperty(unittest.TestCase):
             property_obj: The property to test
             property_type: The type type_name of the property
         """
-        options = PropertyOptions()
-
         # Export the property to a byte array
         writer = BytesIO()
-        bytes_written = property_obj.write(writer, options)
+        bytes_written = property_obj.write(writer)
         writer.seek(0)
-
-        # Create a property wrapper
-        prop = PropertyFactory(property_type, property_obj)
 
         # Import the property from a byte array
         reader = BytesIO()
@@ -61,7 +56,7 @@ class TestProperty(unittest.TestCase):
         reader.write(type_bytes)
 
         # Write the property data
-        prop.write(reader, options)
+        property_obj.write(reader)
         reader.seek(0)
 
         # Read the property type
@@ -89,7 +84,7 @@ class TestProperty(unittest.TestCase):
         byte_prop = ByteProperty()
         byte_prop.name = None
         # Use BytePropertyValue.Byte.value instead of calling it
-        byte_prop.value = BytePropertyValue.Byte.value
+        byte_prop.value = 1
         self.test_property_roundtrip(byte_prop, "ByteProperty")
 
         # Test with namespaced value

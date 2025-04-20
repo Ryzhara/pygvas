@@ -7,8 +7,9 @@ from pydantic.dataclasses import dataclass
 from typing import Optional, Literal
 from io import BytesIO
 
-from .property_base import PropertyTrait
-from ..utils import *
+from gvas.properties.property_base import PropertyTrait
+from gvas.engine_tools import ByteCountValidator
+from gvas.gvas_utils import *
 
 
 @dataclass

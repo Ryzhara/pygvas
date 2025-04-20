@@ -1,16 +1,138 @@
-# Custom version information
-import uuid
+# Engine version information
 import enum
-import struct
 
-from .engine_versions import *
+from pydantic.dataclasses import dataclass
+
+from .gvas_utils import *
 
 
-# ============================================
-#
-def guid_from_uint32x4(uint1: int, uint2: int, uint3: int, uint4: int) -> uuid:
-    byte_buffer = struct.pack("<IIII", uint1, uint2, uint3, uint4)
-    return uuid.UUID(bytes=byte_buffer)
+# Magic number that appears at the start of every GVAS file
+GVAS_MAGIC = b"GVAS"
+PLZ_MAGIC = b"PlZ"  # not sure why RUST uses a null byte terminator
+
+
+class CompressionType(enum.Enum):
+    """
+    Compression types used in Palworld custom file format
+    """
+
+    UNKNOWN = 0x00
+    # None
+    NONE = 0x30
+    # Zlib
+    ZLIB = 0x31
+    # Zlib twice
+    ZLIB_TWICE = 0x32
+    # Palworld specific compression type; NOT IMPLEMENTED
+    PLZ = 0xFF
+
+
+class GameVersion(enum.Enum):
+    """Supported game versions"""
+
+    UNKNOWN = 0
+    DEFAULT = 1
+    PALWORLD = 2
+
+
+# UE4 Engine version enum
+class EngineVersion(enum.Enum):
+    # Unknown
+    UNKNOWN = (-1, -1)
+    # Oldest loadable package
+    VER_UE4_OLDEST_LOADABLE_PACKAGE = (4, 0)
+
+    VER_UE4_0 = (4, 0)
+    VER_UE4_1 = (4, 1)
+    VER_UE4_2 = (4, 2)
+    VER_UE4_3 = (4, 3)
+    VER_UE4_4 = (4, 4)
+    VER_UE4_5 = (4, 5)
+    VER_UE4_6 = (4, 6)
+    VER_UE4_7 = (4, 7)
+    VER_UE4_8 = (4, 8)
+    VER_UE4_9 = (4, 9)
+    VER_UE4_10 = (4, 10)
+    VER_UE4_11 = (4, 11)
+    VER_UE4_12 = (4, 12)
+    VER_UE4_13 = (4, 13)
+    VER_UE4_14 = (4, 14)
+    VER_UE4_15 = (4, 15)
+    VER_UE4_16 = (4, 16)
+    VER_UE4_17 = (4, 17)
+    VER_UE4_18 = (4, 18)
+    VER_UE4_19 = (4, 19)
+    VER_UE4_20 = (4, 20)
+    VER_UE4_21 = (4, 21)
+    VER_UE4_22 = (4, 22)
+    VER_UE4_23 = (4, 23)
+    VER_UE4_24 = (4, 24)
+    VER_UE4_25 = (4, 25)
+    VER_UE4_26 = (4, 26)
+    VER_UE4_27 = (4, 27)
+
+    VER_UE5_0 = (5, 0)
+    VER_UE5_1 = (5, 1)
+    VER_UE5_2 = (5, 2)
+
+    # The newest specified version of the Unreal Engine.
+    VER_UE4_AUTOMATIC_VERSION = (4, 27)
+    # Version plus one
+    VER_UE4_AUTOMATIC_VERSION_PLUS_ONE = (4, 28)
+
+
+# Stores UE4 version in which the GVAS file was saved
+@dataclass
+class FEngineVersion:
+    # Major version number.
+    major: int  # u16
+    # Minor version number.
+    minor: int  # u16
+    # Patch version number.
+    patch: int  # u16
+    # Build id.
+    change_list: int  # u32
+    # Build id string.
+    branch: str  # String
+
+    @classmethod
+    def new(
+        cls, major: int, minor: int, patch: int, change_list: int, branch: str
+    ) -> "FEngineVersion":
+        return FEngineVersion(major, minor, patch, change_list, branch)
+
+    def format(self):
+        return (
+            f"{self.major}.{self.minor}.{self.patch}-{self.change_list}+++{self.branch}"
+        )
+
+    @classmethod
+    def read(cls, stream: BinaryIO) -> "FEngineVersion":
+        major = read_uint16(stream)
+        minor = read_uint16(stream)
+        patch = read_uint16(stream)
+        change_list = read_uint32(stream)
+        branch = read_string(stream)
+        return cls.new(major, minor, patch, change_list, branch)
+
+    # Write FEngineVersion to a binary file
+    # [inline]
+    def write(self, stream: BinaryIO) -> int:
+        bytes_written = 0
+        bytes_written += write_uint16(stream, self.major)
+        bytes_written += write_uint16(stream, self.minor)
+        bytes_written += write_uint16(stream, self.patch)
+        bytes_written += write_uint32(stream, self.change_list)
+        bytes_written += write_string(stream, self.branch)
+        return bytes_written
+
+    # Get [`EngineVersion`]
+    def get_version(self) -> EngineVersion:
+        try:
+            result = EngineVersion((self.major, self.minor))
+        except ValueError:
+            result = EngineVersion.UNKNOWN
+        return result
 
 
 # ============================================
@@ -388,3 +510,138 @@ class FUE5ReleaseStreamObjectVersion(enum.IntEnum):
 
     # Orthographic Near and Far Plane Auto-resolve enabled by default
     OrthographicAutoNearFarPlane = enum.auto()
+
+
+# ============================================
+#
+class ByteCountValidator:
+    """
+    Use stream.tell() to count bytes and compare to expectations.
+    """
+
+    def __init__(self, stream: BinaryIO, expected_byte_count: int, do_validation):
+        self.stream = stream
+        self.expected_byte_count = expected_byte_count
+        self.do_validation = do_validation
+        self.start_byte = 0
+        self.end_byte = 0
+
+    def __enter__(self):
+        self.start_byte = self.stream.tell()
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        if exc_type is not None:
+            if not SerializationTools.inside_unit_tests():
+                print(
+                    f"An exception of type {exc_type} was caught in ByteCountValidator: {exc_val}\n\t{self.start_byte=} {self.expected_byte_count=} {self.do_validation=}\n\t{exc_tb}"
+                )
+            return False
+
+        if not self.do_validation:
+            return None
+
+        self.end_byte = self.stream.tell()
+        read_byte_count = self.end_byte - self.start_byte
+
+        if read_byte_count != self.expected_byte_count:
+            raise DeserializeError.invalid_read_count(
+                self.expected_byte_count, read_byte_count, self.start_byte
+            )
+        return None
+
+
+# ============================================
+#
+class SerializationTools:
+    """
+    This class corresponds to the Rust package use of "options" and scoped property stacks.
+    It is never instantiated and avoids cluttering signatures with mostly unused parameters.
+
+    If your file fails while parsing with a DeserializeError::MissingHint error you need hints.
+    When a struct is stored inside ArrayProperty/SetProperty/MapProperty in GvasFile it does not
+    contain type annotations. This means that a library parsing the file must know the type
+    beforehand. That’s why you need hints.
+    """
+
+    custom_versions: dict[str, int]
+    hints: Dict[str, str] = {}
+    context_stack: List[str] = []
+    engine_major: int = 4
+    engine_minor: int = 0
+    unit_tests_running: bool = False
+
+    @classmethod
+    def set_inside_unit_tests(cls) -> None:
+        cls.unit_tests_running = True
+
+    @classmethod
+    def inside_unit_tests(cls) -> bool:
+        return cls.unit_tests_running
+
+    @classmethod
+    def set_engine_version(cls, engine_major: int, engine_minor: int) -> None:
+        cls.engine_major = engine_major
+        cls.engine_minor = engine_minor
+
+    @classmethod
+    def version_is_at_least(cls, engine_major: int, engine_minor: int):
+        return engine_major >= cls.engine_major and engine_minor >= cls.engine_minor
+
+    def version_is_less_than(cls, engine_major: int, engine_minor: int):
+        return engine_major < cls.engine_major and engine_minor < cls.engine_minor
+
+    # initialization requirements
+    @classmethod
+    def set_custom_versions(cls, custom_versions: dict[str, int]) -> None:
+        cls.custom_versions = custom_versions
+
+    # used for processing hints
+    @classmethod
+    def push_context_step(cls, step: str) -> None:
+        cls.context_stack.append(step)
+
+    @classmethod
+    def pop_context_step(cls) -> None:
+        cls.context_stack.pop()
+
+    @classmethod
+    def get_context_path(cls) -> str:
+        return ".".join(cls.context_stack)
+
+    @classmethod
+    def supports_version(
+        cls, required_version: FEditorObjectVersion | FUE5ReleaseStreamObjectVersion
+    ) -> bool:
+        guid_key_str = guid_to_str(required_version.custom_version_guid)
+        supported_version = cls.custom_versions.get(guid_key_str, 0)
+        return supported_version >= required_version.value
+
+
+# ============================================
+#
+class ContextScopeTracker:
+    parent_context = "unknown"
+    context = "unknown"
+
+    def __init__(self, context: str):
+        self.parent_context = SerializationTools.get_context_path()
+        self.context = context
+
+    def __enter__(self):
+        SerializationTools.push_context_step(self.context)
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        if exc_type is not None:
+            if not SerializationTools.inside_unit_tests():
+                print(
+                    f"An exception of type {exc_type} occurred: {exc_val} with context\n\t{SerializationTools.get_context_path()}"
+                )
+                import traceback
+                import sys
+
+                traceback.print_exception(exc_type, exc_val, exc_tb, file=sys.stdout)
+            return False
+
+        # Don't pop so we can have deepest context for debugging
+        SerializationTools.pop_context_step()
+        return True

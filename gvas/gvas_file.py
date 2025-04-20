@@ -16,9 +16,17 @@ from pydantic import field_serializer, field_validator, Discriminator
 from pydantic.dataclasses import dataclass
 from pydantic import BaseModel
 
-from .engine_versions import FEngineVersion
-from .game_version import GameVersion, CompressionType, GVAS_MAGIC, PLZ_MAGIC
-from .utils import *
+from gvas.engine_tools import (
+    FEngineVersion,
+    EngineVersion,
+    GameVersion,
+    CompressionType,
+    GVAS_MAGIC,
+    PLZ_MAGIC,
+    SerializationTools,
+    ContextScopeTracker,
+)
+from gvas.gvas_utils import *
 
 from gvas.properties.standard_types import (
     DateTimeProperty,
@@ -68,10 +76,57 @@ from gvas.properties.numerical_property import (
 )
 
 
+UNREAL_ENGINE_PROPERTIES = Annotated[
+    Union[
+        # numerical types
+        BoolProperty,
+        ByteProperty,
+        FloatProperty,
+        DoubleProperty,
+        IntProperty,
+        Int8Property,
+        UInt8Property,
+        Int16Property,
+        UInt16Property,
+        Int32Property,
+        UInt32Property,
+        Int64Property,
+        UInt64Property,
+        FloatProperty,
+        DoubleProperty,
+        # standard types
+        DateTimeProperty,
+        GuidProperty,
+        TimespanProperty,
+        IntPointProperty,
+        LinearColorProperty,
+        RotatorProperty,
+        QuatProperty,
+        VectorProperty,
+        Vector2DProperty,
+        # aggregator property types
+        SetProperty,
+        MapProperty,
+        StructProperty,
+        ArrayProperty,
+        # terminal property types
+        EnumProperty,
+        TextProperty,
+        NameProperty,
+        StrProperty,
+        ObjectProperty,
+        FieldPath,
+        FieldPathProperty,
+        MulticastInlineDelegateProperty,
+        MulticastSparseDelegateProperty,
+        DelegateProperty,
+    ],
+    Discriminator("type"),
+]
+
+
 @dataclass
 class GvasHeader:
-    """Header information for GVAS files"""
-
     type: str = "Unknown"
     package_file_version: int = None
     package_file_version_ue5: Optional[int] = None
@@ -114,6 +169,9 @@ class GvasHeader:
 
         # Read versions
         save_game_version = read_uint32(stream)
+        if not 2 <= save_game_version <= 3:
+            raise DeserializeError.invalid_header("Invalid save_game_version")
+
         package_file_version = read_uint32(stream)
 
         # Read UE5 version if present
@@ -311,56 +369,7 @@ class GVASFile(BaseModel):
 
     game_file_format: GameFileFormat
     header: GvasHeader
-    properties: Dict[
-        str,
-        Annotated[
-            Union[
-                # numerical types
-                BoolProperty,
-                ByteProperty,
-                FloatProperty,
-                DoubleProperty,
-                IntProperty,
-                Int8Property,
-                UInt8Property,
-                Int16Property,
-                UInt16Property,
-                Int32Property,
-                UInt32Property,
-                Int64Property,
-                UInt64Property,
-                FloatProperty,
-                DoubleProperty,
-                # standard types
-                DateTimeProperty,
-                GuidProperty,
-                TimespanProperty,
-                IntPointProperty,
-                LinearColorProperty,
-                RotatorProperty,
-                QuatProperty,
-                VectorProperty,
-                Vector2DProperty,
-                # aggregator property types
-                SetProperty,
-                MapProperty,
-                StructProperty,
-                ArrayProperty,
-                # terminal property types
-                EnumProperty,
-                TextProperty,
-                NameProperty,
-                StrProperty,
-                ObjectProperty,
-                FieldPath,
-                FieldPathProperty,
-                MulticastInlineDelegateProperty,
-                MulticastSparseDelegateProperty,
-                DelegateProperty,
-            ],
-            Discriminator("type"),
-        ],
-    ]
+    properties: Dict[str, UNREAL_ENGINE_PROPERTIES]
 
     def __post_init__(self):
         pass
@@ -483,7 +492,7 @@ class GVASFile(BaseModel):
     def write(
         self,
         stream: BinaryIO,
-        ucompressed_file_name: str = None,
+        uncompressed_file_name: str = None,
     ) -> None:
         """Write GVAS file to stream"""
 
@@ -508,9 +517,9 @@ class GVASFile(BaseModel):
         # Handle compression options
         if self.game_file_format.compression_type == CompressionType.ZLIB_TWICE:
             # hack to save uncompressed
-            if ucompressed_file_name:
-                # print(f"Writing {ucompressed_file_name}")
-                with open(ucompressed_file_name, "wb") as f:
+            if uncompressed_file_name:
+                # print(f"Writing {uncompressed_file_name}")
+                with open(uncompressed_file_name, "wb") as f:
                     f.write(data_to_write)
 
             data_to_write = zlib.compress(data_to_write)  # once
@@ -525,9 +534,9 @@ class GVASFile(BaseModel):
             compressed_size = first_compressed_size
 
         elif self.game_file_format.compression_type == CompressionType.ZLIB:
-            # print(f"Writing {ucompressed_file_name}")
-            if ucompressed_file_name:
-                with open(ucompressed_file_name, "wb") as f:
+            # print(f"Writing {uncompressed_file_name}")
+            if uncompressed_file_name:
+                with open(uncompressed_file_name, "wb") as f:
                     f.write(data_to_write)
             data_to_write = zlib.compress(data_to_write)  # once
             compressed_size = len(data_to_write)

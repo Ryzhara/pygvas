@@ -7,7 +7,8 @@ from abc import ABC, abstractmethod
 from typing import Optional, Dict, Any, BinaryIO, List, Tuple
 from pydantic.dataclasses import dataclass
 
-from ..utils import *
+from ..engine_tools import ContextScopeTracker, SerializationTools
+from ..gvas_utils import *
 
 
 # ============================================
@@ -107,7 +108,8 @@ class PropertyFactory:
             property_instance = type_map[property_type]()
             return property_instance
         # else:
-        print(f"Unknown property type: {property_type}")
+        if not SerializationTools.inside_unit_tests():
+            print(f"Unknown property type: {property_type}")
         raise DeserializeError(f"Unknown property type: {property_type}")
 
     @classmethod

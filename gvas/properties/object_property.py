@@ -9,7 +9,8 @@ from typing import Optional, Literal
 from pydantic.dataclasses import dataclass
 
 from .property_base import PropertyTrait
-from ..utils import *
+from ..engine_tools import ByteCountValidator
+from ..gvas_utils import *
 
 
 @dataclass

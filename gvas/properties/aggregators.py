@@ -3,7 +3,12 @@ from typing import Optional, ClassVar, Tuple, Annotated, Type, Literal
 from pydantic import field_serializer, Discriminator
 from pydantic.dataclasses import dataclass
 
-from gvas.utils import *
+from gvas.engine_tools import (
+    ContextScopeTracker,
+    ByteCountValidator,
+    SerializationTools,
+)
+from gvas.gvas_utils import *
 
 from gvas.properties.standard_types import (
     is_special_struct,
@@ -48,7 +53,7 @@ from gvas.properties.delegate_property import (
     DelegateProperty,
 )
 
-ANNOTATED_GROUP = Annotated[
+UNREAL_ENGINE_PROPERTIES = Annotated[
     Union[
         BoolProperty,
         ByteProperty,
@@ -97,8 +102,8 @@ ANNOTATED_GROUP = Annotated[
 class MapProperty(PropertyTrait):
     """A property that holds a key-value mapping"""
 
-    KEY_TYPE = Union[str, ANNOTATED_GROUP]
-    VALUE_TYPE = Union[bool, int, str, ANNOTATED_GROUP]
+    KEY_TYPE = Union[str, UNREAL_ENGINE_PROPERTIES]
+    VALUE_TYPE = Union[bool, int, str, UNREAL_ENGINE_PROPERTIES]
 
     type: Literal["MapProperty"] = "MapProperty"
     key_type: KEY_TYPE = ""
@@ -190,7 +195,7 @@ class SetProperty(PropertyTrait):
     type: Literal["SetProperty"] = "SetProperty"
     property_type: Optional[str] = None
     allocation_flags: int = 0
-    properties: Optional[List[ANNOTATED_GROUP]] = None
+    properties: Optional[List[UNREAL_ENGINE_PROPERTIES]] = None
 
     def __post_init__(self):
         if self.properties is None:
@@ -270,7 +275,7 @@ class StructProperty(PropertyTrait):
     guid: Optional[uuid.UUID] = None
     type_name: Optional[str] = None
     value: Union[
-        Dict[str, ANNOTATED_GROUP],
+        Dict[str, UNREAL_ENGINE_PROPERTIES],
         # these must be here because they can be "special" types.
         # These can also appear inside the dictionary.
         DateTimeProperty,
@@ -435,7 +440,7 @@ class ArrayProperty(PropertyTrait):
         List[
             Union[
                 # property types
-                ANNOTATED_GROUP,
+                UNREAL_ENGINE_PROPERTIES,
                 # bare types
                 str,
                 int,
