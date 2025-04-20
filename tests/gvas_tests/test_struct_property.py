@@ -6,6 +6,7 @@ import unittest
 import uuid
 from io import BytesIO
 
+from gvas.gvas_utils import ZERO_GUID
 from gvas.properties.aggregators import StructProperty
 from gvas.properties.numerical_property import Int32Property, BoolProperty
 from gvas.properties.str_property import StrProperty
@@ -17,16 +18,18 @@ class TestStructProperty(unittest.TestCase):
     def test_create_struct_property(self):
         """Test creating a StructProperty"""
         # Create a new StructProperty
-        struct_prop = StructProperty.new("TestStruct")
+        struct_prop = StructProperty(type_name="TestStruct")
 
         # Check default values
         self.assertEqual(struct_prop.type_name, "TestStruct")
         self.assertIsNotNone(struct_prop.guid)
-        self.assertTrue(struct_prop.guid.is_zero())
+        self.assertTrue(struct_prop.guid == ZERO_GUID)
         self.assertIsNone(struct_prop.value)
 
         # Create a StructProperty with a custom GUID
-        custom_guid = uuid.UUID(bytes=bytes.fromhex("12345678123456789ABC123456789ABC"))
+        custom_guid = uuid.UUID(
+            bytes_le=bytes.fromhex("12345678123456789ABC123456789ABC")
+        )
         struct_prop = StructProperty(type_name="TestStruct", guid=custom_guid)
 
         # Check custom values
@@ -100,15 +103,16 @@ class TestStructProperty(unittest.TestCase):
         # Add a simple property to the outer struct
         outer_struct.value["Name"] = StrProperty(value="Test")
 
+        include_header = False
         # Serialize the outer struct
         stream = BytesIO()
-        bytes_written = outer_struct.write(stream)
+        bytes_written = outer_struct.write(stream, include_header=include_header)
         # Reset the stream position
         stream.seek(0)
 
         # Deserialize the outer struct
-        deserialized_struct = StructProperty()
-        deserialized_struct.read(stream)
+        deserialized_struct = StructProperty(type_name="OuterStruct")
+        deserialized_struct.read(stream, include_header=include_header)
 
         # Check the deserialized values
         self.assertEqual(deserialized_struct.type_name, "OuterStruct")
@@ -116,12 +120,11 @@ class TestStructProperty(unittest.TestCase):
         self.assertEqual(deserialized_struct.value["Name"].value, "Test")
 
         # Check the inner struct
-        inner_prop = deserialized_struct.value["InnerStruct"]
-        self.assertEqual(inner_prop.type, "StructProperty")
-        inner_struct = inner_prop.value
+        inner_struct = deserialized_struct.value["InnerStruct"]
+        self.assertEqual(inner_struct.type, "StructProperty")
         self.assertEqual(inner_struct.type_name, "InnerStruct")
         self.assertEqual(len(inner_struct.value), 1)
-        self.assertEqual(inner_struct.value["Value"].value.value, 42)
+        self.assertEqual(inner_struct.value["Value"].value, 42)
 
 
 if __name__ == "__main__":

@@ -21,14 +21,14 @@ class TestGuid(unittest.TestCase):
 
         # Create a GUID from UUID
         test_uuid = uuid.UUID("12345678-1234-5678-9ABC-123456789ABC")
-        guid = uuid.UUID(test_uuid)
+        guid = uuid.UUID(str(test_uuid))
         self.assertEqual(str(guid).lower(), "12345678-1234-5678-9abc-123456789abc")
         self.assertFalse(guid == ZERO_GUID)
 
         # Create a GUID from bytes
         # Note: The byte order is different in UE format
         guid_bytes = bytes.fromhex("78563412341278569ABC123456789ABC")
-        guid = uuid.UUID(bytes=guid_bytes)
+        guid = uuid.UUID(bytes_le=guid_bytes)
         self.assertEqual(str(guid).lower(), "12345678-1234-5678-9abc-123456789abc")
 
     def test_guid_equality(self):

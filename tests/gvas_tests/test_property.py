@@ -11,7 +11,6 @@ from gvas.properties.property_base import PropertyFactory, PropertyTrait
 from gvas.properties.numerical_property import (
     BoolProperty,
     ByteProperty,
-    BytePropertyValue,
     FloatProperty,
     Int8Property,
     Int16Property,
@@ -24,17 +23,20 @@ from gvas.properties.numerical_property import (
 )
 from gvas.properties.str_property import StrProperty
 from gvas.properties.enum_property import EnumProperty
-from gvas.properties.array_property import ArrayProperty
-from gvas.properties.map_property import MapProperty
-from gvas.properties.set_property import SetProperty
-from gvas.properties.struct_property import StructProperty, StructPropertyValue
-from gvas.gvas_types import Guid
+from gvas.properties.aggregators import (
+    ArrayProperty,
+    MapProperty,
+    SetProperty,
+    StructProperty,
+)
 
 
 class TestProperty(unittest.TestCase):
     """Test property serialization and deserialization"""
 
-    def test_property_roundtrip(self, property_obj: PropertyTrait, property_type: str):
+    def perform_property_roundtrip_test(
+        self, property_obj: PropertyTrait, property_type: str
+    ):
         """
         Test that a property can be serialized and deserialized correctly
 
@@ -75,8 +77,8 @@ class TestProperty(unittest.TestCase):
 
     def test_bool_property(self):
         """Test BoolProperty serialization/deserialization"""
-        self.test_property_roundtrip(BoolProperty(value=True), "BoolProperty")
-        self.test_property_roundtrip(BoolProperty(value=False), "BoolProperty")
+        self.perform_property_roundtrip_test(BoolProperty(value=True), "BoolProperty")
+        self.perform_property_roundtrip_test(BoolProperty(value=False), "BoolProperty")
 
     def test_byte_property(self):
         """Test ByteProperty serialization/deserialization"""
@@ -85,54 +87,74 @@ class TestProperty(unittest.TestCase):
         byte_prop.name = None
         # Use BytePropertyValue.Byte.value instead of calling it
         byte_prop.value = 1
-        self.test_property_roundtrip(byte_prop, "ByteProperty")
+        self.perform_property_roundtrip_test(byte_prop, "ByteProperty")
 
         # Test with namespaced value
         namespaced_prop = ByteProperty()
         namespaced_prop.name = "TestName"
         # Use a string value for namespaced value
         namespaced_prop.value = "TestValue"
-        self.test_property_roundtrip(namespaced_prop, "ByteProperty")
+        self.perform_property_roundtrip_test(namespaced_prop, "ByteProperty")
 
     def test_int_properties(self):
         """Test integer property serialization/deserialization"""
-        self.test_property_roundtrip(Int8Property(value=42), "Int8Property")
-        self.test_property_roundtrip(Int8Property(value=-42), "Int8Property")
-        self.test_property_roundtrip(Int16Property(value=1000), "Int16Property")
-        self.test_property_roundtrip(Int16Property(value=-1000), "Int16Property")
-        self.test_property_roundtrip(Int32Property(value=100000), "Int32Property")
-        self.test_property_roundtrip(Int32Property(value=-100000), "Int32Property")
-        self.test_property_roundtrip(Int64Property(value=10000000000), "Int64Property")
-        self.test_property_roundtrip(Int64Property(value=-10000000000), "Int64Property")
+        self.perform_property_roundtrip_test(Int8Property(value=42), "Int8Property")
+        self.perform_property_roundtrip_test(Int8Property(value=-42), "Int8Property")
+        self.perform_property_roundtrip_test(Int16Property(value=1000), "Int16Property")
+        self.perform_property_roundtrip_test(
+            Int16Property(value=-1000), "Int16Property"
+        )
+        self.perform_property_roundtrip_test(
+            Int32Property(value=100000), "Int32Property"
+        )
+        self.perform_property_roundtrip_test(
+            Int32Property(value=-100000), "Int32Property"
+        )
+        self.perform_property_roundtrip_test(
+            Int64Property(value=10000000000), "Int64Property"
+        )
+        self.perform_property_roundtrip_test(
+            Int64Property(value=-10000000000), "Int64Property"
+        )
 
-        self.test_property_roundtrip(UInt8Property(value=200), "UInt8Property")
-        self.test_property_roundtrip(UInt16Property(value=60000), "UInt16Property")
-        self.test_property_roundtrip(UInt32Property(value=4000000000), "UInt32Property")
-        self.test_property_roundtrip(
+        self.perform_property_roundtrip_test(UInt8Property(value=200), "UInt8Property")
+        self.perform_property_roundtrip_test(
+            UInt16Property(value=60000), "UInt16Property"
+        )
+        self.perform_property_roundtrip_test(
+            UInt32Property(value=4000000000), "UInt32Property"
+        )
+        self.perform_property_roundtrip_test(
             UInt64Property(value=10000000000000000000), "UInt64Property"
         )
 
     def test_float_property(self):
         """Test FloatProperty serialization/deserialization"""
-        self.test_property_roundtrip(FloatProperty(value=3.14159), "FloatProperty")
-        self.test_property_roundtrip(FloatProperty(value=-2.71828), "FloatProperty")
+        self.perform_property_roundtrip_test(
+            FloatProperty(value=3.14159), "FloatProperty"
+        )
+        self.perform_property_roundtrip_test(
+            FloatProperty(value=-2.71828), "FloatProperty"
+        )
 
     def test_str_property(self):
         """Test StrProperty serialization/deserialization"""
-        self.test_property_roundtrip(StrProperty(value="Hello, world!"), "StrProperty")
-        self.test_property_roundtrip(StrProperty(value=None), "StrProperty")
+        self.perform_property_roundtrip_test(
+            StrProperty(value="Hello, world!"), "StrProperty"
+        )
+        self.perform_property_roundtrip_test(StrProperty(value=None), "StrProperty")
 
     def test_enum_property(self):
         """Test EnumProperty serialization/deserialization"""
         enum_prop = EnumProperty()
         enum_prop.enum_type = "TestEnum"
         enum_prop.value = "TestValue"
-        self.test_property_roundtrip(enum_prop, "EnumProperty")
+        self.perform_property_roundtrip_test(enum_prop, "EnumProperty")
 
         enum_prop2 = EnumProperty()
         enum_prop2.enum_type = None
         enum_prop2.value = "TestValue"
-        self.test_property_roundtrip(enum_prop2, "EnumProperty")
+        self.perform_property_roundtrip_test(enum_prop2, "EnumProperty")
 
     # Skipping array_property test as it requires more complex setup
 
