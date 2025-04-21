@@ -9,7 +9,7 @@ from typing import Dict, Optional, Union
 from pathlib import Path
 
 from gvas.gvas_file import GVASFile, GameFileFormat
-from gvas.gvas_utils import SerializationTools
+from gvas.engine_tools import SerializationTools
 
 # Constants for test file paths
 RESOURCES_DIR = os.path.join(os.path.dirname(__file__), "resources")
@@ -26,8 +26,8 @@ def read_gvas_file(
     hints: Optional[Union[Dict[str, str], str, Path]] = None,
 ) -> (BytesIO, GVASFile):
 
-    full_testfile_path = get_testfile_path(input_test_file)
-    with open(full_testfile_path, "rb") as f:
+    # full_testfile_path = get_testfile_path(input_test_file)
+    with open(input_test_file, "rb") as f:
         test_file_bytes = f.read()
 
     test_file_stream = BytesIO(test_file_bytes)
@@ -37,8 +37,8 @@ def read_gvas_file(
         hints = {}
 
     elif type(hints) == str() or isinstance(hints, Path):
-        full_hints_file_path = get_testfile_path(hints)
-        with open(full_hints_file_path, "rb") as f:
+        # full_hints_file_path = get_testfile_path(hints)
+        with open(input_test_file, "rb") as f:
             hints = json.load(f)
 
     else:

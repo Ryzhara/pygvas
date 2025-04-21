@@ -6,7 +6,7 @@ import unittest
 import uuid
 from io import BytesIO
 
-from gvas.gvas_utils import ZERO_GUID
+from gvas.gvas_utils import ZERO_GUID, read_string
 from gvas.properties.aggregators import StructProperty
 from gvas.properties.numerical_property import Int32Property, BoolProperty
 from gvas.properties.str_property import StrProperty
@@ -18,7 +18,7 @@ class TestStructProperty(unittest.TestCase):
     def test_create_struct_property(self):
         """Test creating a StructProperty"""
         # Create a new StructProperty
-        struct_prop = StructProperty(type_name="TestStruct")
+        struct_prop = StructProperty(type_name="TestStruct", guid=ZERO_GUID)
 
         # Check default values
         self.assertEqual(struct_prop.type_name, "TestStruct")
@@ -57,34 +57,47 @@ class TestStructProperty(unittest.TestCase):
     def test_struct_property_roundtrip(self):
         """Test StructProperty serialization and deserialization"""
         # Create a StructProperty
-        struct_prop = StructProperty(type_name="TestStruct", value={})
+        struct_prop = StructProperty(type_name="TestStruct", guid=ZERO_GUID, value={})
 
         # Add some properties to the struct value
         struct_prop.value["IntValue"] = Int32Property(value=42)
         struct_prop.value["BoolValue"] = BoolProperty(value=True)
         struct_prop.value["StringValue"] = StrProperty(value="Hello, world!")
 
-        # Serialize the struct property
-        stream = BytesIO()
-        bytes_written = struct_prop.write(stream)
-        # Reset the stream position
-        stream.seek(0)
+        # Serialize the struct property with and without a standard header
+        for include_header in [False, True]:
+            stream = BytesIO()
+            bytes_written = struct_prop.write(stream, include_header=include_header)
+            stream.seek(0)
 
-        # Deserialize the struct property
-        deserialized_prop = StructProperty()
-        deserialized_prop.read(stream)
+            # Deserialize the struct property
+            deserialized_prop = StructProperty()
+            if include_header:
+                property_type = read_string(stream)
+                assert property_type == struct_prop.type
 
-        # Check the deserialized values
-        self.assertEqual(deserialized_prop.type_name, "TestStruct")
-        self.assertEqual(deserialized_prop.guid, struct_prop.guid)
-        self.assertEqual(deserialized_prop.type_name, "TestStruct")
-        self.assertEqual(len(deserialized_prop.value), 3)
-        self.assertEqual(deserialized_prop.value["IntValue"].value.value, 42)
-        self.assertEqual(deserialized_prop.value["BoolValue"].value.value, True)
-        self.assertEqual(
-            deserialized_prop.value["StringValue"].value.value,
-            "Hello, world!",
-        )
+            deserialized_prop.read(stream, include_header=include_header)
+
+            # Check the deserialized values
+            self.assertEqual(
+                deserialized_prop.type_name,
+                "TestStruct" if include_header else None,
+                "Testing with standard header",
+            )
+
+            self.assertEqual(
+                deserialized_prop.guid,
+                None,
+                f"Testing with {include_header=}. We drop ZERO guids on reads because it saves space.",
+            )
+
+            self.assertEqual(len(deserialized_prop.value), 3)
+            self.assertEqual(deserialized_prop.value["IntValue"].value, 42)
+            self.assertEqual(deserialized_prop.value["BoolValue"].value, True)
+            self.assertEqual(
+                deserialized_prop.value["StringValue"].value,
+                "Hello, world!",
+            )
 
     def test_nested_struct_property(self):
         """Test StructProperty with nested StructProperty"""

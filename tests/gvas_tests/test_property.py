@@ -11,15 +11,17 @@ from gvas.properties.property_base import PropertyFactory, PropertyTrait
 from gvas.properties.numerical_property import (
     BoolProperty,
     ByteProperty,
-    FloatProperty,
     Int8Property,
     Int16Property,
     Int32Property,
+    IntProperty,
     Int64Property,
     UInt8Property,
     UInt16Property,
     UInt32Property,
     UInt64Property,
+    FloatProperty,
+    DoubleProperty,
 )
 from gvas.properties.str_property import StrProperty
 from gvas.properties.enum_property import EnumProperty
@@ -108,10 +110,10 @@ class TestProperty(unittest.TestCase):
             Int32Property(value=100000), "Int32Property"
         )
         self.perform_property_roundtrip_test(
-            Int32Property(value=-100000), "Int32Property"
+            Int32Property(value=-100000), "IntProperty"
         )
         self.perform_property_roundtrip_test(
-            Int64Property(value=10000000000), "Int64Property"
+            Int64Property(value=-10000000000), "Int64Property"
         )
         self.perform_property_roundtrip_test(
             Int64Property(value=-10000000000), "Int64Property"
@@ -135,6 +137,15 @@ class TestProperty(unittest.TestCase):
         )
         self.perform_property_roundtrip_test(
             FloatProperty(value=-2.71828), "FloatProperty"
+        )
+
+    def test_double_property(self):
+        """Test FloatProperty serialization/deserialization"""
+        self.perform_property_roundtrip_test(
+            DoubleProperty(value=3.141592653589793), "DoubleProperty"
+        )
+        self.perform_property_roundtrip_test(
+            DoubleProperty(value=-2.718281828459045), "DoubleProperty"
         )
 
     def test_str_property(self):

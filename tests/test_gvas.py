@@ -5,7 +5,6 @@ Main test file for GVAS functionality
 import json
 import unittest
 from io import BytesIO
-
 from pydantic import TypeAdapter
 
 from gvas.gvas_file import GVASFile
@@ -17,62 +16,70 @@ from tests.common.test_utils import (
 TEST_FILE_CONFIG = {
     "ASSERT_FAILED": {
         "file": "assert_failed.sav",
-        "json": "assert_failed.json",
+        "json": "assert_failed.sav.json",
         "hints": None,
     },
-    "COMPONENT_8": {"file": "component8.sav", "json": "component8.json", "hints": None},
-    "DELEGATE": {"file": "delegate.sav", "json": "delegate.json", "hints": None},
-    "ENUM_ARRAY": {"file": "enum_array.sav", "json": "enum_array.json", "hints": None},
+    "COMPONENT_8": {
+        "file": "component8.sav",
+        "json": "component8.sav.json",
+        "hints": None,
+    },
+    "DELEGATE": {"file": "delegate.sav", "json": "delegate.sav.json", "hints": None},
+    "ENUM_ARRAY": {
+        "file": "enum_array.sav",
+        "json": "enum_array.sav.json",
+        "hints": None,
+    },
     "FEATURES_01": {
         "file": "features_01.sav",
-        "json": "features_01.json",
+        "json": "features_01.sav.json",
         "hints": None,
     },
-    "OPTIONS": {"file": "options.sav", "json": "options.json", "hints": None},
+    "OPTIONS": {"file": "options.sav", "json": "options.sav.json", "hints": None},
     "PACKAGE_VERSION_524": {
         "file": "package_version_524.sav",
-        "json": "package_version_524.json",
+        "json": "package_version_524.sav.json",
         "hints": None,
     },
     "PACKAGE_VERSION_525": {
         "file": "package_version_525.sav",
-        "json": "package_version_525.json",
+        "json": "package_version_525.sav.json",
         "hints": None,
     },
     "PROFILE_0": {"file": "profile_0.sav", "json": "profile_0.json", "hints": None},
     "REGRESSION_01": {
         "file": "regression_01.sav",
-        "json": "regression_01.json",
+        "json": "regression_01.sav.json",
         "hints": None,
     },
     "RO_64bit_fav": {
         "file": "ro_64bit_fav.sav",
-        "json": "ro_64bit_fav.json",
+        "json": "ro_64bit_fav.sav.json",
         "hints": None,
     },
     "SAVESLOT_03": {
         "file": "saveslot_03.sav",
-        "json": "saveslot_03.json",
+        "json": "saveslot_03.sav.json",
         "hints": None,
     },
-    "SLOT1": {"file": "slot1.sav", "json": "slot1.json", "hints": None},
-    "SLOT2": {"file": "slot2.sav", "json": "slot2.json", "hints": None},
-    "SLOT3": {"file": "slot3.sav", "json": "slot3.json", "hints": None},
+    "SLOT1": {"file": "slot1.sav", "json": "slot1.sav.json", "hints": None},
+    "SLOT2": {"file": "slot2.sav", "json": "slot2.sav.json", "hints": None},
+    "SLOT3": {"file": "slot3.sav", "json": "slot3.sav.json", "hints": None},
     "TEXT_PROPERTY_NOARRAY": {
         "file": "text_property_noarray.sav",
-        "json": "text_property_noarray.json",
+        "json": "text_property_noarray.sav.json",
         "hints": None,
     },
-    "TRANSFORM": {"file": "transform.sav", "json": "transform.json", "hints": None},
-    "VECTOR2D": {"file": "vector2d.sav", "json": "vector2d.json", "hints": None},
+    "TRANSFORM": {"file": "transform.sav", "json": "transform.sav.json", "hints": None},
+    "VECTOR2D": {"file": "vector2d.sav", "json": "vector2d.sav.json", "hints": None},
     "PALWORLD_ZLIB": {
         "file": "palworld_zlib.sav",
-        "json": "palworld_zlib.json",
+        "json": "palworld_zlib.sav.json",
         "hints": None,
     },
     "PASLWORLD_ZLIP_TWICE": {
         "file": "palworld_zlib_twice.sav",
-        "json": "palworld_zlib_twice.json",
+        "json": "palworld_zlib_twice.sav.json",
         "hints": "palworld_zlib_twice.hints.json",
     },
 }
@@ -84,7 +91,7 @@ def get_test_file_config(key: str) -> (str, str, str):
     config = TEST_FILE_CONFIG[key]
     test_file = get_testfile_path(config["file"])
     json_file = get_testfile_path(config["json"])
-    hints_file = get_testfile_path(config["hints"])
+    hints_file = get_testfile_path(config["hints"]) if config["hints"] else {}
     return test_file, json_file, hints_file
 
 
