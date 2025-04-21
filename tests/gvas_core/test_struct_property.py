@@ -76,13 +76,13 @@ class TestStructProperty(unittest.TestCase):
         for include_header in [False, True]:
             stream = BytesIO()
             bytes_written = struct_prop.write(stream, include_header=include_header)
-            stream.seek(0)
+            stream.seek(0)  # Reset the stream position
 
             # Deserialize the struct property
             deserialized_prop = StructProperty()
             if include_header:
                 property_type = read_string(stream)
-                assert property_type == struct_prop.type
+                self.assertEqual(property_type, struct_prop.type)
 
             deserialized_prop.read(stream, include_header=include_header)
 
@@ -124,28 +124,31 @@ class TestStructProperty(unittest.TestCase):
         # Add a simple property to the outer struct
         outer_struct.value["Name"] = StrProperty(value="Test")
 
-        include_header = False
-        # Serialize the outer struct
-        stream = BytesIO()
-        bytes_written = outer_struct.write(stream, include_header=include_header)
-        # Reset the stream position
-        stream.seek(0)
+        for include_header in [False, True]:
+            # Serialize the outer struct
+            stream = BytesIO()
+            bytes_written = outer_struct.write(stream, include_header=include_header)
+            stream.seek(0)  # Reset the stream position
 
-        # Deserialize the outer struct
-        deserialized_struct = StructProperty(type_name="OuterStruct")
-        deserialized_struct.read(stream, include_header=include_header)
+            # Deserialize the outer struct
+            deserialized_struct = StructProperty(type_name="OuterStruct")
+            if include_header:
+                property_type = read_string(stream)
+                self.assertEqual(property_type, deserialized_struct.type)
 
-        # Check the deserialized values
-        self.assertEqual(deserialized_struct.type_name, "OuterStruct")
-        self.assertEqual(len(deserialized_struct.value), 2)
-        self.assertEqual(deserialized_struct.value["Name"].value, "Test")
+            deserialized_struct.read(stream, include_header=include_header)
 
-        # Check the inner struct
-        inner_struct = deserialized_struct.value["InnerStruct"]
-        self.assertEqual(inner_struct.type, "StructProperty")
-        self.assertEqual(inner_struct.type_name, "InnerStruct")
-        self.assertEqual(len(inner_struct.value), 1)
-        self.assertEqual(inner_struct.value["Value"].value, 42)
+            # Check the deserialized values
+            self.assertEqual(deserialized_struct.type_name, "OuterStruct")
+            self.assertEqual(len(deserialized_struct.value), 2)
+            self.assertEqual(deserialized_struct.value["Name"].value, "Test")
+
+            # Check the inner struct
+            inner_struct = deserialized_struct.value["InnerStruct"]
+            self.assertEqual(inner_struct.type, "StructProperty")
+            self.assertEqual(inner_struct.type_name, "InnerStruct")
+            self.assertEqual(len(inner_struct.value), 1)
+            self.assertEqual(inner_struct.value["Value"].value, 42)
 
 
 if __name__ == "__main__":

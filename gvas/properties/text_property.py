@@ -199,9 +199,6 @@ class FormatArgument:
     type: str = FormatArgumentValue.Unknown.name
     value: Optional[Union[int, float, "FText"]] = None
 
-    def __post_init__(self):
-        pass
-
     def read(self, stream: BinaryIO) -> Self:
 
         format_argument_type = FormatArgumentType.read_type(stream)
@@ -407,9 +404,6 @@ class Empty:
     #     type: str = "Empty"
     type: Literal[TextHistoryType.Empty.name] = TextHistoryType.Empty.name
     # type: Literal["Empty"] = "Empty"
-
-    def __post_init__(self):
-        pass
 
     def write(self, stream: BinaryIO) -> int:
         bytes_written = 0

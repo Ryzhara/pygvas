@@ -8,6 +8,7 @@ import struct
 from typing import override
 
 from gvas.engine_tools import SerializationTools
+from gvas.gvas_utils import read_string, write_string
 from gvas.properties.property_base import PropertyFactory, PropertyTrait
 from gvas.properties.numerical_property import (
     BoolProperty,
@@ -44,45 +45,39 @@ class TestProperty(unittest.TestCase):
         SerializationTools.hints = {}
 
     def perform_property_roundtrip_test(
-        self, property_obj: PropertyTrait, property_type: str
+        self, test_property: PropertyTrait, property_type: str, places: int = 7
     ):
         """
         Test that a property can be serialized and deserialized correctly
 
         Args:
-            property_obj: The property to test
+            test_property: The property to test
             property_type: The type type_name of the property
         """
+
         # Export the property to a byte array
-        writer = BytesIO()
-        bytes_written = property_obj.write(writer)
-        writer.seek(0)
+        buffer = BytesIO()
+        bytes_written = test_property.write(buffer, include_header=True)
 
-        # Import the property from a byte array
-        reader = BytesIO()
-
-        # Write the property type (normally done by GVASFile)
-        type_bytes = (property_type + "\0").encode("utf-8")
-        reader.write(struct.pack("<I", len(type_bytes)))
-        reader.write(type_bytes)
-
-        # Write the property data
-        property_obj.write(reader)
-        reader.seek(0)
-
-        # Read the property type
-        type_len = struct.unpack("<I", reader.read(4))[0]
-        imported_type = reader.read(type_len).decode("utf-8")[:-1]
+        buffer.seek(0)  # start at beginning
+        imported_type = read_string(buffer)  # Normally done by GVAS file
         self.assertEqual(
             imported_type,
             property_type,
             f"Expected {property_type}, got {imported_type}",
         )
-
-        # Skip the test for now until we fix the PropertyFactory.new method
-        # imported_prop = PropertyFactory.new(reader, imported_type, options)
-        # self.assertEqual(property_obj.value, imported_prop.value.value,
-        #                 f"Properties don't match: {property_obj.value} != {imported_prop.value.value}")
+        # read the rest of the property
+        imported_prop = PropertyFactory.new(buffer, imported_type, include_header=True)
+        # this works for all properties that store in "value", as opposed to "values" or "delegates
+        error_msg = (
+            f"Properties don't match: {test_property.value} != {imported_prop.value}",
+        )
+        if type(test_property.value) == float:
+            self.assertAlmostEqual(
+                test_property.value, imported_prop.value, places=places, msg=error_msg
+            )
+        else:
+            self.assertEqual(test_property.value, imported_prop.value, error_msg)
 
     def test_bool_property(self):
         """Test BoolProperty serialization/deserialization"""
@@ -116,9 +111,7 @@ class TestProperty(unittest.TestCase):
         self.perform_property_roundtrip_test(
             Int32Property(value=100000), "Int32Property"
         )
-        self.perform_property_roundtrip_test(
-            Int32Property(value=-100000), "IntProperty"
-        )
+        self.perform_property_roundtrip_test(IntProperty(value=-100000), "IntProperty")
         self.perform_property_roundtrip_test(
             Int64Property(value=-10000000000), "Int64Property"
         )
@@ -140,19 +133,28 @@ class TestProperty(unittest.TestCase):
     def test_float_property(self):
         """Test FloatProperty serialization/deserialization"""
         self.perform_property_roundtrip_test(
-            FloatProperty(value=3.14159), "FloatProperty"
+            FloatProperty(value=3.14159), "FloatProperty", places=5
         )
         self.perform_property_roundtrip_test(
-            FloatProperty(value=-2.71828), "FloatProperty"
+            FloatProperty(value=31.4159), "FloatProperty", places=4
+        )
+        self.perform_property_roundtrip_test(
+            FloatProperty(value=31415.9), "FloatProperty", places=1
+        )
+        self.perform_property_roundtrip_test(
+            FloatProperty(value=314159.0), "FloatProperty", places=1
+        )
+        self.perform_property_roundtrip_test(
+            FloatProperty(value=-2.71828), "FloatProperty", places=5
         )
 
     def test_double_property(self):
         """Test FloatProperty serialization/deserialization"""
         self.perform_property_roundtrip_test(
-            DoubleProperty(value=3.141592653589793), "DoubleProperty"
+            DoubleProperty(value=3.141592653589793), "DoubleProperty", places=16
         )
         self.perform_property_roundtrip_test(
-            DoubleProperty(value=-2.718281828459045), "DoubleProperty"
+            DoubleProperty(value=-2.718281828459045), "DoubleProperty", places=16
         )
 
     def test_str_property(self):

@@ -5,7 +5,6 @@ Python port of int_property.rs
 
 from typing import Optional, Literal
 
-from pydantic import field_validator, field_serializer
 from pydantic.dataclasses import dataclass
 
 from .property_base import PropertyTrait
@@ -18,9 +17,6 @@ class BoolProperty(PropertyTrait):
 
     type: Literal["BoolProperty"] = "BoolProperty"
     value: bool = False
-
-    def __post_init__(self):
-        pass
 
     def read(
         self,
@@ -70,9 +66,6 @@ class ByteProperty(PropertyTrait):
     type: Literal["ByteProperty"] = "ByteProperty"
     name: Optional[str] = ""
     value: Union[int, str] = 0
-
-    def __post_init__(self):
-        pass
 
     def read(
         self, stream: BinaryIO, include_header: bool = True, suggested_length: int = 0
@@ -124,9 +117,6 @@ class Int8Property(PropertyTrait):
     type: Literal["Int8Property"] = "Int8Property"
     value: int = 0
 
-    def __post_init__(self):
-        pass
-
     def read(self, stream: BinaryIO, include_header: bool = True) -> None:
         if include_header:
             read_standard_header(stream, assert_length=1)
@@ -144,9 +134,6 @@ class Int8Property(PropertyTrait):
 class UInt8Property(PropertyTrait):
     type: Literal["UInt8Property"] = "UInt8Property"
     value: int = 0
-
-    def __post_init__(self):
-        pass
 
     def read(self, stream: BinaryIO, include_header: bool = True) -> None:
         if include_header:
@@ -166,9 +153,6 @@ class Int16Property(PropertyTrait):
     type: Literal["Int16Property"] = "Int16Property"
     value: int = 0
 
-    def __post_init__(self):
-        pass
-
     def read(self, stream: BinaryIO, include_header: bool = True) -> None:
         if include_header:
             read_standard_header(stream, assert_length=2)
@@ -186,9 +170,6 @@ class Int16Property(PropertyTrait):
 class UInt16Property(PropertyTrait):
     type: Literal["UInt16Property"] = "UInt16Property"
     value: int = 0
-
-    def __post_init__(self):
-        pass
 
     def read(self, stream: BinaryIO, include_header: bool = True) -> None:
         if include_header:
@@ -209,9 +190,6 @@ class Int32Property(PropertyTrait):
     type: Literal["Int32Property"] = "Int32Property"
     value: int = 0
 
-    def __post_init__(self):
-        pass
-
     def read(self, stream: BinaryIO, include_header: bool = True) -> None:
         if include_header:
             read_standard_header(stream, assert_length=4)
@@ -224,18 +202,12 @@ class Int32Property(PropertyTrait):
         bytes_written += write_int32(stream, self.value)
         return bytes_written
 
-    def __post_init__(self):
-        pass
-
 
 # for backward compatibility
 @dataclass
 class IntProperty(PropertyTrait):
     type: Literal["IntProperty"] = "IntProperty"
     value: int = 0
-
-    def __post_init__(self):
-        pass
 
     def read(self, stream: BinaryIO, include_header: bool = True) -> None:
         if include_header:
@@ -255,9 +227,6 @@ class UInt32Property(PropertyTrait):
     type: Literal["UInt32Property"] = "UInt32Property"
     value: int = 0
 
-    def __post_init__(self):
-        pass
-
     def read(self, stream: BinaryIO, include_header: bool = True) -> None:
         if include_header:
             read_standard_header(stream, assert_length=4)
@@ -275,9 +244,6 @@ class UInt32Property(PropertyTrait):
 class Int64Property(PropertyTrait):
     type: Literal["Int64Property"] = "Int64Property"
     value: Union[int, float] = 0
-
-    def __post_init__(self):
-        pass
 
     def read(self, stream: BinaryIO, include_header: bool = True) -> None:
         if include_header:
@@ -297,9 +263,6 @@ class UInt64Property(PropertyTrait):
     type: Literal["UInt64Property"] = "UInt64Property"
     value: Union[int, float] = 0
 
-    def __post_init__(self):
-        pass
-
     def read(self, stream: BinaryIO, include_header: bool = True) -> None:
         if include_header:
             read_standard_header(stream, assert_length=8)
@@ -318,9 +281,6 @@ class FloatProperty(PropertyTrait):
     type: Literal["FloatProperty"] = "FloatProperty"
     value: float = 0
 
-    def __post_init__(self):
-        pass
-
     def read(self, stream: BinaryIO, include_header: bool = True) -> None:
         if include_header:
             read_standard_header(stream, assert_length=4)
@@ -338,9 +298,6 @@ class FloatProperty(PropertyTrait):
 class DoubleProperty(PropertyTrait):
     type: Literal["DoubleProperty"] = "DoubleProperty"
     value: float = 0
-
-    def __post_init__(self):
-        pass
 
     def read(self, stream: BinaryIO, include_header: bool = True) -> None:
         if include_header:

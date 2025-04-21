@@ -135,9 +135,6 @@ class GvasHeader:
     custom_versions: dict[str, int] = None
     save_game_class_name: str = None
 
-    def __post_init__(self):
-        pass
-
     # Stores CustomVersions serialized by UE4
     @dataclass
     class FCustomVersion:
@@ -248,9 +245,6 @@ class GameFileFormat:
 
     game_version: GameVersion = GameVersion.UNKNOWN
     compression_type: CompressionType = CompressionType.UNKNOWN
-
-    def __post_init__(self):
-        pass
 
     @field_serializer("game_version")
     def serialize_game_version(self, game_version: GameVersion):
@@ -370,9 +364,6 @@ class GVASFile(BaseModel):
     game_file_format: GameFileFormat
     header: GvasHeader
     properties: dict[str, UNREAL_ENGINE_PROPERTIES]
-
-    def __post_init__(self):
-        pass
 
     @classmethod
     def print_game_file_format(cls, file_path: str):

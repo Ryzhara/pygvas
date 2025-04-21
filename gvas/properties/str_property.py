@@ -19,9 +19,6 @@ class StrProperty(PropertyTrait):
     # type: str = "StrProperty"
     value: Optional[str] = None
 
-    def __post_init__(self):
-        pass
-
     def read(
         self,
         stream: BinaryIO,
