@@ -22,6 +22,7 @@ class TestErrors(unittest.TestCase):
     @override
     def setUpClass(cls) -> None:
         SerializationTools.set_inside_unit_tests()
+        SerializationTools.hints = {}
 
     def test_invalid_magic(self):
         """Test handling of invalid magic bytes"""

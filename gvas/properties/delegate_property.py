@@ -81,7 +81,7 @@ class DelegateProperty(PropertyTrait):
 @dataclass
 class MulticastScriptDelegate:
     type: Literal["MulticastScriptDelegate"] = "MulticastScriptDelegate"
-    delegates: Optional[List[Delegate]] = None
+    delegates: Optional[list[Delegate]] = None
 
     def __post_init__(self):
         pass

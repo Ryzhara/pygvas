@@ -4,14 +4,14 @@ Python port of types.rs
 """
 
 from pydantic.dataclasses import dataclass
-from typing import Dict, TypeVar
+from typing import TypeVar
 
 K = TypeVar("K")
 V = TypeVar("V")
 
 
 @dataclass
-class HashableIndexMap(Dict[K, V]):
+class HashableIndexMap(dict[K, V]):
     """
     A dictionary that maintains insertion order and can be hashed.
     Python equivalent of Rust's HashableIndexMap.

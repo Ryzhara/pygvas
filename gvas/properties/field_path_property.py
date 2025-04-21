@@ -5,7 +5,7 @@ Python port of field_path_property.rs
 
 from pydantic.dataclasses import dataclass
 from io import BytesIO
-from typing import Optional, List, Dict, BinaryIO, Literal
+from typing import Optional, Literal
 from .property_base import PropertyTrait
 from ..engine_tools import ByteCountValidator
 from ..gvas_utils import *
@@ -14,7 +14,7 @@ from ..gvas_utils import *
 @dataclass
 class FieldPath:
     type: Literal["FieldPath"] = "FieldPath"
-    path: Optional[List[str]] = None
+    path: Optional[list[str]] = None
     resolved_owner: Optional[str] = None
 
     def __post_init__(self):

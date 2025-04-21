@@ -3,16 +3,17 @@ Common test utilities for GVAS tests
 """
 
 import json
-import os
 from io import BytesIO
 from typing import Dict, Optional, Union
 from pathlib import Path
 
 from gvas.gvas_file import GVASFile, GameFileFormat
-from gvas.engine_tools import SerializationTools
+from gvas.engine_tools import SerializationTools, CompressionType, GameVersion
 
 # Constants for test file paths
-RESOURCES_DIR = os.path.join(os.path.dirname(__file__), "resources")
+RESOURCES_DIR = Path(
+    Path(__file__).absolute().parent.parent.parent, "resources", "test"
+)
 
 
 def get_testfile_path(testfile_name: Union[str, Path]) -> Path:
@@ -23,10 +24,9 @@ def read_gvas_file(
     input_test_file: str,
     *,
     game_file_format: Optional[GameFileFormat] = None,
-    hints: Optional[Union[Dict[str, str], str, Path]] = None,
-) -> (BytesIO, GVASFile):
+    hints: Optional[Union[dict[str, str], str, Path]] = None,
+) -> (GVASFile, BytesIO):
 
-    # full_testfile_path = get_testfile_path(input_test_file)
     with open(input_test_file, "rb") as f:
         test_file_bytes = f.read()
 
@@ -37,9 +37,10 @@ def read_gvas_file(
         hints = {}
 
     elif type(hints) == str() or isinstance(hints, Path):
-        # full_hints_file_path = get_testfile_path(hints)
-        with open(input_test_file, "rb") as f:
+        hints_file = hints
+        with open(hints_file, "r") as f:
             hints = json.load(f)
+            # print(f"Loaded {hints} from {hints_file}")
 
     else:
         assert isinstance(
@@ -55,9 +56,11 @@ def read_gvas_file(
             game_file_format.compression_type,
         )
     else:
-        game_file_format = GameFileFormat()
+        game_file_format = GameFileFormat(
+            game_version=GameVersion.DEFAULT, compression_type=CompressionType.NONE
+        )
         game_file_format.deserialize_game_version(test_file_stream)
-        gvas_test_file: GVASFile = GVASFile.read(
+        gvas_test_file, _test_file_stream = GVASFile.read(
             test_file_stream,
             game_file_format.game_version,
             game_file_format.compression_type,
@@ -67,4 +70,4 @@ def read_gvas_file(
     test_file_stream.seek(0)
 
     # Pass the file back for optional verification
-    return test_file_stream, gvas_test_file
+    return gvas_test_file, test_file_stream

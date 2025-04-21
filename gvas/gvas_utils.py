@@ -5,7 +5,7 @@ Common utility functions for GVAS
 import datetime
 import struct
 import uuid
-from typing import BinaryIO, Any, List, Dict, Callable, Union
+from typing import BinaryIO, Any, Callable, Union
 
 from gvas.error import DeserializeError, SerializeError
 
@@ -367,10 +367,10 @@ def read_standard_header(
     *,
     assert_length: int = None,
     assert_array_index: int = 0,
-    stream_readers: List[
+    stream_readers: list[
         Callable[[BinaryIO], Any]
     ] = None,  # read after array index and before terminator
-) -> List[Any]:
+) -> list[Any]:
     """
     Args:
         stream: source from which to read data
@@ -418,7 +418,7 @@ def write_standard_header(
     *,
     length: int = None,
     array_index: int = 0,
-    data_to_write: List[
+    data_to_write: list[
         Union[str, uuid.UUID]
     ] = None,  # only accommodate str and guid for now
 ) -> int:

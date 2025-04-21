@@ -1,5 +1,5 @@
 from io import BytesIO
-from typing import Optional, ClassVar, Tuple, Annotated, Type, Literal
+from typing import Optional, ClassVar, Annotated, Literal
 from pydantic import field_serializer, Discriminator
 from pydantic.dataclasses import dataclass
 
@@ -109,7 +109,7 @@ class MapProperty(PropertyTrait):
     key_type: KEY_TYPE = ""
     value_type: VALUE_TYPE = ""
     allocation_flags: int = 0
-    values: List[Tuple[KEY_TYPE, VALUE_TYPE]] = None
+    values: list[tuple[KEY_TYPE, VALUE_TYPE]] = None
 
     def read(
         self,
@@ -195,7 +195,7 @@ class SetProperty(PropertyTrait):
     type: Literal["SetProperty"] = "SetProperty"
     property_type: Optional[str] = None
     allocation_flags: int = 0
-    properties: Optional[List[UNREAL_ENGINE_PROPERTIES]] = None
+    properties: Optional[list[UNREAL_ENGINE_PROPERTIES]] = None
 
     def __post_init__(self):
         if self.properties is None:
@@ -275,7 +275,7 @@ class StructProperty(PropertyTrait):
     guid: Optional[uuid.UUID] = None
     type_name: Optional[str] = None
     value: Union[
-        Dict[str, UNREAL_ENGINE_PROPERTIES],
+        dict[str, UNREAL_ENGINE_PROPERTIES],
         # these must be here because they can be "special" types.
         # These can also appear inside the dictionary.
         DateTimeProperty,
@@ -391,7 +391,7 @@ class ArrayProperty(PropertyTrait):
     """A property that holds an array of values"""
 
     # class variable is not serialized
-    bare_readers: ClassVar[Dict[str, Callable[[BinaryIO], Any]]] = {
+    bare_readers: ClassVar[dict[str, Callable[[BinaryIO], Any]]] = {
         "StrProperty": read_string,
         "NameProperty": read_string,
         "EnumProperty": read_string,
@@ -411,7 +411,7 @@ class ArrayProperty(PropertyTrait):
     }
 
     # class variable is not serialized
-    bare_writers: ClassVar[Dict[str, Callable[[BinaryIO, Any], int]]] = {
+    bare_writers: ClassVar[dict[str, Callable[[BinaryIO, Any], int]]] = {
         "StrProperty": write_string,
         "NameProperty": write_string,
         "EnumProperty": write_string,
@@ -437,7 +437,7 @@ class ArrayProperty(PropertyTrait):
     guid: Optional[uuid.UUID] = None  # often nothing but zeros
     values: Union[
         str,
-        List[
+        list[
             Union[
                 # property types
                 UNREAL_ENGINE_PROPERTIES,

@@ -6,7 +6,7 @@ import enum
 import json
 
 from gvas.gvas_file import GVASFile, GameFileFormat
-from gvas.engine_tools import GameVersion, CompressionType
+from gvas.engine_tools import GameVersion, CompressionType, SerializationTools
 from gvas.properties.aggregators import ArrayProperty
 from gvas.gvas_utils import *
 from test_utilities import compare_binary_files

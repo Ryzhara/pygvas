@@ -5,7 +5,9 @@ Tests for StructProperty functionality
 import unittest
 import uuid
 from io import BytesIO
+from typing import override
 
+from gvas.engine_tools import SerializationTools
 from gvas.gvas_utils import ZERO_GUID, read_string
 from gvas.properties.aggregators import StructProperty
 from gvas.properties.numerical_property import Int32Property, BoolProperty
@@ -14,6 +16,12 @@ from gvas.properties.str_property import StrProperty
 
 class TestStructProperty(unittest.TestCase):
     """Test StructProperty serialization and deserialization"""
+
+    @classmethod
+    @override
+    def setUpClass(cls) -> None:
+        SerializationTools.set_inside_unit_tests()
+        SerializationTools.hints = {}
 
     def test_create_struct_property(self):
         """Test creating a StructProperty"""

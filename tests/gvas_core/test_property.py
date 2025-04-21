@@ -5,8 +5,9 @@ Tests for property functionality
 import unittest
 from io import BytesIO
 import struct
-from typing import Dict, List, Optional
+from typing import override
 
+from gvas.engine_tools import SerializationTools
 from gvas.properties.property_base import PropertyFactory, PropertyTrait
 from gvas.properties.numerical_property import (
     BoolProperty,
@@ -35,6 +36,12 @@ from gvas.properties.aggregators import (
 
 class TestProperty(unittest.TestCase):
     """Test property serialization and deserialization"""
+
+    @classmethod
+    @override
+    def setUpClass(cls) -> None:
+        SerializationTools.set_inside_unit_tests()
+        SerializationTools.hints = {}
 
     def perform_property_roundtrip_test(
         self, property_obj: PropertyTrait, property_type: str

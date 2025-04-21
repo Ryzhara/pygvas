@@ -28,7 +28,7 @@ To run a specific test case:
 
 ```bash
 cd python
-python -m unittest tests.gvas_tests.test_property.TestProperty.test_bool_property
+python -m unittest tests.gvas_core.test_property.TestProperty.test_bool_property
 ```
 
 ## Test Resources

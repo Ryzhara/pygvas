@@ -4,7 +4,7 @@ Python port of properties/mod.rs
 """
 
 from abc import ABC, abstractmethod
-from typing import Optional, Dict, Any, BinaryIO, List, Tuple
+from typing import Optional
 from pydantic.dataclasses import dataclass
 
 from ..engine_tools import ContextScopeTracker, SerializationTools

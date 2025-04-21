@@ -5,12 +5,20 @@ Tests for GUID functionality
 import unittest
 from io import BytesIO
 import uuid
+from typing import override
 
+from gvas.engine_tools import SerializationTools
 from gvas.gvas_utils import ZERO_GUID, write_guid, read_guid
 
 
 class TestGuid(unittest.TestCase):
     """Test GUID functionality"""
+
+    @classmethod
+    @override
+    def setUpClass(cls) -> None:
+        SerializationTools.set_inside_unit_tests()
+        SerializationTools.hints = {}
 
     def test_guid_creation(self):
         """Test creating GUIDs"""

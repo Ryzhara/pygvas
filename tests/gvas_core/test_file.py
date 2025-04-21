@@ -4,9 +4,14 @@ Tests for GVASFile functionality
 
 import unittest
 from io import BytesIO
-from typing import Dict, List, Union
+from typing import Union, override
 
-from gvas.engine_tools import FEngineVersion, CompressionType, GameVersion
+from gvas.engine_tools import (
+    FEngineVersion,
+    CompressionType,
+    GameVersion,
+    SerializationTools,
+)
 from gvas.gvas_file import GVASFile, GvasHeader, GameFileFormat
 from gvas.properties.property_base import PropertyFactory, PropertyTrait
 from gvas.properties.numerical_property import (
@@ -20,6 +25,12 @@ from gvas.properties.str_property import StrProperty
 
 class TestGvasFile(unittest.TestCase):
     """Test GVASFile functionality"""
+
+    @classmethod
+    @override
+    def setUpClass(cls) -> None:
+        SerializationTools.set_inside_unit_tests()
+        SerializationTools.hints = {}
 
     def test_create_file(self):
         """Test creating a GVASFile from scratch"""
@@ -73,7 +84,7 @@ class TestGvasFile(unittest.TestCase):
 
         # Deserialize the file
         stream.seek(0)
-        loaded_file = GVASFile.read(
+        loaded_file, _original_stream = GVASFile.read(
             stream,
             game_version=GameVersion.DEFAULT,
             compression_type=CompressionType.NONE,
@@ -130,7 +141,9 @@ class TestGvasFile(unittest.TestCase):
 
         # Deserialize the file
         stream.seek(0)
-        loaded_file = GVASFile.read(stream, GameVersion.DEFAULT, CompressionType.NONE)
+        loaded_file, _original_stream = GVASFile.read(
+            stream, GameVersion.DEFAULT, CompressionType.NONE
+        )
 
         # Check that the header values match
         self.assertEqual(
@@ -189,7 +202,7 @@ class TestGvasFile(unittest.TestCase):
 
         # Deserialize with default game version
         default_stream.seek(0)
-        default_file = GVASFile.read(
+        default_file, _original_stream = GVASFile.read(
             default_stream, GameVersion.DEFAULT, CompressionType.NONE
         )
 

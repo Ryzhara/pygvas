@@ -369,7 +369,7 @@ class GVASFile(BaseModel):
 
     game_file_format: GameFileFormat
     header: GvasHeader
-    properties: Dict[str, UNREAL_ENGINE_PROPERTIES]
+    properties: dict[str, UNREAL_ENGINE_PROPERTIES]
 
     def __post_init__(self):
         pass
@@ -408,9 +408,10 @@ class GVASFile(BaseModel):
             compressed_size = read_uint32(stream)
             magic_bytes = stream.read(3)
             if magic_bytes == PLZ_MAGIC:
-                print(
-                    f"Found PalWorld file with {decompressed_size=} and {compressed_size=}"
-                )
+                if not SerializationTools.inside_unit_tests():
+                    print(
+                        f"Found PalWorld file with {decompressed_size=} and {compressed_size=}"
+                    )
                 enum_value = read_int8(stream)
                 match enum_value:
                     case CompressionType.NONE.value:
@@ -518,23 +519,19 @@ class GVASFile(BaseModel):
         if self.game_file_format.compression_type == CompressionType.ZLIB_TWICE:
             # hack to save uncompressed
             if uncompressed_file_name:
-                # print(f"Writing {uncompressed_file_name}")
                 with open(uncompressed_file_name, "wb") as f:
                     f.write(data_to_write)
 
             data_to_write = zlib.compress(data_to_write)  # once
             first_compressed_size = len(data_to_write)
-            # print(f"We have: {first_compressed_size=}")
 
             data_to_write = zlib.compress(data_to_write)  # twice
             second_compressed_size = len(data_to_write)
-            # print(f"We have: {second_compressed_size=}")
 
             # tricky folks; they store the first compressed size, not the final
             compressed_size = first_compressed_size
 
         elif self.game_file_format.compression_type == CompressionType.ZLIB:
-            # print(f"Writing {uncompressed_file_name}")
             if uncompressed_file_name:
                 with open(uncompressed_file_name, "wb") as f:
                     f.write(data_to_write)
@@ -550,9 +547,10 @@ class GVASFile(BaseModel):
         # ====================================
         # Handle PalWorld special prefix
         if self.game_file_format.game_version == GameVersion.PALWORLD:
-            print(
-                f"Writing PalWorld file with {decompressed_size=} and {compressed_size=}"
-            )
+            if not SerializationTools.inside_unit_tests():
+                print(
+                    f"Writing PalWorld file with {decompressed_size=} and {compressed_size=}"
+                )
             write_uint32(stream, decompressed_size)
             write_uint32(stream, compressed_size)
             write_bytes(stream, PLZ_MAGIC)
