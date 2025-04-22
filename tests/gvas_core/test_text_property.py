@@ -1,27 +1,19 @@
 import unittest
 from io import BytesIO
-import struct
-import zlib
-from sys import flags
 from typing import Union, Callable
 
 from typing_extensions import override
 
-from gvas.engine_tools import GameVersion, CompressionType, SerializationTools
+from gvas.engine_tools import SerializationTools
 from gvas.error import SerializeError
 from gvas.gvas_utils import datetime_to_str
-
 from gvas.properties.text_property import (
-    TextProperty,
     FText,
     ArgumentFormat,
     FormatArgument,
     DateTime,
-    FTextHistory,
     NumberFormattingOptions,
-    RoundingMode,
     TextHistoryType,
-    FormatArgumentType,
     FormatArgumentValue,
     TransformType,
     Empty,

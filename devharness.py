@@ -255,9 +255,6 @@ def test_gvas_file(test_file: str):
             f"\tFAILED: {test_file} Deserialized of JSON FAILED. The saved GVAS is NOT IDENTICAL to first serialization."
         )
 
-    # if not pydantic_object_commpare:
-    #     print(f"FAILED: Reserialized gvas file is NOT IDENTICAL.")
-
 
 dump_model = False
 if dump_model:
