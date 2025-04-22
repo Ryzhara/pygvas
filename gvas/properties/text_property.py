@@ -1,8 +1,7 @@
 from enum import IntEnum, auto
 from io import BytesIO
 from typing import Self, TypeVar, Type, Annotated
-from pydantic import field_serializer, Discriminator
-from pydantic.dataclasses import dataclass
+from pydantic import Discriminator
 
 from .numerical_property import *
 from .property_base import PropertyTrait
@@ -119,10 +118,6 @@ class NumberFormattingOptions:
         if self.rounding_mode is not None:
             pass
 
-    # @field_serializer("rounding_mode")
-    # def serialize_rounding_mode(self, rounding_mode: RoundingMode):
-    #     return rounding_mode.name
-
     def read(self, stream: BinaryIO) -> Self:
         self.always_include_sign = read_bool32bit(stream)
         self.use_grouping = read_bool32bit(stream)
@@ -194,6 +189,7 @@ class FormatArgumentValue(IntEnum):
         return write_intenum_type(stream, self)
 
 
+# this is actually a factory for all the format argument types listed in the enum
 @dataclass
 class FormatArgument:
     type: str = FormatArgumentValue.Unknown.name
@@ -216,7 +212,7 @@ class FormatArgument:
                     self.type = FormatArgumentValue.Int64.name
                     self.value = read_int64(stream)
                 else:
-                    self.type = FormatArgumentValue(FormatArgumentValue.Int)
+                    self.type = FormatArgumentValue.Int.name
                     self.value = read_int32(stream)
 
             case FormatArgumentType.UInt:
@@ -254,7 +250,7 @@ class FormatArgument:
             FUE5ReleaseStreamObjectVersion.TextFormatArgumentData64bitSupport
         ):
             raise SerializeError.invalid_value(
-                f"{self.type.name} support {'required' if expected else 'prohibited'} with TextFormatArgumentData64bitSupport"
+                f"{self.type} support {'required' if expected else 'prohibited'} with TextFormatArgumentData64bitSupport"
             )
 
     def write(self, stream: BinaryIO) -> int:
@@ -401,9 +397,7 @@ class DateTime:
 
 @dataclass
 class Empty:
-    #     type: str = "Empty"
     type: Literal[TextHistoryType.Empty.name] = TextHistoryType.Empty.name
-    # type: Literal["Empty"] = "Empty"
 
     def write(self, stream: BinaryIO) -> int:
         bytes_written = 0
@@ -419,7 +413,6 @@ class Empty:
 @dataclass
 class NoType:
 
-    # type: str = "NoType"
     type: Literal[TextHistoryType.NoType.name] = TextHistoryType.NoType.name
     culture_invariant_string: Optional[str] = None
 
@@ -512,7 +505,7 @@ class OrderedFormat:
         argument_count = read_int32(stream)
         self.arguments: list = []
         for _ in range(argument_count):
-            value = FormatArgumentValue.read(stream)
+            value = FormatArgument().read(stream)
             self.arguments.append(value)
         return self
 

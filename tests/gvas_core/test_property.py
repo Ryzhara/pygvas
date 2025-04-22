@@ -4,12 +4,11 @@ Tests for property functionality
 
 import unittest
 from io import BytesIO
-import struct
 from typing import override
 
 from gvas.engine_tools import SerializationTools
-from gvas.gvas_utils import read_string, write_string
-from gvas.properties.property_base import PropertyFactory, PropertyTrait
+from gvas.gvas_utils import read_string
+from gvas.properties.enum_property import EnumProperty
 from gvas.properties.numerical_property import (
     BoolProperty,
     ByteProperty,
@@ -25,14 +24,8 @@ from gvas.properties.numerical_property import (
     FloatProperty,
     DoubleProperty,
 )
+from gvas.properties.property_base import PropertyFactory, PropertyTrait
 from gvas.properties.str_property import StrProperty
-from gvas.properties.enum_property import EnumProperty
-from gvas.properties.aggregators import (
-    ArrayProperty,
-    MapProperty,
-    SetProperty,
-    StructProperty,
-)
 
 
 class TestProperty(unittest.TestCase):

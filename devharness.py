@@ -259,34 +259,13 @@ def test_gvas_file(test_file: str):
     #     print(f"FAILED: Reserialized gvas file is NOT IDENTICAL.")
 
 
-# print(GVASFile.model_json_schema())
-
-typearray = TypeAdapter(ArrayProperty)
-arraytest = typearray.validate_python(
-    {
-        "type": "ArrayProperty",
-        "property_type": "TextProperty",
-        "values": [
-            {
-                "type": "TextProperty",
-                "flags": 1,
-                "history": {
-                    "type": "AsNumber",
-                    "source_value": {"type": "Int64", "value": 1},
-                    "format_options": {
-                        "always_include_sign": False,
-                        "use_grouping": True,
-                        "rounding_mode": "HalfToEven",
-                        "minimum_integral_digits": 1,
-                        "maximum_integral_digits": 324,
-                        "minimum_fractional_digits": 0,
-                        "maximum_fractional_digits": 3,
-                    },
-                },
-            }
-        ],
-    }
-)
+dump_model = False
+if dump_model:
+    model_json_schema = GVASFile.model_json_schema()
+    with open("GVAS File Schema Dump.json", "w") as f:
+        json_string = json.dumps(model_json_schema, indent=2)
+        f.write(json_string)
+    exit(0)
 
 for test_file in test_file_list:
     test_gvas_file(test_file)
