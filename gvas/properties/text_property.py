@@ -13,6 +13,7 @@ from ..engine_tools import (
 )
 from ..gvas_utils import *
 
+
 EnumT = TypeVar("EnumT", bound=IntEnum)
 
 
@@ -189,9 +190,24 @@ class FormatArgumentValue(IntEnum):
         return write_intenum_type(stream, self)
 
 
+class TextPropertyHelper:
+
+    @staticmethod
+    def supports_64bit():
+        return SerializationTools.supports_version(
+            FUE5ReleaseStreamObjectVersion.TextFormatArgumentData64bitSupport
+        )
+
+    @staticmethod
+    def supports_culture_invariance():
+        return SerializationTools.supports_version(
+            FEditorObjectVersion.CultureInvariantTextSerializationKeyStability
+        )
+
+
 # this is actually a factory for all the format argument types listed in the enum
 @dataclass
-class FormatArgument:
+class FormatArgument(TextPropertyHelper):
     type: str = FormatArgumentValue.Unknown.name
     value: Optional[Union[int, float, "FText"]] = None
 
@@ -199,9 +215,7 @@ class FormatArgument:
 
         format_argument_type = FormatArgumentType.read_type(stream)
 
-        supports_64bit = SerializationTools.supports_version(
-            FUE5ReleaseStreamObjectVersion.TextFormatArgumentData64bitSupport
-        )
+        supports_64bit = self.supports_64bit()
 
         # Argh. We are impedance matching FormatArgumentType to FormatArgumentValue so
         # we can accommodate an implicit type conversion on 64-bit support. :(
@@ -246,9 +260,7 @@ class FormatArgument:
         return self
 
     def assert_64bit_support(self, *, expected: bool):
-        if expected != SerializationTools.supports_version(
-            FUE5ReleaseStreamObjectVersion.TextFormatArgumentData64bitSupport
-        ):
+        if expected != self.supports_64bit():
             raise SerializeError.invalid_value(
                 f"{self.type} support {'required' if expected else 'prohibited'} with TextFormatArgumentData64bitSupport"
             )
@@ -396,30 +408,26 @@ class DateTime:
 
 
 @dataclass
-class Empty:
+class Empty(TextPropertyHelper):
     type: Literal[TextHistoryType.Empty.name] = TextHistoryType.Empty.name
 
     def write(self, stream: BinaryIO) -> int:
         bytes_written = 0
         bytes_written += TextHistoryType.NoType.write_type(stream)
 
-        if SerializationTools.supports_version(
-            FEditorObjectVersion.CultureInvariantTextSerializationKeyStability
-        ):
+        if self.supports_culture_invariance():
             bytes_written += write_bool32bit(stream, False)
         return bytes_written
 
 
 @dataclass
-class NoType:
+class NoType(TextPropertyHelper):
 
     type: Literal[TextHistoryType.NoType.name] = TextHistoryType.NoType.name
     culture_invariant_string: Optional[str] = None
 
     def read(self, stream: BinaryIO) -> Self:
-        if SerializationTools.supports_version(
-            FEditorObjectVersion.CultureInvariantTextSerializationKeyStability
-        ):
+        if self.supports_culture_invariance():
             has_culture_invariant_string = read_bool32bit(stream)
             if has_culture_invariant_string:
                 self.culture_invariant_string = read_string(stream)
@@ -433,9 +441,7 @@ class NoType:
         bytes_written = 0
         bytes_written += TextHistoryType.NoType.write_type(stream)
 
-        if SerializationTools.supports_version(
-            FEditorObjectVersion.CultureInvariantTextSerializationKeyStability
-        ):
+        if self.supports_culture_invariance():
             bytes_written += write_bool32bit(stream, True)
             bytes_written += write_string(stream, self.culture_invariant_string)
         return bytes_written

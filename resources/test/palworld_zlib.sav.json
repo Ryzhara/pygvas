@@ -145,7 +145,6 @@
               "type_name": "Quat",
               "value": {
                 "type": "Quat",
-                "is_double": true,
                 "x": 0.0,
                 "y": -0.0,
                 "z": 0.7122995838326626,
@@ -157,7 +156,6 @@
               "type_name": "Vector",
               "value": {
                 "type": "Vector",
-                "is_double": true,
                 "x": -346885.8958710417,
                 "y": 262952.62055793736,
                 "z": 4095.4127513287012

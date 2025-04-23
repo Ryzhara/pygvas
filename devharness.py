@@ -108,9 +108,10 @@ test_file_list = [
 # game_version = GameVersion.DEFAULT
 # compression = CompressionType.NONE
 
+# # game_version = GameVersion.PALWORLD
+# # compression = CompressionType.ZLIB
 # test_file_list = ["resources/test/palworld_zlib.sav"]  # working!
-# game_version = GameVersion.PALWORLD
-# compression = CompressionType.ZLIB
+
 
 # test_file_list = ["resources/test/palworld_zlib_twice.sav"]  # working!
 # # game_version = GameVersion.PALWORLD

@@ -4,6 +4,7 @@ Main test file for GVAS functionality
 
 import json
 import unittest
+import zipfile
 from io import BytesIO
 from pathlib import Path
 from typing import override
@@ -82,13 +83,8 @@ TEST_FILE_CONFIG = {
     },
     "PALWORLD_ZLIB_TWICE": {
         "file": "palworld_zlib_twice.sav",
-        "json": "palworld_zlib_twice.sav.json",
+        "json": "palworld_zlib_twice.sav.json.zip",
         "hints": "palworld_zlib_twice.hints.json",
-        # "hints": {
-        #     "worldSaveData.StructProperty.MapObjectSpawnerInStageSaveData.MapProperty.Value.StructProperty.SpawnerDataMapByLevelObjectInstanceId.MapProperty.Key.StructProperty": "Guid",
-        #     "worldSaveData.StructProperty.BaseCampSaveData.MapProperty.Key.StructProperty": "Guid",
-        #     "worldSaveData.StructProperty.GroupSaveDataMap.MapProperty.Key.StructProperty": "Guid",
-        # },
     },
 }
 
@@ -96,15 +92,18 @@ TEST_FILE_CONFIG = {
 def get_test_file_config(key: str) -> (str, str, str):
     if key not in TEST_FILE_CONFIG.keys():
         raise KeyError()
+
     config = TEST_FILE_CONFIG[key]
     test_file = get_testfile_path(config["file"])
     json_file = get_testfile_path(config["json"])
+
     if type(config["hints"]) is str or isinstance(config["hints"], Path):
         hints_file = get_testfile_path(config["hints"])
     elif type(config["hints"]) is dict:
         hints_file = config["hints"]
     else:
         hints_file = {}
+
     return test_file, json_file, hints_file
 
 
@@ -148,6 +147,22 @@ class TestGvasExamples(unittest.TestCase):
             f"GVAS deserialization failed for {test_key}",
         )
 
+    @staticmethod
+    def get_json_content(json_file):
+        # load test file. check if it was zipped because size
+        if zipfile.is_zipfile(json_file):
+            json_file_without_ext = json_file
+            if Path(json_file).suffix.lower() == ".zip":
+                json_file_without_ext = Path(json_file).stem
+            with zipfile.ZipFile(json_file, "r") as zf:
+                with zf.open(json_file_without_ext) as f:
+                    expected_json = json.load(f)
+        else:
+            with open(json_file, "r") as f:
+                expected_json = json.load(f)
+
+        return expected_json
+
     def perform_json_serialization_test(self, test_key: str):
         """
         Read GVAS file from storage and serialize into JSON. Compare that to the expected JSON.
@@ -158,9 +173,9 @@ class TestGvasExamples(unittest.TestCase):
         gvas_adaptor = TypeAdapter(GVASFile)
         gvas_file_dict = gvas_adaptor.dump_python(gvas_file, exclude_none=True)
         serialized_json_str = json.dumps(gvas_file_dict)
-        # load test file
-        with open(json_file, "r") as f:
-            expected_json = json.load(f)
+
+        expected_json = self.get_json_content(json_file)
+
         # normalize spacing, just in case
         expected_json_str = json.dumps(expected_json)
 
@@ -177,9 +192,7 @@ class TestGvasExamples(unittest.TestCase):
         """
         test_file, json_file, hints_file = get_test_file_config(test_key)
 
-        with open(json_file, "r") as f:
-            expected_json = json.load(f)
-        expected_json_str = json.dumps(expected_json)
+        expected_json = self.get_json_content(json_file)
 
         # deserialize the JSON to a GVAS file
         gvas_adaptor = TypeAdapter(GVASFile)

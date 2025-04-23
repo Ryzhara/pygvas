@@ -119,16 +119,16 @@ class TestTextPropertyTypes(unittest.TestCase):
 
     def test_60_rotator_property(self):
         self.perform_roundtrip_standard_type_roundtrip_test(
-            RotatorProperty(is_double=False, pitch=1.0, yaw=1.0, roll=1.0),
-            RotatorProperty(is_double=False),
+            RotatorProperty(pitch=1.0, yaw=1.0, roll=1.0),
+            RotatorProperty(),
             supports_version=False,
             msg=f"Testing standard type RotatorProperty (float)",
         )
 
     def test_61_rotator_property(self):
         self.perform_roundtrip_standard_type_roundtrip_test(
-            RotatorProperty(is_double=True, pitch=1.0, yaw=1.0, roll=1.0),
-            RotatorProperty(is_double=True),
+            RotatorProperty(pitch=1.0, yaw=1.0, roll=1.0),
+            RotatorProperty(),
             supports_version=True,
             msg=f"Testing standard type RotatorProperty (double)",
         )
@@ -144,62 +144,32 @@ class TestTextPropertyTypes(unittest.TestCase):
 
     def test_80_vector2d_property(self):
         self.perform_roundtrip_standard_type_roundtrip_test(
-            Vector2DProperty(is_double=False, x=1.0, y=1.0),
-            Vector2DProperty(is_double=False),
+            Vector2DProperty(x=1.0, y=1.0),
+            Vector2DProperty(),
             supports_version=False,
             msg=f"Testing standard type Vector2DProperty",
         )
 
     def test_81_vector2d_property(self):
         self.perform_roundtrip_standard_type_roundtrip_test(
-            Vector2DProperty(is_double=True, x=1.0, y=1.0),
-            Vector2DProperty(is_double=True),
+            Vector2DProperty(x=1.0, y=1.0),
+            Vector2DProperty(),
             supports_version=True,
             msg=f"Testing standard type Vector2DProperty",
         )
 
     def test_80_vector_property(self):
         self.perform_roundtrip_standard_type_roundtrip_test(
-            VectorProperty(is_double=False, x=1.0, y=1.0, z=1.0),
-            VectorProperty(is_double=False),
+            VectorProperty(x=1.0, y=1.0, z=1.0),
+            VectorProperty(),
             supports_version=False,
             msg=f"Testing standard type VectorProperty",
         )
 
     def test_81_vector_property(self):
         self.perform_roundtrip_standard_type_roundtrip_test(
-            VectorProperty(is_double=True, x=3.14159, y=3.14159, z=3.14159),
-            VectorProperty(is_double=True),
+            VectorProperty(x=3.14159, y=3.14159, z=3.14159),
+            VectorProperty(),
             supports_version=True,
             msg=f"Testing standard type VectorProperty",
         )
-
-    def test_90_ensure_support_version_works(self):
-        fn_restore = SerializationTools.supports_version
-        try:
-            SerializationTools.supports_version = lambda x: True
-
-            vector = VectorProperty.new()
-            self.assertTrue(vector.is_double)
-
-            quat = QuatProperty.new()
-            self.assertTrue(quat.is_double)
-
-            rotator = RotatorProperty.new()
-            self.assertTrue(rotator.is_double)
-
-            SerializationTools.supports_version = lambda x: False
-
-            vector = VectorProperty.new()
-            self.assertFalse(vector.is_double)
-
-            quat = QuatProperty.new()
-            self.assertFalse(quat.is_double)
-
-            rotator = RotatorProperty.new()
-            self.assertFalse(rotator.is_double)
-
-        except Exception:
-            raise
-        finally:
-            SerializationTools.supports_version = fn_restore

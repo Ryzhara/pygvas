@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Optional, Literal
+
 from pydantic.dataclasses import dataclass
 
 from gvas.gvas_utils import *
@@ -24,6 +25,13 @@ class StandardStructTrait(ABC):
         """Write property data to a binary stream and return byte count written"""
         pass
 
+    @staticmethod
+    def uses_lwc():
+        uses_lwc = SerializationTools.supports_version(
+            FUE5ReleaseStreamObjectVersion.LargeWorldCoordinates
+        )
+        return uses_lwc
+
 
 # ============================================
 #
@@ -31,10 +39,6 @@ class StandardStructTrait(ABC):
 class GuidProperty(StandardStructTrait):
     type: Literal["Guid"] = "Guid"
     guid: Optional[str] = None
-
-    @classmethod
-    def new(cls) -> "GuidProperty":
-        return cls()
 
     def read(self, stream: BinaryIO) -> None:
         position = stream.tell()
@@ -54,10 +58,6 @@ class DateTimeProperty(StandardStructTrait):
     datetime: int = 0  # uint64
     comment: str = None
 
-    @classmethod
-    def new(cls) -> "DateTimeProperty":
-        return cls()
-
     def read(self, stream: BinaryIO) -> None:
         self.datetime = read_uint64(stream)
         self.comment = datetime_to_str(self.datetime)
@@ -74,10 +74,6 @@ class TimespanProperty(StandardStructTrait):
     type: Literal["Timespan"] = "Timespan"
     timespan: int = 0  # uint64
     comment: str = None
-
-    @classmethod
-    def new(cls) -> "TimespanProperty":
-        return cls()
 
     def read(self, stream: BinaryIO) -> None:
         format_str, size = ("<Q", 8)
@@ -97,10 +93,6 @@ class IntPointProperty(StandardStructTrait):
     type: Literal["IntPoint"] = "IntPoint"
     x: int = 0
     y: int = 0
-
-    @classmethod
-    def new(cls) -> "IntPointProperty":
-        return cls()
 
     def read(self, stream: BinaryIO) -> None:
         # always int32
@@ -125,10 +117,6 @@ class LinearColorProperty(StandardStructTrait):
     g: float = 0
     r: float = 0
 
-    @classmethod
-    def new(cls) -> "LinearColorProperty":
-        return cls()
-
     def read(self, stream: BinaryIO) -> None:
         # always float32
         self.a = read_float(stream)
@@ -151,26 +139,22 @@ class LinearColorProperty(StandardStructTrait):
 @dataclass
 class RotatorProperty(StandardStructTrait):
     type: Literal["Rotator"] = "Rotator"
-    is_double: bool = False
     pitch: float = 0
     yaw: float = 0
     roll: float = 0
 
-    @classmethod
-    def new(cls) -> "RotatorProperty":
-        uses_lwc = SerializationTools.supports_version(
-            FUE5ReleaseStreamObjectVersion.LargeWorldCoordinates
-        )
-        return cls(is_double=uses_lwc)
-
     def read(self, stream: BinaryIO) -> None:
-        read_fn = read_double if self.is_double else read_float
+
+        read_fn = read_double if self.uses_lwc() else read_float
+
         self.pitch = read_fn(stream)
         self.yaw = read_fn(stream)
         self.roll = read_fn(stream)
 
     def write(self, stream: BinaryIO) -> int:
-        write_fn = write_double if self.is_double else write_float
+
+        write_fn = write_double if self.uses_lwc() else write_float
+
         bytes_written = 0
         bytes_written += write_fn(stream, self.pitch)
         bytes_written += write_fn(stream, self.yaw)
@@ -183,28 +167,24 @@ class RotatorProperty(StandardStructTrait):
 @dataclass
 class QuatProperty(StandardStructTrait):
     type: Literal["Quat"] = "Quat"
-    is_double: bool = False
     x: float = 0
     y: float = 0
     z: float = 0
     w: float = 0
 
-    @classmethod
-    def new(cls) -> "QuatProperty":
-        uses_lwc = SerializationTools.supports_version(
-            FUE5ReleaseStreamObjectVersion.LargeWorldCoordinates
-        )
-        return cls(is_double=uses_lwc)
-
     def read(self, stream: BinaryIO) -> None:
-        read_fn = read_double if self.is_double else read_float
+
+        read_fn = read_double if self.uses_lwc() else read_float
+
         self.x = read_fn(stream)
         self.y = read_fn(stream)
         self.z = read_fn(stream)
         self.w = read_fn(stream)
 
     def write(self, stream: BinaryIO) -> int:
-        write_fn = write_double if self.is_double else write_float
+
+        write_fn = write_double if self.uses_lwc() else write_float
+
         bytes_written = 0
         bytes_written += write_fn(stream, self.x)
         bytes_written += write_fn(stream, self.y)
@@ -218,26 +198,22 @@ class QuatProperty(StandardStructTrait):
 @dataclass
 class VectorProperty(StandardStructTrait):
     type: Literal["Vector"] = "Vector"
-    is_double: bool = False
     x: float = 0
     y: float = 0
     z: float = 0
 
-    @classmethod
-    def new(cls, use_lwc=False) -> "VectorProperty":
-        uses_lwc = SerializationTools.supports_version(
-            FUE5ReleaseStreamObjectVersion.LargeWorldCoordinates
-        )
-        return cls(is_double=uses_lwc)
-
     def read(self, stream: BinaryIO) -> None:
-        read_fn = read_double if self.is_double else read_float
+
+        read_fn = read_double if self.uses_lwc() else read_float
+
         self.x = read_fn(stream)
         self.y = read_fn(stream)
         self.z = read_fn(stream)
 
     def write(self, stream: BinaryIO) -> int:
-        write_fn = write_double if self.is_double else write_float
+
+        write_fn = write_double if self.uses_lwc() else write_float
+
         bytes_written = 0
         bytes_written += write_fn(stream, self.x)
         bytes_written += write_fn(stream, self.y)
@@ -251,39 +227,44 @@ class VectorProperty(StandardStructTrait):
 # from pydantic import BaseModel
 class Vector2DProperty(StandardStructTrait):
     type: Literal["Vector2D"] = "Vector2D"
-    is_double: bool = False
     x: float = 0
     y: float = 0
 
     @classmethod
     def from_json(cls, json_obj: dict) -> "Vector2DProperty":
-        # Custom parsing logic goes here
-        # json_obj["value"] = int(json_obj["value"])
         return cls(**json_obj)
 
-    @classmethod
-    def new(cls) -> "Vector2DProperty":
-        uses_lwc = SerializationTools.supports_version(
-            FUE5ReleaseStreamObjectVersion.LargeWorldCoordinates
-        )
-        return cls(is_double=uses_lwc)
-
     def read(self, stream: BinaryIO) -> None:
-        read_fn = read_double if self.is_double else read_float
+
+        read_fn = read_double if self.uses_lwc() else read_float
+
         self.x = read_fn(stream)
         self.y = read_fn(stream)
 
     def write(self, stream: BinaryIO) -> int:
-        write_fn = write_double if self.is_double else write_float
+
+        write_fn = write_double if self.uses_lwc() else write_float
+
         bytes_written = 0
         bytes_written += write_fn(stream, self.x)
         bytes_written += write_fn(stream, self.y)
         return bytes_written
 
 
+STANDARD_TYPE_UNION = Union[
+    DateTimeProperty,
+    GuidProperty,
+    IntPointProperty,
+    LinearColorProperty,
+    QuatProperty,
+    RotatorProperty,
+    TimespanProperty,
+    VectorProperty,
+    Vector2DProperty,
+]
 # ============================================
 #
-_special_struct_type_map = {
+_special_struct_type_map: dict[str, STANDARD_TYPE_UNION] = {
     "Vector": VectorProperty,
     "Vector2D": Vector2DProperty,
     "Rotator": RotatorProperty,
@@ -310,8 +291,10 @@ def get_special_struct_instance(
     # Map property types to their classes
 
     if type_name in _special_struct_type_map.keys():
-        property_encoding_class = _special_struct_type_map.get(type_name)
-        property_instance = property_encoding_class.new()
+        property_encoding_class: STANDARD_TYPE_UNION = _special_struct_type_map.get(
+            type_name
+        )
+        property_instance = property_encoding_class()
     else:
         print(f"Unknown special struct type: {type_name}")
         raise DeserializeError(f"Unknown special struct type: {type_name}")
