@@ -97,6 +97,9 @@ test_file_list = [
     "resources/test/ro_64bit_fav.sav",
     "resources/test/SaveSlot_03.sav",
     "resources/test/vector2d.sav",
+    "resources/test/regression_01.bin",
+    #   regression_01.bin once had an error but now is working without hings?
+    #   -- custom struct @ FSDEventRewardsSave.StructProperty.EventsSeen.SetProperty.StructProperty
 ]
 
 
@@ -112,6 +115,10 @@ test_file_list = [
 # # compression = CompressionType.ZLIB
 # test_file_list = ["resources/test/palworld_zlib.sav"]  # working!
 
+#   text_property_noarray.bin -- SaveGameData.StructProperty.QuestsStatus.ArrayProperty.QuestsStatus.ShortDescription.TextProperty
+#  test_file_list = ["resources/test/text_property_noarray.bin"]  # Working!
+# StructProperty["TrackedQuestsNames"] = NameProperty(value="QU91_InvestigateTower_B2")
+
 
 # test_file_list = ["resources/test/palworld_zlib_twice.sav"]  # working!
 # # game_version = GameVersion.PALWORLD
@@ -124,9 +131,23 @@ test_file_list = [
 
 # there are some "BIN" files:
 #   features_01.bin, -- custom struct @ FSDEventRewardsSave.StructProperty.EventsSeen.SetProperty.StructProperty
-#   regression_01.bin,  -- custom struct @ FSDEventRewardsSave.StructProperty.EventsSeen.SetProperty.StructProperty
-#   text_property_noarray.bin -- SaveGameData.StructProperty.QuestsStatus.ArrayProperty.QuestsStatus.ShortDescription.TextProperty
-# test_file_list = ["resources/test/SaveSlot_03.bin"]  # Working!
+test_file_list = ["resources/test/features_01.bin"]
+SerializationTools.hints = {
+    "SeasonSave.StructProperty.Seasons.MapProperty.Key.StructProperty": "Guid",
+    "SeasonSave.StructProperty.Seasons.MapProperty.Value.StructProperty.CompletedSpecialChallenges.MapProperty.Key.StructProperty": "Guid",
+    "UnLockedMissionParameters.MapProperty.Key.StructProperty": "Guid",
+    "ItemUpgradeSelections.MapProperty.Key.StructProperty": "Guid",
+    "ItemUpgradeLoadouts.ArrayProperty.Loadout.MapProperty.Key.StructProperty": "Guid",
+    "EnemiesKilled.MapProperty.Key.StructProperty": "Guid",
+    "UnlockedItemSkins.MapProperty.Key.StructProperty": "Guid",
+    "Resources.StructProperty.OwnedResources.MapProperty.Key.StructProperty": "Guid",
+    "FSDEventRewardsSave.StructProperty.EventsSeen.SetProperty.StructProperty": "Guid",
+    "GameDLCSave.StructProperty.AnnouncedIDs.SetProperty.StructProperty": "Guid",
+    "Drinks.StructProperty.UnlockedDrinks.SetProperty.StructProperty": "Guid",
+    "UnlockedItemSkins.MapProperty.Value.StructProperty.Skins.SetProperty.StructProperty": "Guid",
+    "UnlockedPickaxeParts.SetProperty.StructProperty": "Guid",
+    "MinersManualKnownObjects.SetProperty.StructProperty": "Guid",
+}
 
 
 # always a quick retest

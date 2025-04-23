@@ -564,7 +564,8 @@ class SerializationTools:
     """
 
     custom_versions: dict[str, int]
-    hints: dict[str, str] = {}
+    hints: dict[str, Union[str, dict[str, Any]]] = {}
+    hint_context: dict[str, Any] = {}
     context_stack: list[str] = []
     engine_major: int = 4
     engine_minor: int = 0

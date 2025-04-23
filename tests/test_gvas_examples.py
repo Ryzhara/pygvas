@@ -34,10 +34,15 @@ TEST_FILE_CONFIG = {
         "json": "enum_array.sav.json",
         "hints": None,
     },
+    "ISLANDS_OF_INSIGHT": {
+        "file": "islands_of_insight.sav",
+        "json": "islands_of_insight.sav.json.zip",
+        "hints": None,
+    },
     "FEATURES_01": {
         "file": "features_01.bin",
         "json": "features_01.bin.json",
-        "hints": None,
+        "hints": "features_01.hints.json",
     },
     "OPTIONS": {"file": "options.sav", "json": "options.sav.json", "hints": None},
     "PACKAGE_VERSION_524": {
@@ -128,7 +133,9 @@ class TestGvasExamples(unittest.TestCase):
         SerializationTools.set_inside_unit_tests()
         SerializationTools.hints = {}
 
-    def perform_gvas_deserialization_test(self, test_key: str):
+    def perform_gvas_deserialization_test(
+        self, test_key: str, should_be_equal: bool = True
+    ):
         """
         Read GVAS file from storage. compare the serialized version to original binary.
         """
@@ -141,11 +148,18 @@ class TestGvasExamples(unittest.TestCase):
         serialized_stream.seek(0)
         original_file_stream.seek(0)
 
-        self.assertEqual(
-            original_file_stream.getvalue(),
-            serialized_stream.getvalue(),
-            f"GVAS deserialization failed for {test_key}",
-        )
+        if should_be_equal:
+            self.assertEqual(
+                original_file_stream.getvalue(),
+                serialized_stream.getvalue(),
+                f"GVAS deserialization failed for {test_key}",
+            )
+        else:
+            self.assertNotEqual(
+                original_file_stream.getvalue(),
+                serialized_stream.getvalue(),
+                f"GVAS deserialization failed for {test_key}",
+            )
 
     @staticmethod
     def get_json_content(json_file):
@@ -212,209 +226,84 @@ class TestGvasExamples(unittest.TestCase):
             f"JSON deserialization failed for {test_key}",
         )
 
+    def do_all_tests(self, test_key: str):
+        self.perform_gvas_deserialization_test(test_key)
+        self.perform_json_serialization_test(test_key)
+        self.perform_json_deserialization_test(test_key)
+
     def test_005_assert_failed(self):
-        self.perform_gvas_deserialization_test("ASSERT_FAILED")
-
-    def test_006_assert_failed_json_serialization(self):
-        self.perform_json_serialization_test("ASSERT_FAILED")
-
-    def test_007_assert_failed_json_deserialization(self):
-        self.perform_json_deserialization_test("ASSERT_FAILED")
+        self.do_all_tests("ASSERT_FAILED")
 
     def test_010_component8(self):
-        self.perform_gvas_deserialization_test("COMPONENT8")
-
-    def test_011_component8_json_serialization(self):
-        self.perform_json_serialization_test("COMPONENT8")
-
-    def test_012_component8_json_deserialization(self):
-        self.perform_json_deserialization_test("COMPONENT8")
+        self.do_all_tests("COMPONENT8")
 
     def test_030_delegate(self):
-        self.perform_gvas_deserialization_test("DELEGATE")
-
-    def test_031_delegate_json_serialization(self):
-        self.perform_json_serialization_test("DELEGATE")
-
-    def test_032_delegate_json_deserialization(self):
-        self.perform_json_deserialization_test("DELEGATE")
+        self.do_all_tests("DELEGATE")
 
     def test_040_enum_array(self):
-        self.perform_gvas_deserialization_test("ENUM_ARRAY")
-
-    def test_041_enum_array_json_serialization(self):
-        self.perform_json_serialization_test("ENUM_ARRAY")
-
-    def test_042_enum_array_json_deserialization(self):
-        self.perform_json_deserialization_test("ENUM_ARRAY")
+        self.do_all_tests("ENUM_ARRAY")
 
     def test_050_options(self):
-        self.perform_gvas_deserialization_test("OPTIONS")
-
-    def test_051_options_json_serialization(self):
-        self.perform_json_serialization_test("OPTIONS")
-
-    def test_052_options_json_deserialization(self):
-        self.perform_json_deserialization_test("OPTIONS")
+        self.do_all_tests("OPTIONS")
 
     def test_060_package_version_524(self):
-        self.perform_gvas_deserialization_test("PACKAGE_VERSION_524")
-
-    def test_061_package_version_524_json_serialization(self):
-        self.perform_json_serialization_test("PACKAGE_VERSION_524")
-
-    def test_062_package_version_524_json_deserialization(self):
-        self.perform_json_deserialization_test("PACKAGE_VERSION_524")
+        self.do_all_tests("PACKAGE_VERSION_524")
 
     def test_065_package_version_525(self):
-        self.perform_gvas_deserialization_test("PACKAGE_VERSION_525")
-
-    def test_066_package_version_525_json_serialization(self):
-        self.perform_json_serialization_test("PACKAGE_VERSION_525")
-
-    def test_067_package_version_525_json_deserialization(self):
-        self.perform_json_deserialization_test("PACKAGE_VERSION_525")
+        self.do_all_tests("PACKAGE_VERSION_525")
 
     def test_070_profile_0(self):
         """Note: this python implementation does not need hints."""
-        self.perform_gvas_deserialization_test("PROFILE_0")
-
-    def test_071_profile_0_json_serialization(self):
-        """Note: this python implementation does not need hints."""
-        self.perform_json_serialization_test("PROFILE_0")
-
-    def test_072_profile_0_json_deserialization(self):
-        """Note: this python implementation does not need hints."""
-        self.perform_json_deserialization_test("PROFILE_0")
+        self.do_all_tests("PROFILE_0")
 
     def test_080_ro_64bit_fav(self):
-        self.perform_gvas_deserialization_test("RO_64BIT_FAV")
-
-    def test_081_ro_64bit_fav_json_serialization(self):
-        self.perform_json_serialization_test("RO_64BIT_FAV")
-
-    def test_082_ro_64bit_fav_json_deserialization(self):
-        self.perform_json_deserialization_test("RO_64BIT_FAV")
+        self.do_all_tests("RO_64BIT_FAV")
 
     def test_090_saveslot03(self):
         """Note: this python implementation does not need hints."""
-        self.perform_gvas_deserialization_test("SAVESLOT_03")
-
-    def test_091_saveslot03_json_serialization(self):
-        """Note: this python implementation does not need hints."""
-        self.perform_json_serialization_test("SAVESLOT_03")
-
-    def test_092_saveslot03_json_sdeerialization(self):
-        """Note: this python implementation does not need hints."""
-        self.perform_json_deserialization_test("SAVESLOT_03")
+        self.do_all_tests("SAVESLOT_03")
 
     def test_100_slot1(self):
-        self.perform_gvas_deserialization_test("SLOT1")
-
-    def test_101_slot1_json_serialization(self):
-        self.perform_json_serialization_test("SLOT1")
-
-    def test_102_slot1_json_deserialization(self):
-        self.perform_json_deserialization_test("SLOT1")
+        self.do_all_tests("SLOT1")
 
     def test_110_slot2(self):
-        self.perform_gvas_deserialization_test("SLOT2")
-
-    def test_111_slot2_json_serialization(self):
-        self.perform_json_serialization_test("SLOT2")
-
-    def test_112_slot2_json_deserialization(self):
-        self.perform_json_deserialization_test("SLOT2")
+        self.do_all_tests("SLOT2")
 
     def test_120_slot3(self):
-        self.perform_gvas_deserialization_test("SLOT3")
-
-    def test_121_slot3_json_serialization(self):
-        self.perform_json_serialization_test("SLOT3")
-
-    def test_122_slot3_json_deserialization(self):
-        self.perform_json_deserialization_test("SLOT3")
+        self.do_all_tests("SLOT3")
 
     def test_130_transform(self):
-        self.perform_gvas_deserialization_test("TRANSFORM")
-
-    def test_131_transform_json_serialization(self):
-        self.perform_json_serialization_test("TRANSFORM")
-
-    def test_132_transform_json_deserialization(self):
-        self.perform_json_deserialization_test("TRANSFORM")
+        self.do_all_tests("TRANSFORM")
 
     def test_140_vector2d(self):
-        self.perform_gvas_deserialization_test("VECTOR2D")
-
-    def test_141_vector2d_json_serialization(self):
-        self.perform_json_serialization_test("VECTOR2D")
-
-    def test_142_vector2d_json_deserialization(self):
-        self.perform_json_deserialization_test("VECTOR2D")
+        self.do_all_tests("VECTOR2D")
 
     def test_200_regression_01(self):
         """This is a BIN file."""
-        self.assertTrue(True)
-        # self.perform_gvas_deserialization_test("REGRESSION_01")
-
-    def test_201_regression_01_json_serialization(self):
-        """This is a BIN file."""
-        self.assertTrue(True)
-        # self.perform_json_serialization_test("REGRESSION_01")
-
-    def test_202_regression_01_json_deserialization(self):
-        """This is a BIN file."""
-        self.assertTrue(True)
-        # self.perform_json_deserialization_test("REGRESSION_01")
+        self.do_all_tests("REGRESSION_01")
 
     def test_210_text_property_noarray(self):
-        """This is a BIN file."""
-        self.assertTrue(True)
-        # self.perform_gvas_deserialization_test("TEXT_PROPERTY_NOARRAY")
-
-    def test_211_text_property_noarray_json_serialization(self):
-        """This is a BIN file."""
-        self.assertTrue(True)
-        # self.perform_json_serialization_test("TEXT_PROPERTY_NOARRAY")
-
-    def test_212_text_property_noarray_json_deserialization(self):
-        """This is a BIN file."""
-        self.assertTrue(True)
-        # self.perform_json_deserialization_test("TEXT_PROPERTY_NOARRAY")
+        """This is a BIN file with an ERROR."""
+        # This file is invalid because it contains duplicate StructProperty members.
+        # Duplicates occur around byte # 114,712 -- according to the internets, that's not INVALID:
+        #       StructProperty["TrackedQuestsNames"] = NameProperty(value="QU91_InvestigateTower_B2")
+        # Deserialization overwrites the first instance and only serializes it back out once.
+        self.perform_gvas_deserialization_test(
+            "TEXT_PROPERTY_NOARRAY", should_be_equal=False
+        )
 
     def test_220_features_01(self):
         """This is a BIN file."""
-        self.assertTrue(True)
-        # self.perform_gvas_deserialization_test("FEATURES_01")
-
-    def test_221_features_01_json_serialization(self):
-        """This is a BIN file."""
-        self.assertTrue(True)
-        # self.perform_json_serialization_test("FEATURES_01")
-
-    def test_222_features_01_json_deserialization(self):
-        """This is a BIN file."""
-        self.assertTrue(True)
-        # self.perform_json_deserialization_test("FEATURES_01")
+        self.do_all_tests("FEATURES_01")
 
     def test_300_palworld_zlib(self):
-        self.perform_gvas_deserialization_test("PALWORLD_ZLIB")
-
-    def test_301_palworld_zlib_json_serialization(self):
-        self.perform_json_serialization_test("PALWORLD_ZLIB")
-
-    def test_302_palworld_zlib_json_deserialization(self):
-        self.perform_json_deserialization_test("PALWORLD_ZLIB")
+        self.do_all_tests("PALWORLD_ZLIB")
 
     def test_310_palworld_zlib_twice(self):
-        self.perform_gvas_deserialization_test("PALWORLD_ZLIB_TWICE")
+        self.do_all_tests("PALWORLD_ZLIB_TWICE")
 
-    def test_311_palworld_zlib_twice_json_serialization(self):
-        self.perform_json_serialization_test("PALWORLD_ZLIB_TWICE")
-
-    def test_312_palworld_zlib_twice_json_deserialization(self):
-        self.perform_json_deserialization_test("PALWORLD_ZLIB_TWICE")
+    def test_320_enum_array(self):
+        self.do_all_tests("ISLANDS_OF_INSIGHT")
 
 
 if __name__ == "__main__":

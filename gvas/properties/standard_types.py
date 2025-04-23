@@ -230,10 +230,6 @@ class Vector2DProperty(StandardStructTrait):
     x: float = 0
     y: float = 0
 
-    @classmethod
-    def from_json(cls, json_obj: dict) -> "Vector2DProperty":
-        return cls(**json_obj)
-
     def read(self, stream: BinaryIO) -> None:
 
         read_fn = read_double if self.uses_lwc() else read_float
@@ -251,6 +247,28 @@ class Vector2DProperty(StandardStructTrait):
         return bytes_written
 
 
+# ============================================
+# .
+@dataclass
+class ByteBlob(StandardStructTrait):
+    """Intended for hints to allow circumventing unknown custom types in GVAS files."""
+
+    type: Literal["ByteBlob"] = "ByteBlob"
+    byte_blob: str = ""
+
+    def read(self, stream: BinaryIO) -> None:
+
+        # expect length in context
+        context = SerializationTools.hint_context
+        byte_count = context["byte_count"]
+        self.byte_blob = read_bytes(stream, byte_count).hex()
+
+    def write(self, stream: BinaryIO) -> int:
+        bytes_written = 0
+        bytes_written += write_bytes(stream, bytes.fromhex(self.byte_blob))
+        return bytes_written
+
+
 STANDARD_TYPE_UNION = Union[
     DateTimeProperty,
     GuidProperty,
@@ -261,7 +279,9 @@ STANDARD_TYPE_UNION = Union[
     TimespanProperty,
     VectorProperty,
     Vector2DProperty,
+    ByteBlob,
 ]
+
 # ============================================
 #
 _special_struct_type_map: dict[str, STANDARD_TYPE_UNION] = {
@@ -274,6 +294,7 @@ _special_struct_type_map: dict[str, STANDARD_TYPE_UNION] = {
     "DateTime": DateTimeProperty,
     "Timespan": TimespanProperty,
     "Guid": GuidProperty,
+    "ByteBlob": ByteBlob,
 }
 
 

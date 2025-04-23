@@ -275,8 +275,9 @@ def read_string(stream: BinaryIO) -> str | None:
         return None  # ""
 
     if not -131072 <= length <= 131072:
+        position = stream.tell() - 4
         raise SerializeError.invalid_value(
-            f"String length {length} is out of range -131072 <= length <= 131072"
+            f"String length {length} is out of range -131072 <= length <= 131072 around {position=}"
         )
 
     # UTF 16

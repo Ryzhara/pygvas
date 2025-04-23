@@ -257,7 +257,7 @@ class SetProperty(PropertyTrait):
         if include_header:
             bytes_written += write_standard_header(
                 stream,
-                self.property_type,
+                "SetProperty",
                 length=body_bytes,
                 data_to_write=[self.property_type],
             )
@@ -302,37 +302,46 @@ class StructProperty(PropertyTrait):
     ) -> None:
         """Read struct from stream"""
         length = 0
-        type_name_override = None
         if include_header:
             length, self.type_name, self.guid = read_standard_header(
                 stream, stream_readers=[read_string, read_guid]
             )
+
         if self.guid == ZERO_GUID:
             self.guid = None
 
-        #  This modelled after the line in RUST file struct_property.rs
-        #  "StructProperty" => match include_header {
-        #    true => Ok(StructProperty::read(cursor, include_header, options)?.into()),
-        else:
-            # see if we have to override the type name
-            struct_path = SerializationTools.get_context_path()
-            type_name_override = SerializationTools.hints.get(struct_path, None)
+        # see if we have to override the type name
+        hint_context_path = SerializationTools.get_context_path()
+        hint_type_override: Union[str, dict] = SerializationTools.hints.get(
+            hint_context_path, None
+        )
+
+        # either we test for self.type_name or we use the override
+        deserialize_type = hint_type_override or self.type_name
+
+        expected_type = None
+        if type(deserialize_type) is str and is_special_struct(deserialize_type):
+            expected_type = get_special_struct_instance(deserialize_type)
+        elif type(deserialize_type) is dict:
+            # context may be, for example, the number of bytes in an unknown "ByteBlob"
+            SerializationTools.hint_context = hint_type_override["context"]
+            deserialize_type = hint_type_override["type"]
+            expected_type = get_special_struct_instance(deserialize_type)
 
         with ByteCountValidator(
             stream, length, do_validation=include_header
         ) as _validator:
-            self.read_body(stream, type_name_override)
+            self.read_body(stream, expected_type)
 
-    def read_body(self, stream: BinaryIO, type_name_override: str = None) -> None:
+    def read_body(self, stream: BinaryIO, standard_struct_override: str = None) -> None:
         """we must check for type_name in the special (graphical) structure types and
         then invoke reading that, vs reading a custom, arbitrary body as below"""
 
-        deserialize_type = type_name_override or self.type_name
-
-        if is_special_struct(deserialize_type):
-            property_value = get_special_struct_instance(deserialize_type)
-            property_value.read(stream)
-            self.value = property_value
+        if standard_struct_override and isinstance(
+            standard_struct_override, StandardStructTrait
+        ):
+            standard_struct_override.read(stream)
+            self.value = standard_struct_override
 
         else:  # fully custom
             self.value = {}
@@ -356,7 +365,7 @@ class StructProperty(PropertyTrait):
         body_buffer = BytesIO()
         body_bytes = 0
 
-        if self.value:
+        if self.value is not None:
             if isinstance(self.value, StandardStructTrait):
                 body_bytes += self.value.write(body_buffer)
             else:
@@ -504,30 +513,30 @@ class ArrayProperty(PropertyTrait):
             # This embedded struct header differs slightly by repeating the field_name.
             self.field_name = read_string(stream)
 
-            with ContextScopeTracker(self.field_name) as _scope_tracker:
-                member_type = read_string(stream)
-                assert (
-                    member_type == self.property_type
-                ), f"PropertyFactory array member type mismatch: {member_type} != {self.property_type}"
+            #            with ContextScopeTracker(self.field_name) as _scope_tracker:
+            member_type = read_string(stream)
+            assert (
+                member_type == self.property_type
+            ), f"PropertyFactory array member type mismatch: {member_type} != {self.property_type}"
 
-                expected_byte_count, self.type_name, self.guid = read_standard_header(
-                    stream, stream_readers=[read_string, read_guid]
-                )
-                if self.guid == ZERO_GUID:
-                    self.guid = None
+            expected_byte_count, self.type_name, self.guid = read_standard_header(
+                stream, stream_readers=[read_string, read_guid]
+            )
+            if self.guid == ZERO_GUID:
+                self.guid = None
 
-                with ByteCountValidator(
-                    stream, expected_byte_count, do_validation=True
-                ) as _validator:
-                    for _ in range(property_count):
-                        if is_special_struct(self.type_name):
-                            array_property = get_special_struct_instance(self.type_name)
-                            array_property.read(stream)
-                            self.values.append(array_property)
-                        else:
-                            array_property = StructProperty(self.property_type)
-                            array_property.read_body(stream)
-                            self.values.append(array_property)
+            with ByteCountValidator(
+                stream, expected_byte_count, do_validation=True
+            ) as _validator:
+                for _ in range(property_count):
+                    if is_special_struct(self.type_name):
+                        array_property = get_special_struct_instance(self.type_name)
+                        array_property.read(stream)
+                        self.values.append(array_property)
+                    else:
+                        array_property = StructProperty(self.property_type)
+                        array_property.read_body(stream)
+                        self.values.append(array_property)
 
         # elif self.property_type == "TextProperty":
         #     for _ in range(property_count):

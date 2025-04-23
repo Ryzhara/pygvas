@@ -17,19 +17,9 @@ from gvas.properties.standard_types import (
     TimespanProperty,
     VectorProperty,
     Vector2DProperty,
+    ByteBlob,
+    STANDARD_TYPE_UNION,
 )
-
-STANDARD_TYPE_UNION = Union[
-    DateTimeProperty,
-    GuidProperty,
-    IntPointProperty,
-    LinearColorProperty,
-    QuatProperty,
-    RotatorProperty,
-    TimespanProperty,
-    VectorProperty,
-    Vector2DProperty,
-]
 
 
 class TestTextPropertyTypes(unittest.TestCase):
@@ -173,3 +163,23 @@ class TestTextPropertyTypes(unittest.TestCase):
             supports_version=True,
             msg=f"Testing standard type VectorProperty",
         )
+
+    def test_90_byte_blob_property(self):
+        test_blob_list = ["", "0123456789abcdef"]
+        for byte_blob in test_blob_list:
+            self.assertEqual(
+                len(byte_blob) % 2,
+                0,
+                "Test string for byte_blob must have an even number of characters.",
+            )
+            hint_context_restore = SerializationTools.hint_context
+            SerializationTools.hint_context = {"byte_count": len(byte_blob)}
+            try:
+                self.perform_roundtrip_standard_type_roundtrip_test(
+                    ByteBlob(byte_blob=byte_blob),
+                    ByteBlob(),
+                    supports_version=False,
+                    msg=f"Testing standard type ByteBlob",
+                )
+            finally:
+                SerializationTools.hint_context = hint_context_restore
