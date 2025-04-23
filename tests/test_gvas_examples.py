@@ -279,11 +279,11 @@ class TestGvasExamples(unittest.TestCase):
         self.do_all_tests("VECTOR2D")
 
     def test_200_regression_01(self):
-        """This is a BIN file."""
+        """This is a BIN file that needs no hints."""
         self.do_all_tests("REGRESSION_01")
 
     def test_210_text_property_noarray(self):
-        """This is a BIN file with an ERROR."""
+        """This is a BIN file with an ERROR and needs no hints."""
         # This file is invalid because it contains duplicate StructProperty members.
         # Duplicates occur around byte # 114,712 -- according to the internets, that's not INVALID:
         #       StructProperty["TrackedQuestsNames"] = NameProperty(value="QU91_InvestigateTower_B2")
@@ -293,7 +293,7 @@ class TestGvasExamples(unittest.TestCase):
         )
 
     def test_220_features_01(self):
-        """This is a BIN file."""
+        """This is a BIN file that needs hints."""
         self.do_all_tests("FEATURES_01")
 
     def test_300_palworld_zlib(self):
