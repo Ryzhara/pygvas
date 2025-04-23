@@ -1,0 +1,563 @@
+{
+  "game_file_format": {
+    "game_version": "DEFAULT",
+    "compression_type": "NONE"
+  },
+  "header": {
+    "type": "Version2",
+    "package_file_version": 525,
+    "engine_version": {
+      "major": 4,
+      "minor": 18,
+      "patch": 1,
+      "change_list": 0,
+      "branch": "++UE4+Release-4.18"
+    },
+    "custom_version_format": 3,
+    "custom_versions": {
+      "22D5549C-BE4F-26A8-4607-2194D082B461": 11,
+      "E432D8B0-0D4F-891F-B77E-CFACA24AFD36": 10,
+      "2843C6E1-534D-2CA2-868E-6CA38CBD1764": 0,
+      "3CC15E37-FB48-E406-F084-00B57E712A26": 2,
+      "ED68B0E4-E942-94F4-0BDA-31A241BB462E": 20,
+      "3F74FCCF-8044-B043-DF14-919373201D17": 30,
+      "B5492BB0-E944-20BB-B732-04A36003E452": 1,
+      "5C10E4A4-B549-A159-C440-C5A7EEDF7E54": 0,
+      "C931C839-DC47-E65A-179C-449A7C8E1C3E": 0,
+      "331BF078-984F-EAEB-EA84-B4B9A25AB9CC": 0,
+      "0F383166-E043-4D2D-27CF-09805AA95669": 0,
+      "9F8BF812-FC4A-7588-0CD9-7CA629BD3A38": 24,
+      "4CE75A7B-104C-70D2-9857-58A95A2A210B": 4,
+      "186929D7-DD4B-D61D-A864-E29D8438C13C": 0,
+      "7852A1C2-FE4A-E7BF-FF90-176C55F71D53": 1,
+      "D4A3AC6E-C14C-EC40-ED8B-86B7C58F4209": 1,
+      "DD75E529-2746-A3E0-76D2-109DEADC2C23": 12,
+      "ACD0AEF2-6F41-FE9A-7FAA-6486FCD626FA": 1,
+      "18F054B9-D64D-62C9-B179-4EA7C213A18E": 16,
+      "48EBD403-C34C-0BB5-41DE-98A593C96C5C": 0,
+      "194D0C43-7049-5471-699B-6987E5B090DF": 14,
+      "BD32FEAA-144C-9553-255E-6AB6DDD13210": 1,
+      "8EE1AF23-584E-E14C-52C2-618DB7BE53B9": 6,
+      "EAB762A4-3A4E-99F4-1FEC-C199B2E12482": 2,
+      "BDFDB52E-104D-AC01-8FF3-3681DAA59333": 5,
+      "4F359D50-2F49-E6F6-B285-49A71C633C07": 0,
+      "E79E7F71-3A49-B0E9-3291-B3880781381B": 4,
+      "D3343A2F-7A44-F3AD-46CA-1385A4B540B4": 1,
+      "027DB613-BB4B-DACD-84FE-CDB5B0C52E9A": 1,
+      "2B0FF92B-0D4C-DA47-D475-8EBD4C0946F6": 4,
+      "004A8AD7-9746-58E8-B519-A8BAB4467D48": 11,
+      "86F87955-1F4C-3A93-7B08-BA832FB96163": 1,
+      "367A23A4-C941-EACA-F818-A28FF31B6858": 4,
+      "7E7C71E2-D344-F552-4053-0C955E0315B3": 1,
+      "ED0A3111-614D-552E-A39A-67AF2C08A1C5": 17,
+      "2F992BCE-B348-09F0-26AD-059EA7ACFD60": 0,
+      "FA7AF5FC-8342-7650-58E6-A9B9322DA0FF": 47,
+      "4B7148EE-5246-2C8A-E640-BE98E6F07ECB": 4
+    },
+    "save_game_class_name": "SettingConfig_C"
+  },
+  "properties": {
+    "LeftRightShoot": {
+      "type": "BoolProperty",
+      "value": true
+    },
+    "ArtQuality": {
+      "type": "IntProperty",
+      "value": 1
+    },
+    "CameraLensSensibility": {
+      "type": "IntProperty",
+      "value": 1
+    },
+    "CamLensSenNoneSniper": {
+      "type": "FloatProperty",
+      "value": 0.800000011920929
+    },
+    "CamLensSenRedDotSniper": {
+      "type": "FloatProperty",
+      "value": 0.4000000059604645
+    },
+    "CamLensSen2XSniper": {
+      "type": "FloatProperty",
+      "value": 0.23999999463558197
+    },
+    "CamLensSen4XSniper": {
+      "type": "FloatProperty",
+      "value": 0.10999999940395355
+    },
+    "CamLensSen8XSniper": {
+      "type": "FloatProperty",
+      "value": 0.07999999821186066
+    },
+    "FireCamLensSenNoneSniper": {
+      "type": "FloatProperty",
+      "value": 0.800000011920929
+    },
+    "FireCamLensSenRedDotSniper": {
+      "type": "FloatProperty",
+      "value": 0.4000000059604645
+    },
+    "FireCamLensSen2XSniper": {
+      "type": "FloatProperty",
+      "value": 0.23999999463558197
+    },
+    "FireCamLensSen4XSniper": {
+      "type": "FloatProperty",
+      "value": 0.10999999940395355
+    },
+    "FireCamLensSen8XSniper": {
+      "type": "FloatProperty",
+      "value": 0.07999999821186066
+    },
+    "GyroscopeSenNoneSniper": {
+      "type": "FloatProperty",
+      "value": 0.800000011920929
+    },
+    "GyroscopeSenRedDotSniper": {
+      "type": "FloatProperty",
+      "value": 0.7200000286102295
+    },
+    "GyroscopeSen2XSniper": {
+      "type": "FloatProperty",
+      "value": 0.6000000238418579
+    },
+    "GyroscopeSen4XSniper": {
+      "type": "FloatProperty",
+      "value": 0.4000000059604645
+    },
+    "GyroscopeSen8XSniper": {
+      "type": "FloatProperty",
+      "value": 0.2800000011920929
+    },
+    "MainVolumValue": {
+      "type": "FloatProperty",
+      "value": 1.0
+    },
+    "FPSLevel": {
+      "type": "IntProperty",
+      "value": 8
+    },
+    "VehicleEye": {
+      "type": "FloatProperty",
+      "value": 0.800000011920929
+    },
+    "ParachuteEye": {
+      "type": "FloatProperty",
+      "value": 0.800000011920929
+    },
+    "FpViewValue": {
+      "type": "IntProperty",
+      "value": 103
+    },
+    "CamFpFreeEye": {
+      "type": "FloatProperty",
+      "value": 0.5600000023841858
+    },
+    "CamLensSenNoneSniperFP": {
+      "type": "FloatProperty",
+      "value": 0.699999988079071
+    },
+    "FireCamLensSenNoneSniperFP": {
+      "type": "FloatProperty",
+      "value": 0.699999988079071
+    },
+    "GyroscopeSenNoneSniperFP": {
+      "type": "FloatProperty",
+      "value": 0.7599999904632568
+    },
+    "CamLensSen3XSniper": {
+      "type": "FloatProperty",
+      "value": 0.17000000178813934
+    },
+    "CamLensSen6XSniper": {
+      "type": "FloatProperty",
+      "value": 0.09000000357627869
+    },
+    "FireCamLensSen3XSniper": {
+      "type": "FloatProperty",
+      "value": 0.17000000178813934
+    },
+    "FireCamLensSen6XSniper": {
+      "type": "FloatProperty",
+      "value": 0.09000000357627869
+    },
+    "GyroscopeSen3XSniper": {
+      "type": "FloatProperty",
+      "value": 0.5
+    },
+    "GyroscopeSen6XSniper": {
+      "type": "FloatProperty",
+      "value": 0.3400000035762787
+    },
+    "ScreenLightness": {
+      "type": "FloatProperty",
+      "value": 1.5
+    },
+    "DeathPlaybackSwitch": {
+      "type": "BoolProperty",
+      "value": true
+    },
+    "QuickSignIDList": {
+      "type": "ArrayProperty",
+      "property_type": "IntProperty",
+      "values": [
+        33887,
+        33890,
+        33888,
+        33889,
+        30088,
+        33883,
+        33884,
+        33886,
+        33906,
+        33907,
+        33908,
+        33909,
+        33910,
+        33911,
+        33912,
+        33913,
+        33914,
+        33915,
+        33918,
+        33895,
+        33897,
+        33898,
+        33958,
+        33959,
+        33960,
+        33996,
+        33995,
+        33997,
+        33998,
+        33999
+      ]
+    },
+    "DynamicHoldGun": {
+      "type": "BoolProperty",
+      "value": true
+    },
+    "HitEffectColor": {
+      "type": "IntProperty",
+      "value": 3
+    },
+    "HurtEffectColor": {
+      "type": "IntProperty",
+      "value": 2
+    },
+    "bHasMapCBToES": {
+      "type": "BoolProperty",
+      "value": true
+    },
+    "ProfiledScreenSwitch": {
+      "type": "IntProperty",
+      "value": 1
+    },
+    "BattleFPS": {
+      "type": "IntProperty",
+      "value": 8
+    },
+    "BattleRenderStyle": {
+      "type": "IntProperty",
+      "value": 1
+    },
+    "BattleRenderQuality": {
+      "type": "IntProperty",
+      "value": 1
+    },
+    "LobbyFPS": {
+      "type": "IntProperty",
+      "value": 4
+    },
+    "LobbyRenderStyle": {
+      "type": "IntProperty",
+      "value": 1
+    },
+    "LobbyRenderQuality": {
+      "type": "IntProperty",
+      "value": 3
+    },
+    "HasGraphicsSeparateConfig": {
+      "type": "BoolProperty",
+      "value": true
+    },
+    "RingThrowSwitch": {
+      "type": "BoolProperty",
+      "value": true
+    },
+    "PickUpCountSetting_Drug": {
+      "type": "MapProperty",
+      "key_type": "IntProperty",
+      "value_type": "IntProperty",
+      "allocation_flags": 0,
+      "values": [
+        [
+          {
+            "type": "IntProperty",
+            "value": 601007
+          },
+          {
+            "type": "IntProperty",
+            "value": 3
+          }
+        ]
+      ]
+    },
+    "bTranslatePickupSettingToMap": {
+      "type": "BoolProperty",
+      "value": true
+    },
+    "ShoulderEnable": {
+      "type": "BoolProperty",
+      "value": true
+    },
+    "SettingHasOperatedShoulder": {
+      "type": "BoolProperty",
+      "value": true
+    },
+    "SettingHasOperatedRotateWithShoulder": {
+      "type": "BoolProperty",
+      "value": true
+    },
+    "TpViewValue": {
+      "type": "IntProperty",
+      "value": 90
+    },
+    "FireGyroscopeSenNoneSniper": {
+      "type": "FloatProperty",
+      "value": 0.800000011920929
+    },
+    "FireGyroscopeSenRedDotSniper": {
+      "type": "FloatProperty",
+      "value": 0.7200000286102295
+    },
+    "FireGyroscopeSen2XSniper": {
+      "type": "FloatProperty",
+      "value": 0.6000000238418579
+    },
+    "FireGyroscopeSen4XSniper": {
+      "type": "FloatProperty",
+      "value": 0.4000000059604645
+    },
+    "FireGyroscopeSen8XSniper": {
+      "type": "FloatProperty",
+      "value": 0.2800000011920929
+    },
+    "FireGyroscopeSen3XSniper": {
+      "type": "FloatProperty",
+      "value": 0.5
+    },
+    "FireGyroscopeSen6XSniper": {
+      "type": "FloatProperty",
+      "value": 0.3400000035762787
+    },
+    "FireGyroscopeSenNoneSniperFp": {
+      "type": "FloatProperty",
+      "value": 0.7599999904632568
+    },
+    "FireGyroscopeSenShoulderTPP": {
+      "type": "FloatProperty",
+      "value": 0.800000011920929
+    },
+    "FireGyroscopeSenShoulderFPP": {
+      "type": "FloatProperty",
+      "value": 0.800000011920929
+    },
+    "bLbsNear": {
+      "type": "BoolProperty",
+      "value": true
+    },
+    "bLbsWarZone": {
+      "type": "BoolProperty",
+      "value": true
+    },
+    "bRecordWonderfulReplayOpen": {
+      "type": "BoolProperty",
+      "value": true
+    },
+    "bLbsMain": {
+      "type": "BoolProperty",
+      "value": true
+    },
+    "bLbsChat": {
+      "type": "BoolProperty",
+      "value": true
+    },
+    "AutoHitMark": {
+      "type": "BoolProperty",
+      "value": true
+    },
+    "bResetDeathPlaybackSwitch": {
+      "type": "BoolProperty",
+      "value": true
+    },
+    "setting_ver_info": {
+      "type": "MapProperty",
+      "key_type": "IntProperty",
+      "value_type": "IntProperty",
+      "allocation_flags": 0,
+      "values": [
+        [
+          {
+            "type": "IntProperty",
+            "value": 101
+          },
+          {
+            "type": "IntProperty",
+            "value": 5
+          }
+        ],
+        [
+          {
+            "type": "IntProperty",
+            "value": 1
+          },
+          {
+            "type": "IntProperty",
+            "value": 49
+          }
+        ]
+      ]
+    },
+    "PlayerChatQuickTextIDList_1": {
+      "type": "ArrayProperty",
+      "property_type": "IntProperty",
+      "values": [
+        30087,
+        30088,
+        30039,
+        30025,
+        30093,
+        30034,
+        30029,
+        30069,
+        30038,
+        30050,
+        30045,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "PlayerChatQuickTextIDList_2": {
+      "type": "ArrayProperty",
+      "property_type": "IntProperty",
+      "values": [
+        30087,
+        30088,
+        30039,
+        30025,
+        30093,
+        30034,
+        30029,
+        30069,
+        30038,
+        30050,
+        30045,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "PlayerChatQuickTextIDList_3": {
+      "type": "ArrayProperty",
+      "property_type": "IntProperty",
+      "values": [
+        30087,
+        30088,
+        30039,
+        30025,
+        30093,
+        30034,
+        30029,
+        30069,
+        30038,
+        30050,
+        30045,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "PlayerWheelChatQuickTextIDList_1": {
+      "type": "ArrayProperty",
+      "property_type": "IntProperty",
+      "values": [
+        30087,
+        30088,
+        30039,
+        30093,
+        30034,
+        30029,
+        30038,
+        30045
+      ]
+    },
+    "PlayerWheelChatQuickTextIDList_2": {
+      "type": "ArrayProperty",
+      "property_type": "IntProperty",
+      "values": [
+        30087,
+        30088,
+        30039,
+        30093,
+        30034,
+        30029,
+        30038,
+        30045
+      ]
+    },
+    "PlayerWheelChatQuickTextIDList_3": {
+      "type": "ArrayProperty",
+      "property_type": "IntProperty",
+      "values": [
+        30087,
+        30088,
+        30039,
+        30093,
+        30034,
+        30029,
+        30038,
+        30045
+      ]
+    },
+    "OldMarkStyle": {
+      "type": "IntProperty",
+      "value": 2
+    },
+    "SoundVisualizationType": {
+      "type": "IntProperty",
+      "value": 3
+    },
+    "LocalHideMetroArmor": {
+      "type": "BoolProperty",
+      "value": false
+    },
+    "ManorRenderQuality": {
+      "type": "IntProperty",
+      "value": 3
+    },
+    "OpenID": {
+      "type": "StrProperty",
+      "value": "106404747950818600"
+    }
+  }
+}

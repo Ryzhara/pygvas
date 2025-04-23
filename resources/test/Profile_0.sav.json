@@ -1,0 +1,5309 @@
+{
+  "game_file_format": {
+    "game_version": "DEFAULT",
+    "compression_type": "NONE"
+  },
+  "header": {
+    "type": "Version2",
+    "package_file_version": 522,
+    "engine_version": {
+      "major": 4,
+      "minor": 27,
+      "patch": 2,
+      "change_list": 0,
+      "branch": "++UE4+Release-4.27"
+    },
+    "custom_version_format": 3,
+    "custom_versions": {
+      "12E426FB-4D4B-151F-0A55-7293702F1D96": 3,
+      "F37ABB24-834F-4656-C22D-2F1FFF96AD49": 5,
+      "FA7AF5FC-8342-7650-58E6-A9B9322DA0FF": 68,
+      "ED0A3111-614D-552E-A39A-67AF2C08A1C5": 17,
+      "2923A576-B545-2309-41D8-AE98D86A2FCF": 5,
+      "0769BC5F-AE40-C855-84F1-678E3FF1FF5E": 1,
+      "4E7CE782-A543-2333-C513-6BB4F30D3197": 0,
+      "22D5549C-BE4F-26A8-4607-2194D082B461": 43,
+      "E432D8B0-0D4F-891F-B77E-CFACA24AFD36": 10,
+      "2843C6E1-534D-2CA2-868E-6CA38CBD1764": 0,
+      "3CC15E37-FB48-E406-F084-00B57E712A26": 4,
+      "ED68B0E4-E942-94F4-0BDA-31A241BB462E": 40,
+      "3F74FCCF-8044-B043-DF14-919373201D17": 37,
+      "B5492BB0-E944-20BB-B732-04A36003E452": 3,
+      "5C10E4A4-B549-A159-C440-C5A7EEDF7E54": 0,
+      "C931C839-DC47-E65A-179C-449A7C8E1C3E": 0,
+      "331BF078-984F-EAEB-EA84-B4B9A25AB9CC": 14,
+      "0F383166-E043-4D2D-27CF-09805AA95669": 0,
+      "9F8BF812-FC4A-7588-0CD9-7CA629BD3A38": 45,
+      "4CE75A7B-104C-70D2-9857-58A95A2A210B": 13,
+      "186929D7-DD4B-D61D-A864-E29D8438C13C": 3,
+      "7852A1C2-FE4A-E7BF-FF90-176C55F71D53": 1,
+      "D4A3AC6E-C14C-EC40-ED8B-86B7C58F4209": 3,
+      "DD75E529-2746-A3E0-76D2-109DEADC2C23": 17,
+      "5DA643AF-4749-D37F-8E3E-739805BBC1D9": 15,
+      "EC6C266B-8F4B-C71E-D9E4-0BA307FC4209": 1,
+      "613DF70D-EA47-3FA2-E989-27B79A49410C": 1,
+      "86181D60-844F-64AC-DED3-16AAD6C7EA0D": 47,
+      "686308E7-584C-236B-701B-3984915E2616": 1,
+      "D6BCFF9D-5801-4F49-8212-21E288A8923C": 10,
+      "ACD0AEF2-6F41-FE9A-7FAA-6486FCD626FA": 1,
+      "0B1F4F17-A545-C6B4-E82E-3FB17D91FBD0": 10,
+      "834AF935-6C40-58E2-F509-18A37C241096": 41,
+      "6EC18FB6-E242-1B8B-5C21-53B4FE448805": 1,
+      "0685E1B2-C2CF-7342-BBF4-4EA507BA8B75": 1,
+      "3689F564-BA42-1BFD-8972-96BA4EFAD0D5": 1,
+      "27D80E6F-9548-09A6-8D99-919CA40E1890": 2,
+      "E79E7F71-3A49-B0E9-3291-B3880781381B": 8,
+      "50326854-AF48-9980-9698-C88BB7F9ADFB": 0,
+      "194D0C43-7049-5471-699B-6987E5B090DF": 15,
+      "BD32FEAA-144C-9553-255E-6AB6DDD13210": 1,
+      "8EE1AF23-584E-E14C-52C2-618DB7BE53B9": 11,
+      "EAB762A4-3A4E-99F4-1FEC-C199B2E12482": 4,
+      "BDFDB52E-104D-AC01-8FF3-3681DAA59333": 5,
+      "4F359D50-2F49-E6F6-B285-49A71C633C07": 0,
+      "40EB564A-DC11-F510-7E34-D392E76AC9B2": 2,
+      "004A8AD7-9746-58E8-B519-A8BAB4467D48": 18,
+      "86F87955-1F4C-3A93-7B08-BA832FB96163": 2,
+      "52BE2F61-0B40-53DA-914F-0D917C85B19F": 1,
+      "367A23A4-C941-EACA-F818-A28FF31B6858": 4,
+      "753F4E80-494B-8870-068C-D6A4DCB67E3C": 5,
+      "F20A68FB-A34B-EF59-B519-A8BA3D44C873": 2,
+      "0EB75099-174E-1AB4-0DFA-CCBBD67F8157": 1
+    },
+    "save_game_class_name": "/Script/EconCore.GenericSaveGame"
+  },
+  "properties": {
+    "dbStrings": {
+      "type": "MapProperty",
+      "key_type": "StrProperty",
+      "value_type": "StrProperty",
+      "allocation_flags": 0,
+      "values": [
+        [
+          {
+            "type": "StrProperty",
+            "value": "Story/Campaign/index"
+          },
+          {
+            "type": "StrProperty",
+            "value": "c1.m19a.s2"
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "music"
+          },
+          {
+            "type": "StrProperty",
+            "value": "music.lasthope"
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "preferedEngine"
+          },
+          {
+            "type": "StrProperty",
+            "value": "DieselEngine"
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "Option_settings.a.master"
+          },
+          {
+            "type": "StrProperty",
+            "value": "50.0%"
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "Option_settings.a.music"
+          },
+          {
+            "type": "StrProperty",
+            "value": "50.0%"
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "Option_settings.g.terrainres"
+          },
+          {
+            "type": "StrProperty",
+            "value": "tfactor.x2"
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "Option_settings.dpiscale"
+          },
+          {
+            "type": "StrProperty",
+            "value": "120%"
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "Option_settings.daytime"
+          },
+          {
+            "type": "StrProperty",
+            "value": "toggle.enabled"
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "preferedTrainColor"
+          },
+          {
+            "type": "StrProperty",
+            "value": "Crimson"
+          }
+        ]
+      ]
+    },
+    "dbNumbers": {
+      "type": "MapProperty",
+      "key_type": "StrProperty",
+      "value_type": "IntProperty",
+      "allocation_flags": 0,
+      "values": [
+        [
+          {
+            "type": "StrProperty",
+            "value": "SeenMovie_Welcome"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "meta.attemptingload"
+          },
+          {
+            "type": "IntProperty",
+            "value": 0
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "appearin_lastsfx_time_intro"
+          },
+          {
+            "type": "IntProperty",
+            "value": 8734
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "appearin_lastsfx_time_outro"
+          },
+          {
+            "type": "IntProperty",
+            "value": 8738
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "playtime_418AD60A45FCE310E9D3DEB5B9894EF2"
+          },
+          {
+            "type": "IntProperty",
+            "value": 38
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "bestrank_418AD60A45FCE310E9D3DEB5B9894EF2"
+          },
+          {
+            "type": "IntProperty",
+            "value": 4
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "money"
+          },
+          {
+            "type": "IntProperty",
+            "value": 14
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "roamPlayerPosition_x"
+          },
+          {
+            "type": "IntProperty",
+            "value": -1366
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "roamPlayerPosition_y"
+          },
+          {
+            "type": "IntProperty",
+            "value": -934
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "playtime_2AB6B5764521494B8DE77891EFD0A8AE"
+          },
+          {
+            "type": "IntProperty",
+            "value": 68
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "bestrank_2AB6B5764521494B8DE77891EFD0A8AE"
+          },
+          {
+            "type": "IntProperty",
+            "value": 4
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "playtime_9696568941466D44AE95DD9F1F170004"
+          },
+          {
+            "type": "IntProperty",
+            "value": 67
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "bestrank_9696568941466D44AE95DD9F1F170004"
+          },
+          {
+            "type": "IntProperty",
+            "value": 4
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "playstyle.modifier.noghosting"
+          },
+          {
+            "type": "IntProperty",
+            "value": 0
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "playstyle.modifier.notimer"
+          },
+          {
+            "type": "IntProperty",
+            "value": 0
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "playstyle.modifier.infinitemoney"
+          },
+          {
+            "type": "IntProperty",
+            "value": 0
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "playstyle.modifier.endless"
+          },
+          {
+            "type": "IntProperty",
+            "value": 0
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "playtime_197C3AD14915E04F243623981F89CA32"
+          },
+          {
+            "type": "IntProperty",
+            "value": 496
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "bestrank_197C3AD14915E04F243623981F89CA32"
+          },
+          {
+            "type": "IntProperty",
+            "value": 4
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "didNotify_unlock.placeable.oilwell"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "didNotify_unlock.upgrade.oilpower"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "playtime_275848C64EC0DFAC00DF819482F5E31D"
+          },
+          {
+            "type": "IntProperty",
+            "value": 802
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "bestrank_275848C64EC0DFAC00DF819482F5E31D"
+          },
+          {
+            "type": "IntProperty",
+            "value": 4
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "didNotify_unlock.BasicEngine"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "playtime_82A9B46F42BF6C5555D608A6619B35E6"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1374
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "bestrank_82A9B46F42BF6C5555D608A6619B35E6"
+          },
+          {
+            "type": "IntProperty",
+            "value": 4
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "didNotify_unlock.CustomEngine"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "didNotify_unlock.placeable.geothermal"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "playtime_976B945848D92B929BC9318144D2AFD9"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1615
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "bestrank_976B945848D92B929BC9318144D2AFD9"
+          },
+          {
+            "type": "IntProperty",
+            "value": 2
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "didNotify_unlock.placeable.oilpower"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "didNotify_unlock.placeable.limestonemine"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "didNotify_unlock.placeable.coppermine"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "didNotify_unlock.placeable.concreteyard"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "didNotify_unlock.upgrade.concreteyard"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "didNotify_unlock.upgrade.coiler"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "playtime_23565CB1440C2F8CF29A20BE0F344E14"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1761
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "bestrank_23565CB1440C2F8CF29A20BE0F344E14"
+          },
+          {
+            "type": "IntProperty",
+            "value": 3
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "didNotify_unlock.autoBranching"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "playtime_C40ABA944C06215E9BA1F3808798BD78"
+          },
+          {
+            "type": "IntProperty",
+            "value": 866
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "bestrank_C40ABA944C06215E9BA1F3808798BD78"
+          },
+          {
+            "type": "IntProperty",
+            "value": 4
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "playtime_ABD6676B4D2F295C2C56F7BC7A80CF1B"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1049
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "bestrank_ABD6676B4D2F295C2C56F7BC7A80CF1B"
+          },
+          {
+            "type": "IntProperty",
+            "value": 4
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "didNotify_unlock.heightIncrease1"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "playtime_0A465B724263583BBBAC469FE7D852F8"
+          },
+          {
+            "type": "IntProperty",
+            "value": 2255
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "bestrank_0A465B724263583BBBAC469FE7D852F8"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "didNotify_unlock.placeable.saltsifter"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "didNotify_unlock.placeable.coalmine"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "didNotify_unlock.upgrade.saltsifter"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "playtime_7CA6B81C4B27D3DD5D9110A91BD3B333"
+          },
+          {
+            "type": "IntProperty",
+            "value": 3046
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "bestrank_7CA6B81C4B27D3DD5D9110A91BD3B333"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "didNotify_unlock.placeable.coalpower"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "didNotify_unlock.ClimberEngine"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "didNotify_unlock.placeable.ironmine"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "playtime_E2AB4F1B4783E580DF19F5BB1048C40C"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1258
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "bestrank_E2AB4F1B4783E580DF19F5BB1048C40C"
+          },
+          {
+            "type": "IntProperty",
+            "value": 4
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "didNotify_unlock.placeable.steelmill"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "playtime_E54ECA4B4EBE680952C1E1A108EBFED6"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1402
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "bestrank_E54ECA4B4EBE680952C1E1A108EBFED6"
+          },
+          {
+            "type": "IntProperty",
+            "value": 4
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "didNotify_unlock.placeable.plasticizer"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "playtime_3D2D8F324CA52B457413909B8FA06DBD"
+          },
+          {
+            "type": "IntProperty",
+            "value": 3128
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "bestrank_3D2D8F324CA52B457413909B8FA06DBD"
+          },
+          {
+            "type": "IntProperty",
+            "value": 2
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "didNotify_unlock.placeable.furnitureAssembler"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "didNotify_unlock.upgrade.plasticizer"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "didNotify_unlock.upgrade.furnitureassembler"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "didNotify_unlock.upgrade.coalpower"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "didNotify_unlock.upgrade.steelmill"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "playtime_79C004794149BAEF9D01D0812D468C73"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1699
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "bestrank_79C004794149BAEF9D01D0812D468C73"
+          },
+          {
+            "type": "IntProperty",
+            "value": 3
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "playtime_C351F593458BA314057C44964D17796E"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1908
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "bestrank_C351F593458BA314057C44964D17796E"
+          },
+          {
+            "type": "IntProperty",
+            "value": 4
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "didNotify_unlock.placeable.goodsfactory"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "didNotify_unlock.placeable.oilrefinery"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "didNotify_unlock.placeable.hardmold"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "didNotify_unlock.placeable.neonrefinery"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "playtime_CE7047994E27F2501309BFBF10504939"
+          },
+          {
+            "type": "IntProperty",
+            "value": 2497
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "bestrank_CE7047994E27F2501309BFBF10504939"
+          },
+          {
+            "type": "IntProperty",
+            "value": 3
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "playtime_6F26D84E49EF7EE051658D88685804A3"
+          },
+          {
+            "type": "IntProperty",
+            "value": 2789
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "bestrank_6F26D84E49EF7EE051658D88685804A3"
+          },
+          {
+            "type": "IntProperty",
+            "value": 2
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "didNotify_unlock.placeable.incinerator"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "didNotify_unlock.placeable.oregassifier"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "didNotify_unlock.placeable.electronicsfab"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "didNotify_unlock.upgrade.goodsfactory"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "playtime_7792A16A471FD6ABABB19C909A879023"
+          },
+          {
+            "type": "IntProperty",
+            "value": 4257
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "bestrank_7792A16A471FD6ABABB19C909A879023"
+          },
+          {
+            "type": "IntProperty",
+            "value": 2
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "playtime_A8C916CA44A8F236048AC88B3B9D9D1B"
+          },
+          {
+            "type": "IntProperty",
+            "value": 279
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "bestrank_A8C916CA44A8F236048AC88B3B9D9D1B"
+          },
+          {
+            "type": "IntProperty",
+            "value": 4
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "playtime_8017CDB54D7D1D368B309198831A15F1"
+          },
+          {
+            "type": "IntProperty",
+            "value": 2814
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "bestrank_8017CDB54D7D1D368B309198831A15F1"
+          },
+          {
+            "type": "IntProperty",
+            "value": 4
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "didNotify_unlock.placeable.tooldie"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "didNotify_unlock.upgrade.tooldie"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "playtime_2E33E5724251952E750D6FA29B6A6242"
+          },
+          {
+            "type": "IntProperty",
+            "value": 3373
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "bestrank_2E33E5724251952E750D6FA29B6A6242"
+          },
+          {
+            "type": "IntProperty",
+            "value": 3
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "playtime_BDE017E34B75C14E86D9AA973EFE3385"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1571
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "bestrank_BDE017E34B75C14E86D9AA973EFE3385"
+          },
+          {
+            "type": "IntProperty",
+            "value": 4
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "didNotify_unlock.upgrade.oilrefinery"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "playtime_FDE6EA5B41E9DF7229789A93AE4E8170"
+          },
+          {
+            "type": "IntProperty",
+            "value": 2556
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "bestrank_FDE6EA5B41E9DF7229789A93AE4E8170"
+          },
+          {
+            "type": "IntProperty",
+            "value": 3
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "playtime_E6D6A92C43B137E2C8B402A0F43E5F51"
+          },
+          {
+            "type": "IntProperty",
+            "value": 2366
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "bestrank_E6D6A92C43B137E2C8B402A0F43E5F51"
+          },
+          {
+            "type": "IntProperty",
+            "value": 4
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "didNotify_unlock.placeable.hullyard"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "didNotify_unlock.heightIncrease2"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "didNotify_unlock.HybridEngine"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "didNotify_unlock.upgrade.neonrefinery"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "didNotify_unlock.upgrade.electronicsfab"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "didNotify_unlock.upgrade.hullyard"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "didNotify_unlock.upgrade.incinerator"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "didNotify_unlock.upgrade.oregassifier"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "didNotify_unlock.upgrade.hardmold"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "playtime_49106FD1406C726B44788684DD19013B"
+          },
+          {
+            "type": "IntProperty",
+            "value": 3678
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "bestrank_49106FD1406C726B44788684DD19013B"
+          },
+          {
+            "type": "IntProperty",
+            "value": 3
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "didNotify_unlock.placeable.luxuryassembler"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "playtime_19FC4F6F4F082AEF91001DB636DD3CB0"
+          },
+          {
+            "type": "IntProperty",
+            "value": 2258
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "bestrank_19FC4F6F4F082AEF91001DB636DD3CB0"
+          },
+          {
+            "type": "IntProperty",
+            "value": 4
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "didNotify_unlock.placeable.glasssmelter"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "playtime_B9C9338A41EB24590F4F3D8F77E1DD59"
+          },
+          {
+            "type": "IntProperty",
+            "value": 5376
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "bestrank_B9C9338A41EB24590F4F3D8F77E1DD59"
+          },
+          {
+            "type": "IntProperty",
+            "value": 4
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "didNotify_unlock.placeable.signworks"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "didNotify_unlock.placeable.chipfab"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "playtime_1F2DF7A54B9EF8A02928BFAF03675B92"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1187
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "bestrank_1F2DF7A54B9EF8A02928BFAF03675B92"
+          },
+          {
+            "type": "IntProperty",
+            "value": 4
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "didNotify_unlock.upgrade.glasssmelter"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "didNotify_unlock.stationSpeed"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "playtime_F65B1395431DE131107D1BA87B09A133"
+          },
+          {
+            "type": "IntProperty",
+            "value": 6844
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "bestrank_F65B1395431DE131107D1BA87B09A133"
+          },
+          {
+            "type": "IntProperty",
+            "value": 2
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "didNotify_unlock.placeable.tubeplant"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "didNotify_unlock.placeable.motorAssembly"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "didNotify_unlock.upgrade.motorAssembly"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "playtime_AB6DD6AB4678ACAC44968D8ABDD312E3"
+          },
+          {
+            "type": "IntProperty",
+            "value": 6083
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "bestrank_AB6DD6AB4678ACAC44968D8ABDD312E3"
+          },
+          {
+            "type": "IntProperty",
+            "value": 3
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "didNotify_unlock.placeable.heavyworks"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "didNotify_unlock.placeable.framer"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "playtime_6071814D4CF0425177A7F39AC189358B"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1383
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "bestrank_6071814D4CF0425177A7F39AC189358B"
+          },
+          {
+            "type": "IntProperty",
+            "value": 4
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "playtime_85EB724D43C96BAA7832A3BAA3AEDEC2"
+          },
+          {
+            "type": "IntProperty",
+            "value": 712
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "bestrank_85EB724D43C96BAA7832A3BAA3AEDEC2"
+          },
+          {
+            "type": "IntProperty",
+            "value": 4
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "playtime_7CA27AEE46CC848BE165FEA4F8081A9C"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1167
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "bestrank_7CA27AEE46CC848BE165FEA4F8081A9C"
+          },
+          {
+            "type": "IntProperty",
+            "value": 4
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "playtime_02700E05478FA5C176BA6F9F97675886"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1310
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "bestrank_02700E05478FA5C176BA6F9F97675886"
+          },
+          {
+            "type": "IntProperty",
+            "value": 4
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "playtime_428959F042082EEB444E56AC0D976004"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1366
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "bestrank_428959F042082EEB444E56AC0D976004"
+          },
+          {
+            "type": "IntProperty",
+            "value": 4
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "playtime_8633BE2044A6EC9315E5F6BAA128ACE8"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1273
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "bestrank_8633BE2044A6EC9315E5F6BAA128ACE8"
+          },
+          {
+            "type": "IntProperty",
+            "value": 4
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "didNotify_unlock.DieselEngine"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "playtime_573832E84B1534B065BF6693C7523FC4"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1832
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "bestrank_573832E84B1534B065BF6693C7523FC4"
+          },
+          {
+            "type": "IntProperty",
+            "value": 4
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "playtime_977D0299439D9BF70DFC5BB4CF27591C"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1648
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "bestrank_977D0299439D9BF70DFC5BB4CF27591C"
+          },
+          {
+            "type": "IntProperty",
+            "value": 4
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "playtime_CCEE486545CECC02A0810280F994B0D8"
+          },
+          {
+            "type": "IntProperty",
+            "value": 3575
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "bestrank_CCEE486545CECC02A0810280F994B0D8"
+          },
+          {
+            "type": "IntProperty",
+            "value": 2
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "playtime_030D7E264B5C212715FEFE80F6EB97E2"
+          },
+          {
+            "type": "IntProperty",
+            "value": 3677
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "bestrank_030D7E264B5C212715FEFE80F6EB97E2"
+          },
+          {
+            "type": "IntProperty",
+            "value": 3
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "didNotify_unlock.upgrade.signworks"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "playtime_A92DE3C648A91DFDF02B598AE39A3DCA"
+          },
+          {
+            "type": "IntProperty",
+            "value": 4637
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "bestrank_A92DE3C648A91DFDF02B598AE39A3DCA"
+          },
+          {
+            "type": "IntProperty",
+            "value": 4
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "didNotify_unlock.upgrade.chipfab"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "playtime_11EC647042ECCC315E1B909C4D4A9666"
+          },
+          {
+            "type": "IntProperty",
+            "value": 2706
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "bestrank_11EC647042ECCC315E1B909C4D4A9666"
+          },
+          {
+            "type": "IntProperty",
+            "value": 4
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "didNotify_unlock.RescueEngine"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "didNotify_unlock.upgrade.tubeplant"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "didNotify_unlock.upgrade.luxuryassembler"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "didNotify_unlock.upgrade.framer"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "didNotify_unlock.upgrade.heavyworks"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "playtime_173683C94F06A5F7B0D24F80BA2CF073"
+          },
+          {
+            "type": "IntProperty",
+            "value": 4455
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "bestrank_173683C94F06A5F7B0D24F80BA2CF073"
+          },
+          {
+            "type": "IntProperty",
+            "value": 3
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "playtime_E312638F4BED14780F466B95B370E0DD"
+          },
+          {
+            "type": "IntProperty",
+            "value": 2011
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "bestrank_E312638F4BED14780F466B95B370E0DD"
+          },
+          {
+            "type": "IntProperty",
+            "value": 4
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "playtime_E23150FF41457A230C7FC4B84226C0C5"
+          },
+          {
+            "type": "IntProperty",
+            "value": 5053
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "bestrank_E23150FF41457A230C7FC4B84226C0C5"
+          },
+          {
+            "type": "IntProperty",
+            "value": 4
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "playtime_4D163CA741A2EDAA7ED54C83D77539FF"
+          },
+          {
+            "type": "IntProperty",
+            "value": 5906
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "bestrank_4D163CA741A2EDAA7ED54C83D77539FF"
+          },
+          {
+            "type": "IntProperty",
+            "value": 3
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "playtime_A698A0C242D5A317F8DB6D97EF0AFF8E"
+          },
+          {
+            "type": "IntProperty",
+            "value": 4176
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "bestrank_A698A0C242D5A317F8DB6D97EF0AFF8E"
+          },
+          {
+            "type": "IntProperty",
+            "value": 4
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "didNotify_unlock.placeable.rocketfactory"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "didNotify_unlock.placeable.boosterplant"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "didNotify_unlock.placeable.armory"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "didNotify_unlock.BulletEngine"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "didNotify_unlock.upgrade.rocketfactory"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "playtime_70B1F2D8471C128390408C94C7EB161E"
+          },
+          {
+            "type": "IntProperty",
+            "value": 1914
+          }
+        ],
+        [
+          {
+            "type": "StrProperty",
+            "value": "bestrank_70B1F2D8471C128390408C94C7EB161E"
+          },
+          {
+            "type": "IntProperty",
+            "value": 4
+          }
+        ]
+      ]
+    },
+    "UnlockLayer": {
+      "type": "StructProperty",
+      "type_name": "UnlockLayer",
+      "value": {
+        "ownCounts": {
+          "type": "MapProperty",
+          "key_type": "NameProperty",
+          "value_type": "IntProperty",
+          "allocation_flags": 0,
+          "values": [
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.t2"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.t3"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m1"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m2"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.oilwell"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.upgrade.oilpower"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.Workhorse"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m2bonus"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m3"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.CustomEngine"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.placeable.geothermal"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.upgrade.geothermal"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.oilPower"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m4"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.coppermine"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.coiler"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.limestonemine"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.concreteYard"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.upgrade.concreteyard"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.upgrade.coiler"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.mspecial1"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.autoBranching"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m6"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.MediumHeight"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m7"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.saltsifter"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.coalMine"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.upgrade.saltsifter"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m8"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.coalpower"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.Industrial"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.ironmine"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m9"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m8bonus1"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m8bonus2"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.steelMill"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.plasticizer"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.mspecial2"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m9bonus"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.furnitureAssembler"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.upgrade.plasticizer"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.upgrade.furnitureassembler"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.upgrade.coalpower"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.upgrade.steelmill"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m10a1"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m10b1"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.oilrefinery"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.neonrefinery"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.goodsFactory"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.hardmold"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.electronicsFab"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m11"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m10bonus"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.incinerator"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.oreGassifier"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.mspecial3"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m11bonus1"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m11bonus2"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.placeable.electronicsfab"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.upgrade.goodsfactory"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m12"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.tooldie"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m12bonus"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m13"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.upgrade.tooldie"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.upgrade.oilrefinery"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m10a2"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.Electric"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m13bonus1"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m13bonus2"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m14"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.hullyard"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.MaxHeight"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.HybridEngine"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.upgrade.neonrefinery"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.upgrade.electronicsfab"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.upgrade.hullyard"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.upgrade.incinerator"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.upgrade.oregassifier"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.upgrade.hardmold"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.luxuryAssembler"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.mspecial4"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m14bonus"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.rescue"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m15"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.glassSmelter"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.signworks"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m16"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m15bonus1"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m15bonus2"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.chipfab"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.upgrade.glasssmelter"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.stationSpeed"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m17a"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m17b"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m16bonus"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.tubePlant"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.diesel"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.motor"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.upgrade.motorAssembly"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.heavyworks"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.framer"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m18a"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m18b"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m17bonus"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "placeholder"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m4bonus"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m5"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m4bonus2"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.DieselEngine"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.upgrade.signworks"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.upgrade.chipfab"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.RescueEngine"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.upgrade.tubeplant"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.upgrade.luxuryassembler"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.upgrade.framer"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.upgrade.heavyworks"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.armory"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.boosterplant"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.rocketfactory"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.Bullet"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m19a"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m19b"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m18bonus"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.BulletEngine"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.upgrade.rocketfactory"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ]
+          ]
+        },
+        "historicCounts": {
+          "type": "MapProperty",
+          "key_type": "NameProperty",
+          "value_type": "IntProperty",
+          "allocation_flags": 0,
+          "values": [
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.t2"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.t3"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m1"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m2"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.oilwell"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.upgrade.oilpower"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.Workhorse"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m2bonus"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m3"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.CustomEngine"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.placeable.geothermal"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.upgrade.geothermal"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.oilPower"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m4"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.coppermine"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.coiler"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.limestonemine"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.concreteYard"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.upgrade.concreteyard"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.upgrade.coiler"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.mspecial1"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.autoBranching"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m6"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.MediumHeight"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m7"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.saltsifter"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.coalMine"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.upgrade.saltsifter"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m8"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.coalpower"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.Industrial"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.ironmine"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m9"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m8bonus1"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m8bonus2"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.steelMill"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.plasticizer"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.mspecial2"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m9bonus"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.furnitureAssembler"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.upgrade.plasticizer"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.upgrade.furnitureassembler"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.upgrade.coalpower"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.upgrade.steelmill"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m10a1"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m10b1"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.oilrefinery"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.neonrefinery"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.goodsFactory"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.hardmold"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.electronicsFab"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m11"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m10bonus"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.incinerator"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.oreGassifier"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.mspecial3"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m11bonus1"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m11bonus2"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.placeable.electronicsfab"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.upgrade.goodsfactory"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m12"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.tooldie"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m12bonus"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m13"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.upgrade.tooldie"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.upgrade.oilrefinery"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m10a2"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.Electric"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m13bonus1"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m13bonus2"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m14"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.hullyard"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.MaxHeight"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.HybridEngine"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.upgrade.neonrefinery"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.upgrade.electronicsfab"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.upgrade.hullyard"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.upgrade.incinerator"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.upgrade.oregassifier"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.upgrade.hardmold"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.luxuryAssembler"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.mspecial4"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m14bonus"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.rescue"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m15"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.glassSmelter"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.signworks"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m16"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m15bonus1"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m15bonus2"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.chipfab"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.upgrade.glasssmelter"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.stationSpeed"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m17a"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m17b"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m16bonus"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.tubePlant"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.diesel"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.motor"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.upgrade.motorAssembly"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.heavyworks"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.framer"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m18a"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m18b"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m17bonus"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "placeholder"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m4bonus"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m5"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m4bonus2"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.DieselEngine"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.upgrade.signworks"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.upgrade.chipfab"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.RescueEngine"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.upgrade.tubeplant"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.upgrade.luxuryassembler"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.upgrade.framer"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.upgrade.heavyworks"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.armory"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.boosterplant"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.rocketfactory"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.milestone.Bullet"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m19a"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m19b"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.c1.m18bonus"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.BulletEngine"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "unlock.upgrade.rocketfactory"
+              },
+              {
+                "type": "IntProperty",
+                "value": 1
+              }
+            ]
+          ]
+        }
+      }
+    },
+    "achievementHistoryScope": {
+      "type": "StructProperty",
+      "type_name": "MetaMetricStorageScope",
+      "value": {
+        "metrics": {
+          "type": "MapProperty",
+          "key_type": "NameProperty",
+          "value_type": "StructProperty",
+          "allocation_flags": 0,
+          "values": [
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "Profit"
+              },
+              {
+                "type": "StructProperty",
+                "value": {
+                  "valueByFilter": {
+                    "type": "MapProperty",
+                    "key_type": "NameProperty",
+                    "value_type": "IntProperty",
+                    "allocation_flags": 0,
+                    "values": [
+                      [
+                        {
+                          "type": "NameProperty",
+                          "array_index": 0,
+                          "value": "None"
+                        },
+                        {
+                          "type": "IntProperty",
+                          "value": 737
+                        }
+                      ]
+                    ]
+                  }
+                }
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "export.rate"
+              },
+              {
+                "type": "StructProperty",
+                "value": {
+                  "valueByFilter": {
+                    "type": "MapProperty",
+                    "key_type": "NameProperty",
+                    "value_type": "IntProperty",
+                    "allocation_flags": 0,
+                    "values": [
+                      [
+                        {
+                          "type": "NameProperty",
+                          "array_index": 0,
+                          "value": "Energy"
+                        },
+                        {
+                          "type": "IntProperty",
+                          "value": 0
+                        }
+                      ],
+                      [
+                        {
+                          "type": "NameProperty",
+                          "array_index": 0,
+                          "value": "Mainframes"
+                        },
+                        {
+                          "type": "IntProperty",
+                          "value": 0
+                        }
+                      ]
+                    ]
+                  }
+                }
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "produce"
+              },
+              {
+                "type": "StructProperty",
+                "value": {
+                  "valueByFilter": {
+                    "type": "MapProperty",
+                    "key_type": "NameProperty",
+                    "value_type": "IntProperty",
+                    "allocation_flags": 0,
+                    "values": [
+                      [
+                        {
+                          "type": "NameProperty",
+                          "array_index": 0,
+                          "value": "Energy"
+                        },
+                        {
+                          "type": "IntProperty",
+                          "value": 1043
+                        }
+                      ],
+                      [
+                        {
+                          "type": "NameProperty",
+                          "array_index": 0,
+                          "value": "CrudeOil"
+                        },
+                        {
+                          "type": "IntProperty",
+                          "value": 1047
+                        }
+                      ]
+                    ]
+                  }
+                }
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "cycle"
+              },
+              {
+                "type": "StructProperty",
+                "value": {
+                  "valueByFilter": {
+                    "type": "MapProperty",
+                    "key_type": "NameProperty",
+                    "value_type": "IntProperty",
+                    "allocation_flags": 0,
+                    "values": [
+                      [
+                        {
+                          "type": "NameProperty",
+                          "array_index": 0,
+                          "value": "placeable.geothermal"
+                        },
+                        {
+                          "type": "IntProperty",
+                          "value": 70
+                        }
+                      ]
+                    ]
+                  }
+                }
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "build.track"
+              },
+              {
+                "type": "StructProperty",
+                "value": {
+                  "valueByFilter": {
+                    "type": "MapProperty",
+                    "key_type": "NameProperty",
+                    "value_type": "IntProperty",
+                    "allocation_flags": 0,
+                    "values": [
+                      [
+                        {
+                          "type": "NameProperty",
+                          "array_index": 0,
+                          "value": "None"
+                        },
+                        {
+                          "type": "IntProperty",
+                          "value": 8341
+                        }
+                      ]
+                    ]
+                  }
+                }
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "build.branch"
+              },
+              {
+                "type": "StructProperty",
+                "value": {
+                  "valueByFilter": {
+                    "type": "MapProperty",
+                    "key_type": "NameProperty",
+                    "value_type": "IntProperty",
+                    "allocation_flags": 0,
+                    "values": [
+                      [
+                        {
+                          "type": "NameProperty",
+                          "array_index": 0,
+                          "value": "None"
+                        },
+                        {
+                          "type": "IntProperty",
+                          "value": 1848
+                        }
+                      ]
+                    ]
+                  }
+                }
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "build.train"
+              },
+              {
+                "type": "StructProperty",
+                "value": {
+                  "valueByFilter": {
+                    "type": "MapProperty",
+                    "key_type": "NameProperty",
+                    "value_type": "IntProperty",
+                    "allocation_flags": 0,
+                    "values": [
+                      [
+                        {
+                          "type": "NameProperty",
+                          "array_index": 0,
+                          "value": "None"
+                        },
+                        {
+                          "type": "IntProperty",
+                          "value": 1120
+                        }
+                      ]
+                    ]
+                  }
+                }
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "arrive.length"
+              },
+              {
+                "type": "StructProperty",
+                "value": {
+                  "valueByFilter": {
+                    "type": "MapProperty",
+                    "key_type": "NameProperty",
+                    "value_type": "IntProperty",
+                    "allocation_flags": 0,
+                    "values": [
+                      [
+                        {
+                          "type": "NameProperty",
+                          "array_index": 0,
+                          "value": "None"
+                        },
+                        {
+                          "type": "IntProperty",
+                          "value": 13
+                        }
+                      ]
+                    ]
+                  }
+                }
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "arrive.freight"
+              },
+              {
+                "type": "StructProperty",
+                "value": {
+                  "valueByFilter": {
+                    "type": "MapProperty",
+                    "key_type": "NameProperty",
+                    "value_type": "IntProperty",
+                    "allocation_flags": 0,
+                    "values": [
+                      [
+                        {
+                          "type": "NameProperty",
+                          "array_index": 0,
+                          "value": "Water"
+                        },
+                        {
+                          "type": "IntProperty",
+                          "value": 2067
+                        }
+                      ],
+                      [
+                        {
+                          "type": "NameProperty",
+                          "array_index": 0,
+                          "value": "Steel"
+                        },
+                        {
+                          "type": "IntProperty",
+                          "value": 2059
+                        }
+                      ]
+                    ]
+                  }
+                }
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "salvage.track"
+              },
+              {
+                "type": "StructProperty",
+                "value": {
+                  "valueByFilter": {
+                    "type": "MapProperty",
+                    "key_type": "NameProperty",
+                    "value_type": "IntProperty",
+                    "allocation_flags": 0,
+                    "values": [
+                      [
+                        {
+                          "type": "NameProperty",
+                          "array_index": 0,
+                          "value": "None"
+                        },
+                        {
+                          "type": "IntProperty",
+                          "value": 1128
+                        }
+                      ]
+                    ]
+                  }
+                }
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "salvage.branch"
+              },
+              {
+                "type": "StructProperty",
+                "value": {
+                  "valueByFilter": {
+                    "type": "MapProperty",
+                    "key_type": "NameProperty",
+                    "value_type": "IntProperty",
+                    "allocation_flags": 0,
+                    "values": [
+                      [
+                        {
+                          "type": "NameProperty",
+                          "array_index": 0,
+                          "value": "None"
+                        },
+                        {
+                          "type": "IntProperty",
+                          "value": 59
+                        }
+                      ]
+                    ]
+                  }
+                }
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "upgrade"
+              },
+              {
+                "type": "StructProperty",
+                "value": {
+                  "valueByFilter": {
+                    "type": "MapProperty",
+                    "key_type": "NameProperty",
+                    "value_type": "IntProperty",
+                    "allocation_flags": 0,
+                    "values": [
+                      [
+                        {
+                          "type": "NameProperty",
+                          "array_index": 0,
+                          "value": "None"
+                        },
+                        {
+                          "type": "IntProperty",
+                          "value": 268
+                        }
+                      ],
+                      [
+                        {
+                          "type": "NameProperty",
+                          "array_index": 0,
+                          "value": "placeable.waterpump"
+                        },
+                        {
+                          "type": "IntProperty",
+                          "value": 32
+                        }
+                      ]
+                    ]
+                  }
+                }
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "Path"
+              },
+              {
+                "type": "StructProperty",
+                "value": {
+                  "valueByFilter": {
+                    "type": "MapProperty",
+                    "key_type": "NameProperty",
+                    "value_type": "IntProperty",
+                    "allocation_flags": 0,
+                    "values": [
+                      [
+                        {
+                          "type": "NameProperty",
+                          "array_index": 0,
+                          "value": "None"
+                        },
+                        {
+                          "type": "IntProperty",
+                          "value": 61
+                        }
+                      ]
+                    ]
+                  }
+                }
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "mission"
+              },
+              {
+                "type": "StructProperty",
+                "value": {
+                  "valueByFilter": {
+                    "type": "MapProperty",
+                    "key_type": "NameProperty",
+                    "value_type": "IntProperty",
+                    "allocation_flags": 0,
+                    "values": [
+                      [
+                        {
+                          "type": "NameProperty",
+                          "array_index": 0,
+                          "value": "82A9B46F42BF6C5555D608A6619B35E6"
+                        },
+                        {
+                          "type": "IntProperty",
+                          "value": 2
+                        }
+                      ]
+                    ]
+                  }
+                }
+              }
+            ],
+            [
+              {
+                "type": "NameProperty",
+                "array_index": 0,
+                "value": "maxupgrade"
+              },
+              {
+                "type": "StructProperty",
+                "value": {
+                  "valueByFilter": {
+                    "type": "MapProperty",
+                    "key_type": "NameProperty",
+                    "value_type": "IntProperty",
+                    "allocation_flags": 0,
+                    "values": [
+                      [
+                        {
+                          "type": "NameProperty",
+                          "array_index": 0,
+                          "value": "city"
+                        },
+                        {
+                          "type": "IntProperty",
+                          "value": 2
+                        }
+                      ]
+                    ]
+                  }
+                }
+              }
+            ]
+          ]
+        }
+      }
+    }
+  }
+}
