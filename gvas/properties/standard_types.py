@@ -82,7 +82,7 @@ class TimespanProperty(StandardStructTrait):
     def read(self, stream: BinaryIO) -> None:
         format_str, size = ("<Q", 8)
         self.timespan = struct.unpack(format_str, stream.read(size))[0]
-        self.comment = str(datetime.timedelta(milliseconds=(self.timespan / 1000.0)))
+        self.comment = timespan_to_str(self.timespan)
 
     def write(self, stream: BinaryIO) -> int:
         format_str, _size = ("<Q", 8)

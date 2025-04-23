@@ -11,6 +11,20 @@ This module provides common utility functions for working with the GVAS format, 
 
 ## Data Type Conversion Functions
 
+### timespan_to_str(tspan: int) -> str
+Converts a timespan value (in milliseconds) to a human-readable string format.
+
+#### Parameters
+- `tspan`: Integer representing timespan in milliseconds
+
+#### Returns
+- String in the format "HH:MM:SS.mmm" representing the timespan
+
+#### Example
+```python
+timespan_to_str(3661000)  # Returns "1:01:01.000"
+```
+
 ### datetime_to_str
 ```python
 def datetime_to_str(dt: int) -> str

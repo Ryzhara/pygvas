@@ -19,14 +19,18 @@ def datetime_to_str(dt: int) -> str:
     try:
         ticks_per_second = 10_000_000.0
         seconds = dt / ticks_per_second
-        comment = (
+        datetime_str = (
             datetime.datetime.min + datetime.timedelta(seconds=seconds)
         ).strftime("%d/%m/%Y %H:%M:%S.%f")
     except Exception as e:
         print(f"Cant process {dt=} : {e}")
-        comment = str(dt)
+        datetime_str = str(dt)
 
-    return comment
+    return datetime_str
+
+
+def timespan_to_str(tspan: int) -> str:
+    return str(datetime.timedelta(milliseconds=(tspan / 1000.0)))
 
 
 # ============================================
