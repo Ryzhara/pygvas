@@ -4,13 +4,12 @@ Python port of name_property.rs
 """
 
 from io import BytesIO
-from typing import Optional, Literal
+from typing import Literal
 
 from pydantic.dataclasses import dataclass
 
-from .property_base import PropertyTrait
-from ..engine_tools import ByteCountValidator
-from ..gvas_utils import *
+from gvas.properties.property_base import PropertyTrait
+from gvas.gvas_utils import *
 
 
 @dataclass

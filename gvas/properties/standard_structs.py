@@ -1,10 +1,10 @@
 from abc import ABC, abstractmethod
-from typing import Optional, Literal
+from typing import Literal
 
 from pydantic.dataclasses import dataclass
 
-from gvas.gvas_utils import *
 from gvas.engine_tools import FUE5ReleaseStreamObjectVersion, EngineVersionTool
+from gvas.gvas_utils import *
 
 
 # ============================================
@@ -259,7 +259,7 @@ class ByteBlobStruct(StandardStructTrait):
     def read(self, stream: BinaryIO) -> None:
 
         # expect length in context
-        context = ContextScopeTracker.hint_context
+        context = ContextScopeTracker.get_hint_context()
         byte_count = context["byte_count"]
         self.byte_blob = read_bytes(stream, byte_count).hex()
 
@@ -284,7 +284,7 @@ STANDARD_STRUCT_UNION = Union[
 
 # ============================================
 #
-_special_struct_type_map: dict[str, STANDARD_STRUCT_UNION] = {
+_standard_struct_type_map: dict[str, STANDARD_STRUCT_UNION] = {
     "Vector": VectorStruct,
     "Vector2D": Vector2DStruct,
     "Rotator": RotatorStruct,
@@ -300,19 +300,19 @@ _special_struct_type_map: dict[str, STANDARD_STRUCT_UNION] = {
 
 # ============================================
 #
-def is_special_struct(type_name: str) -> bool:
-    return type_name in _special_struct_type_map.keys()
+def is_standard_struct(type_name: str) -> bool:
+    return type_name in _standard_struct_type_map.keys()
 
 
 # ============================================
 #
-def get_special_struct_instance(
+def get_standard_struct_instance(
     type_name: str, use_lwc: bool = False
 ) -> StandardStructTrait:
     # Map property types to their classes
 
-    if type_name in _special_struct_type_map.keys():
-        property_encoding_class: STANDARD_STRUCT_UNION = _special_struct_type_map.get(
+    if type_name in _standard_struct_type_map.keys():
+        property_encoding_class: STANDARD_STRUCT_UNION = _standard_struct_type_map.get(
             type_name
         )
         property_instance = property_encoding_class()

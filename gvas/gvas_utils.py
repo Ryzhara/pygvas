@@ -1,11 +1,7 @@
-"""
-Common utility functions for GVAS
-"""
-
 import datetime
 import struct
 import uuid
-from typing import BinaryIO, Any, Callable, Union
+from typing import BinaryIO, Any, Callable, Union, Optional
 
 from gvas.error import DeserializeError, SerializeError
 
@@ -14,33 +10,63 @@ ZERO_GUID = uuid.UUID(int=0)
 
 # ============================================
 # Don NOT make this @dataclass because then our class variable syntax is wrong. ;)
+# ## Hints
+# If your file fails while parsing with a `DeserializeError` error you probably need hints.
+# When a struct is stored inside ArrayProperty/SetProperty/MapProperty in GvasFile it does not contain type annotations.
+# This means that a library parsing the file must know the type beforehand. That's why you need hints.
 class ContextScopeTracker:
-    hints: dict[str, Union[str, dict[str, Any]]] = {}
-    hint_context: dict[str, Any] = {}
-    context_stack: list[str] = []
-    unit_tests_running: bool = False
+    _unit_tests_running: bool = False
+    _context_stack: list[str] = []
+    _hints: dict[str, Union[str, dict[str, Any]]] = {}
+    # this one is for remote case when we need more than a type name; used by called object
+    _hint_context: dict[str, Any] = {}
 
-    # used for processing hints
-    @classmethod
-    def push_context_step(cls, step: str) -> None:
-        cls.context_stack.append(step)
-
-    @classmethod
-    def pop_context_step(cls) -> None:
-        cls.context_stack.pop()
-
-    @classmethod
-    def get_context_path(cls) -> str:
-        return ".".join(cls.context_stack)
-
+    # ============= UNIT TESTING HELPER ====================
     @classmethod
     def set_inside_unit_tests(cls) -> None:
-        cls.unit_tests_running = True
+        cls._unit_tests_running = True
 
     @classmethod
     def inside_unit_tests(cls) -> bool:
-        return cls.unit_tests_running
+        return cls._unit_tests_running
 
+    # ============= CONTEXT TRACKING ====================
+    @classmethod
+    def push_context_step(cls, step: str) -> None:
+        cls._context_stack.append(step)
+
+    @classmethod
+    def pop_context_step(cls) -> None:
+        cls._context_stack.pop()
+
+    @classmethod
+    def get_context_path(cls) -> str:
+        return ".".join(cls._context_stack)
+
+    # ============= PROCESSING HINTS ====================
+
+    @classmethod
+    def set_hints(cls, hints: dict[str, Union[str, dict[str, Any]]]):
+        """For those files that need hints for successful deserialization."""
+        cls._hints = hints
+
+    @classmethod
+    def get_hint_for_context(cls) -> Union[str, Union[str, dict[str, Any]]]:
+        hint_context_path = cls.get_context_path()
+        hint_type_override = cls._hints.get(hint_context_path, None)
+        return hint_type_override
+
+    # ============= MOST UNUSUAL CASE HANDLING ====================
+    @classmethod
+    def set_hint_context(cls, context: dict[str, Any]):
+        """Some hints are more than just a type name. ByteBlobStruct requires a length, for example."""
+        cls._hint_context = context
+
+    @classmethod
+    def get_hint_context(cls) -> dict[str, Any]:
+        return cls._hint_context
+
+    # ============= IMPLEMENTATION FOR PYTHON CONTEXT MANAGER ====================
     def __init__(self, context: str):
         # a snapshot for debugging
         self.parent_context = ContextScopeTracker.get_context_path()
@@ -461,10 +487,10 @@ def write_guid(stream: BinaryIO, guid: [uuid, str]) -> uuid:
 def read_standard_header(
     stream: BinaryIO,
     *,
-    assert_length: int = None,
-    assert_array_index: int = 0,
-    stream_readers: list[
-        Callable[[BinaryIO], Any]
+    assert_length: Optional[int] = None,
+    assert_array_index: Optional[int] = 0,
+    stream_readers: Optional[
+        list[Callable[[BinaryIO], Any]]
     ] = None,  # read after array index and before terminator
 ) -> list[Any]:
     """

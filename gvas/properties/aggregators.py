@@ -1,24 +1,23 @@
+"""
+String property implementations for GVAS
+Python port of set_property.rs, map_property.rs, struct_property.rs, array_property.rs
+"""
+
 from io import BytesIO
-from typing import Optional, ClassVar, Annotated, Literal
+from typing import ClassVar, Annotated, Literal
+
 from pydantic import field_serializer, Discriminator
 from pydantic.dataclasses import dataclass
 
 from gvas.gvas_utils import *
-
-from gvas.properties.standard_types import (
-    is_special_struct,
-    get_special_struct_instance,
-    StandardStructTrait,
-    DateTimeStruct,
-    GuidStruct,
-    TimespanStruct,
-    IntPointStruct,
-    LinearColorStruct,
-    RotatorStruct,
-    QuatStruct,
-    VectorStruct,
-    Vector2DStruct,
+from gvas.properties.delegate_property import (
+    MulticastInlineDelegateProperty,
+    MulticastSparseDelegateProperty,
+    DelegateProperty,
 )
+from gvas.properties.enum_property import EnumProperty
+from gvas.properties.field_path_property import FieldPath, FieldPathProperty
+from gvas.properties.name_property import NameProperty
 from gvas.properties.numerical_property import (
     BoolProperty,
     ByteProperty,
@@ -34,19 +33,24 @@ from gvas.properties.numerical_property import (
     Int64Property,
     UInt64Property,
 )
-from gvas.properties.property_base import PropertyFactory, PropertyTrait
-
-from gvas.properties.enum_property import EnumProperty
-from gvas.properties.text_property import TextProperty
-from gvas.properties.name_property import NameProperty
-from gvas.properties.str_property import StrProperty
 from gvas.properties.object_property import ObjectProperty
-from gvas.properties.field_path_property import FieldPath, FieldPathProperty
-from gvas.properties.delegate_property import (
-    MulticastInlineDelegateProperty,
-    MulticastSparseDelegateProperty,
-    DelegateProperty,
+from gvas.properties.property_base import PropertyFactory, PropertyTrait
+from gvas.properties.standard_structs import (
+    is_standard_struct,
+    get_standard_struct_instance,
+    StandardStructTrait,
+    DateTimeStruct,
+    GuidStruct,
+    TimespanStruct,
+    IntPointStruct,
+    LinearColorStruct,
+    RotatorStruct,
+    QuatStruct,
+    VectorStruct,
+    Vector2DStruct,
 )
+from gvas.properties.str_property import StrProperty
+from gvas.properties.text_property import TextProperty
 
 UNREAL_ENGINE_PROPERTIES = Annotated[
     Union[
@@ -101,8 +105,8 @@ class MapProperty(PropertyTrait):
     VALUE_TYPE = Union[bool, int, str, UNREAL_ENGINE_PROPERTIES]
 
     type: Literal["MapProperty"] = "MapProperty"
-    key_type: KEY_TYPE = ""
-    value_type: VALUE_TYPE = ""
+    key_type: KEY_TYPE = None
+    value_type: VALUE_TYPE = None
     allocation_flags: int = 0
     values: list[tuple[KEY_TYPE, VALUE_TYPE]] = None
 
@@ -285,30 +289,44 @@ class StructProperty(PropertyTrait):
         if self.guid == ZERO_GUID:
             self.guid = None
 
-        # see if we have to override the type name
-        hint_context_path = ContextScopeTracker.get_context_path()
-        hint_type_override: Union[str, dict] = ContextScopeTracker.hints.get(
-            hint_context_path, None
-        )
+        # # see if we have to override the type name
+        # hint_context_path = ContextScopeTracker.get_context_path()
+        # hint_type_override: Union[str, dict] = ContextScopeTracker.hints.get(
+        #     hint_context_path, None
+        # )
+
+        hint_type_override = ContextScopeTracker.get_hint_for_context()
 
         # either we test for self.type_name or we use the override
         deserialize_type = hint_type_override or self.type_name
 
-        expected_type = None
-        if type(deserialize_type) is str and is_special_struct(deserialize_type):
-            expected_type = get_special_struct_instance(deserialize_type)
-        elif type(deserialize_type) is dict:
-            # context may be, for example, the number of bytes in an unknown "ByteBlobStruct"
-            ContextScopeTracker.hint_context = hint_type_override["context"]
+
+        # unwrap this version
+        if type(deserialize_type) is dict:
+            # context may be, for example, the number of bytes in a "ByteBlobStruct"
             deserialize_type = hint_type_override["type"]
-            expected_type = get_special_struct_instance(deserialize_type)
+            ContextScopeTracker.set_hint_context(hint_type_override["context"])
+
+        # may have been a str, but the dict must also result in a "type" str
+        expected_type = None
+        if is_standard_struct(deserialize_type):
+            expected_type = get_standard_struct_instance(deserialize_type)
+
+        # It turns out that we almost always want to default to a custom struct, here.
+        # if deserialize_type is None:
+        #     deserialize_type = "StructProperty" or self.type_name="CustomStruct"
+        #     raise DeserializeError.missing_hint(
+        #         self.type, ContextScopeTracker.get_context_path(), stream.tell()
+        #     )
 
         with ByteCountValidator(
             stream, length, do_validation=include_header
         ) as _validator:
             self.read_body(stream, expected_type)
 
-    def read_body(self, stream: BinaryIO, standard_struct_override: str = None) -> None:
+    def read_body(
+        self, stream: BinaryIO, standard_struct_override: StandardStructTrait = None
+    ) -> None:
         """we must check for type_name in the special (graphical) structure types and
         then invoke reading that, vs reading a custom, arbitrary body as below"""
 
@@ -500,8 +518,8 @@ class ArrayProperty(PropertyTrait):
                 stream, expected_byte_count, do_validation=True
             ) as _validator:
                 for _ in range(property_count):
-                    if is_special_struct(self.type_name):
-                        array_property = get_special_struct_instance(self.type_name)
+                    if is_standard_struct(self.type_name):
+                        array_property = get_standard_struct_instance(self.type_name)
                         array_property.read(stream)
                         self.values.append(array_property)
                     else:
@@ -560,7 +578,7 @@ class ArrayProperty(PropertyTrait):
             body_buffer = BytesIO()
             body_bytes = 0
             for struct_property in self.values:
-                if is_special_struct(self.type_name):
+                if is_standard_struct(self.type_name):
                     body_bytes += struct_property.write(body_buffer)
                 else:
                     body_bytes += struct_property.write(

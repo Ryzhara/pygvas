@@ -3,12 +3,13 @@ FieldPath property implementation for GVAS
 Python port of field_path_property.rs
 """
 
-from pydantic.dataclasses import dataclass
 from io import BytesIO
-from typing import Optional, Literal
-from .property_base import PropertyTrait
-from ..engine_tools import ByteCountValidator
-from ..gvas_utils import *
+from typing import Literal
+
+from pydantic.dataclasses import dataclass
+
+from gvas.properties.property_base import PropertyTrait
+from gvas.gvas_utils import *
 
 
 @dataclass

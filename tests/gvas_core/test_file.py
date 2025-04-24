@@ -30,7 +30,7 @@ class TestGvasFile(unittest.TestCase):
     @override
     def setUpClass(cls) -> None:
         ContextScopeTracker.set_inside_unit_tests()
-        ContextScopeTracker.hints = {}
+        ContextScopeTracker.set_hints({})
 
     def test_10_create_file(self):
         # Test creating a GVASFile from scratch

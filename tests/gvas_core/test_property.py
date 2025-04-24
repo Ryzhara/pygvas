@@ -34,7 +34,7 @@ class TestProperty(unittest.TestCase):
     @override
     def setUpClass(cls) -> None:
         ContextScopeTracker.set_inside_unit_tests()
-        ContextScopeTracker.hints = {}
+        ContextScopeTracker.set_hints({})
 
     def perform_property_roundtrip_test(
         self, test_property: PropertyTrait, property_type: str, places: int = 7

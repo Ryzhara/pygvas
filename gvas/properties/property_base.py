@@ -4,10 +4,10 @@ Python port of properties/mod.rs
 """
 
 from abc import ABC, abstractmethod
-from typing import Optional
+
 from pydantic.dataclasses import dataclass
 
-from ..gvas_utils import *
+from gvas.gvas_utils import *
 
 
 # ============================================

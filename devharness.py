@@ -122,31 +122,33 @@ test_file_list = [
 # test_file_list = ["resources/test/palworld_zlib_twice.sav"]  # working!
 # # game_version = GameVersion.PALWORLD
 # # compression = CompressionType.ZLIB_TWICE
-# ContextScopeTracker.hints = {
+# ContextScopeTracker.set_hints({
 #     "worldSaveData.StructProperty.MapObjectSpawnerInStageSaveData.MapProperty.Value.StructProperty.SpawnerDataMapByLevelObjectInstanceId.MapProperty.Key.StructProperty": "Guid",
 #     "worldSaveData.StructProperty.BaseCampSaveData.MapProperty.Key.StructProperty": "Guid",
 #     "worldSaveData.StructProperty.GroupSaveDataMap.MapProperty.Key.StructProperty": "Guid",
-# }
+# })
 
 # there are some "BIN" files:
 #   features_01.bin, -- custom struct @ FSDEventRewardsSave.StructProperty.EventsSeen.SetProperty.StructProperty
 test_file_list = ["resources/test/features_01.bin"]
-ContextScopeTracker.hints = {
-    "SeasonSave.StructProperty.Seasons.MapProperty.Key.StructProperty": "Guid",
-    "SeasonSave.StructProperty.Seasons.MapProperty.Value.StructProperty.CompletedSpecialChallenges.MapProperty.Key.StructProperty": "Guid",
-    "UnLockedMissionParameters.MapProperty.Key.StructProperty": "Guid",
-    "ItemUpgradeSelections.MapProperty.Key.StructProperty": "Guid",
-    "ItemUpgradeLoadouts.ArrayProperty.Loadout.MapProperty.Key.StructProperty": "Guid",
-    "EnemiesKilled.MapProperty.Key.StructProperty": "Guid",
-    "UnlockedItemSkins.MapProperty.Key.StructProperty": "Guid",
-    "Resources.StructProperty.OwnedResources.MapProperty.Key.StructProperty": "Guid",
-    "FSDEventRewardsSave.StructProperty.EventsSeen.SetProperty.StructProperty": "Guid",
-    "GameDLCSave.StructProperty.AnnouncedIDs.SetProperty.StructProperty": "Guid",
-    "Drinks.StructProperty.UnlockedDrinks.SetProperty.StructProperty": "Guid",
-    "UnlockedItemSkins.MapProperty.Value.StructProperty.Skins.SetProperty.StructProperty": "Guid",
-    "UnlockedPickaxeParts.SetProperty.StructProperty": "Guid",
-    "MinersManualKnownObjects.SetProperty.StructProperty": "Guid",
-}
+ContextScopeTracker.set_hints(
+    {
+        "SeasonSave.StructProperty.Seasons.MapProperty.Key.StructProperty": "Guid",
+        "SeasonSave.StructProperty.Seasons.MapProperty.Value.StructProperty.CompletedSpecialChallenges.MapProperty.Key.StructProperty": "Guid",
+        "UnLockedMissionParameters.MapProperty.Key.StructProperty": "Guid",
+        "ItemUpgradeSelections.MapProperty.Key.StructProperty": "Guid",
+        "ItemUpgradeLoadouts.ArrayProperty.Loadout.MapProperty.Key.StructProperty": "Guid",
+        "EnemiesKilled.MapProperty.Key.StructProperty": "Guid",
+        "UnlockedItemSkins.MapProperty.Key.StructProperty": "Guid",
+        "Resources.StructProperty.OwnedResources.MapProperty.Key.StructProperty": "Guid",
+        "FSDEventRewardsSave.StructProperty.EventsSeen.SetProperty.StructProperty": "Guid",
+        "GameDLCSave.StructProperty.AnnouncedIDs.SetProperty.StructProperty": "Guid",
+        "Drinks.StructProperty.UnlockedDrinks.SetProperty.StructProperty": "Guid",
+        "UnlockedItemSkins.MapProperty.Value.StructProperty.Skins.SetProperty.StructProperty": "Guid",
+        "UnlockedPickaxeParts.SetProperty.StructProperty": "Guid",
+        "MinersManualKnownObjects.SetProperty.StructProperty": "Guid",
+    }
+)
 
 
 # always a quick retest

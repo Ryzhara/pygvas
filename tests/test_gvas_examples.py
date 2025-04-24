@@ -125,13 +125,13 @@ class TestGvasExamples(unittest.TestCase):
     @override
     def setUpClass(cls) -> None:
         ContextScopeTracker.set_inside_unit_tests()
-        ContextScopeTracker.hints = {}
+        ContextScopeTracker.set_hints({})
 
     @classmethod
     @override
     def setUp(self):
         ContextScopeTracker.set_inside_unit_tests()
-        ContextScopeTracker.hints = {}
+        ContextScopeTracker.set_hints({})
 
     def perform_gvas_deserialization_test(
         self, test_key: str, should_be_equal: bool = True

@@ -48,7 +48,7 @@ def read_gvas_file(
             hints, dict
         ), f"Hints must be either a dict or a str/Path object to a file."
 
-    ContextScopeTracker.hints = hints
+    ContextScopeTracker.set_hints(hints)
 
     if game_file_format is not None:
         gvas_test_file: GVASFile = GVASFile.read(

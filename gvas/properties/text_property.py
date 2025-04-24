@@ -4,14 +4,14 @@ from io import BytesIO
 from typing import Self, TypeVar, Type, Annotated
 from pydantic import Discriminator
 
-from .numerical_property import *
-from .property_base import PropertyTrait
-from ..engine_tools import (
+from gvas.properties.numerical_property import *
+from gvas.properties.property_base import PropertyTrait
+from gvas.engine_tools import (
     EngineVersionTool,
     FEditorObjectVersion,
     FUE5ReleaseStreamObjectVersion,
 )
-from ..gvas_utils import *
+from gvas.gvas_utils import *
 
 
 EnumT = TypeVar("EnumT", bound=IntEnum)

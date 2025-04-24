@@ -5,6 +5,7 @@ Tests for StructProperty functionality
 import unittest
 import uuid
 from io import BytesIO
+from time import sleep
 from typing import override
 
 from gvas.gvas_utils import ZERO_GUID, read_string, ContextScopeTracker
@@ -20,7 +21,13 @@ class TestStructProperty(unittest.TestCase):
     @override
     def setUpClass(cls) -> None:
         ContextScopeTracker.set_inside_unit_tests()
-        ContextScopeTracker.hints = {}
+        ContextScopeTracker.set_hints({})
+
+    @classmethod
+    @override
+    def setUp(cls) -> None:
+        ContextScopeTracker.set_inside_unit_tests()
+        ContextScopeTracker.set_hints({})
 
     def test_10_create_struct_property(self):
         # Create a new StructProperty
@@ -70,6 +77,7 @@ class TestStructProperty(unittest.TestCase):
         struct_property.value["BoolValue"] = BoolProperty(value=True)
         struct_property.value["StringValue"] = StrProperty(value="Hello, world!")
 
+        # when there is no header, we need to know that it is
         # Serialize the struct property with and without a standard header
         for include_header in [False, True]:
             stream = BytesIO()
@@ -82,6 +90,7 @@ class TestStructProperty(unittest.TestCase):
                 property_type = read_string(stream)
                 self.assertEqual(property_type, struct_property.type)
 
+            ContextScopeTracker.set_hints({} if include_header else {"": "TestStruct"})
             deserialized_property.read(stream, include_header=include_header)
 
             # Check the deserialized values

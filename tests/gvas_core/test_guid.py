@@ -17,7 +17,7 @@ class TestGuid(unittest.TestCase):
     @override
     def setUpClass(cls) -> None:
         ContextScopeTracker.set_inside_unit_tests()
-        ContextScopeTracker.hints = {}
+        ContextScopeTracker.set_hints({})
 
     def test_10_guid_creation(self):
         # Test creating GUIDs

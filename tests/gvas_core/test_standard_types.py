@@ -13,7 +13,7 @@ from gvas.gvas_utils import (
     ContextScopeTracker,
 )
 
-from gvas.properties.standard_types import (
+from gvas.properties.standard_structs import (
     DateTimeStruct,
     GuidStruct,
     IntPointStruct,
@@ -35,7 +35,7 @@ class TestTextPropertyTypes(unittest.TestCase):
     @override
     def setUpClass(cls) -> None:
         ContextScopeTracker.set_inside_unit_tests()
-        ContextScopeTracker.hints = {}
+        ContextScopeTracker.set_hints({})
 
     def write_and_read_standard_type(
         self,
@@ -178,8 +178,8 @@ class TestTextPropertyTypes(unittest.TestCase):
                 0,
                 "Test string for byte_blob must have an even number of characters.",
             )
-            hint_context_restore = ContextScopeTracker.hint_context
-            ContextScopeTracker.hint_context = {"byte_count": len(byte_blob)}
+            hint_context_restore = ContextScopeTracker.get_hint_context()
+            ContextScopeTracker.set_hint_context({"byte_count": len(byte_blob)})
             try:
                 self.perform_roundtrip_standard_type_roundtrip_test(
                     ByteBlobStruct(byte_blob=byte_blob),
@@ -188,4 +188,4 @@ class TestTextPropertyTypes(unittest.TestCase):
                     msg=f"Testing standard type ByteBlobStruct",
                 )
             finally:
-                ContextScopeTracker.hint_context = hint_context_restore
+                ContextScopeTracker.set_hint_context(hint_context_restore)

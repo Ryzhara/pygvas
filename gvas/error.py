@@ -36,6 +36,14 @@ class DeserializeError(Exception):
         )
 
     @classmethod
+    def invalid_hint(
+        cls, hint_type: str, property_path: str, position: int
+    ) -> "DeserializeError":
+        return cls(
+            f"Unknown hint type for {hint_type} at path {property_path}", position
+        )
+
+    @classmethod
     def invalid_value_size(cls, length: int, param: int, position: int):
         return cls(f"Invalid size: expecting {length} and got {param} at {position=}")
 

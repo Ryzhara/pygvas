@@ -10,11 +10,11 @@ Key differences from Rust version:
 
 import zlib
 from io import BytesIO
-from typing import Optional, Annotated
+from typing import Annotated
 
+from pydantic import BaseModel
 from pydantic import field_serializer, field_validator, Discriminator
 from pydantic.dataclasses import dataclass
-from pydantic import BaseModel
 
 from gvas.engine_tools import (
     FEngineVersion,
@@ -25,38 +25,20 @@ from gvas.engine_tools import (
     EngineVersionTool,
 )
 from gvas.gvas_utils import *
-
-from gvas.properties.standard_types import (
-    DateTimeStruct,
-    GuidStruct,
-    TimespanStruct,
-    IntPointStruct,
-    LinearColorStruct,
-    RotatorStruct,
-    QuatStruct,
-    VectorStruct,
-    Vector2DStruct,
-)
-
-from gvas.properties.property_base import PropertyFactory
-from gvas.properties.enum_property import EnumProperty
-from gvas.properties.text_property import TextProperty
-from gvas.properties.str_property import StrProperty
-from gvas.properties.name_property import NameProperty
-from gvas.properties.object_property import ObjectProperty
-from gvas.properties.field_path_property import FieldPathProperty, FieldPath
-from gvas.properties.delegate_property import (
-    MulticastInlineDelegateProperty,
-    MulticastSparseDelegateProperty,
-    DelegateProperty,
-)
-
 from gvas.properties.aggregators import (
     SetProperty,
     MapProperty,
     ArrayProperty,
     StructProperty,
 )
+from gvas.properties.delegate_property import (
+    MulticastInlineDelegateProperty,
+    MulticastSparseDelegateProperty,
+    DelegateProperty,
+)
+from gvas.properties.enum_property import EnumProperty
+from gvas.properties.field_path_property import FieldPathProperty, FieldPath
+from gvas.properties.name_property import NameProperty
 from gvas.properties.numerical_property import (
     BoolProperty,
     ByteProperty,
@@ -72,7 +54,21 @@ from gvas.properties.numerical_property import (
     FloatProperty,
     DoubleProperty,
 )
-
+from gvas.properties.object_property import ObjectProperty
+from gvas.properties.property_base import PropertyFactory
+from gvas.properties.standard_structs import (
+    DateTimeStruct,
+    GuidStruct,
+    TimespanStruct,
+    IntPointStruct,
+    LinearColorStruct,
+    RotatorStruct,
+    QuatStruct,
+    VectorStruct,
+    Vector2DStruct,
+)
+from gvas.properties.str_property import StrProperty
+from gvas.properties.text_property import TextProperty
 
 UNREAL_ENGINE_PROPERTIES = Annotated[
     Union[

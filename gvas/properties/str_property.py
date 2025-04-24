@@ -1,14 +1,15 @@
 """
 String property implementations for GVAS
-Python port of str_property.rs and name_property.rs
+Python port of str_property.rs
 """
 
-from pydantic.dataclasses import dataclass
-from typing import Optional, Literal
 from io import BytesIO
+from typing import Literal
 
-from gvas.properties.property_base import PropertyTrait
+from pydantic.dataclasses import dataclass
+
 from gvas.gvas_utils import *
+from gvas.properties.property_base import PropertyTrait
 
 
 @dataclass
