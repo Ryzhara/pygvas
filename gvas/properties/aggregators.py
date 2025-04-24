@@ -99,7 +99,14 @@ UNREAL_ENGINE_PROPERTIES = Annotated[
 
 @dataclass
 class MapProperty(PropertyTrait):
-    """A property that holds a key-value mapping"""
+    """
+    A property that holds a key-value mapping
+    For MapProperty, we store tuples of (key, value) to avoid complexity of
+    trying to boil things down to immutable types and then reverse that.
+    That DOES mean the end user can encounter collisions if they do it wrong.
+
+    And the tuples get serialized as a list of two items: [key, value]
+    """
 
     KEY_TYPE = Union[str, UNREAL_ENGINE_PROPERTIES]
     VALUE_TYPE = Union[bool, int, str, UNREAL_ENGINE_PROPERTIES]
@@ -286,7 +293,7 @@ class StructProperty(PropertyTrait):
                 stream, stream_readers=[read_string, read_guid]
             )
 
-        if self.guid == ZERO_GUID:
+        if self.guid == MagicConstants.ZERO_GUID:
             self.guid = None
 
         # # see if we have to override the type name
@@ -300,7 +307,6 @@ class StructProperty(PropertyTrait):
         # either we test for self.type_name or we use the override
         deserialize_type = hint_type_override or self.type_name
 
-
         # unwrap this version
         if type(deserialize_type) is dict:
             # context may be, for example, the number of bytes in a "ByteBlobStruct"
@@ -308,13 +314,18 @@ class StructProperty(PropertyTrait):
             ContextScopeTracker.set_hint_context(hint_type_override["context"])
 
         # may have been a str, but the dict must also result in a "type" str
-        expected_type = None
+        standard_struct_override = None
         if is_standard_struct(deserialize_type):
-            expected_type = get_standard_struct_instance(deserialize_type)
+            standard_struct_override = get_standard_struct_instance(deserialize_type)
 
         # It turns out that we almost always want to default to a custom struct, here.
+        # I leave this commentary here for future reference, in case we wish to change
+        # this choice.
         # if deserialize_type is None:
-        #     deserialize_type = "StructProperty" or self.type_name="CustomStruct"
+        #     deserialize_type = "StructProperty"
+        #           or maybe
+        #     self.type_name = "CustomStruct"
+        #           or just
         #     raise DeserializeError.missing_hint(
         #         self.type, ContextScopeTracker.get_context_path(), stream.tell()
         #     )
@@ -322,7 +333,7 @@ class StructProperty(PropertyTrait):
         with ByteCountValidator(
             stream, length, do_validation=include_header
         ) as _validator:
-            self.read_body(stream, expected_type)
+            self.read_body(stream, standard_struct_override)
 
     def read_body(
         self, stream: BinaryIO, standard_struct_override: StandardStructTrait = None
@@ -375,7 +386,10 @@ class StructProperty(PropertyTrait):
                 stream,
                 "StructProperty",
                 length=body_bytes,
-                data_to_write=[self.type_name or "", self.guid or ZERO_GUID],
+                data_to_write=[
+                    self.type_name or "",
+                    self.guid or MagicConstants.ZERO_GUID,
+                ],
             )
 
         # Write buffer contents with optional header
@@ -511,7 +525,7 @@ class ArrayProperty(PropertyTrait):
             expected_byte_count, self.type_name, self.guid = read_standard_header(
                 stream, stream_readers=[read_string, read_guid]
             )
-            if self.guid == ZERO_GUID:
+            if self.guid == MagicConstants.ZERO_GUID:
                 self.guid = None
 
             with ByteCountValidator(
@@ -592,7 +606,7 @@ class ArrayProperty(PropertyTrait):
                 array_buffer,
                 self.property_type,
                 length=body_bytes,
-                data_to_write=[self.type_name, self.guid or ZERO_GUID],
+                data_to_write=[self.type_name, self.guid or MagicConstants.ZERO_GUID],
             )
 
             array_bytes += write_bytes(array_buffer, body_buffer.getvalue())

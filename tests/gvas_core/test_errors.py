@@ -10,9 +10,9 @@ import zlib
 from typing_extensions import override
 
 from gvas.error import DeserializeError
-from gvas.gvas_file import GVASFile, GVAS_MAGIC
+from gvas.gvas_file import GVASFile
 from gvas.engine_tools import GameVersion, CompressionType
-from gvas.gvas_utils import ContextScopeTracker
+from gvas.gvas_utils import ContextScopeTracker, MagicConstants
 from gvas.properties.property_base import PropertyFactory
 
 
@@ -56,7 +56,7 @@ class TestErrors(unittest.TestCase):
         # Test handling of invalid header
         # Create a stream with valid magic but invalid data
         stream = BytesIO()
-        stream.write(GVAS_MAGIC)  # Valid magic
+        stream.write(MagicConstants.GVAS_MAGIC)  # Valid magic
         stream.write(struct.pack("<I", 999))  # Invalid save game version
         stream.seek(0)
 

@@ -16,14 +16,9 @@ from gvas.properties.property_base import PropertyTrait
 class StrProperty(PropertyTrait):
 
     type: Literal["StrProperty"] = "StrProperty"
-    # type: str = "StrProperty"
     value: Optional[str] = None
 
-    def read(
-        self,
-        stream: BinaryIO,
-        include_header: bool = True,
-    ) -> None:
+    def read(self, stream: BinaryIO, include_header: bool = True) -> None:
         """Read string from stream"""
         length = 0
         if include_header:
@@ -34,11 +29,7 @@ class StrProperty(PropertyTrait):
         ) as _validator:
             self.value = read_string(stream)
 
-    def write(
-        self,
-        stream: BinaryIO,
-        include_header: bool = True,
-    ) -> int:
+    def write(self, stream: BinaryIO, include_header: bool = True) -> int:
         """Write string to stream"""
         bytes_written = 0
 

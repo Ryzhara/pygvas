@@ -372,7 +372,7 @@ class FText:
 
     def read(self, stream: BinaryIO) -> Self:
         self.flags = read_uint32(stream)
-        self.history = FTextHistory.read(stream)
+        self.history = FTextHistoryFactory.read(stream)
         return self
 
     def write(self, stream: BinaryIO):
@@ -752,7 +752,7 @@ class StringTableEntry:
 
 
 @dataclass
-class FTextHistory:
+class FTextHistoryFactory:
     @classmethod
     def read(cls, stream: BinaryIO) -> UNREAL_ENGINE_TEXT_PROPERTY_TYPES:
 
@@ -815,11 +815,7 @@ class TextProperty(PropertyTrait):
     flags: int = 0
     history: Optional[UNREAL_ENGINE_TEXT_PROPERTY_TYPES] = None
 
-    def read(
-        self,
-        stream: BinaryIO,
-        include_header: bool = True,
-    ) -> None:
+    def read(self, stream: BinaryIO, include_header: bool = True) -> None:
         """Read text from stream"""
         length = 0
         if include_header:
@@ -832,11 +828,7 @@ class TextProperty(PropertyTrait):
             self.flags = ftext.flags
             self.history = ftext.history
 
-    def write(
-        self,
-        stream: BinaryIO,
-        include_header: bool = True,
-    ) -> int:
+    def write(self, stream: BinaryIO, include_header: bool = True) -> int:
         """Write text to stream"""
         body_buffer = BytesIO()
         ftext = FText(flags=self.flags, history=self.history)

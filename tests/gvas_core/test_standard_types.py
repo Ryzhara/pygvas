@@ -6,7 +6,7 @@ from typing_extensions import override
 
 from gvas.engine_tools import EngineVersionTool
 from gvas.gvas_utils import (
-    ZERO_GUID,
+    MagicConstants,
     guid_to_str,
     datetime_to_str,
     timespan_to_str,
@@ -25,6 +25,7 @@ from gvas.properties.standard_structs import (
     Vector2DStruct,
     ByteBlobStruct,
     STANDARD_STRUCT_UNION,
+    StandardStructTrait,
 )
 
 
@@ -70,6 +71,46 @@ class TestTextPropertyTypes(unittest.TestCase):
         self.write_and_read_standard_type(test_value, deserializer, supports_version)
         self.assertEqual(test_value, deserializer, msg)
 
+    def test_00_test_duck_typing_supports_version(self):
+        class DuckClass(StandardStructTrait):
+            expected_value: bool = None
+
+            def read(self, stream: BytesIO) -> None:
+                if (
+                    self.expected_value is None
+                    or self.expected_value != self.uses_lwc()
+                ):
+                    raise ValueError(
+                        "Duck type failed {self.expected_value=} and {self.uses_lwc()=}"
+                    )
+
+            def write(self, stream: BytesIO) -> int:
+                if (
+                    self.expected_value is None
+                    or self.expected_value != self.uses_lwc()
+                ):
+                    raise ValueError(
+                        "Duck type failed {self.expected_value=} and {self.uses_lwc()=}"
+                    )
+                return 0
+
+        fn_restore = EngineVersionTool.supports_version
+        try:
+            for supports_version in [True, False]:
+                duck_class = DuckClass()
+                EngineVersionTool.supports_version = lambda x: supports_version
+                duck_class.expected_value = supports_version
+
+                _write_buffer = BytesIO()
+                _bytes_written = duck_class.write(_write_buffer)
+                _write_buffer.seek(0)
+
+                duck_class.read(_write_buffer)
+        except Exception:
+            raise
+        finally:
+            EngineVersionTool.supports_version = fn_restore
+
     def test_10_datetime_property(self):
         ticks = 500000000000000000  # '09/06/1585 16:53:20.000000'
         self.perform_roundtrip_standard_type_roundtrip_test(
@@ -81,7 +122,7 @@ class TestTextPropertyTypes(unittest.TestCase):
 
     def test_20_guid_property(self):
         self.perform_roundtrip_standard_type_roundtrip_test(
-            GuidStruct(guid=guid_to_str(ZERO_GUID)),
+            GuidStruct(guid=guid_to_str(MagicConstants.ZERO_GUID)),
             GuidStruct(),
             supports_version=False,
             msg=f"Testing standard type GUIDProperty",

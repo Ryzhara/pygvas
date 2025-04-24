@@ -8,7 +8,7 @@ from io import BytesIO
 from time import sleep
 from typing import override
 
-from gvas.gvas_utils import ZERO_GUID, read_string, ContextScopeTracker
+from gvas.gvas_utils import MagicConstants, read_string, ContextScopeTracker
 from gvas.properties.aggregators import StructProperty
 from gvas.properties.numerical_property import Int32Property, BoolProperty
 from gvas.properties.str_property import StrProperty
@@ -31,12 +31,14 @@ class TestStructProperty(unittest.TestCase):
 
     def test_10_create_struct_property(self):
         # Create a new StructProperty
-        struct_property = StructProperty(type_name="TestStruct", guid=ZERO_GUID)
+        struct_property = StructProperty(
+            type_name="TestStruct", guid=MagicConstants.ZERO_GUID
+        )
 
         # Check default values
         self.assertEqual(struct_property.type_name, "TestStruct")
         self.assertIsNotNone(struct_property.guid)
-        self.assertTrue(struct_property.guid == ZERO_GUID)
+        self.assertTrue(struct_property.guid == MagicConstants.ZERO_GUID)
         self.assertIsNone(struct_property.value)
 
         # Create a StructProperty with a custom GUID
@@ -69,7 +71,7 @@ class TestStructProperty(unittest.TestCase):
     def test_30_struct_property_roundtrip(self):
         # Create a StructProperty
         struct_property = StructProperty(
-            type_name="TestStruct", guid=ZERO_GUID, value={}
+            type_name="TestStruct", guid=MagicConstants.ZERO_GUID, value={}
         )
 
         # Add some properties to the struct value

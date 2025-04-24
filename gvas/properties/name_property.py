@@ -20,11 +20,7 @@ class NameProperty(PropertyTrait):
     array_index: int = 0
     value: Optional[str] = None
 
-    def read(
-        self,
-        stream: BinaryIO,
-        include_header: bool = True,
-    ) -> None:
+    def read(self, stream: BinaryIO, include_header: bool = True) -> None:
         """Read name from stream"""
         length, start, end = 0, 0, 0
         if include_header:
@@ -38,11 +34,7 @@ class NameProperty(PropertyTrait):
         ) as _validator:
             self.value = read_string(stream)
 
-    def write(
-        self,
-        stream: BinaryIO,
-        include_header: bool = True,
-    ) -> int:
+    def write(self, stream: BinaryIO, include_header: bool = True) -> int:
         """Write name to stream"""
         # Write to temporary buffer first to get length
         body_buffer = BytesIO()

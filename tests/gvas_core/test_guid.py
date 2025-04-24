@@ -7,7 +7,7 @@ from io import BytesIO
 import uuid
 from typing import override
 
-from gvas.gvas_utils import ZERO_GUID, write_guid, read_guid, ContextScopeTracker
+from gvas.gvas_utils import MagicConstants, write_guid, read_guid, ContextScopeTracker
 
 
 class TestGuid(unittest.TestCase):
@@ -21,15 +21,15 @@ class TestGuid(unittest.TestCase):
 
     def test_10_guid_creation(self):
         # Test creating GUIDs
-        guid = ZERO_GUID
+        guid = MagicConstants.ZERO_GUID
         self.assertEqual(str(guid), "00000000-0000-0000-0000-000000000000")
-        self.assertTrue(guid == ZERO_GUID)
+        self.assertTrue(guid == MagicConstants.ZERO_GUID)
 
         # Create a GUID from UUID
         test_uuid = uuid.UUID("12345678-1234-5678-9ABC-123456789ABC")
         guid = uuid.UUID(str(test_uuid))
         self.assertEqual(str(guid).lower(), "12345678-1234-5678-9abc-123456789abc")
-        self.assertFalse(guid == ZERO_GUID)
+        self.assertFalse(guid == MagicConstants.ZERO_GUID)
 
         # Create a GUID from bytes
         # Note: The byte order is different in UE format

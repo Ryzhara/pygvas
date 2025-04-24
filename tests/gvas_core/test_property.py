@@ -173,10 +173,6 @@ class TestProperty(unittest.TestCase):
         enum_prop2.value = "TestValue"
         self.perform_property_roundtrip_test(enum_prop2, "EnumProperty")
 
-    # Skipping array_property test as it requires more complex setup
-
-    # Skipping struct_property test as it requires more complex setup
-
 
 if __name__ == "__main__":
     unittest.main()

@@ -19,11 +19,7 @@ class ObjectProperty(PropertyTrait):
     type: Literal["ObjectProperty"] = "ObjectProperty"
     value: Optional[str] = None
 
-    def read(
-        self,
-        stream: BinaryIO,
-        include_header: bool = True,
-    ) -> None:
+    def read(self, stream: BinaryIO, include_header: bool = True) -> None:
         length = 0
         if include_header:
             length, *_ = read_standard_header(stream)
@@ -34,11 +30,7 @@ class ObjectProperty(PropertyTrait):
         ) as _validator:
             self.value = read_string(stream)
 
-    def write(
-        self,
-        stream: BinaryIO,
-        include_header: bool = True,
-    ) -> int:
+    def write(self, stream: BinaryIO, include_header: bool = True) -> int:
         """Write enum value to stream"""
 
         # create temporary buffer for body

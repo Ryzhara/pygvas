@@ -10,11 +10,6 @@ from pydantic.dataclasses import dataclass
 from .gvas_utils import *
 
 
-# Magic number that appears at the start of every GVAS file
-GVAS_MAGIC = b"GVAS"
-PLZ_MAGIC = b"PlZ"  # not sure why RUST uses a null byte terminator
-
-
 class CompressionType(enum.Enum):
     UNKNOWN = 0x00
     # None

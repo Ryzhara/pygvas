@@ -20,8 +20,6 @@ from gvas.engine_tools import (
     FEngineVersion,
     GameVersion,
     CompressionType,
-    GVAS_MAGIC,
-    PLZ_MAGIC,
     EngineVersionTool,
 )
 from gvas.gvas_utils import *
@@ -155,7 +153,7 @@ class GvasHeader:
         """Read header from stream"""
         # Check magic number
         magic = stream.read(4)
-        if magic != GVAS_MAGIC:
+        if magic != MagicConstants.GVAS_MAGIC:
             raise DeserializeError.invalid_header("Invalid magic number")
 
         # Read versions
@@ -204,7 +202,7 @@ class GvasHeader:
         bytes_written = 0
 
         # Write magic number
-        bytes_written += stream.write(GVAS_MAGIC)
+        bytes_written += stream.write(MagicConstants.GVAS_MAGIC)
 
         # Write versions
         bytes_written += write_uint32(stream, 3 if self.package_file_version_ue5 else 2)
@@ -264,12 +262,12 @@ class GameFileFormat:
     @classmethod
     def has_gvas_header(cls, stream: BinaryIO) -> bool:
         peeked_bytes = peek(stream, 4)
-        return peeked_bytes == GVAS_MAGIC
+        return peeked_bytes == MagicConstants.GVAS_MAGIC
 
     @classmethod
     def has_palworld_header(cls, stream: BinaryIO) -> bool:
         peeked_bytes = peek(stream, 4)
-        return peeked_bytes == PLZ_MAGIC
+        return peeked_bytes == MagicConstants.PLZ_MAGIC
 
     @classmethod
     def has_zlib_header(cls, stream: BinaryIO) -> bool:
@@ -300,7 +298,9 @@ class GameFileFormat:
             if not sizes_ok:
                 return False
 
-            if (_plz_bytes := read_bytes(stream, len(PLZ_MAGIC))) != PLZ_MAGIC:
+            if (
+                _plz_bytes := read_bytes(stream, len(MagicConstants.PLZ_MAGIC))
+            ) != MagicConstants.PLZ_MAGIC:
                 return False
 
             self.game_version = GameVersion.PALWORLD
@@ -393,7 +393,7 @@ class GVASFile(BaseModel):
             decompressed_size = read_uint32(stream)
             compressed_size = read_uint32(stream)
             magic_bytes = stream.read(3)
-            if magic_bytes == PLZ_MAGIC:
+            if magic_bytes == MagicConstants.PLZ_MAGIC:
                 if not ContextScopeTracker.inside_unit_tests():
                     print(
                         f"Found PalWorld file with {decompressed_size=} and {compressed_size=}"
@@ -539,7 +539,7 @@ class GVASFile(BaseModel):
                 )
             write_uint32(stream, decompressed_size)
             write_uint32(stream, compressed_size)
-            write_bytes(stream, PLZ_MAGIC)
+            write_bytes(stream, MagicConstants.PLZ_MAGIC)
             write_int8(stream, self.game_file_format.compression_type.value)
 
         stream.write(data_to_write)

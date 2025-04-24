@@ -18,11 +18,7 @@ class BoolProperty(PropertyTrait):
     type: Literal["BoolProperty"] = "BoolProperty"
     value: bool = False
 
-    def read(
-        self,
-        stream: BinaryIO,
-        include_header: bool = True,
-    ) -> None:
+    def read(self, stream: BinaryIO, include_header: bool = True) -> None:
         """Read boolean value from stream -- length and array_index should both be zero"""
         if include_header:
             # BoolProperty header is just 8 bytes of zeros! No terminator
@@ -36,11 +32,7 @@ class BoolProperty(PropertyTrait):
             # And then ends in a terminator
             read_uint8(stream, 0)  # Read bool specific null byte
 
-    def write(
-        self,
-        stream: BinaryIO,
-        include_header: bool = True,
-    ) -> int:
+    def write(self, stream: BinaryIO, include_header: bool = True) -> int:
         """Write boolean value to stream"""
         bytes_written = 0
 
@@ -83,11 +75,7 @@ class ByteProperty(PropertyTrait):
             # according to the RUST code, this is an FSTRING, with  int32 prefix of length. Not BYTES.
             self.value = read_string(stream)
 
-    def write(
-        self,
-        stream: BinaryIO,
-        include_header: bool = True,
-    ) -> int:
+    def write(self, stream: BinaryIO, include_header: bool = True) -> int:
         """Write byte property to stream"""
         bytes_written = 0
 

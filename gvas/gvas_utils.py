@@ -5,11 +5,20 @@ from typing import BinaryIO, Any, Callable, Union, Optional
 
 from gvas.error import DeserializeError, SerializeError
 
-ZERO_GUID = uuid.UUID(int=0)
+
+# ============================================
+# Encapsulate constants
+class MagicConstants:
+    # class variables
+    ZERO_GUID = uuid.UUID(int=0)
+    # Magic number that appears at the start of every GVAS file
+    GVAS_MAGIC = b"GVAS"
+    # not sure why RUST uses a null byte terminator on this constant
+    PLZ_MAGIC = b"PlZ"
 
 
 # ============================================
-# Don NOT make this @dataclass because then our class variable syntax is wrong. ;)
+# Do NOT make this @dataclass because then our class variable syntax is wrong. ;)
 # ## Hints
 # If your file fails while parsing with a `DeserializeError` error you probably need hints.
 # When a struct is stored inside ArrayProperty/SetProperty/MapProperty in GvasFile it does not contain type annotations.

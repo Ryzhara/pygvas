@@ -22,7 +22,7 @@ class EnhancedJSONEncoder(json.JSONEncoder):
             if isinstance(value, (type(None))):
                 return not not value
 
-            if isinstance(value, uuid.UUID) and value == ZERO_GUID:
+            if isinstance(value, uuid.UUID) and value == MagicConstants.ZERO_GUID:
                 return False
 
             return True

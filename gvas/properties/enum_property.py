@@ -20,11 +20,7 @@ class EnumProperty(PropertyTrait):
     enum_type: Optional[str] = None
     value: Optional[str] = None
 
-    def read(
-        self,
-        stream: BinaryIO,
-        include_header: bool = True,
-    ) -> None:
+    def read(self, stream: BinaryIO, include_header: bool = True) -> None:
         """Read enum value from stream"""
         length = 0
         if include_header:
@@ -38,11 +34,7 @@ class EnumProperty(PropertyTrait):
         ) as _validator:
             self.value = read_string(stream)
 
-    def write(
-        self,
-        stream: BinaryIO,
-        include_header: bool = True,
-    ) -> int:
+    def write(self, stream: BinaryIO, include_header: bool = True) -> int:
         """Write enum value to stream"""
 
         body_buffer = BytesIO()
