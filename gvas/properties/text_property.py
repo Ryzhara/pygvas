@@ -2,6 +2,7 @@ import enum
 from enum import IntEnum, auto
 from io import BytesIO
 from typing import Self, TypeVar, Type, Annotated
+
 from pydantic import Discriminator
 
 from gvas.properties.numerical_property import *

@@ -31,7 +31,7 @@ TEST_FILE_CONFIG = {
     "DELEGATE": {"file": "delegate.sav", "json": "delegate.sav.json", "hints": None},
     "ENUM_ARRAY": {
         "file": "enum_array.sav",
-        "json": "enum_array.sav.json",
+        "json": "enum_array.sav.json.zip",
         "hints": None,
     },
     "ISLANDS_OF_INSIGHT": {

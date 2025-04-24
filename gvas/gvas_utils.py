@@ -7,18 +7,19 @@ from gvas.error import DeserializeError, SerializeError
 
 
 # ============================================
-# Encapsulate constants
+# Encapsulate constants as class variables
 class MagicConstants:
-    # class variables
+    # Used in a lot of places
     ZERO_GUID = uuid.UUID(int=0)
     # Magic number that appears at the start of every GVAS file
     GVAS_MAGIC = b"GVAS"
-    # not sure why RUST uses a null byte terminator on this constant
+    # Magic number for Palworld files. Not sure why RUST uses a null byte terminator on this constant
     PLZ_MAGIC = b"PlZ"
 
 
 # ============================================
 # Do NOT make this @dataclass because then our class variable syntax is wrong. ;)
+# The following is adpabted from the Rust code:
 # ## Hints
 # If your file fails while parsing with a `DeserializeError` error you probably need hints.
 # When a struct is stored inside ArrayProperty/SetProperty/MapProperty in GvasFile it does not contain type annotations.
@@ -27,7 +28,7 @@ class ContextScopeTracker:
     _unit_tests_running: bool = False
     _context_stack: list[str] = []
     _hints: dict[str, Union[str, dict[str, Any]]] = {}
-    # this one is for remote case when we need more than a type name; used by called object
+    # this one is for the remote case when you want the ByteBlobStruct or similar.
     _hint_context: dict[str, Any] = {}
 
     # ============= UNIT TESTING HELPER ====================
