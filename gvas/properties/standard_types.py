@@ -4,7 +4,7 @@ from typing import Optional, Literal
 from pydantic.dataclasses import dataclass
 
 from gvas.gvas_utils import *
-from gvas.engine_tools import FUE5ReleaseStreamObjectVersion, SerializationTools
+from gvas.engine_tools import FUE5ReleaseStreamObjectVersion, EngineVersionTool
 
 
 # ============================================
@@ -27,7 +27,7 @@ class StandardStructTrait(ABC):
 
     @staticmethod
     def uses_lwc():
-        uses_lwc = SerializationTools.supports_version(
+        uses_lwc = EngineVersionTool.supports_version(
             FUE5ReleaseStreamObjectVersion.LargeWorldCoordinates
         )
         return uses_lwc
@@ -259,7 +259,7 @@ class ByteBlob(StandardStructTrait):
     def read(self, stream: BinaryIO) -> None:
 
         # expect length in context
-        context = SerializationTools.hint_context
+        context = ContextScopeTracker.hint_context
         byte_count = context["byte_count"]
         self.byte_blob = read_bytes(stream, byte_count).hex()
 

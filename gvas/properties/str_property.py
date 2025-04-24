@@ -8,7 +8,6 @@ from typing import Optional, Literal
 from io import BytesIO
 
 from gvas.properties.property_base import PropertyTrait
-from gvas.engine_tools import ByteCountValidator
 from gvas.gvas_utils import *
 
 

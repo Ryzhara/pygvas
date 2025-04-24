@@ -98,7 +98,7 @@ Validates the number of bytes read from a stream.
 - `__enter__()`: Records starting position
 - `__exit__()`: Validates bytes read and handles exceptions
 
-### SerializationTools
+### EngineVersionTool
 Provides tools for serialization and version management.
 
 #### Class Fields

@@ -4,8 +4,14 @@ from typing import Union, Callable
 
 from typing_extensions import override
 
-from gvas.engine_tools import SerializationTools
-from gvas.gvas_utils import ZERO_GUID, guid_to_str, datetime_to_str, timespan_to_str
+from gvas.engine_tools import EngineVersionTool
+from gvas.gvas_utils import (
+    ZERO_GUID,
+    guid_to_str,
+    datetime_to_str,
+    timespan_to_str,
+    ContextScopeTracker,
+)
 
 from gvas.properties.standard_types import (
     DateTimeProperty,
@@ -28,8 +34,8 @@ class TestTextPropertyTypes(unittest.TestCase):
     @classmethod
     @override
     def setUpClass(cls) -> None:
-        SerializationTools.set_inside_unit_tests()
-        SerializationTools.hints = {}
+        ContextScopeTracker.set_inside_unit_tests()
+        ContextScopeTracker.hints = {}
 
     def write_and_read_standard_type(
         self,
@@ -37,9 +43,9 @@ class TestTextPropertyTypes(unittest.TestCase):
         deserializer: STANDARD_TYPE_UNION,
         supports_version: bool,
     ) -> None:
-        fn_restore = SerializationTools.supports_version
+        fn_restore = EngineVersionTool.supports_version
         try:
-            SerializationTools.supports_version = lambda x: supports_version
+            EngineVersionTool.supports_version = lambda x: supports_version
             # object is initialized. We only do testing for serialize and deserialize and compare
             write_buffer = BytesIO()
             _bytes_written = test_value.write(write_buffer)
@@ -50,7 +56,7 @@ class TestTextPropertyTypes(unittest.TestCase):
         except Exception:
             raise
         finally:
-            SerializationTools.supports_version = fn_restore
+            EngineVersionTool.supports_version = fn_restore
 
     def perform_roundtrip_standard_type_roundtrip_test(
         self,
@@ -172,8 +178,8 @@ class TestTextPropertyTypes(unittest.TestCase):
                 0,
                 "Test string for byte_blob must have an even number of characters.",
             )
-            hint_context_restore = SerializationTools.hint_context
-            SerializationTools.hint_context = {"byte_count": len(byte_blob)}
+            hint_context_restore = ContextScopeTracker.hint_context
+            ContextScopeTracker.hint_context = {"byte_count": len(byte_blob)}
             try:
                 self.perform_roundtrip_standard_type_roundtrip_test(
                     ByteBlob(byte_blob=byte_blob),
@@ -182,4 +188,4 @@ class TestTextPropertyTypes(unittest.TestCase):
                     msg=f"Testing standard type ByteBlob",
                 )
             finally:
-                SerializationTools.hint_context = hint_context_restore
+                ContextScopeTracker.hint_context = hint_context_restore

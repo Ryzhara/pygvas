@@ -7,7 +7,7 @@ from .numerical_property import *
 from .property_base import PropertyTrait
 from ..engine_tools import (
     ByteCountValidator,
-    SerializationTools,
+    EngineVersionTool,
     FEditorObjectVersion,
     FUE5ReleaseStreamObjectVersion,
 )
@@ -194,13 +194,13 @@ class TextPropertyHelper:
 
     @staticmethod
     def supports_64bit():
-        return SerializationTools.supports_version(
+        return EngineVersionTool.supports_version(
             FUE5ReleaseStreamObjectVersion.TextFormatArgumentData64bitSupport
         )
 
     @staticmethod
     def supports_culture_invariance():
-        return SerializationTools.supports_version(
+        return EngineVersionTool.supports_version(
             FEditorObjectVersion.CultureInvariantTextSerializationKeyStability
         )
 

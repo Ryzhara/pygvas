@@ -512,47 +512,12 @@ class FUE5ReleaseStreamObjectVersion(enum.IntEnum):
     OrthographicAutoNearFarPlane = enum.auto()
 
 
-# ============================================
-#
-class ByteCountValidator:
-    """
-    Use stream.tell() to count bytes and compare to expectations.
-    """
-
-    def __init__(self, stream: BinaryIO, expected_byte_count: int, do_validation):
-        self.stream = stream
-        self.expected_byte_count = expected_byte_count
-        self.do_validation = do_validation
-        self.start_byte = 0
-        self.end_byte = 0
-
-    def __enter__(self):
-        self.start_byte = self.stream.tell()
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        if exc_type is not None:
-            if not SerializationTools.inside_unit_tests():
-                print(
-                    f"An exception of type {exc_type} was caught in ByteCountValidator: {exc_val}\n\t{self.start_byte=} {self.expected_byte_count=} {self.do_validation=}\n\t{exc_tb}"
-                )
-            return False
-
-        if not self.do_validation:
-            return None
-
-        self.end_byte = self.stream.tell()
-        read_byte_count = self.end_byte - self.start_byte
-
-        if read_byte_count != self.expected_byte_count:
-            raise DeserializeError.invalid_read_count(
-                self.expected_byte_count, read_byte_count, self.start_byte
-            )
-        return None
+ENGINE_VERSION_CLASSES = Union[FEditorObjectVersion | FUE5ReleaseStreamObjectVersion]
 
 
 # ============================================
-#
-class SerializationTools:
+# Don NOT make this @dataclass because then our class variable syntax is wrong. ;)
+class EngineVersionTool:
     """
     This class corresponds to the Rust package use of "options" and scoped property stacks.
     It is never instantiated and avoids cluttering signatures with mostly unused parameters.
@@ -563,21 +528,9 @@ class SerializationTools:
     beforehand. That’s why you need hints.
     """
 
-    custom_versions: dict[str, int]
-    hints: dict[str, Union[str, dict[str, Any]]] = {}
-    hint_context: dict[str, Any] = {}
-    context_stack: list[str] = []
+    custom_versions: dict[str, int] = {}
     engine_major: int = 4
     engine_minor: int = 0
-    unit_tests_running: bool = False
-
-    @classmethod
-    def set_inside_unit_tests(cls) -> None:
-        cls.unit_tests_running = True
-
-    @classmethod
-    def inside_unit_tests(cls) -> bool:
-        return cls.unit_tests_running
 
     @classmethod
     def set_engine_version(cls, engine_major: int, engine_minor: int) -> None:
@@ -596,53 +549,8 @@ class SerializationTools:
     def set_custom_versions(cls, custom_versions: dict[str, int]) -> None:
         cls.custom_versions = custom_versions
 
-    # used for processing hints
     @classmethod
-    def push_context_step(cls, step: str) -> None:
-        cls.context_stack.append(step)
-
-    @classmethod
-    def pop_context_step(cls) -> None:
-        cls.context_stack.pop()
-
-    @classmethod
-    def get_context_path(cls) -> str:
-        return ".".join(cls.context_stack)
-
-    @classmethod
-    def supports_version(
-        cls, required_version: FEditorObjectVersion | FUE5ReleaseStreamObjectVersion
-    ) -> bool:
+    def supports_version(cls, required_version: ENGINE_VERSION_CLASSES) -> bool:
         guid_key_str = guid_to_str(required_version.custom_version_guid)
         supported_version = cls.custom_versions.get(guid_key_str, 0)
         return supported_version >= required_version.value
-
-
-# ============================================
-#
-class ContextScopeTracker:
-    parent_context = "unknown"
-    context = "unknown"
-
-    def __init__(self, context: str):
-        self.parent_context = SerializationTools.get_context_path()
-        self.context = context
-
-    def __enter__(self):
-        SerializationTools.push_context_step(self.context)
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        if exc_type is not None:
-            if not SerializationTools.inside_unit_tests():
-                print(
-                    f"An exception of type {exc_type} occurred: {exc_val} with context\n\t{SerializationTools.get_context_path()}"
-                )
-                import traceback
-                import sys
-
-                traceback.print_exception(exc_type, exc_val, exc_tb, file=sys.stdout)
-            return False
-
-        # Don't pop so we can have deepest context for debugging
-        SerializationTools.pop_context_step()
-        return True

@@ -3,11 +3,6 @@ from typing import Optional, ClassVar, Annotated, Literal
 from pydantic import field_serializer, Discriminator
 from pydantic.dataclasses import dataclass
 
-from gvas.engine_tools import (
-    ContextScopeTracker,
-    ByteCountValidator,
-    SerializationTools,
-)
 from gvas.gvas_utils import *
 
 from gvas.properties.standard_types import (
@@ -135,11 +130,11 @@ class MapProperty(PropertyTrait):
             self.values = []
             for _ in range(element_count):
                 with ContextScopeTracker("Key") as _scope_tracker:
-                    key_prop = PropertyFactory.new(
+                    key_prop = PropertyFactory.create_and_deserialize(
                         stream, self.key_type, include_header=False
                     )
                 with ContextScopeTracker("Value") as _scope_tracker:
-                    value_prop = PropertyFactory.new(
+                    value_prop = PropertyFactory.create_and_deserialize(
                         stream, self.value_type, include_header=False
                     )
                 try:
@@ -224,7 +219,7 @@ class SetProperty(PropertyTrait):
             if element_count > 0:
                 total_bytes_per_property = (length - 8) // element_count
                 for _ in range(element_count):
-                    prop = PropertyFactory.new(
+                    prop = PropertyFactory.create_and_deserialize(
                         stream,
                         self.property_type,
                         include_header=False,
@@ -311,8 +306,8 @@ class StructProperty(PropertyTrait):
             self.guid = None
 
         # see if we have to override the type name
-        hint_context_path = SerializationTools.get_context_path()
-        hint_type_override: Union[str, dict] = SerializationTools.hints.get(
+        hint_context_path = ContextScopeTracker.get_context_path()
+        hint_type_override: Union[str, dict] = ContextScopeTracker.hints.get(
             hint_context_path, None
         )
 
@@ -324,7 +319,7 @@ class StructProperty(PropertyTrait):
             expected_type = get_special_struct_instance(deserialize_type)
         elif type(deserialize_type) is dict:
             # context may be, for example, the number of bytes in an unknown "ByteBlob"
-            SerializationTools.hint_context = hint_type_override["context"]
+            ContextScopeTracker.hint_context = hint_type_override["context"]
             deserialize_type = hint_type_override["type"]
             expected_type = get_special_struct_instance(deserialize_type)
 
@@ -343,14 +338,14 @@ class StructProperty(PropertyTrait):
             standard_struct_override.read(stream)
             self.value = standard_struct_override
 
-        else:  # fully custom
+        else:  # fully custom is the default
             self.value = {}
             while True:
                 if (property_name := read_string(stream)) == "None":
                     break
                 with ContextScopeTracker(property_name) as _scope_tracker:
                     property_type = read_string(stream)
-                    property_value = PropertyFactory.new(
+                    property_value = PropertyFactory.create_and_deserialize(
                         stream, property_type, include_header=True
                     )
                     self.value[property_name] = property_value
@@ -513,7 +508,7 @@ class ArrayProperty(PropertyTrait):
             # This embedded struct header differs slightly by repeating the field_name.
             self.field_name = read_string(stream)
 
-            #            with ContextScopeTracker(self.field_name) as _scope_tracker:
+            # ArrayProperty does not use a ContextScopeTracker!:
             member_type = read_string(stream)
             assert (
                 member_type == self.property_type
@@ -538,13 +533,6 @@ class ArrayProperty(PropertyTrait):
                         array_property.read_body(stream)
                         self.values.append(array_property)
 
-        # elif self.property_type == "TextProperty":
-        #     for _ in range(property_count):
-        #         array_property = PropertyFactory.new(
-        #             stream, self.property_type, include_header=False
-        #         )
-        #         self.values.append(array_property)
-
         elif self.property_type == "ByteProperty":
             # read it all as one blob
 
@@ -553,15 +541,12 @@ class ArrayProperty(PropertyTrait):
             if suggested_count == 1:
                 self.values = read_bytes(stream, suggested_length)
             else:
-                array_property = PropertyFactory.new(
+                array_property = PropertyFactory.create_and_deserialize(
                     stream,
                     self.property_type,
                     include_header=False,
                     suggested_length=suggested_length,
                 )
-                # We have must use actual_property_count because the sample files are inconsistent
-                # regarding whether it is byte count or property count, or 1
-                # array_property.actual_property_count = property_count
                 self.values.append(array_property)
 
         # some data types are read without any additional metadata
@@ -572,7 +557,7 @@ class ArrayProperty(PropertyTrait):
 
         else:  # catchall
             for _ in range(property_count):
-                array_property = PropertyFactory.new(
+                array_property = PropertyFactory.create_and_deserialize(
                     stream, self.property_type, include_header=False
                 )
                 self.values.append(array_property)
@@ -594,14 +579,6 @@ class ArrayProperty(PropertyTrait):
 
         # property_count, or number of elements in the array
         property_count = len(self.values)
-
-        # this method is MUCH better than serializing each byte independently. Who does that?!
-        # if self.property_type == "ByteProperty" and property_count > 0:
-        #     if type(self.values) is list:
-        #         byte_property: "ByteProperty" = self.values[0]
-        #         # property_count = byte_property.actual_property_count
-        #     elif type(self.values) is bytes:
-        #         property_count = len(self.values)
 
         properties_body_start = array_buffer.tell()
         array_bytes += write_uint32(array_buffer, property_count)

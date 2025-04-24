@@ -10,9 +10,9 @@ from gvas.engine_tools import (
     FEngineVersion,
     CompressionType,
     GameVersion,
-    SerializationTools,
 )
 from gvas.gvas_file import GVASFile, GvasHeader, GameFileFormat
+from gvas.gvas_utils import ContextScopeTracker
 from gvas.properties.property_base import PropertyFactory, PropertyTrait
 from gvas.properties.numerical_property import (
     Int32Property,
@@ -29,11 +29,11 @@ class TestGvasFile(unittest.TestCase):
     @classmethod
     @override
     def setUpClass(cls) -> None:
-        SerializationTools.set_inside_unit_tests()
-        SerializationTools.hints = {}
+        ContextScopeTracker.set_inside_unit_tests()
+        ContextScopeTracker.hints = {}
 
-    def test_create_file(self):
-        """Test creating a GVASFile from scratch"""
+    def test_10_create_file(self):
+        # Test creating a GVASFile from scratch
 
         # create a game file format
         game_file_format = GameFileFormat(
@@ -109,8 +109,8 @@ class TestGvasFile(unittest.TestCase):
             file.properties["BoolProperty"].value,
         )
 
-    def test_file_header(self):
-        """Test GVASFile header serialization"""
+    def test_20_file_header(self):
+        # Test GVASFile header serialization
 
         # create a game file format
         game_file_format = GameFileFormat(
@@ -172,8 +172,8 @@ class TestGvasFile(unittest.TestCase):
             loaded_file.header.save_game_class_name, header.save_game_class_name
         )
 
-    def test_game_version_handling(self):
-        """Test handling different game versions"""
+    def test_30_game_version_handling(self):
+        # Test handling different game versions
         # create a game file format
         game_file_format = GameFileFormat(
             game_version=GameVersion.DEFAULT, compression_type=CompressionType.NONE

@@ -8,7 +8,8 @@ from typing import Dict, Optional, Union
 from pathlib import Path
 
 from gvas.gvas_file import GVASFile, GameFileFormat
-from gvas.engine_tools import SerializationTools, CompressionType, GameVersion
+from gvas.engine_tools import CompressionType, GameVersion
+from gvas.gvas_utils import ContextScopeTracker
 
 # Constants for test file paths
 RESOURCES_DIR = Path(
@@ -47,7 +48,7 @@ def read_gvas_file(
             hints, dict
         ), f"Hints must be either a dict or a str/Path object to a file."
 
-    SerializationTools.hints = hints
+    ContextScopeTracker.hints = hints
 
     if game_file_format is not None:
         gvas_test_file: GVASFile = GVASFile.read(

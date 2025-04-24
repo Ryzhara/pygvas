@@ -7,7 +7,6 @@ from abc import ABC, abstractmethod
 from typing import Optional
 from pydantic.dataclasses import dataclass
 
-from ..engine_tools import ContextScopeTracker, SerializationTools
 from ..gvas_utils import *
 
 
@@ -40,9 +39,9 @@ class PropertyFactory:
     def property_class_from_type(property_type: str) -> PropertyTrait:
 
         from gvas.properties.enum_property import EnumProperty
-        from gvas.properties.text_property import TextProperty
         from gvas.properties.str_property import StrProperty
         from gvas.properties.name_property import NameProperty
+        from gvas.properties.text_property import TextProperty
         from gvas.properties.object_property import ObjectProperty
         from gvas.properties.field_path_property import FieldPathProperty
         from gvas.properties.delegate_property import (
@@ -54,8 +53,8 @@ class PropertyFactory:
         from gvas.properties.aggregators import (
             SetProperty,
             MapProperty,
-            ArrayProperty,
             StructProperty,
+            ArrayProperty,
         )
         from gvas.properties.numerical_property import (
             BoolProperty,
@@ -75,15 +74,15 @@ class PropertyFactory:
 
         # Map property types to their classes
         type_map = {
-            "ArrayProperty": ArrayProperty,
-            "StructProperty": StructProperty,
-            "TextProperty": TextProperty,
-            "MapProperty": MapProperty,
-            "NameProperty": NameProperty,
             "SetProperty": SetProperty,
-            "StrProperty": StrProperty,
-            "ByteProperty": ByteProperty,
+            "MapProperty": MapProperty,
+            "StructProperty": StructProperty,
+            "ArrayProperty": ArrayProperty,
+            "NameProperty": NameProperty,
             "EnumProperty": EnumProperty,
+            "StrProperty": StrProperty,
+            "TextProperty": TextProperty,
+            "ByteProperty": ByteProperty,
             "ObjectProperty": ObjectProperty,
             "FieldPathProperty": FieldPathProperty,
             "MulticastInlineDelegateProperty": MulticastInlineDelegateProperty,
@@ -108,12 +107,12 @@ class PropertyFactory:
             property_instance = type_map[property_type]()
             return property_instance
         # else:
-        if not SerializationTools.inside_unit_tests():
+        if not ContextScopeTracker.inside_unit_tests():
             print(f"Unknown property type: {property_type}")
         raise DeserializeError(f"Unknown property type: {property_type}")
 
     @classmethod
-    def new(
+    def create_and_deserialize(
         cls,
         stream: BinaryIO,
         property_type: str,

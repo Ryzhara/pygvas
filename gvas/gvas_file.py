@@ -18,13 +18,11 @@ from pydantic import BaseModel
 
 from gvas.engine_tools import (
     FEngineVersion,
-    EngineVersion,
     GameVersion,
     CompressionType,
     GVAS_MAGIC,
     PLZ_MAGIC,
-    SerializationTools,
-    ContextScopeTracker,
+    EngineVersionTool,
 )
 from gvas.gvas_utils import *
 
@@ -399,7 +397,7 @@ class GVASFile(BaseModel):
             compressed_size = read_uint32(stream)
             magic_bytes = stream.read(3)
             if magic_bytes == PLZ_MAGIC:
-                if not SerializationTools.inside_unit_tests():
+                if not ContextScopeTracker.inside_unit_tests():
                     print(
                         f"Found PalWorld file with {decompressed_size=} and {compressed_size=}"
                     )
@@ -446,12 +444,12 @@ class GVASFile(BaseModel):
         # Read header
         header = GvasHeader.read(stream)
 
-        # set up hints for use during de/serialization
-        SerializationTools.set_engine_version(
+        # Set up version information for using during deserialization
+        EngineVersionTool.set_engine_version(
             engine_major=header.engine_version.major,
             engine_minor=header.engine_version.minor,
         )
-        SerializationTools.set_custom_versions(header.custom_versions)
+        EngineVersionTool.set_custom_versions(header.custom_versions)
 
         # Read all the top level file properties
         properties = {}
@@ -460,7 +458,7 @@ class GVASFile(BaseModel):
                 break
             with ContextScopeTracker(property_name):
                 property_type = read_string(stream)
-                property_value = PropertyFactory.new(
+                property_value = PropertyFactory.create_and_deserialize(
                     stream, property_type, include_header=True
                 )
                 properties[property_name] = property_value
@@ -538,7 +536,7 @@ class GVASFile(BaseModel):
         # ====================================
         # Handle PalWorld special prefix
         if self.game_file_format.game_version == GameVersion.PALWORLD:
-            if not SerializationTools.inside_unit_tests():
+            if not ContextScopeTracker.inside_unit_tests():
                 print(
                     f"Writing PalWorld file with {decompressed_size=} and {compressed_size=}"
                 )

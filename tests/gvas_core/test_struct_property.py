@@ -7,8 +7,7 @@ import uuid
 from io import BytesIO
 from typing import override
 
-from gvas.engine_tools import SerializationTools
-from gvas.gvas_utils import ZERO_GUID, read_string
+from gvas.gvas_utils import ZERO_GUID, read_string, ContextScopeTracker
 from gvas.properties.aggregators import StructProperty
 from gvas.properties.numerical_property import Int32Property, BoolProperty
 from gvas.properties.str_property import StrProperty
@@ -20,11 +19,10 @@ class TestStructProperty(unittest.TestCase):
     @classmethod
     @override
     def setUpClass(cls) -> None:
-        SerializationTools.set_inside_unit_tests()
-        SerializationTools.hints = {}
+        ContextScopeTracker.set_inside_unit_tests()
+        ContextScopeTracker.hints = {}
 
-    def test_create_struct_property(self):
-        """Test creating a StructProperty"""
+    def test_10_create_struct_property(self):
         # Create a new StructProperty
         struct_prop = StructProperty(type_name="TestStruct", guid=ZERO_GUID)
 
@@ -45,8 +43,7 @@ class TestStructProperty(unittest.TestCase):
         self.assertEqual(struct_prop.guid, custom_guid)
         self.assertIsNone(struct_prop.value)
 
-    def test_struct_property_with_values(self):
-        """Test StructProperty with nested values"""
+    def test_20_struct_property_with_values(self):
         # Create a StructProperty
         struct_prop = StructProperty(type_name="TestStruct", value={})
 
@@ -62,8 +59,7 @@ class TestStructProperty(unittest.TestCase):
         self.assertEqual(struct_prop.value["BoolValue"].value, True)
         self.assertEqual(struct_prop.value["StringValue"].value, "Hello, world!")
 
-    def test_struct_property_roundtrip(self):
-        """Test StructProperty serialization and deserialization"""
+    def test_30_struct_property_roundtrip(self):
         # Create a StructProperty
         struct_prop = StructProperty(type_name="TestStruct", guid=ZERO_GUID, value={})
 
@@ -107,8 +103,9 @@ class TestStructProperty(unittest.TestCase):
                 "Hello, world!",
             )
 
-    def test_nested_struct_property(self):
-        """Test StructProperty with nested StructProperty"""
+    def test_40_nested_struct_property(self):
+        # Test StructProperty with nested StructProperty
+
         # Create outer StructProperty
         outer_struct = StructProperty(type_name="OuterStruct", value={})
 

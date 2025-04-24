@@ -10,8 +10,8 @@ from pathlib import Path
 from typing import override
 from pydantic import TypeAdapter
 
-from gvas.engine_tools import SerializationTools
 from gvas.gvas_file import GVASFile
+from gvas.gvas_utils import ContextScopeTracker
 from tests.common.test_utils import (
     read_gvas_file,
     get_testfile_path,
@@ -124,14 +124,14 @@ class TestGvasExamples(unittest.TestCase):
     @classmethod
     @override
     def setUpClass(cls) -> None:
-        SerializationTools.set_inside_unit_tests()
-        SerializationTools.hints = {}
+        ContextScopeTracker.set_inside_unit_tests()
+        ContextScopeTracker.hints = {}
 
     @classmethod
     @override
     def setUp(self):
-        SerializationTools.set_inside_unit_tests()
-        SerializationTools.hints = {}
+        ContextScopeTracker.set_inside_unit_tests()
+        ContextScopeTracker.hints = {}
 
     def perform_gvas_deserialization_test(
         self, test_key: str, should_be_equal: bool = True

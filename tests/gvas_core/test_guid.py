@@ -7,8 +7,7 @@ from io import BytesIO
 import uuid
 from typing import override
 
-from gvas.engine_tools import SerializationTools
-from gvas.gvas_utils import ZERO_GUID, write_guid, read_guid
+from gvas.gvas_utils import ZERO_GUID, write_guid, read_guid, ContextScopeTracker
 
 
 class TestGuid(unittest.TestCase):
@@ -17,12 +16,11 @@ class TestGuid(unittest.TestCase):
     @classmethod
     @override
     def setUpClass(cls) -> None:
-        SerializationTools.set_inside_unit_tests()
-        SerializationTools.hints = {}
+        ContextScopeTracker.set_inside_unit_tests()
+        ContextScopeTracker.hints = {}
 
-    def test_guid_creation(self):
-        """Test creating GUIDs"""
-        # Create a zero GUID
+    def test_10_guid_creation(self):
+        # Test creating GUIDs
         guid = ZERO_GUID
         self.assertEqual(str(guid), "00000000-0000-0000-0000-000000000000")
         self.assertTrue(guid == ZERO_GUID)
@@ -39,8 +37,8 @@ class TestGuid(unittest.TestCase):
         guid = uuid.UUID(bytes_le=guid_bytes)
         self.assertEqual(str(guid).lower(), "12345678-1234-5678-9abc-123456789abc")
 
-    def test_guid_equality(self):
-        """Test GUID equality"""
+    def test_20_guid_equality(self):
+        # Test GUID equality
         guid1 = uuid.UUID("12345678-1234-5678-9ABC-123456789ABC")
         guid2 = uuid.UUID("12345678-1234-5678-9ABC-123456789ABC")
         guid3 = uuid.UUID("87654321-4321-8765-CBA9-CBA987654321")
@@ -52,8 +50,8 @@ class TestGuid(unittest.TestCase):
         guid_dict = {guid1: "value1", guid3: "value3"}
         self.assertEqual(guid_dict[guid1], "value1")
 
-    def test_guid_serialization(self):
-        """Test GUID serialization and deserialization"""
+    def test_30_guid_serialization(self):
+        # Test GUID serialization and deserialization
         original_guid = uuid.UUID("12345678-1234-5678-9ABC-123456789ABC")
 
         # Serialize to bytes

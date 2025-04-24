@@ -4,9 +4,9 @@ from typing import Union, Callable
 
 from typing_extensions import override
 
-from gvas.engine_tools import SerializationTools
+from gvas.engine_tools import EngineVersionTool
 from gvas.error import SerializeError
-from gvas.gvas_utils import datetime_to_str
+from gvas.gvas_utils import datetime_to_str, ContextScopeTracker
 from gvas.properties.text_property import (
     FText,
     ArgumentFormat,
@@ -56,16 +56,16 @@ class TestTextPropertyTypes(unittest.TestCase):
     @classmethod
     @override
     def setUpClass(cls) -> None:
-        SerializationTools.set_inside_unit_tests()
-        SerializationTools.hints = {}
+        ContextScopeTracker.set_inside_unit_tests()
+        ContextScopeTracker.hints = {}
 
     def perform_text_format_argument_roundtrip_test(
         self, *, format_argument_value: FormatArgumentValue, supports_64bit: bool
     ):
         # duck type this baby for the test
-        fn_restore = SerializationTools.supports_version
+        fn_restore = EngineVersionTool.supports_version
         try:
-            SerializationTools.supports_version = lambda x: supports_64bit
+            EngineVersionTool.supports_version = lambda x: supports_64bit
 
             # it is easier to write then read, except for FText
             self.assertEqual(format_argument_value, FormatArgumentValue.Text)
@@ -89,7 +89,7 @@ class TestTextPropertyTypes(unittest.TestCase):
             raise
         finally:
             # get our ducks in a row
-            SerializationTools.supports_version = fn_restore
+            EngineVersionTool.supports_version = fn_restore
 
     def perform_numerical_format_argument_roundtrip_test(
         self,
@@ -100,9 +100,9 @@ class TestTextPropertyTypes(unittest.TestCase):
         places: int = 7,
     ):
         # duck type this baby for the test
-        fn_restore = SerializationTools.supports_version
+        fn_restore = EngineVersionTool.supports_version
         try:
-            SerializationTools.supports_version = lambda x: supports_64bit
+            EngineVersionTool.supports_version = lambda x: supports_64bit
 
             test_value: FormatArgument = FormatArgument(
                 type=format_argument_value.name, value=numerical_value
@@ -136,7 +136,7 @@ class TestTextPropertyTypes(unittest.TestCase):
             raise
         finally:
             # get our ducks in a row
-            SerializationTools.supports_version = fn_restore
+            EngineVersionTool.supports_version = fn_restore
 
     def write_and_read_text_history(
         self,
@@ -144,9 +144,9 @@ class TestTextPropertyTypes(unittest.TestCase):
         deserializer: HISTORY_TYPE_UNION,
         supports_version: bool,
     ) -> (TextHistoryType, HISTORY_TYPE_UNION):
-        fn_restore = SerializationTools.supports_version
+        fn_restore = EngineVersionTool.supports_version
         try:
-            SerializationTools.supports_version = lambda x: supports_version
+            EngineVersionTool.supports_version = lambda x: supports_version
             # object is initialized. We only do testing for serialize and deserialize and compare
             write_buffer = BytesIO()
             _bytes_written = test_value.write(write_buffer)
@@ -159,7 +159,7 @@ class TestTextPropertyTypes(unittest.TestCase):
         except Exception:
             raise
         finally:
-            SerializationTools.supports_version = fn_restore
+            EngineVersionTool.supports_version = fn_restore
 
         return text_history_type, result
 

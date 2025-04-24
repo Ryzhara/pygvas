@@ -12,6 +12,97 @@ from gvas.error import DeserializeError, SerializeError
 ZERO_GUID = uuid.UUID(int=0)
 
 
+# ============================================
+# Don NOT make this @dataclass because then our class variable syntax is wrong. ;)
+class ContextScopeTracker:
+    hints: dict[str, Union[str, dict[str, Any]]] = {}
+    hint_context: dict[str, Any] = {}
+    context_stack: list[str] = []
+    unit_tests_running: bool = False
+
+    # used for processing hints
+    @classmethod
+    def push_context_step(cls, step: str) -> None:
+        cls.context_stack.append(step)
+
+    @classmethod
+    def pop_context_step(cls) -> None:
+        cls.context_stack.pop()
+
+    @classmethod
+    def get_context_path(cls) -> str:
+        return ".".join(cls.context_stack)
+
+    @classmethod
+    def set_inside_unit_tests(cls) -> None:
+        cls.unit_tests_running = True
+
+    @classmethod
+    def inside_unit_tests(cls) -> bool:
+        return cls.unit_tests_running
+
+    def __init__(self, context: str):
+        # a snapshot for debugging
+        self.parent_context = ContextScopeTracker.get_context_path()
+        self.context = context
+
+    def __enter__(self):
+        ContextScopeTracker.push_context_step(self.context)
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        if exc_type is not None:
+            if not ContextScopeTracker.inside_unit_tests():
+                print(
+                    f"An exception of type {exc_type} occurred: {exc_val} with context\n\t{ContextScopeTracker.get_context_path()}"
+                )
+                import traceback
+                import sys
+
+                traceback.print_exception(exc_type, exc_val, exc_tb, file=sys.stdout)
+            return False
+
+        ContextScopeTracker.pop_context_step()
+        return True
+
+
+# ============================================
+#
+class ByteCountValidator:
+    """
+    Use stream.tell() to count bytes and compare to expectations.
+    """
+
+    def __init__(self, stream: BinaryIO, expected_byte_count: int, do_validation):
+        self.stream = stream
+        self.expected_byte_count = expected_byte_count
+        self.do_validation = do_validation
+        self.start_byte = 0
+        self.end_byte = 0
+
+    def __enter__(self):
+        self.start_byte = self.stream.tell()
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        if exc_type is not None:
+            if not ContextScopeTracker.inside_unit_tests():
+                print(
+                    f"An exception of type {exc_type} was caught in ByteCountValidator: {exc_val}\n\t{self.start_byte=} {self.expected_byte_count=} {self.do_validation=}\n\t{exc_tb}"
+                )
+            return False
+
+        if not self.do_validation:
+            return None
+
+        self.end_byte = self.stream.tell()
+        read_byte_count = self.end_byte - self.start_byte
+
+        if read_byte_count != self.expected_byte_count:
+            raise DeserializeError.invalid_read_count(
+                self.expected_byte_count, read_byte_count, self.start_byte
+            )
+        return None
+
+
 def datetime_to_str(dt: int) -> str:
     # datetime.datetime.fromtimestamp takes time in seconds since January 1, 1970, 00:00:00 (UTC) as a floating-point number
     # FDateTime type represents dates and times as ticks (0.1 microseconds) since January 1, 0001
@@ -122,7 +213,7 @@ def read_bool32bit(stream: BinaryIO) -> bool:
         raise DeserializeError.invalid_value(
             value,
             stream.tell() - 4,
-            "read_bool32bit",
+            f"Invalid read_bool32bit value {value} at {stream.tell()} with context {ContextScopeTracker.get_context_path()}",
         )
     return True if value else False
 
@@ -132,7 +223,7 @@ def read_bool32bit(stream: BinaryIO) -> bool:
 def write_bool32bit(stream: BinaryIO, value: [int, bool]) -> int:
     if value not in [0, 1, True, False]:
         raise SerializeError.invalid_value(
-            f"Invalid bool32bit value {value} at {stream.tell()}"
+            f"Invalid write_bool32bit value {value} at {stream.tell()} with context {ContextScopeTracker.get_context_path()}"
         )
     return write_uint32(stream, 1 if value else 0)
 
@@ -277,7 +368,7 @@ def read_string(stream: BinaryIO) -> str | None:
     if not -131072 <= length <= 131072:
         position = stream.tell() - 4
         raise SerializeError.invalid_value(
-            f"String length {length} is out of range -131072 <= length <= 131072 around {position=}"
+            f"String length {length} is out of range -131072 <= length <= 131072 around {position=} with context {ContextScopeTracker.get_context_path()}"
         )
 
     # UTF 16
