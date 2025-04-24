@@ -54,7 +54,7 @@ The format supports various text history types:
 - AS_CURRENCY: Currency formatting
 - AS_DATE: Date formatting
 - AS_TIME: Time formatting
-- AS_DATETIME: DateTime formatting
+- AS_DATETIME: LightWeightDateTime formatting
 - TRANSFORM: Text transformation
 - STRING_TABLE_ENTRY: String table entry
 - TEXT_GENERATOR: Generated text

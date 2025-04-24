@@ -1,3 +1,4 @@
+import enum
 from enum import IntEnum, auto
 from io import BytesIO
 from typing import Self, TypeVar, Type, Annotated
@@ -6,7 +7,6 @@ from pydantic import Discriminator
 from .numerical_property import *
 from .property_base import PropertyTrait
 from ..engine_tools import (
-    ByteCountValidator,
     EngineVersionTool,
     FEditorObjectVersion,
     FUE5ReleaseStreamObjectVersion,
@@ -17,35 +17,25 @@ from ..gvas_utils import *
 EnumT = TypeVar("EnumT", bound=IntEnum)
 
 
-def cast_to_type(enum_class: Type[EnumT], value: int) -> Any:
-    """Casts an integer to an IntEnum member.
+class IntEnumHelper(enum.IntEnum):
+    @staticmethod
+    def cast_to_type(enum_class: Type[EnumT], value: int) -> Any:
+        try:
+            return enum_class(value)
+        except ValueError:
+            raise ValueError(f"{value} is not a valid member of {enum_class.__name__}")
 
-    Args:
-        enum_class: The IntEnum class to cast to.
-        value: The integer value to cast.
+    @staticmethod
+    def read_intenum_type(stream: BinaryIO, enum_class: Type[EnumT]) -> Any:
+        enum_value: int = read_int8(stream)
+        return IntEnumHelper.cast_to_type(enum_class, enum_value)
 
-    Returns:
-        The corresponding IntEnum member.
-
-    Raises:
-        ValueError: If the integer value is not a valid member of the IntEnum.
-    """
-    try:
-        return enum_class(value)
-    except ValueError:
-        raise ValueError(f"{value} is not a valid member of {enum_class.__name__}")
-
-
-def read_intenum_type(stream: BinaryIO, enum_class: Type[EnumT]) -> Any:
-    enum_value: int = read_int8(stream)
-    return cast_to_type(enum_class, enum_value)
+    @staticmethod
+    def write_intenum_type(stream: BinaryIO, enum_value: IntEnum) -> int:
+        return write_int8(stream, enum_value.value)
 
 
-def write_intenum_type(stream: BinaryIO, enum_value: IntEnum) -> int:
-    return write_int8(stream, enum_value.value)
-
-
-class DateTimeStyle(IntEnum):
+class DateTimeStyle(IntEnumHelper):
     # Default
     Default = 0
     # Short
@@ -59,13 +49,13 @@ class DateTimeStyle(IntEnum):
 
     @classmethod
     def read_type(cls, stream: BinaryIO) -> "DateTimeStyle":
-        return read_intenum_type(stream, DateTimeStyle)
+        return IntEnumHelper.read_intenum_type(stream, DateTimeStyle)
 
     def write_type(self, stream: BinaryIO) -> int:
-        return write_intenum_type(stream, self)
+        return IntEnumHelper.write_intenum_type(stream, self)
 
 
-class TransformType(IntEnum):
+class TransformType(IntEnumHelper):
     # To lowercase
     ToLower = 0
     # To uppercase
@@ -73,13 +63,13 @@ class TransformType(IntEnum):
 
     @classmethod
     def read_type(cls, stream: BinaryIO) -> "TransformType":
-        return read_intenum_type(stream, TransformType)
+        return IntEnumHelper.read_intenum_type(stream, TransformType)
 
     def write_type(self, stream: BinaryIO) -> int:
-        return write_intenum_type(stream, self)
+        return IntEnumHelper.write_intenum_type(stream, self)
 
 
-class RoundingMode(IntEnum):
+class RoundingMode(IntEnumHelper):
     # Rounds to the nearest place, equidistant ties go to the value which is closest to an even value: 1.5 becomes 2, 0.5 becomes 0
     HalfToEven = 0
     # Rounds to nearest place, equidistant ties go to the value which is further from zero: -0.5 becomes -1.0, 0.5 becomes 1.0
@@ -97,10 +87,10 @@ class RoundingMode(IntEnum):
 
     @classmethod
     def read_type(cls, stream: BinaryIO) -> "RoundingMode":
-        return read_intenum_type(stream, RoundingMode)
+        return IntEnumHelper.read_intenum_type(stream, RoundingMode)
 
     def write_type(self, stream: BinaryIO) -> int:
-        return write_intenum_type(stream, self)
+        return IntEnumHelper.write_intenum_type(stream, self)
 
 
 # Number formatting options
@@ -141,7 +131,7 @@ class NumberFormattingOptions:
         return bytes_written
 
 
-class FormatArgumentType(IntEnum):
+class FormatArgumentType(IntEnumHelper):
     # Integer (32 bit in most games, 64 bit in Hogwarts Legacy)
     Int = 0
     # Unsigned integer (32 bit)
@@ -157,15 +147,15 @@ class FormatArgumentType(IntEnum):
 
     @classmethod
     def read_type(cls, stream: BinaryIO) -> "FormatArgumentType":
-        return read_intenum_type(stream, FormatArgumentType)
+        return IntEnumHelper.read_intenum_type(stream, FormatArgumentType)
 
     def write_type(self, stream: BinaryIO) -> int:
-        return write_intenum_type(stream, self)
+        return IntEnumHelper.write_intenum_type(stream, self)
 
 
 # Argh. We are impedance matching FormatArgumentType to FormatArgumentValue so
 # we can accommodate an implicit type conversion on 64-bit support. :(
-class FormatArgumentValue(IntEnum):
+class FormatArgumentValue(IntEnumHelper):
     Unknown = -1
     # Integer
     Int = 0
@@ -184,10 +174,10 @@ class FormatArgumentValue(IntEnum):
 
     @classmethod
     def read_type(cls, stream: BinaryIO) -> "FormatArgumentValue":
-        return read_intenum_type(stream, FormatArgumentValue)
+        return IntEnumHelper.read_intenum_type(stream, FormatArgumentValue)
 
     def write_type(self, stream: BinaryIO) -> int:
-        return write_intenum_type(stream, self)
+        return IntEnumHelper.write_intenum_type(stream, self)
 
 
 class TextPropertyHelper:
@@ -312,7 +302,7 @@ class FormatArgument(TextPropertyHelper):
         return bytes_written
 
 
-class TextHistoryType(IntEnum):
+class TextHistoryType(IntEnumHelper):
     Empty = -2
     # None
     # [default]
@@ -348,10 +338,10 @@ class TextHistoryType(IntEnum):
 
     @classmethod
     def read_type(cls, stream: BinaryIO) -> "TextHistoryType":
-        return read_intenum_type(stream, TextHistoryType)
+        return IntEnumHelper.read_intenum_type(stream, TextHistoryType)
 
     def write_type(self, stream: BinaryIO) -> int:
-        return write_intenum_type(stream, self)
+        return IntEnumHelper.write_intenum_type(stream, self)
 
 
 UNREAL_ENGINE_TEXT_PROPERTY_TYPES = Annotated[
@@ -392,9 +382,9 @@ class FText:
         return bytes_written
 
 
-# Lightweight version of DateTime
+# Lightweight version of LightWeightDateTime
 @dataclass
-class DateTime:
+class LightWeightDateTime:
     ticks: int = 0
     comment: str = None
 
@@ -643,13 +633,13 @@ class AsCurrency:
 @dataclass
 class AsDate:
     type: Literal[TextHistoryType.AsDate.name] = TextHistoryType.AsDate.name
-    date_time: Optional[DateTime] = None
+    date_time: Optional[LightWeightDateTime] = None
     date_style: Optional[DateTimeStyle] = None
     # todo: FTEXT_HISTORY_DATE_TIMEZONE support (needs object version)
     target_culture: Optional[str] = None
 
     def read(self, stream: BinaryIO) -> Self:
-        self.date_time = DateTime().read(stream)
+        self.date_time = LightWeightDateTime().read(stream)
         self.date_style = DateTimeStyle.read_type(stream)
         self.target_culture = read_string(stream)
         return self
@@ -667,13 +657,13 @@ class AsDate:
 @dataclass
 class AsTime:
     type: Literal[TextHistoryType.AsTime.name] = TextHistoryType.AsTime.name
-    source_date_time: Optional[DateTime] = None
+    source_date_time: Optional[LightWeightDateTime] = None
     time_style: Optional[DateTimeStyle] = None
     time_zone: Optional[str] = None
     target_culture: Optional[str] = None
 
     def read(self, stream: BinaryIO) -> Self:
-        self.source_date_time = DateTime().read(stream)
+        self.source_date_time = LightWeightDateTime().read(stream)
         self.time_style = DateTimeStyle.read_type(stream)
         self.time_zone = read_string(stream)
         self.target_culture = read_string(stream)
@@ -693,14 +683,14 @@ class AsTime:
 @dataclass
 class AsDateTime:
     type: Literal[TextHistoryType.AsDateTime.name] = TextHistoryType.AsDateTime.name
-    source_date_time: Optional[DateTime] = None
+    source_date_time: Optional[LightWeightDateTime] = None
     date_style: Optional[DateTimeStyle] = None
     time_style: Optional[DateTimeStyle] = None
     time_zone: Optional[str] = None
     target_culture: Optional[str] = None
 
     def read(self, stream: BinaryIO) -> Self:
-        self.source_date_time = DateTime().read(stream)
+        self.source_date_time = LightWeightDateTime().read(stream)
         self.date_style = DateTimeStyle.read_type(stream)
         self.time_style = DateTimeStyle.read_type(stream)
         self.time_zone = read_string(stream)

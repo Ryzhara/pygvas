@@ -41,7 +41,7 @@ For simple types, the elements are written directly without headers:
 - StrProperty: String
 - NameProperty: String
 - EnumProperty: String
-- GuidProperty: UUID
+- GuidStruct: UUID
 - BoolProperty: Bool
 - Int8Property: Int8
 - UInt8Property: UInt8

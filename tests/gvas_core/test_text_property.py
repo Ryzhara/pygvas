@@ -11,7 +11,7 @@ from gvas.properties.text_property import (
     FText,
     ArgumentFormat,
     FormatArgument,
-    DateTime,
+    LightWeightDateTime,
     NumberFormattingOptions,
     TextHistoryType,
     FormatArgumentValue,
@@ -382,7 +382,7 @@ class TestTextPropertyTypes(unittest.TestCase):
     def test_140_text_history_as_date(self):
         ticks = 500000000000000000  # '09/06/1585 16:53:20.000000'
         test_value = AsDate(
-            date_time=DateTime(ticks=ticks, comment=datetime_to_str(ticks)),
+            date_time=LightWeightDateTime(ticks=ticks, comment=datetime_to_str(ticks)),
             date_style=DateTimeStyle.Default,
             target_culture="Enlightened AsDate",
         )
@@ -396,7 +396,9 @@ class TestTextPropertyTypes(unittest.TestCase):
     def test_150_text_history_as_datetime(self):
         ticks = 500000000000000000  # '09/06/1585 16:53:20.000000'
         test_value = AsDateTime(
-            source_date_time=DateTime(ticks=ticks, comment=datetime_to_str(ticks)),
+            source_date_time=LightWeightDateTime(
+                ticks=ticks, comment=datetime_to_str(ticks)
+            ),
             date_style=DateTimeStyle.Default,
             time_style=DateTimeStyle.Default,
             time_zone="CST",

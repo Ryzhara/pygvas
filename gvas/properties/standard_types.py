@@ -36,7 +36,7 @@ class StandardStructTrait(ABC):
 # ============================================
 #
 @dataclass
-class GuidProperty(StandardStructTrait):
+class GuidStruct(StandardStructTrait):
     type: Literal["Guid"] = "Guid"
     guid: Optional[str] = None
 
@@ -53,7 +53,7 @@ class GuidProperty(StandardStructTrait):
 # ============================================
 #
 @dataclass
-class DateTimeProperty(StandardStructTrait):
+class DateTimeStruct(StandardStructTrait):
     type: Literal["DateTime"] = "DateTime"
     datetime: int = 0  # uint64
     comment: str = None
@@ -70,7 +70,7 @@ class DateTimeProperty(StandardStructTrait):
 # ============================================
 #
 @dataclass
-class TimespanProperty(StandardStructTrait):
+class TimespanStruct(StandardStructTrait):
     type: Literal["Timespan"] = "Timespan"
     timespan: int = 0  # uint64
     comment: str = None
@@ -89,7 +89,7 @@ class TimespanProperty(StandardStructTrait):
 # ============================================
 #
 @dataclass
-class IntPointProperty(StandardStructTrait):
+class IntPointStruct(StandardStructTrait):
     type: Literal["IntPoint"] = "IntPoint"
     x: int = 0
     y: int = 0
@@ -110,7 +110,7 @@ class IntPointProperty(StandardStructTrait):
 # ============================================
 #
 @dataclass
-class LinearColorProperty(StandardStructTrait):
+class LinearColorStruct(StandardStructTrait):
     type: Literal["LinearColor"] = "LinearColor"
     a: float = 0
     b: float = 0
@@ -137,7 +137,7 @@ class LinearColorProperty(StandardStructTrait):
 # ============================================
 #
 @dataclass
-class RotatorProperty(StandardStructTrait):
+class RotatorStruct(StandardStructTrait):
     type: Literal["Rotator"] = "Rotator"
     pitch: float = 0
     yaw: float = 0
@@ -165,7 +165,7 @@ class RotatorProperty(StandardStructTrait):
 # ============================================
 #
 @dataclass
-class QuatProperty(StandardStructTrait):
+class QuatStruct(StandardStructTrait):
     type: Literal["Quat"] = "Quat"
     x: float = 0
     y: float = 0
@@ -196,7 +196,7 @@ class QuatProperty(StandardStructTrait):
 # ============================================
 #
 @dataclass
-class VectorProperty(StandardStructTrait):
+class VectorStruct(StandardStructTrait):
     type: Literal["Vector"] = "Vector"
     x: float = 0
     y: float = 0
@@ -225,7 +225,7 @@ class VectorProperty(StandardStructTrait):
 #
 @dataclass
 # from pydantic import BaseModel
-class Vector2DProperty(StandardStructTrait):
+class Vector2DStruct(StandardStructTrait):
     type: Literal["Vector2D"] = "Vector2D"
     x: float = 0
     y: float = 0
@@ -250,10 +250,10 @@ class Vector2DProperty(StandardStructTrait):
 # ============================================
 # .
 @dataclass
-class ByteBlob(StandardStructTrait):
+class ByteBlobStruct(StandardStructTrait):
     """Intended for hints to allow circumventing unknown custom types in GVAS files."""
 
-    type: Literal["ByteBlob"] = "ByteBlob"
+    type: Literal["ByteBlobStruct"] = "ByteBlobStruct"
     byte_blob: str = ""
 
     def read(self, stream: BinaryIO) -> None:
@@ -269,32 +269,32 @@ class ByteBlob(StandardStructTrait):
         return bytes_written
 
 
-STANDARD_TYPE_UNION = Union[
-    DateTimeProperty,
-    GuidProperty,
-    IntPointProperty,
-    LinearColorProperty,
-    QuatProperty,
-    RotatorProperty,
-    TimespanProperty,
-    VectorProperty,
-    Vector2DProperty,
-    ByteBlob,
+STANDARD_STRUCT_UNION = Union[
+    DateTimeStruct,
+    GuidStruct,
+    IntPointStruct,
+    LinearColorStruct,
+    QuatStruct,
+    RotatorStruct,
+    TimespanStruct,
+    VectorStruct,
+    Vector2DStruct,
+    ByteBlobStruct,
 ]
 
 # ============================================
 #
-_special_struct_type_map: dict[str, STANDARD_TYPE_UNION] = {
-    "Vector": VectorProperty,
-    "Vector2D": Vector2DProperty,
-    "Rotator": RotatorProperty,
-    "Quat": QuatProperty,
-    "LinearColor": LinearColorProperty,
-    "IntPoint": IntPointProperty,
-    "DateTime": DateTimeProperty,
-    "Timespan": TimespanProperty,
-    "Guid": GuidProperty,
-    "ByteBlob": ByteBlob,
+_special_struct_type_map: dict[str, STANDARD_STRUCT_UNION] = {
+    "Vector": VectorStruct,
+    "Vector2D": Vector2DStruct,
+    "Rotator": RotatorStruct,
+    "Quat": QuatStruct,
+    "LinearColor": LinearColorStruct,
+    "IntPoint": IntPointStruct,
+    "DateTime": DateTimeStruct,
+    "Timespan": TimespanStruct,
+    "Guid": GuidStruct,
+    "ByteBlobStruct": ByteBlobStruct,
 }
 
 
@@ -312,7 +312,7 @@ def get_special_struct_instance(
     # Map property types to their classes
 
     if type_name in _special_struct_type_map.keys():
-        property_encoding_class: STANDARD_TYPE_UNION = _special_struct_type_map.get(
+        property_encoding_class: STANDARD_STRUCT_UNION = _special_struct_type_map.get(
             type_name
         )
         property_instance = property_encoding_class()

@@ -12,10 +12,6 @@ PLZ_MAGIC = b"PlZ"  # not sure why RUST uses a null byte terminator
 
 
 class CompressionType(enum.Enum):
-    """
-    Compression types used in Palworld custom file format
-    """
-
     UNKNOWN = 0x00
     # None
     NONE = 0x30
@@ -28,16 +24,13 @@ class CompressionType(enum.Enum):
 
 
 class GameVersion(enum.Enum):
-    """Supported game versions"""
-
     UNKNOWN = 0
     DEFAULT = 1
     PALWORLD = 2
 
 
-# UE4 Engine version enum
+# Engine version enum
 class EngineVersion(enum.Enum):
-    # Unknown
     UNKNOWN = (-1, -1)
     # Oldest loadable package
     VER_UE4_OLDEST_LOADABLE_PACKAGE = (4, 0)
@@ -84,39 +77,20 @@ class EngineVersion(enum.Enum):
 # Stores UE4 version in which the GVAS file was saved
 @dataclass
 class FEngineVersion:
-    # Major version number.
-    major: int  # u16
-    # Minor version number.
-    minor: int  # u16
-    # Patch version number.
-    patch: int  # u16
-    # Build id.
-    change_list: int  # u32
-    # Build id string.
-    branch: str  # String
+    major: int = 0  # u16 Major version number.
+    minor: int = 0  # u16 Minor version number.
+    patch: int = 0  # u16 Patch version number.
+    change_list: int = 0  # u32 Build id.
+    branch: str = "un.known"  # String Build id string.
 
-    @classmethod
-    def new(
-        cls, major: int, minor: int, patch: int, change_list: int, branch: str
-    ) -> "FEngineVersion":
-        return FEngineVersion(major, minor, patch, change_list, branch)
+    def read(self, stream: BinaryIO) -> "FEngineVersion":
+        self.major = read_uint16(stream)
+        self.minor = read_uint16(stream)
+        self.patch = read_uint16(stream)
+        self.change_list = read_uint32(stream)
+        self.branch = read_string(stream)
+        return self
 
-    def format(self):
-        return (
-            f"{self.major}.{self.minor}.{self.patch}-{self.change_list}+++{self.branch}"
-        )
-
-    @classmethod
-    def read(cls, stream: BinaryIO) -> "FEngineVersion":
-        major = read_uint16(stream)
-        minor = read_uint16(stream)
-        patch = read_uint16(stream)
-        change_list = read_uint32(stream)
-        branch = read_string(stream)
-        return cls.new(major, minor, patch, change_list, branch)
-
-    # Write FEngineVersion to a binary file
-    # [inline]
     def write(self, stream: BinaryIO) -> int:
         bytes_written = 0
         bytes_written += write_uint16(stream, self.major)
@@ -125,14 +99,6 @@ class FEngineVersion:
         bytes_written += write_uint32(stream, self.change_list)
         bytes_written += write_string(stream, self.branch)
         return bytes_written
-
-    # Get [`EngineVersion`]
-    def get_version(self) -> EngineVersion:
-        try:
-            result = EngineVersion((self.major, self.minor))
-        except ValueError:
-            result = EngineVersion.UNKNOWN
-        return result
 
 
 # ============================================

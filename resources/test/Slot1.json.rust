@@ -131,8 +131,8 @@
     },
     "date_time_property": {
       "type": "StructProperty",
-      "type_name": "DateTime",
-      "DateTime": {
+      "type_name": "LightWeightDateTime",
+      "LightWeightDateTime": {
         "ticks": 637864237380020000
       }
     },

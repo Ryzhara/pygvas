@@ -16,15 +16,15 @@ A union type representing all supported Unreal Engine property types, including:
   - Int64Property, UInt64Property
   - FloatProperty, DoubleProperty
 - Standard types:
-  - DateTimeProperty
-  - GuidProperty
-  - TimespanProperty
-  - IntPointProperty
-  - LinearColorProperty
-  - RotatorProperty
-  - QuatProperty
-  - VectorProperty
-  - Vector2DProperty
+  - DateTimeStruct
+  - GuidStruct
+  - TimespanStruct
+  - IntPointStruct
+  - LinearColorStruct
+  - RotatorStruct
+  - QuatStruct
+  - VectorStruct
+  - Vector2DStruct
 - Aggregator types:
   - SetProperty
   - MapProperty

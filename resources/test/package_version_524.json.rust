@@ -337,8 +337,8 @@
         "GameTime": [
           {
             "type": "StructProperty",
-            "type_name": "DateTime",
-            "DateTime": {
+            "type_name": "LightWeightDateTime",
+            "LightWeightDateTime": {
               "ticks": 268650776026
             }
           }
@@ -346,8 +346,8 @@
         "SaveTime": [
           {
             "type": "StructProperty",
-            "type_name": "DateTime",
-            "DateTime": {
+            "type_name": "LightWeightDateTime",
+            "LightWeightDateTime": {
               "ticks": 638392717571080000
             }
           }

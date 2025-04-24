@@ -9,15 +9,15 @@ from gvas.properties.standard_types import (
     is_special_struct,
     get_special_struct_instance,
     StandardStructTrait,
-    DateTimeProperty,
-    GuidProperty,
-    TimespanProperty,
-    IntPointProperty,
-    LinearColorProperty,
-    RotatorProperty,
-    QuatProperty,
-    VectorProperty,
-    Vector2DProperty,
+    DateTimeStruct,
+    GuidStruct,
+    TimespanStruct,
+    IntPointStruct,
+    LinearColorStruct,
+    RotatorStruct,
+    QuatStruct,
+    VectorStruct,
+    Vector2DStruct,
 )
 from gvas.properties.numerical_property import (
     BoolProperty,
@@ -65,15 +65,15 @@ UNREAL_ENGINE_PROPERTIES = Annotated[
         UInt64Property,
         FloatProperty,
         DoubleProperty,
-        DateTimeProperty,
-        GuidProperty,
-        TimespanProperty,
-        IntPointProperty,
-        LinearColorProperty,
-        RotatorProperty,
-        QuatProperty,
-        VectorProperty,
-        Vector2DProperty,
+        DateTimeStruct,
+        GuidStruct,
+        TimespanStruct,
+        IntPointStruct,
+        LinearColorStruct,
+        RotatorStruct,
+        QuatStruct,
+        VectorStruct,
+        Vector2DStruct,
         "SetProperty",
         "MapProperty",
         "StructProperty",
@@ -106,11 +106,7 @@ class MapProperty(PropertyTrait):
     allocation_flags: int = 0
     values: list[tuple[KEY_TYPE, VALUE_TYPE]] = None
 
-    def read(
-        self,
-        stream: BinaryIO,
-        include_header: bool = True,
-    ) -> None:
+    def read(self, stream: BinaryIO, include_header: bool = True) -> None:
         """Read map from stream"""
         length = 0
         if include_header:
@@ -130,24 +126,20 @@ class MapProperty(PropertyTrait):
             self.values = []
             for _ in range(element_count):
                 with ContextScopeTracker("Key") as _scope_tracker:
-                    key_prop = PropertyFactory.create_and_deserialize(
+                    key_property = PropertyFactory.create_and_deserialize(
                         stream, self.key_type, include_header=False
                     )
                 with ContextScopeTracker("Value") as _scope_tracker:
-                    value_prop = PropertyFactory.create_and_deserialize(
+                    value_property = PropertyFactory.create_and_deserialize(
                         stream, self.value_type, include_header=False
                     )
                 try:
-                    self.values.append((key_prop, value_prop))
+                    self.values.append((key_property, value_property))
                 except Exception as e:
                     print(f"error: {e}")
                     raise e
 
-    def write(
-        self,
-        stream: BinaryIO,
-        include_header: bool = True,
-    ) -> int:
+    def write(self, stream: BinaryIO, include_header: bool = True) -> int:
         """Write map to stream"""
 
         body_buffer = BytesIO()
@@ -196,11 +188,7 @@ class SetProperty(PropertyTrait):
         if self.properties is None:
             self.properties = []
 
-    def read(
-        self,
-        stream: BinaryIO,
-        include_header: bool = True,
-    ) -> None:
+    def read(self, stream: BinaryIO, include_header: bool = True) -> None:
         """Read set from stream"""
         if not include_header:
             raise DeserializeError.invalid_property(
@@ -219,19 +207,15 @@ class SetProperty(PropertyTrait):
             if element_count > 0:
                 total_bytes_per_property = (length - 8) // element_count
                 for _ in range(element_count):
-                    prop = PropertyFactory.create_and_deserialize(
+                    property_instance = PropertyFactory.create_and_deserialize(
                         stream,
                         self.property_type,
                         include_header=False,
                         suggested_length=total_bytes_per_property,
                     )
-                    self.properties.append(prop)
+                    self.properties.append(property_instance)
 
-    def write(
-        self,
-        stream: BinaryIO,
-        include_header: bool = True,
-    ) -> int:
+    def write(self, stream: BinaryIO, include_header: bool = True) -> int:
         """Write set to stream"""
 
         # Create the body in a temporary buffer
@@ -273,15 +257,15 @@ class StructProperty(PropertyTrait):
         dict[str, UNREAL_ENGINE_PROPERTIES],
         # these must be here because they can be "special" types.
         # These can also appear inside the dictionary.
-        DateTimeProperty,
-        GuidProperty,
-        TimespanProperty,
-        IntPointProperty,
-        LinearColorProperty,
-        RotatorProperty,
-        QuatProperty,
-        VectorProperty,
-        Vector2DProperty,
+        DateTimeStruct,
+        GuidStruct,
+        TimespanStruct,
+        IntPointStruct,
+        LinearColorStruct,
+        RotatorStruct,
+        QuatStruct,
+        VectorStruct,
+        Vector2DStruct,
     ] = None
 
     @field_serializer("guid")
@@ -290,11 +274,7 @@ class StructProperty(PropertyTrait):
             return guid_to_str(value)
         return value
 
-    def read(
-        self,
-        stream: BinaryIO,
-        include_header: bool = True,
-    ) -> None:
+    def read(self, stream: BinaryIO, include_header: bool = True) -> None:
         """Read struct from stream"""
         length = 0
         if include_header:
@@ -318,7 +298,7 @@ class StructProperty(PropertyTrait):
         if type(deserialize_type) is str and is_special_struct(deserialize_type):
             expected_type = get_special_struct_instance(deserialize_type)
         elif type(deserialize_type) is dict:
-            # context may be, for example, the number of bytes in an unknown "ByteBlob"
+            # context may be, for example, the number of bytes in an unknown "ByteBlobStruct"
             ContextScopeTracker.hint_context = hint_type_override["context"]
             deserialize_type = hint_type_override["type"]
             expected_type = get_special_struct_instance(deserialize_type)
@@ -350,11 +330,7 @@ class StructProperty(PropertyTrait):
                     )
                     self.value[property_name] = property_value
 
-    def write(
-        self,
-        stream: BinaryIO,
-        include_header: bool = True,
-    ) -> int:
+    def write(self, stream: BinaryIO, include_header: bool = True) -> int:
         """Write struct to stream"""
 
         body_buffer = BytesIO()
@@ -399,7 +375,7 @@ class ArrayProperty(PropertyTrait):
         "StrProperty": read_string,
         "NameProperty": read_string,
         "EnumProperty": read_string,
-        "GuidProperty": read_guid,
+        "GuidStruct": read_guid,
         "BoolProperty": read_bool,
         "Int8Property": read_int8,
         "UInt8Property": read_uint8,
@@ -419,7 +395,7 @@ class ArrayProperty(PropertyTrait):
         "StrProperty": write_string,
         "NameProperty": write_string,
         "EnumProperty": write_string,
-        "GuidProperty": write_guid,
+        "GuidStruct": write_guid,
         "BoolProperty": write_bool,
         "Int8Property": write_int8,
         "UInt8Property": write_uint8,
@@ -562,11 +538,7 @@ class ArrayProperty(PropertyTrait):
                 )
                 self.values.append(array_property)
 
-    def write(
-        self,
-        stream: BinaryIO,
-        include_header: bool = True,
-    ) -> int:
+    def write(self, stream: BinaryIO, include_header: bool = True) -> int:
         """Write array to stream"""
         if not include_header:
             raise SerializeError.invalid_value(

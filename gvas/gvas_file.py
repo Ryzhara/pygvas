@@ -27,15 +27,15 @@ from gvas.engine_tools import (
 from gvas.gvas_utils import *
 
 from gvas.properties.standard_types import (
-    DateTimeProperty,
-    GuidProperty,
-    TimespanProperty,
-    IntPointProperty,
-    LinearColorProperty,
-    RotatorProperty,
-    QuatProperty,
-    VectorProperty,
-    Vector2DProperty,
+    DateTimeStruct,
+    GuidStruct,
+    TimespanStruct,
+    IntPointStruct,
+    LinearColorStruct,
+    RotatorStruct,
+    QuatStruct,
+    VectorStruct,
+    Vector2DStruct,
 )
 
 from gvas.properties.property_base import PropertyFactory
@@ -93,15 +93,15 @@ UNREAL_ENGINE_PROPERTIES = Annotated[
         FloatProperty,
         DoubleProperty,
         # standard types
-        DateTimeProperty,
-        GuidProperty,
-        TimespanProperty,
-        IntPointProperty,
-        LinearColorProperty,
-        RotatorProperty,
-        QuatProperty,
-        VectorProperty,
-        Vector2DProperty,
+        DateTimeStruct,
+        GuidStruct,
+        TimespanStruct,
+        IntPointStruct,
+        LinearColorStruct,
+        RotatorStruct,
+        QuatStruct,
+        VectorStruct,
+        Vector2DStruct,
         # aggregator property types
         SetProperty,
         MapProperty,
@@ -177,7 +177,8 @@ class GvasHeader:
             format_version = "Version3"
 
         # Read engine version
-        engine_version: FEngineVersion = FEngineVersion.read(stream)
+        engine_version: FEngineVersion = FEngineVersion()
+        engine_version.read(stream)
 
         # Read custom versions
         custom_version_format = read_uint32(stream)
@@ -489,9 +490,9 @@ class GVASFile(BaseModel):
         # First we serialize the content to UE format
         buffer = BytesIO()
         bytes_written = self.header.write(buffer)
-        for name, prop in self.properties.items():
+        for name, property_instance in self.properties.items():
             bytes_written += write_string(buffer, name)
-            prop.write(buffer, include_header=True)
+            property_instance.write(buffer, include_header=True)
 
         # Write None + NULL byte terminator for file end
         write_string(buffer, "None")

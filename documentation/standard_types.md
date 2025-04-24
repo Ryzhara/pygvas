@@ -11,7 +11,7 @@ All standard types follow a common pattern:
 
 ## Individual Type Formats
 
-### GuidProperty
+### GuidStruct
 Represents a GUID/UUID value.
 
 **Binary Format:**
@@ -23,7 +23,7 @@ Represents a GUID/UUID value.
 01 23 45 67 89 AB CD EF FE DC BA 98 76 54 32 10  // 16-byte GUID
 ```
 
-### DateTimeProperty
+### DateTimeStruct
 Represents a date and time value.
 
 **Binary Format:**
@@ -35,7 +35,7 @@ Represents a date and time value.
 00 00 00 00 00 00 00 00  // 8-byte timestamp
 ```
 
-### TimespanProperty
+### TimespanStruct
 Represents a time duration.
 
 **Binary Format:**
@@ -47,7 +47,7 @@ Represents a time duration.
 00 00 00 00 00 00 00 00  // 8-byte duration
 ```
 
-### IntPointProperty
+### IntPointStruct
 Represents a 2D integer point.
 
 **Binary Format:**
@@ -61,7 +61,7 @@ Represents a 2D integer point.
 00 00 00 00  // Y coordinate
 ```
 
-### LinearColorProperty
+### LinearColorStruct
 Represents a color with alpha channel.
 
 **Binary Format:**
@@ -79,7 +79,7 @@ Represents a color with alpha channel.
 00 00 00 00  // Red
 ```
 
-### RotatorProperty
+### RotatorStruct
 Represents a 3D rotation.
 
 **Binary Format:**
@@ -99,7 +99,7 @@ Represents a 3D rotation.
 00 00 00 00  // Roll
 ```
 
-### QuatProperty
+### QuatStruct
 Represents a quaternion.
 
 **Binary Format:**
@@ -121,7 +121,7 @@ Represents a quaternion.
 00 00 00 00  // W
 ```
 
-### VectorProperty
+### VectorStruct
 Represents a 3D vector.
 
 **Binary Format:**
@@ -141,7 +141,7 @@ Represents a 3D vector.
 00 00 00 00  // Z
 ```
 
-### Vector2DProperty
+### Vector2DStruct
 Represents a 2D vector.
 
 **Binary Format:**

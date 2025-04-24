@@ -103,7 +103,7 @@ The `TextProperty` class implements a property type that holds FText data in the
 ### AsDate
 ```
 [Type] (Int32)            // TextHistoryType.AsDate
-[DateTime] (DateTime)     // Date to format
+[LightWeightDateTime] (LightWeightDateTime)     // Date to format
 [Date Style] (DateTimeStyle) // Style for date formatting
 [Target Culture] (String) // Culture for formatting
 ```

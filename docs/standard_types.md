@@ -15,7 +15,7 @@ Unlike the classes derived from PropertyTrait, classes derived from StandardStru
 [guid: bytes]              // 16 bytes, little-endian UUID
 ```
 
-### DateTime PropertyFactory
+### LightWeightDateTime PropertyFactory
 ```
 [datetime: uint64]         // Ticks since January 1, 0001 (0.1 microseconds)
 ```
@@ -78,9 +78,9 @@ Unlike the classes derived from PropertyTrait, classes derived from StandardStru
 [guid: 16 bytes]          // e.g., "550e8400-e29b-41d4-a716-446655440000"
 ```
 
-### DateTime PropertyFactory
+### LightWeightDateTime PropertyFactory
 ```
-[property_type: "DateTime"]
+[property_type: "LightWeightDateTime"]
 [length: 8]
 [array_index: 0]
 [terminator: 0]
@@ -124,7 +124,7 @@ Unlike the classes derived from PropertyTrait, classes derived from StandardStru
 ## Notes
 - All integers are stored in little-endian format
 - All floating-point values are stored in little-endian format
-- DateTime values are stored as ticks (0.1 microseconds) since January 1, 0001
+- LightWeightDateTime values are stored as ticks (0.1 microseconds) since January 1, 0001
 - Timespan values are stored in milliseconds
 - The following types use float32 in UE4 and float64 in UE5+:
   - Vector

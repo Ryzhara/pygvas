@@ -34,11 +34,7 @@ class DelegateProperty(PropertyTrait):
     type: Literal["DelegateProperty"] = "DelegateProperty"
     value: Optional[Delegate] = None
 
-    def read(
-        self,
-        stream: BinaryIO,
-        include_header: bool = True,
-    ) -> None:
+    def read(self, stream: BinaryIO, include_header: bool = True) -> None:
         length = 0
         if include_header:
             length, *_ = read_standard_header(stream)
@@ -50,11 +46,7 @@ class DelegateProperty(PropertyTrait):
         ) as _validator:
             self.value.read(stream)
 
-    def write(
-        self,
-        stream: BinaryIO,
-        include_header: bool = True,
-    ) -> int:
+    def write(self, stream: BinaryIO, include_header: bool = True) -> int:
         """Write enum value to stream"""
 
         # create temporary buffer for body
@@ -99,11 +91,7 @@ class MulticastInlineDelegateProperty(PropertyTrait):
     type: Literal["MulticastInlineDelegateProperty"] = "MulticastInlineDelegateProperty"
     value: Optional[MulticastScriptDelegate] = None
 
-    def read(
-        self,
-        stream: BinaryIO,
-        include_header=True,
-    ) -> None:
+    def read(self, stream: BinaryIO, include_header=True) -> None:
         length = 0
         if include_header:
             length, *_ = read_standard_header(stream)
@@ -114,11 +102,7 @@ class MulticastInlineDelegateProperty(PropertyTrait):
         ) as _validator:
             self.value.read(stream)
 
-    def write(
-        self,
-        stream: BinaryIO,
-        include_header=True,
-    ) -> int:
+    def write(self, stream: BinaryIO, include_header=True) -> int:
         # create temporary buffer for body
         body_buffer = BytesIO()
         body_bytes = self.value.write(body_buffer)
@@ -139,11 +123,7 @@ class MulticastSparseDelegateProperty(PropertyTrait):
     type: Literal["MulticastSparseDelegateProperty"] = "MulticastSparseDelegateProperty"
     value: Optional[MulticastScriptDelegate] = None
 
-    def read(
-        self,
-        stream: BinaryIO,
-        include_header=True,
-    ) -> None:
+    def read(self, stream: BinaryIO, include_header=True) -> None:
         length = 0
         if include_header:
             length, *_ = read_standard_header(stream)
@@ -154,11 +134,7 @@ class MulticastSparseDelegateProperty(PropertyTrait):
         ) as _validator:
             self.value.read(stream)
 
-    def write(
-        self,
-        stream: BinaryIO,
-        include_header=True,
-    ) -> int:
+    def write(self, stream: BinaryIO, include_header=True) -> int:
         # create temporary buffer for body
         body_buffer = BytesIO()
         body_bytes = self.value.write(body_buffer)

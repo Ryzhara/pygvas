@@ -14,17 +14,17 @@ from gvas.gvas_utils import (
 )
 
 from gvas.properties.standard_types import (
-    DateTimeProperty,
-    GuidProperty,
-    IntPointProperty,
-    LinearColorProperty,
-    QuatProperty,
-    RotatorProperty,
-    TimespanProperty,
-    VectorProperty,
-    Vector2DProperty,
-    ByteBlob,
-    STANDARD_TYPE_UNION,
+    DateTimeStruct,
+    GuidStruct,
+    IntPointStruct,
+    LinearColorStruct,
+    QuatStruct,
+    RotatorStruct,
+    TimespanStruct,
+    VectorStruct,
+    Vector2DStruct,
+    ByteBlobStruct,
+    STANDARD_STRUCT_UNION,
 )
 
 
@@ -39,8 +39,8 @@ class TestTextPropertyTypes(unittest.TestCase):
 
     def write_and_read_standard_type(
         self,
-        test_value: STANDARD_TYPE_UNION,
-        deserializer: STANDARD_TYPE_UNION,
+        test_value: STANDARD_STRUCT_UNION,
+        deserializer: STANDARD_STRUCT_UNION,
         supports_version: bool,
     ) -> None:
         fn_restore = EngineVersionTool.supports_version
@@ -60,8 +60,8 @@ class TestTextPropertyTypes(unittest.TestCase):
 
     def perform_roundtrip_standard_type_roundtrip_test(
         self,
-        test_value: STANDARD_TYPE_UNION,
-        deserializer: STANDARD_TYPE_UNION,
+        test_value: STANDARD_STRUCT_UNION,
+        deserializer: STANDARD_STRUCT_UNION,
         supports_version: bool,
         msg: str,
     ):
@@ -73,101 +73,101 @@ class TestTextPropertyTypes(unittest.TestCase):
     def test_10_datetime_property(self):
         ticks = 500000000000000000  # '09/06/1585 16:53:20.000000'
         self.perform_roundtrip_standard_type_roundtrip_test(
-            DateTimeProperty(datetime=ticks, comment=datetime_to_str(ticks)),
-            DateTimeProperty(),
+            DateTimeStruct(datetime=ticks, comment=datetime_to_str(ticks)),
+            DateTimeStruct(),
             supports_version=False,
-            msg=f"Testing standard type DateTimeProperty",
+            msg=f"Testing standard type DateTimeStruct",
         )
 
     def test_20_guid_property(self):
         self.perform_roundtrip_standard_type_roundtrip_test(
-            GuidProperty(guid=guid_to_str(ZERO_GUID)),
-            GuidProperty(),
+            GuidStruct(guid=guid_to_str(ZERO_GUID)),
+            GuidStruct(),
             supports_version=False,
             msg=f"Testing standard type GUIDProperty",
         )
 
     def test_30_int_point_property(self):
         self.perform_roundtrip_standard_type_roundtrip_test(
-            IntPointProperty(x=3, y=-3),
-            IntPointProperty(),
+            IntPointStruct(x=3, y=-3),
+            IntPointStruct(),
             supports_version=False,
-            msg=f"Testing standard type IntPointProperty",
+            msg=f"Testing standard type IntPointStruct",
         )
 
     # this one will likely have the double/float issue because we're using doubles internally
     def test_40_linear_color_property(self):
         self.perform_roundtrip_standard_type_roundtrip_test(
-            LinearColorProperty(a=1.0, b=1.0, g=1.0, r=1.0),
-            LinearColorProperty(),
+            LinearColorStruct(a=1.0, b=1.0, g=1.0, r=1.0),
+            LinearColorStruct(),
             supports_version=False,
-            msg=f"Testing standard type LinearColorProperty",
+            msg=f"Testing standard type LinearColorStruct",
         )
 
     # this one will likely have the double/float issue because we're using doubles internally
     def test_50_quat_property(self):
         self.perform_roundtrip_standard_type_roundtrip_test(
-            QuatProperty(x=1.0, y=1.0, z=1.0, w=1.0),
-            QuatProperty(),
+            QuatStruct(x=1.0, y=1.0, z=1.0, w=1.0),
+            QuatStruct(),
             supports_version=False,
-            msg=f"Testing standard type QuatProperty",
+            msg=f"Testing standard type QuatStruct",
         )
 
     def test_60_rotator_property(self):
         self.perform_roundtrip_standard_type_roundtrip_test(
-            RotatorProperty(pitch=1.0, yaw=1.0, roll=1.0),
-            RotatorProperty(),
+            RotatorStruct(pitch=1.0, yaw=1.0, roll=1.0),
+            RotatorStruct(),
             supports_version=False,
-            msg=f"Testing standard type RotatorProperty (float)",
+            msg=f"Testing standard type RotatorStruct (float)",
         )
 
     def test_61_rotator_property(self):
         self.perform_roundtrip_standard_type_roundtrip_test(
-            RotatorProperty(pitch=1.0, yaw=1.0, roll=1.0),
-            RotatorProperty(),
+            RotatorStruct(pitch=1.0, yaw=1.0, roll=1.0),
+            RotatorStruct(),
             supports_version=True,
-            msg=f"Testing standard type RotatorProperty (double)",
+            msg=f"Testing standard type RotatorStruct (double)",
         )
 
     def test_70_timespan_property(self):
         ticks = 500000000000000000  # '09/06/1585 16:53:20.000000'
         self.perform_roundtrip_standard_type_roundtrip_test(
-            TimespanProperty(timespan=ticks, comment=timespan_to_str(ticks)),
-            TimespanProperty(),
+            TimespanStruct(timespan=ticks, comment=timespan_to_str(ticks)),
+            TimespanStruct(),
             supports_version=False,
-            msg=f"Testing standard type TimespanProperty",
+            msg=f"Testing standard type TimespanStruct",
         )
 
     def test_80_vector2d_property(self):
         self.perform_roundtrip_standard_type_roundtrip_test(
-            Vector2DProperty(x=1.0, y=1.0),
-            Vector2DProperty(),
+            Vector2DStruct(x=1.0, y=1.0),
+            Vector2DStruct(),
             supports_version=False,
-            msg=f"Testing standard type Vector2DProperty",
+            msg=f"Testing standard type Vector2DStruct",
         )
 
     def test_81_vector2d_property(self):
         self.perform_roundtrip_standard_type_roundtrip_test(
-            Vector2DProperty(x=1.0, y=1.0),
-            Vector2DProperty(),
+            Vector2DStruct(x=1.0, y=1.0),
+            Vector2DStruct(),
             supports_version=True,
-            msg=f"Testing standard type Vector2DProperty",
+            msg=f"Testing standard type Vector2DStruct",
         )
 
     def test_80_vector_property(self):
         self.perform_roundtrip_standard_type_roundtrip_test(
-            VectorProperty(x=1.0, y=1.0, z=1.0),
-            VectorProperty(),
+            VectorStruct(x=1.0, y=1.0, z=1.0),
+            VectorStruct(),
             supports_version=False,
-            msg=f"Testing standard type VectorProperty",
+            msg=f"Testing standard type VectorStruct",
         )
 
     def test_81_vector_property(self):
         self.perform_roundtrip_standard_type_roundtrip_test(
-            VectorProperty(x=3.14159, y=3.14159, z=3.14159),
-            VectorProperty(),
+            VectorStruct(x=3.14159, y=3.14159, z=3.14159),
+            VectorStruct(),
             supports_version=True,
-            msg=f"Testing standard type VectorProperty",
+            msg=f"Testing standard type VectorStruct",
         )
 
     def test_90_byte_blob_property(self):
@@ -182,10 +182,10 @@ class TestTextPropertyTypes(unittest.TestCase):
             ContextScopeTracker.hint_context = {"byte_count": len(byte_blob)}
             try:
                 self.perform_roundtrip_standard_type_roundtrip_test(
-                    ByteBlob(byte_blob=byte_blob),
-                    ByteBlob(),
+                    ByteBlobStruct(byte_blob=byte_blob),
+                    ByteBlobStruct(),
                     supports_version=False,
-                    msg=f"Testing standard type ByteBlob",
+                    msg=f"Testing standard type ByteBlobStruct",
                 )
             finally:
                 ContextScopeTracker.hint_context = hint_context_restore

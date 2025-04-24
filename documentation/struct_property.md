@@ -32,15 +32,15 @@ For special built-in types:
 
 ## Special Built-in Types
 The following special struct types are supported:
-- DateTimeProperty
-- GuidProperty
-- TimespanProperty
-- IntPointProperty
-- LinearColorProperty
-- RotatorProperty
-- QuatProperty
-- VectorProperty
-- Vector2DProperty
+- DateTimeStruct
+- GuidStruct
+- TimespanStruct
+- IntPointStruct
+- LinearColorStruct
+- RotatorStruct
+- QuatStruct
+- VectorStruct
+- Vector2DStruct
 
 ## Implementation Notes
 - All integers are stored in little-endian format

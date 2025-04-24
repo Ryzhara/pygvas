@@ -59,19 +59,22 @@ class TestProperty(unittest.TestCase):
             f"Expected {property_type}, got {imported_type}",
         )
         # read the rest of the property
-        imported_prop = PropertyFactory.create_and_deserialize(
+        imported_property = PropertyFactory.create_and_deserialize(
             buffer, imported_type, include_header=True
         )
         # this works for all properties that store in "value", as opposed to "values" or "delegates
         error_msg = (
-            f"Properties don't match: {test_property.value} != {imported_prop.value}",
+            f"Properties don't match: {test_property.value} != {imported_property.value}",
         )
         if type(test_property.value) == float:
             self.assertAlmostEqual(
-                test_property.value, imported_prop.value, places=places, msg=error_msg
+                test_property.value,
+                imported_property.value,
+                places=places,
+                msg=error_msg,
             )
         else:
-            self.assertEqual(test_property.value, imported_prop.value, error_msg)
+            self.assertEqual(test_property.value, imported_property.value, error_msg)
 
     def test_010_bool_property(self):
         # Test BoolProperty serialization/deserialization
@@ -81,18 +84,18 @@ class TestProperty(unittest.TestCase):
     def test_020_byte_property(self):
         # Test ByteProperty serialization/deserialization
         # Test with byte value
-        byte_prop = ByteProperty()
-        byte_prop.name = None
+        byte_property = ByteProperty()
+        byte_property.name = None
         # Use BytePropertyValue.Byte.value instead of calling it
-        byte_prop.value = 1
-        self.perform_property_roundtrip_test(byte_prop, "ByteProperty")
+        byte_property.value = 1
+        self.perform_property_roundtrip_test(byte_property, "ByteProperty")
 
         # Test with namespaced value
-        namespaced_prop = ByteProperty()
-        namespaced_prop.name = "TestName"
+        namespaced_property = ByteProperty()
+        namespaced_property.name = "TestName"
         # Use a string value for namespaced value
-        namespaced_prop.value = "TestValue"
-        self.perform_property_roundtrip_test(namespaced_prop, "ByteProperty")
+        namespaced_property.value = "TestValue"
+        self.perform_property_roundtrip_test(namespaced_property, "ByteProperty")
 
     def test_030_int_properties(self):
         # Test integer property serialization/deserialization
@@ -160,10 +163,10 @@ class TestProperty(unittest.TestCase):
 
     def test_070_enum_property(self):
         # Test EnumProperty serialization/deserialization
-        enum_prop = EnumProperty()
-        enum_prop.enum_type = "TestEnum"
-        enum_prop.value = "TestValue"
-        self.perform_property_roundtrip_test(enum_prop, "EnumProperty")
+        enum_property = EnumProperty()
+        enum_property.enum_type = "TestEnum"
+        enum_property.value = "TestValue"
+        self.perform_property_roundtrip_test(enum_property, "EnumProperty")
 
         enum_prop2 = EnumProperty()
         enum_prop2.enum_type = None
