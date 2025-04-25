@@ -1,21 +1,6 @@
 @echo off
 setlocal enabledelayedexpansion
 
-rem Default: no verbose flag
-set VERBOSE_FLAG=
-
-rem Parse arguments
-:parse_args
-if "%~1"=="" goto done_parse
-if "%~1"=="-v" (
-    set VERBOSE_FLAG=-v
-) else (
-    rem You can handle other args here if needed
-)
-shift
-goto parse_args
-
-:done_parse
 
 rem test each utility
 echo You may need to activate your virtual environment before invoking these.
