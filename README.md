@@ -48,12 +48,12 @@ Example with type hints for struct properties:
 ```python
 from gvas import GVASFile, GameVersion
 
-# Create type hints for ambiguous structs
+# Create type deserialization_hints for ambiguous structs
 hints = {
     "UnLockedMissionParameters.MapProperty.Key.StructProperty": "Guid"
 }
 
-# Read with hints
+# Read with deserialization_hints
 with open("save.sav", "rb") as f:
     gvas_file = GVASFile.read_with_hints(f, GameVersion.Default, hints)
 ```

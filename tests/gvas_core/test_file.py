@@ -30,7 +30,7 @@ class TestGvasFile(unittest.TestCase):
     @override
     def setUpClass(cls) -> None:
         ContextScopeTracker.set_inside_unit_tests()
-        ContextScopeTracker.set_hints({})
+        ContextScopeTracker.set_deserialization_hints({})
 
     def test_10_create_file(self):
         # Test creating a GVASFile from scratch
@@ -84,7 +84,7 @@ class TestGvasFile(unittest.TestCase):
 
         # Deserialize the file
         stream.seek(0)
-        loaded_file, _original_stream = GVASFile.read(
+        loaded_file = GVASFile.read(
             stream,
             game_version=GameVersion.DEFAULT,
             compression_type=CompressionType.NONE,
@@ -132,18 +132,13 @@ class TestGvasFile(unittest.TestCase):
         # Create a new GVASFile
         file = GVASFile(game_file_format=game_file_format, header=header, properties={})
 
-        # Add custom format data if needed
-        # Note: This would need to be added to the actual implementation
-
         # Serialize the file
         stream = BytesIO()
         file.write(stream)
 
         # Deserialize the file
         stream.seek(0)
-        loaded_file, _original_stream = GVASFile.read(
-            stream, GameVersion.DEFAULT, CompressionType.NONE
-        )
+        loaded_file = GVASFile.read(stream, GameVersion.DEFAULT, CompressionType.NONE)
 
         # Check that the header values match
         self.assertEqual(
@@ -202,7 +197,7 @@ class TestGvasFile(unittest.TestCase):
 
         # Deserialize with default game version
         default_stream.seek(0)
-        default_file, _original_stream = GVASFile.read(
+        default_file = GVASFile.read(
             default_stream, GameVersion.DEFAULT, CompressionType.NONE
         )
 

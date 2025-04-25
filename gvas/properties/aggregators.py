@@ -298,7 +298,7 @@ class StructProperty(PropertyTrait):
 
         # # see if we have to override the type name
         # hint_context_path = ContextScopeTracker.get_context_path()
-        # hint_type_override: Union[str, dict] = ContextScopeTracker.hints.get(
+        # hint_type_override: Union[str, dict] = ContextScopeTracker.deserialization_hints.get(
         #     hint_context_path, None
         # )
 

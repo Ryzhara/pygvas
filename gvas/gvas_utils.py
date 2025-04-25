@@ -21,13 +21,13 @@ class MagicConstants:
 # Do NOT make this @dataclass because then our class variable syntax is wrong. ;)
 # The following is adpabted from the Rust code:
 # ## Hints
-# If your file fails while parsing with a `DeserializeError` error you probably need hints.
+# If your file fails while parsing with a `DeserializeError` error you probably need deserialization_hints.
 # When a struct is stored inside ArrayProperty/SetProperty/MapProperty in GvasFile it does not contain type annotations.
-# This means that a library parsing the file must know the type beforehand. That's why you need hints.
+# This means that a library parsing the file must know the type beforehand. That's why you need deserialization_hints.
 class ContextScopeTracker:
     _unit_tests_running: bool = False
     _context_stack: list[str] = []
-    _hints: dict[str, Union[str, dict[str, Any]]] = {}
+    _deserialization_hints: dict[str, Union[str, dict[str, Any]]] = {}
     # this one is for the remote case when you want the ByteBlobStruct or similar.
     _hint_context: dict[str, Any] = {}
 
@@ -56,20 +56,22 @@ class ContextScopeTracker:
     # ============= PROCESSING HINTS ====================
 
     @classmethod
-    def set_hints(cls, hints: dict[str, Union[str, dict[str, Any]]]):
-        """For those files that need hints for successful deserialization."""
-        cls._hints = hints
+    def set_deserialization_hints(
+        cls, deserialization_hints: dict[str, Union[str, dict[str, Any]]]
+    ):
+        """For those files that need deserialization_hints for successful deserialization."""
+        cls._deserialization_hints = deserialization_hints
 
     @classmethod
     def get_hint_for_context(cls) -> Union[str, Union[str, dict[str, Any]]]:
         hint_context_path = cls.get_context_path()
-        hint_type_override = cls._hints.get(hint_context_path, None)
+        hint_type_override = cls._deserialization_hints.get(hint_context_path, None)
         return hint_type_override
 
     # ============= MOST UNUSUAL CASE HANDLING ====================
     @classmethod
     def set_hint_context(cls, context: dict[str, Any]):
-        """Some hints are more than just a type name. ByteBlobStruct requires a length, for example."""
+        """Some deserialization_hints are more than just a type name. ByteBlobStruct requires a length, for example."""
         cls._hint_context = context
 
     @classmethod

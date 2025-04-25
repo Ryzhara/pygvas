@@ -57,7 +57,7 @@ class TestTextPropertyTypes(unittest.TestCase):
     @override
     def setUpClass(cls) -> None:
         ContextScopeTracker.set_inside_unit_tests()
-        ContextScopeTracker.set_hints({})
+        ContextScopeTracker.set_deserialization_hints({})
 
     def perform_text_format_argument_roundtrip_test(
         self, *, format_argument_value: FormatArgumentValue, supports_64bit: bool

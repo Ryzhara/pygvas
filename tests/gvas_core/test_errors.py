@@ -23,7 +23,7 @@ class TestErrors(unittest.TestCase):
     @override
     def setUpClass(cls) -> None:
         ContextScopeTracker.set_inside_unit_tests()
-        ContextScopeTracker.set_hints({})
+        ContextScopeTracker.set_deserialization_hints({})
 
     def test_10_invalid_magic(self):
         # Test handling of invalid magic bytes

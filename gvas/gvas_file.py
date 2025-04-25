@@ -9,6 +9,7 @@ Key differences from Rust version:
 """
 
 import json
+import pathlib
 import zlib
 from io import BytesIO
 from typing import Annotated
@@ -362,48 +363,91 @@ class GVASFile(BaseModel):
     properties: dict[str, UNREAL_ENGINE_PROPERTIES]
 
     @classmethod
-    def print_game_file_format(cls, file_path: str):
+    def get_game_file_format(cls, file_path: str) -> GameFileFormat:
         """Utility for revealing GVAS file GameFileFormat data."""
         with open(file_path, "rb") as stream:
             game_file_format = GameFileFormat()
             game_file_format.deserialize_game_version(stream)
-            print(
-                f"File {file_path} is {game_file_format.game_version} with {game_file_format.compression_type}"
-            )
+            return game_file_format
+
+    @classmethod
+    def deserialize_json(cls, json_content: dict) -> "GVASFile":
+
+        gvas_file_adaptor = TypeAdapter(GVASFile)
+        gvas_file: GVASFile = gvas_file_adaptor.validate_python(json_content)
+
+        # These steps are required to correctly handle float/double
+        # differences between UE4 and UE5 when writing/reading data.
+        EngineVersionTool.set_custom_versions(gvas_file.header.custom_versions)
+        EngineVersionTool.set_engine_version(
+            gvas_file.header.engine_version.major,
+            gvas_file.header.engine_version.minor,
+        )
+        return gvas_file
 
     @classmethod
     def deserialize_json_file(cls, json_file_path: str) -> "GVASFile":
 
         with open(json_file_path, "r") as f:
             json_content = json.load(f)
-            gvas_file_adaptor = TypeAdapter(GVASFile)
-            gvas_file: GVASFile = gvas_file_adaptor.validate_python(json_content)
-
-            # These steps are required to correctly handle float/double
-            # differences between UE4 and UE5 when writing/reading data.
-            EngineVersionTool.set_custom_versions(gvas_file.header.custom_versions)
-            EngineVersionTool.set_engine_version(
-                gvas_file.header.engine_version.major,
-                gvas_file.header.engine_version.minor,
-            )
-            return gvas_file
+            return GVASFile.deserialize_json(json_content)
 
     @classmethod
-    def read_gvas_file(cls, file_path: str) -> ("GVASFile", BinaryIO):
+    def set_up_gvas_deserialization_hints(
+        cls, deserialization: dict[str, Union[str, dict[str, Any]]]
+    ):
+
+        assert isinstance(
+            deserialization, Union[dict, str, pathlib.Path, None]
+        ), f"Hints must be either a dict or a str/Path object to a file."
+
+        if deserialization is None:
+            deserialization = {}
+        elif isinstance(deserialization, Union[str, pathlib.Path]):
+            deserialization_hints_file = deserialization
+            with open(deserialization_hints_file, "r") as f:
+                deserialization = json.load(f)
+        else:
+            assert isinstance(deserialization, dict)
+
+        ContextScopeTracker.set_deserialization_hints(deserialization)
+
+    # This function does not return the original file stream.
+    @classmethod
+    def read_gvas_file(
+        cls,
+        file_path: str,
+        *,
+        game_file_format: Optional[GameFileFormat] = None,
+        deserialization_hints: Optional[
+            Union[dict[str, str], str, pathlib.Path]
+        ] = None,
+    ) -> "GVASFile":
+
+        GVASFile.set_up_gvas_deserialization_hints(deserialization_hints)
+
+        assert isinstance(game_file_format, Union[GameFileFormat, None])
+
         with open(file_path, "rb") as stream:
-            game_file_format = GameFileFormat()
-            game_file_format.deserialize_game_version(stream)
-            return cls.read(
+            if game_file_format is None:
+                # detect it
+                game_file_format = GameFileFormat()
+                game_file_format.deserialize_game_version(stream)
+
+            gvas_file, _original_stream = cls.read(
                 stream, game_file_format.game_version, game_file_format.compression_type
             )
 
+            return gvas_file
+
+    # This function does not close the file when done.
     @classmethod
     def read(
         cls,
         stream: BinaryIO,
         game_version: GameVersion,
         compression_type: CompressionType,
-    ) -> ("GVASFile", BinaryIO):
+    ) -> "GVASFile":
 
         decompressed_size = 0
         compressed_size = 0
@@ -411,6 +455,10 @@ class GVASFile(BaseModel):
             # we have to peek through custom file format. *sigh*
             decompressed_size = read_uint32(stream)
             compressed_size = read_uint32(stream)
+            assert (
+                compressed_size < decompressed_size
+            ), f"Expected {decompressed_size} > {compressed_size}"
+
             magic_bytes = stream.read(3)
             if magic_bytes == MagicConstants.PLZ_MAGIC:
                 if not ContextScopeTracker.inside_unit_tests():
@@ -444,6 +492,7 @@ class GVASFile(BaseModel):
         elif compression_type == CompressionType.ZLIB:
             compressed_data = stream.read()
             decompressed_data = zlib.decompress(compressed_data)
+
             assert decompressed_size == len(
                 decompressed_data
             ), f"{decompressed_size=} != {len(decompressed_data)=}"
@@ -482,13 +531,10 @@ class GVASFile(BaseModel):
         read_uint32(stream, 0)
 
         stream.seek(0)
-        return (
-            cls(
-                game_file_format=GameFileFormat(game_version, compression_type),
-                header=header,
-                properties=properties,
-            ),
-            stream,
+        return cls(
+            game_file_format=GameFileFormat(game_version, compression_type),
+            header=header,
+            properties=properties,
         )
 
     def write_file(self, output_file, uncompressed_output_file) -> None:

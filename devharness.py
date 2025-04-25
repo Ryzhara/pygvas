@@ -104,7 +104,7 @@ test_file_list = [
 
 # this one requires HINTS implementation.
 # There is a 16-byte GUID hiding anonymously as a struct_property in a map_property
-# See gvas/tests/common/palworld.rs in hints() hashmap for testing sequence
+# See gvas/tests/common/palworld.rs in deserialization_hints() hashmap for testing sequence
 # test_file_list = ["resources/test/palworld_zlib_twice.sav"]  # Working!
 
 # game_version = GameVersion.DEFAULT
@@ -131,7 +131,7 @@ test_file_list = [
 # there are some "BIN" files:
 #   features_01.bin, -- custom struct @ FSDEventRewardsSave.StructProperty.EventsSeen.SetProperty.StructProperty
 test_file_list = ["resources/test/features_01.bin"]
-ContextScopeTracker.set_hints(
+ContextScopeTracker.set_deserialization_hints(
     {
         "SeasonSave.StructProperty.Seasons.MapProperty.Key.StructProperty": "Guid",
         "SeasonSave.StructProperty.Seasons.MapProperty.Value.StructProperty.CompletedSpecialChallenges.MapProperty.Key.StructProperty": "Guid",

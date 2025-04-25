@@ -36,7 +36,7 @@ class TestTextPropertyTypes(unittest.TestCase):
     @override
     def setUpClass(cls) -> None:
         ContextScopeTracker.set_inside_unit_tests()
-        ContextScopeTracker.set_hints({})
+        ContextScopeTracker.set_deserialization_hints({})
 
     def write_and_read_standard_type(
         self,

@@ -21,13 +21,13 @@ class TestStructProperty(unittest.TestCase):
     @override
     def setUpClass(cls) -> None:
         ContextScopeTracker.set_inside_unit_tests()
-        ContextScopeTracker.set_hints({})
+        ContextScopeTracker.set_deserialization_hints({})
 
     @classmethod
     @override
     def setUp(cls) -> None:
         ContextScopeTracker.set_inside_unit_tests()
-        ContextScopeTracker.set_hints({})
+        ContextScopeTracker.set_deserialization_hints({})
 
     def test_10_create_struct_property(self):
         # Create a new StructProperty
@@ -92,7 +92,9 @@ class TestStructProperty(unittest.TestCase):
                 property_type = read_string(stream)
                 self.assertEqual(property_type, struct_property.type)
 
-            ContextScopeTracker.set_hints({} if include_header else {"": "TestStruct"})
+            ContextScopeTracker.set_deserialization_hints(
+                {} if include_header else {"": "TestStruct"}
+            )
             deserialized_property.read(stream, include_header=include_header)
 
             # Check the deserialized values

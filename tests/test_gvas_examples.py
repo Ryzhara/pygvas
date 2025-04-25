@@ -28,7 +28,11 @@ TEST_FILE_CONFIG = {
         "json": "component8.sav.json",
         "hints": None,
     },
-    "DELEGATE": {"file": "delegate.sav", "json": "delegate.sav.json", "hints": None},
+    "DELEGATE": {
+        "file": "delegate.sav",
+        "json": "delegate.sav.json",
+        "hints": None,
+    },
     "ENUM_ARRAY": {
         "file": "enum_array.sav",
         "json": "enum_array.sav.json.zip",
@@ -44,7 +48,11 @@ TEST_FILE_CONFIG = {
         "json": "features_01.bin.json",
         "hints": "features_01.hints.json",
     },
-    "OPTIONS": {"file": "options.sav", "json": "options.sav.json", "hints": None},
+    "OPTIONS": {
+        "file": "options.sav",
+        "json": "options.sav.json",
+        "hints": None,
+    },
     "PACKAGE_VERSION_524": {
         "file": "package_version_524.sav",
         "json": "package_version_524.sav.json",
@@ -55,7 +63,11 @@ TEST_FILE_CONFIG = {
         "json": "package_version_525.sav.json",
         "hints": None,
     },
-    "PROFILE_0": {"file": "profile_0.sav", "json": "profile_0.sav.json", "hints": None},
+    "PROFILE_0": {
+        "file": "profile_0.sav",
+        "json": "profile_0.sav.json",
+        "hints": None,
+    },
     "REGRESSION_01": {
         "file": "regression_01.bin",
         "json": "regression_01.bin.json",
@@ -71,16 +83,36 @@ TEST_FILE_CONFIG = {
         "json": "saveslot_03.sav.json",
         "hints": None,
     },
-    "SLOT1": {"file": "slot1.sav", "json": "slot1.sav.json", "hints": None},
-    "SLOT2": {"file": "slot2.sav", "json": "slot2.sav.json", "hints": None},
-    "SLOT3": {"file": "slot3.sav", "json": "slot3.sav.json", "hints": None},
+    "SLOT1": {
+        "file": "slot1.sav",
+        "json": "slot1.sav.json",
+        "hints": None,
+    },
+    "SLOT2": {
+        "file": "slot2.sav",
+        "json": "slot2.sav.json",
+        "hints": None,
+    },
+    "SLOT3": {
+        "file": "slot3.sav",
+        "json": "slot3.sav.json",
+        "hints": None,
+    },
     "TEXT_PROPERTY_NOARRAY": {
         "file": "text_property_noarray.bin",
         "json": "text_property_noarray.bin.json",
         "hints": None,
     },
-    "TRANSFORM": {"file": "transform.sav", "json": "transform.sav.json", "hints": None},
-    "VECTOR2D": {"file": "vector2d.sav", "json": "vector2d.sav.json", "hints": None},
+    "TRANSFORM": {
+        "file": "transform.sav",
+        "json": "transform.sav.json",
+        "hints": None,
+    },
+    "VECTOR2D": {
+        "file": "vector2d.sav",
+        "json": "vector2d.sav.json",
+        "hints": None,
+    },
     "PALWORLD_ZLIB": {
         "file": "palworld_zlib.sav",
         "json": "palworld_zlib.sav.json",
@@ -125,13 +157,13 @@ class TestGvasExamples(unittest.TestCase):
     @override
     def setUpClass(cls) -> None:
         ContextScopeTracker.set_inside_unit_tests()
-        ContextScopeTracker.set_hints({})
+        ContextScopeTracker.set_deserialization_hints({})
 
     @classmethod
     @override
     def setUp(self):
         ContextScopeTracker.set_inside_unit_tests()
-        ContextScopeTracker.set_hints({})
+        ContextScopeTracker.set_deserialization_hints({})
 
     def perform_gvas_deserialization_test(
         self, test_key: str, should_be_equal: bool = True
@@ -140,7 +172,9 @@ class TestGvasExamples(unittest.TestCase):
         Read GVAS file from storage. compare the serialized version to original binary.
         """
         test_file, json_file, hints_file = get_test_file_config(test_key)
-        gvas_file, original_file_stream = read_gvas_file(test_file, hints=hints_file)
+        gvas_file, original_file_stream = read_gvas_file(
+            test_file, deserialization_hints=hints_file
+        )
 
         serialized_stream = BytesIO()
         gvas_file.write(serialized_stream)
@@ -162,7 +196,7 @@ class TestGvasExamples(unittest.TestCase):
             )
 
     @staticmethod
-    def get_json_content(json_file):
+    def get_possibly_zipped_json_content(json_file):
         # load test file. check if it was zipped because size
         if zipfile.is_zipfile(json_file):
             json_file_without_ext = json_file
@@ -182,13 +216,18 @@ class TestGvasExamples(unittest.TestCase):
         Read GVAS file from storage and serialize into JSON. Compare that to the expected JSON.
         """
         test_file, json_file, hints_file = get_test_file_config(test_key)
-        gvas_file, original_file_stream = read_gvas_file(test_file, hints=hints_file)
+
+        # gvas_file, original_file_stream = GVASFile.read_gvas_file(test_file)
+
+        gvas_file, original_file_stream = read_gvas_file(
+            test_file, deserialization_hints=hints_file
+        )
         # serialize to json
         gvas_adaptor = TypeAdapter(GVASFile)
         gvas_file_dict = gvas_adaptor.dump_python(gvas_file, exclude_none=True)
         serialized_json_str = json.dumps(gvas_file_dict)
 
-        expected_json = self.get_json_content(json_file)
+        expected_json = self.get_possibly_zipped_json_content(json_file)
 
         # normalize spacing, just in case
         expected_json_str = json.dumps(expected_json)
@@ -206,11 +245,10 @@ class TestGvasExamples(unittest.TestCase):
         """
         test_file, json_file, hints_file = get_test_file_config(test_key)
 
-        expected_json = self.get_json_content(json_file)
+        exemplar_json = self.get_possibly_zipped_json_content(json_file)
 
         # deserialize the JSON to a GVAS file
-        gvas_adaptor = TypeAdapter(GVASFile)
-        deserialized_gvas = gvas_adaptor.validate_python(expected_json)
+        deserialized_gvas = GVASFile.deserialize_json(exemplar_json)
 
         # serialize back to binary
         deserialized_gvas_stream: BytesIO = BytesIO()
@@ -253,14 +291,14 @@ class TestGvasExamples(unittest.TestCase):
         self.do_all_tests("PACKAGE_VERSION_525")
 
     def test_070_profile_0(self):
-        """Note: this python implementation does not need hints."""
+        """Note: this python implementation does not need deserialization_hints."""
         self.do_all_tests("PROFILE_0")
 
     def test_080_ro_64bit_fav(self):
         self.do_all_tests("RO_64BIT_FAV")
 
     def test_090_saveslot03(self):
-        """Note: this python implementation does not need hints."""
+        """Note: this python implementation does not need deserialization_hints."""
         self.do_all_tests("SAVESLOT_03")
 
     def test_100_slot1(self):
@@ -279,11 +317,11 @@ class TestGvasExamples(unittest.TestCase):
         self.do_all_tests("VECTOR2D")
 
     def test_200_regression_01(self):
-        """This is a BIN file that needs no hints."""
+        """This is a BIN file that needs no deserialization_hints."""
         self.do_all_tests("REGRESSION_01")
 
     def test_210_text_property_noarray(self):
-        """This is a BIN file with an ERROR and needs no hints."""
+        """This is a BIN file with an ERROR and needs no deserialization_hints."""
         # This file is invalid because it contains duplicate StructProperty members.
         # Duplicates occur around byte # 114,712 -- according to the internets, that's not INVALID:
         #       StructProperty["TrackedQuestsNames"] = NameProperty(value="QU91_InvestigateTower_B2")
@@ -293,7 +331,7 @@ class TestGvasExamples(unittest.TestCase):
         )
 
     def test_220_features_01(self):
-        """This is a BIN file that needs hints."""
+        """This is a BIN file that needs deserialization_hints."""
         self.do_all_tests("FEATURES_01")
 
     def test_300_palworld_zlib(self):

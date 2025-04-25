@@ -251,7 +251,7 @@ class Vector2DStruct(StandardStructTrait):
 # .
 @dataclass
 class ByteBlobStruct(StandardStructTrait):
-    """Intended for hints to allow circumventing unknown custom types in GVAS files."""
+    """Intended for deserialization_hints to allow circumventing unknown custom types in GVAS files."""
 
     type: Literal["ByteBlobStruct"] = "ByteBlobStruct"
     byte_blob: str = ""

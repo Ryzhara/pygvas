@@ -487,10 +487,10 @@ class EngineVersionTool:
     This class corresponds to the Rust package use of "options" and scoped property stacks.
     It is never instantiated and avoids cluttering signatures with mostly unused parameters.
 
-    If your file fails while parsing with a DeserializeError::MissingHint error you need hints.
+    If your file fails while parsing with a DeserializeError::MissingHint error you need deserialization_hints.
     When a struct is stored inside ArrayProperty/SetProperty/MapProperty in GvasFile it does not
     contain type annotations. This means that a library parsing the file must know the type
-    beforehand. That’s why you need hints.
+    beforehand. That’s why you need deserialization_hints.
     """
 
     custom_versions: dict[str, int] = {}
