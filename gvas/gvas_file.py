@@ -363,11 +363,12 @@ class GVASFile(BaseModel):
 
     @classmethod
     def print_game_file_format(cls, file_path: str):
+        """Utility for revealing GVAS file GameFileFormat data."""
         with open(file_path, "rb") as stream:
             game_file_format = GameFileFormat()
             game_file_format.deserialize_game_version(stream)
             print(
-                f"Found {file_path=} has version={game_file_format.game_version} and compression={game_file_format.compression_type}"
+                f"File {file_path} is {game_file_format.game_version} with {game_file_format.compression_type}"
             )
 
     @classmethod
