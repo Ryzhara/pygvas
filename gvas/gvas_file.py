@@ -25,7 +25,7 @@ from gvas.engine_tools import (
     EngineVersionTool,
 )
 from gvas.gvas_utils import *
-from gvas.properties.aggregators import (
+from gvas.properties.aggregator_properties import (
     SetProperty,
     MapProperty,
     ArrayProperty,

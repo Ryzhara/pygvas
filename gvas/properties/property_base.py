@@ -50,7 +50,7 @@ class PropertyFactory:
             DelegateProperty,
         )
 
-        from gvas.properties.aggregators import (
+        from gvas.properties.aggregator_properties import (
             SetProperty,
             MapProperty,
             StructProperty,
