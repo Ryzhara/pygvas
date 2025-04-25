@@ -1,8 +1,5 @@
 import argparse
-import json
 import sys
-
-from pydantic import TypeAdapter
 
 from gvas.gvas_file import GVASFile
 
@@ -21,7 +18,7 @@ def main():
     args = parse_arguments()
 
     try:
-        gvas_file: GVASFile = GVASFile.deserialize_json_file(args.input_file)
+        gvas_file: GVASFile = GVASFile.deserialize_from_json_file(args.input_file)
     except FileNotFoundError:
         print(f"Error: Input file '{args.input_file}' not found.", file=sys.stderr)
         sys.exit(1)
@@ -30,7 +27,7 @@ def main():
         sys.exit(1)
 
     try:
-        gvas_file.write_file(args.output_file, None)
+        gvas_file.serialize_to_gvas_file(args.output_file, None)
     except Exception as e:
         print(f"Error writing to output file: {e}", file=sys.stderr)
         sys.exit(1)

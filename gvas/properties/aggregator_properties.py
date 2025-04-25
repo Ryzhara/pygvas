@@ -18,7 +18,7 @@ from gvas.properties.delegate_property import (
 from gvas.properties.enum_property import EnumProperty
 from gvas.properties.field_path_property import FieldPath, FieldPathProperty
 from gvas.properties.name_property import NameProperty
-from gvas.properties.numerical_property import (
+from gvas.properties.numerical_properties import (
     BoolProperty,
     ByteProperty,
     FloatProperty,

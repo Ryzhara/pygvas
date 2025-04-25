@@ -10,7 +10,7 @@ from typing import override
 
 from gvas.gvas_utils import MagicConstants, read_string, ContextScopeTracker
 from gvas.properties.aggregator_properties import StructProperty
-from gvas.properties.numerical_property import Int32Property, BoolProperty
+from gvas.properties.numerical_properties import Int32Property, BoolProperty
 from gvas.properties.str_property import StrProperty
 
 

@@ -201,7 +201,7 @@ def test_gvas_file(test_file: str):
     gvas_file = None
     try:
         gvas_file: GVASFile
-        gvas_file, decompressed_data = GVASFile.read_gvas_file(test_file)
+        gvas_file, decompressed_data = GVASFile.deserialize_gvas_file(test_file)
     except Exception as e:
         print(f"Failed to load {test_file}: {e}")
         raise e
@@ -215,7 +215,7 @@ def test_gvas_file(test_file: str):
     # dump binary to work toward idempotence for read, write, rinse and repeat
     output_file = f"{test_file}.idempotent"
     uncompressed_output_file = f"{test_file}.decompressed.idempotent"
-    gvas_file.write_file(output_file, uncompressed_output_file)
+    gvas_file.serialize_to_gvas_file(output_file, uncompressed_output_file)
 
     idempotent = compare_binary_files(test_file, output_file)
 
@@ -268,7 +268,7 @@ def test_gvas_file(test_file: str):
     # Now write that GVAS file back out for round trip test
     output_file_too = f"{test_file}.idempotent.too"
     uncompressed_output_file = f"{test_file}.decompressed.idempotent.too"
-    new_gvas.write_file(output_file_too, uncompressed_output_file)
+    new_gvas.serialize_to_gvas_file(output_file_too, uncompressed_output_file)
 
     reread_and_rewrite = compare_binary_files(output_file_too, output_file)
 

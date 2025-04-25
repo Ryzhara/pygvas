@@ -5,7 +5,7 @@ from typing import Self, TypeVar, Type, Annotated
 
 from pydantic import Discriminator
 
-from gvas.properties.numerical_property import *
+from gvas.properties.numerical_properties import *
 from gvas.properties.property_base import PropertyTrait
 from gvas.engine_tools import (
     EngineVersionTool,

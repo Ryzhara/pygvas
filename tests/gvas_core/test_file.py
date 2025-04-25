@@ -14,7 +14,7 @@ from gvas.engine_tools import (
 from gvas.gvas_file import GVASFile, GvasHeader, GameFileFormat
 from gvas.gvas_utils import ContextScopeTracker
 from gvas.properties.property_base import PropertyFactory, PropertyTrait
-from gvas.properties.numerical_property import (
+from gvas.properties.numerical_properties import (
     Int32Property,
     BoolProperty,
     IntProperty,

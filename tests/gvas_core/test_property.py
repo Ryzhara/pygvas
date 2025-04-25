@@ -8,7 +8,7 @@ from typing import override
 
 from gvas.gvas_utils import read_string, ContextScopeTracker
 from gvas.properties.enum_property import EnumProperty
-from gvas.properties.numerical_property import (
+from gvas.properties.numerical_properties import (
     BoolProperty,
     ByteProperty,
     Int8Property,

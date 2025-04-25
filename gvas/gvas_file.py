@@ -39,7 +39,7 @@ from gvas.properties.delegate_property import (
 from gvas.properties.enum_property import EnumProperty
 from gvas.properties.field_path_property import FieldPathProperty, FieldPath
 from gvas.properties.name_property import NameProperty
-from gvas.properties.numerical_property import (
+from gvas.properties.numerical_properties import (
     BoolProperty,
     ByteProperty,
     Int8Property,
@@ -385,8 +385,18 @@ class GVASFile(BaseModel):
         )
         return gvas_file
 
+    def serialize_to_json(self) -> dict:
+        gvas_file_adaptor = TypeAdapter(GVASFile)
+        gvas_file_dict = gvas_file_adaptor.dump_python(self, exclude_none=True)
+        return gvas_file_dict
+
+    def serialize_to_json_file(self, file_path: str) -> None:
+        serialized_json: dict = self.serialize_to_json()
+        with open(file_path, "w") as f:
+            f.write(json.dumps(serialized_json, indent=2))
+
     @classmethod
-    def deserialize_json_file(cls, json_file_path: str) -> "GVASFile":
+    def deserialize_from_json_file(cls, json_file_path: str) -> "GVASFile":
 
         with open(json_file_path, "r") as f:
             json_content = json.load(f)
@@ -414,7 +424,7 @@ class GVASFile(BaseModel):
 
     # This function does not return the original file stream.
     @classmethod
-    def read_gvas_file(
+    def deserialize_gvas_file(
         cls,
         file_path: str,
         *,
@@ -537,7 +547,7 @@ class GVASFile(BaseModel):
             properties=properties,
         )
 
-    def write_file(self, output_file, uncompressed_output_file) -> None:
+    def serialize_to_gvas_file(self, output_file, uncompressed_output_file) -> None:
         with open(output_file, "wb") as f:
             self.write(f, uncompressed_output_file)
 

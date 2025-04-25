@@ -56,7 +56,7 @@ class PropertyFactory:
             StructProperty,
             ArrayProperty,
         )
-        from gvas.properties.numerical_property import (
+        from gvas.properties.numerical_properties import (
             BoolProperty,
             ByteProperty,
             Int8Property,

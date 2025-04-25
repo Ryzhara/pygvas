@@ -27,25 +27,18 @@ def main():
     args = parse_arguments()
 
     try:
-        gvas_file = GVASFile.read_gvas_file(
+        gvas_file: GVASFile = GVASFile.deserialize_gvas_file(
             args.input_file, deserialization_hints=args.hints_file
         )
-
     except Exception as e:
-        print(f"Error processing file: {e}", file=sys.stderr)
+        print(f"Error processing input_file: {e}", file=sys.stderr)
         sys.exit(1)
 
     try:
-        gvas_file_adaptor = TypeAdapter(GVASFile)
-        gvas_file_dict = gvas_file_adaptor.dump_python(gvas_file, exclude_none=True)
-        pydantic_json_content = json.dumps(gvas_file_dict, indent=2)
-        with open(args.output_file, "w") as f:
-            f.write(pydantic_json_content)
-
+        gvas_file.serialize_to_json_file(args.output_file)
     except Exception as e:
         print(f"Error writing to output file: {e}", file=sys.stderr)
         sys.exit(1)
-
     print(
         f"Successfully processed the UE GVAS file '{args.input_file}' into '{args.output_file}'."
     )
