@@ -4,7 +4,7 @@ import sys
 
 from pydantic import TypeAdapter
 
-from gvas import GVASFile
+from gvas.gvas_file import GVASFile
 
 
 # python gvas2json.py input.txt output.txt
@@ -21,7 +21,7 @@ def main():
     args = parse_arguments()
 
     try:
-        gvas_file, _decompressed_data = GVASFile.read_file(args.input_file)
+        gvas_file, _decompressed_data = GVASFile.read_gvas_file(args.input_file)
 
     except FileNotFoundError:
         print(f"Error: Input file '{args.input_file}' not found.", file=sys.stderr)

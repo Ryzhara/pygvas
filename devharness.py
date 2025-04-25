@@ -176,7 +176,7 @@ def test_gvas_file(test_file: str):
     gvas_file = None
     try:
         gvas_file: GVASFile
-        gvas_file, decompressed_data = GVASFile.read_file(test_file)
+        gvas_file, decompressed_data = GVASFile.read_gvas_file(test_file)
     except Exception as e:
         print(f"Failed to load {test_file}: {e}")
         raise e

@@ -8,11 +8,12 @@ Key differences from Rust version:
 - Uses dataclasses for structured data
 """
 
+import json
 import zlib
 from io import BytesIO
 from typing import Annotated
 
-from pydantic import BaseModel
+from pydantic import BaseModel, TypeAdapter
 from pydantic import field_serializer, field_validator, Discriminator
 from pydantic.dataclasses import dataclass
 
@@ -370,7 +371,24 @@ class GVASFile(BaseModel):
             )
 
     @classmethod
-    def read_file(cls, file_path: str) -> ("GVASFile", BinaryIO):
+    def deserialize_json_file(cls, json_file_path: str) -> "GVASFile":
+
+        with open(json_file_path, "r") as f:
+            json_content = json.load(f)
+            gvas_file_adaptor = TypeAdapter(GVASFile)
+            gvas_file: GVASFile = gvas_file_adaptor.validate_python(json_content)
+
+            # These steps are required to correctly handle float/double
+            # differences between UE4 and UE5 when writing/reading data.
+            EngineVersionTool.set_custom_versions(gvas_file.header.custom_versions)
+            EngineVersionTool.set_engine_version(
+                gvas_file.header.engine_version.major,
+                gvas_file.header.engine_version.minor,
+            )
+            return gvas_file
+
+    @classmethod
+    def read_gvas_file(cls, file_path: str) -> ("GVASFile", BinaryIO):
         with open(file_path, "rb") as stream:
             game_file_format = GameFileFormat()
             game_file_format.deserialize_game_version(stream)

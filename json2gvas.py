@@ -4,7 +4,7 @@ import sys
 
 from pydantic import TypeAdapter
 
-from gvas import GVASFile
+from gvas.gvas_file import GVASFile
 
 
 # python gvas2json.py input.txt output.txt
@@ -21,8 +21,7 @@ def main():
     args = parse_arguments()
 
     try:
-        with open(args.input_file, "r") as f:
-            pydantic_json_content_dict = json.load(f)
+        gvas_file: GVASFile = GVASFile.deserialize_json_file(args.input_file)
     except FileNotFoundError:
         print(f"Error: Input file '{args.input_file}' not found.", file=sys.stderr)
         sys.exit(1)
@@ -31,11 +30,6 @@ def main():
         sys.exit(1)
 
     try:
-        gvas_file_adaptor = TypeAdapter(GVASFile)
-        gvas_file: GVASFile = gvas_file_adaptor.validate_python(
-            pydantic_json_content_dict
-        )
-        gvas_file = GVASFile(**pydantic_json_content_dict)
         gvas_file.write_file(args.output_file, None)
     except Exception as e:
         print(f"Error writing to output file: {e}", file=sys.stderr)
