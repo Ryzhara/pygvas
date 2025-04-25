@@ -110,39 +110,39 @@
                         "ArrayProperty": "#/$defs/ArrayProperty",
                         "BoolProperty": "#/$defs/BoolProperty",
                         "ByteProperty": "#/$defs/ByteProperty",
-                        "DateTime": "#/$defs/DateTimeProperty",
+                        "DateTime": "#/$defs/DateTimeStruct",
                         "DelegateProperty": "#/$defs/DelegateProperty",
                         "DoubleProperty": "#/$defs/DoubleProperty",
                         "EnumProperty": "#/$defs/EnumProperty",
                         "FieldPath": "#/$defs/FieldPath",
                         "FieldPathProperty": "#/$defs/FieldPathProperty",
                         "FloatProperty": "#/$defs/FloatProperty",
-                        "Guid": "#/$defs/GuidProperty",
+                        "Guid": "#/$defs/GuidStruct",
                         "Int16Property": "#/$defs/Int16Property",
                         "Int32Property": "#/$defs/Int32Property",
                         "Int64Property": "#/$defs/Int64Property",
                         "Int8Property": "#/$defs/Int8Property",
-                        "IntPoint": "#/$defs/IntPointProperty",
+                        "IntPoint": "#/$defs/IntPointStruct",
                         "IntProperty": "#/$defs/IntProperty",
-                        "LinearColor": "#/$defs/LinearColorProperty",
+                        "LinearColor": "#/$defs/LinearColorStruct",
                         "MapProperty": "#/$defs/MapProperty",
                         "MulticastInlineDelegateProperty": "#/$defs/MulticastInlineDelegateProperty",
                         "MulticastSparseDelegateProperty": "#/$defs/MulticastSparseDelegateProperty",
                         "NameProperty": "#/$defs/NameProperty",
                         "ObjectProperty": "#/$defs/ObjectProperty",
-                        "Quat": "#/$defs/QuatProperty",
-                        "Rotator": "#/$defs/RotatorProperty",
+                        "Quat": "#/$defs/QuatStruct",
+                        "Rotator": "#/$defs/RotatorStruct",
                         "SetProperty": "#/$defs/SetProperty",
                         "StrProperty": "#/$defs/StrProperty",
                         "StructProperty": "#/$defs/StructProperty",
                         "TextProperty": "#/$defs/TextProperty",
-                        "Timespan": "#/$defs/TimespanProperty",
+                        "Timespan": "#/$defs/TimespanStruct",
                         "UInt16Property": "#/$defs/UInt16Property",
                         "UInt32Property": "#/$defs/UInt32Property",
                         "UInt64Property": "#/$defs/UInt64Property",
                         "UInt8Property": "#/$defs/UInt8Property",
-                        "Vector": "#/$defs/VectorProperty",
-                        "Vector2D": "#/$defs/Vector2DProperty"
+                        "Vector": "#/$defs/VectorStruct",
+                        "Vector2D": "#/$defs/Vector2DStruct"
                       },
                       "propertyName": "type"
                     },
@@ -187,31 +187,31 @@
                         "$ref": "#/$defs/UInt64Property"
                       },
                       {
-                        "$ref": "#/$defs/DateTimeProperty"
+                        "$ref": "#/$defs/DateTimeStruct"
                       },
                       {
-                        "$ref": "#/$defs/GuidProperty"
+                        "$ref": "#/$defs/GuidStruct"
                       },
                       {
-                        "$ref": "#/$defs/TimespanProperty"
+                        "$ref": "#/$defs/TimespanStruct"
                       },
                       {
-                        "$ref": "#/$defs/IntPointProperty"
+                        "$ref": "#/$defs/IntPointStruct"
                       },
                       {
-                        "$ref": "#/$defs/LinearColorProperty"
+                        "$ref": "#/$defs/LinearColorStruct"
                       },
                       {
-                        "$ref": "#/$defs/RotatorProperty"
+                        "$ref": "#/$defs/RotatorStruct"
                       },
                       {
-                        "$ref": "#/$defs/QuatProperty"
+                        "$ref": "#/$defs/QuatStruct"
                       },
                       {
-                        "$ref": "#/$defs/VectorProperty"
+                        "$ref": "#/$defs/VectorStruct"
                       },
                       {
-                        "$ref": "#/$defs/Vector2DProperty"
+                        "$ref": "#/$defs/Vector2DStruct"
                       },
                       {
                         "$ref": "#/$defs/SetProperty"
@@ -361,7 +361,7 @@
         "date_time": {
           "anyOf": [
             {
-              "$ref": "#/$defs/DateTime"
+              "$ref": "#/$defs/LightWeightDateTime"
             },
             {
               "type": "null"
@@ -407,7 +407,7 @@
         "source_date_time": {
           "anyOf": [
             {
-              "$ref": "#/$defs/DateTime"
+              "$ref": "#/$defs/LightWeightDateTime"
             },
             {
               "type": "null"
@@ -568,7 +568,7 @@
         "source_date_time": {
           "anyOf": [
             {
-              "$ref": "#/$defs/DateTime"
+              "$ref": "#/$defs/LightWeightDateTime"
             },
             {
               "type": "null"
@@ -719,7 +719,6 @@
       "type": "object"
     },
     "CompressionType": {
-      "description": "Compression types used in Palworld custom file format",
       "enum": [
         0,
         48,
@@ -730,23 +729,7 @@
       "title": "CompressionType",
       "type": "integer"
     },
-    "DateTime": {
-      "properties": {
-        "ticks": {
-          "default": 0,
-          "title": "Ticks",
-          "type": "integer"
-        },
-        "comment": {
-          "default": null,
-          "title": "Comment",
-          "type": "string"
-        }
-      },
-      "title": "DateTime",
-      "type": "object"
-    },
-    "DateTimeProperty": {
+    "DateTimeStruct": {
       "properties": {
         "type": {
           "const": "DateTime",
@@ -765,7 +748,7 @@
           "type": "string"
         }
       },
-      "title": "DateTimeProperty",
+      "title": "DateTimeStruct",
       "type": "object"
     },
     "DateTimeStyle": {
@@ -907,33 +890,31 @@
     "FEngineVersion": {
       "properties": {
         "major": {
+          "default": 0,
           "title": "Major",
           "type": "integer"
         },
         "minor": {
+          "default": 0,
           "title": "Minor",
           "type": "integer"
         },
         "patch": {
+          "default": 0,
           "title": "Patch",
           "type": "integer"
         },
         "change_list": {
+          "default": 0,
           "title": "Change List",
           "type": "integer"
         },
         "branch": {
+          "default": "un.known",
           "title": "Branch",
           "type": "string"
         }
       },
-      "required": [
-        "major",
-        "minor",
-        "patch",
-        "change_list",
-        "branch"
-      ],
       "title": "FEngineVersion",
       "type": "object"
     },
@@ -1140,7 +1121,6 @@
       "type": "object"
     },
     "GameVersion": {
-      "description": "Supported game versions",
       "enum": [
         0,
         1,
@@ -1149,7 +1129,7 @@
       "title": "GameVersion",
       "type": "integer"
     },
-    "GuidProperty": {
+    "GuidStruct": {
       "properties": {
         "type": {
           "const": "Guid",
@@ -1170,7 +1150,7 @@
           "title": "Guid"
         }
       },
-      "title": "GuidProperty",
+      "title": "GuidStruct",
       "type": "object"
     },
     "GvasHeader": {
@@ -1298,7 +1278,7 @@
       "title": "Int8Property",
       "type": "object"
     },
-    "IntPointProperty": {
+    "IntPointStruct": {
       "properties": {
         "type": {
           "const": "IntPoint",
@@ -1317,7 +1297,7 @@
           "type": "integer"
         }
       },
-      "title": "IntPointProperty",
+      "title": "IntPointStruct",
       "type": "object"
     },
     "IntProperty": {
@@ -1337,7 +1317,23 @@
       "title": "IntProperty",
       "type": "object"
     },
-    "LinearColorProperty": {
+    "LightWeightDateTime": {
+      "properties": {
+        "ticks": {
+          "default": 0,
+          "title": "Ticks",
+          "type": "integer"
+        },
+        "comment": {
+          "default": null,
+          "title": "Comment",
+          "type": "string"
+        }
+      },
+      "title": "LightWeightDateTime",
+      "type": "object"
+    },
+    "LinearColorStruct": {
       "properties": {
         "type": {
           "const": "LinearColor",
@@ -1366,11 +1362,11 @@
           "type": "number"
         }
       },
-      "title": "LinearColorProperty",
+      "title": "LinearColorStruct",
       "type": "object"
     },
     "MapProperty": {
-      "description": "A property that holds a key-value mapping",
+      "description": "A property that holds a key-value mapping\nFor MapProperty, we store tuples of (key, value) to avoid complexity of\ntrying to boil things down to immutable types and then reverse that.\nThat DOES mean the end user can encounter collisions if they do it wrong.\n\nAnd the tuples get serialized as a list of two items: [key, value]",
       "properties": {
         "type": {
           "const": "MapProperty",
@@ -1389,39 +1385,39 @@
                   "ArrayProperty": "#/$defs/ArrayProperty",
                   "BoolProperty": "#/$defs/BoolProperty",
                   "ByteProperty": "#/$defs/ByteProperty",
-                  "DateTime": "#/$defs/DateTimeProperty",
+                  "DateTime": "#/$defs/DateTimeStruct",
                   "DelegateProperty": "#/$defs/DelegateProperty",
                   "DoubleProperty": "#/$defs/DoubleProperty",
                   "EnumProperty": "#/$defs/EnumProperty",
                   "FieldPath": "#/$defs/FieldPath",
                   "FieldPathProperty": "#/$defs/FieldPathProperty",
                   "FloatProperty": "#/$defs/FloatProperty",
-                  "Guid": "#/$defs/GuidProperty",
+                  "Guid": "#/$defs/GuidStruct",
                   "Int16Property": "#/$defs/Int16Property",
                   "Int32Property": "#/$defs/Int32Property",
                   "Int64Property": "#/$defs/Int64Property",
                   "Int8Property": "#/$defs/Int8Property",
-                  "IntPoint": "#/$defs/IntPointProperty",
+                  "IntPoint": "#/$defs/IntPointStruct",
                   "IntProperty": "#/$defs/IntProperty",
-                  "LinearColor": "#/$defs/LinearColorProperty",
+                  "LinearColor": "#/$defs/LinearColorStruct",
                   "MapProperty": "#/$defs/MapProperty",
                   "MulticastInlineDelegateProperty": "#/$defs/MulticastInlineDelegateProperty",
                   "MulticastSparseDelegateProperty": "#/$defs/MulticastSparseDelegateProperty",
                   "NameProperty": "#/$defs/NameProperty",
                   "ObjectProperty": "#/$defs/ObjectProperty",
-                  "Quat": "#/$defs/QuatProperty",
-                  "Rotator": "#/$defs/RotatorProperty",
+                  "Quat": "#/$defs/QuatStruct",
+                  "Rotator": "#/$defs/RotatorStruct",
                   "SetProperty": "#/$defs/SetProperty",
                   "StrProperty": "#/$defs/StrProperty",
                   "StructProperty": "#/$defs/StructProperty",
                   "TextProperty": "#/$defs/TextProperty",
-                  "Timespan": "#/$defs/TimespanProperty",
+                  "Timespan": "#/$defs/TimespanStruct",
                   "UInt16Property": "#/$defs/UInt16Property",
                   "UInt32Property": "#/$defs/UInt32Property",
                   "UInt64Property": "#/$defs/UInt64Property",
                   "UInt8Property": "#/$defs/UInt8Property",
-                  "Vector": "#/$defs/VectorProperty",
-                  "Vector2D": "#/$defs/Vector2DProperty"
+                  "Vector": "#/$defs/VectorStruct",
+                  "Vector2D": "#/$defs/Vector2DStruct"
                 },
                 "propertyName": "type"
               },
@@ -1466,31 +1462,31 @@
                   "$ref": "#/$defs/UInt64Property"
                 },
                 {
-                  "$ref": "#/$defs/DateTimeProperty"
+                  "$ref": "#/$defs/DateTimeStruct"
                 },
                 {
-                  "$ref": "#/$defs/GuidProperty"
+                  "$ref": "#/$defs/GuidStruct"
                 },
                 {
-                  "$ref": "#/$defs/TimespanProperty"
+                  "$ref": "#/$defs/TimespanStruct"
                 },
                 {
-                  "$ref": "#/$defs/IntPointProperty"
+                  "$ref": "#/$defs/IntPointStruct"
                 },
                 {
-                  "$ref": "#/$defs/LinearColorProperty"
+                  "$ref": "#/$defs/LinearColorStruct"
                 },
                 {
-                  "$ref": "#/$defs/RotatorProperty"
+                  "$ref": "#/$defs/RotatorStruct"
                 },
                 {
-                  "$ref": "#/$defs/QuatProperty"
+                  "$ref": "#/$defs/QuatStruct"
                 },
                 {
-                  "$ref": "#/$defs/VectorProperty"
+                  "$ref": "#/$defs/VectorStruct"
                 },
                 {
-                  "$ref": "#/$defs/Vector2DProperty"
+                  "$ref": "#/$defs/Vector2DStruct"
                 },
                 {
                   "$ref": "#/$defs/SetProperty"
@@ -1537,7 +1533,7 @@
               ]
             }
           ],
-          "default": "",
+          "default": null,
           "title": "Key Type"
         },
         "value_type": {
@@ -1557,39 +1553,39 @@
                   "ArrayProperty": "#/$defs/ArrayProperty",
                   "BoolProperty": "#/$defs/BoolProperty",
                   "ByteProperty": "#/$defs/ByteProperty",
-                  "DateTime": "#/$defs/DateTimeProperty",
+                  "DateTime": "#/$defs/DateTimeStruct",
                   "DelegateProperty": "#/$defs/DelegateProperty",
                   "DoubleProperty": "#/$defs/DoubleProperty",
                   "EnumProperty": "#/$defs/EnumProperty",
                   "FieldPath": "#/$defs/FieldPath",
                   "FieldPathProperty": "#/$defs/FieldPathProperty",
                   "FloatProperty": "#/$defs/FloatProperty",
-                  "Guid": "#/$defs/GuidProperty",
+                  "Guid": "#/$defs/GuidStruct",
                   "Int16Property": "#/$defs/Int16Property",
                   "Int32Property": "#/$defs/Int32Property",
                   "Int64Property": "#/$defs/Int64Property",
                   "Int8Property": "#/$defs/Int8Property",
-                  "IntPoint": "#/$defs/IntPointProperty",
+                  "IntPoint": "#/$defs/IntPointStruct",
                   "IntProperty": "#/$defs/IntProperty",
-                  "LinearColor": "#/$defs/LinearColorProperty",
+                  "LinearColor": "#/$defs/LinearColorStruct",
                   "MapProperty": "#/$defs/MapProperty",
                   "MulticastInlineDelegateProperty": "#/$defs/MulticastInlineDelegateProperty",
                   "MulticastSparseDelegateProperty": "#/$defs/MulticastSparseDelegateProperty",
                   "NameProperty": "#/$defs/NameProperty",
                   "ObjectProperty": "#/$defs/ObjectProperty",
-                  "Quat": "#/$defs/QuatProperty",
-                  "Rotator": "#/$defs/RotatorProperty",
+                  "Quat": "#/$defs/QuatStruct",
+                  "Rotator": "#/$defs/RotatorStruct",
                   "SetProperty": "#/$defs/SetProperty",
                   "StrProperty": "#/$defs/StrProperty",
                   "StructProperty": "#/$defs/StructProperty",
                   "TextProperty": "#/$defs/TextProperty",
-                  "Timespan": "#/$defs/TimespanProperty",
+                  "Timespan": "#/$defs/TimespanStruct",
                   "UInt16Property": "#/$defs/UInt16Property",
                   "UInt32Property": "#/$defs/UInt32Property",
                   "UInt64Property": "#/$defs/UInt64Property",
                   "UInt8Property": "#/$defs/UInt8Property",
-                  "Vector": "#/$defs/VectorProperty",
-                  "Vector2D": "#/$defs/Vector2DProperty"
+                  "Vector": "#/$defs/VectorStruct",
+                  "Vector2D": "#/$defs/Vector2DStruct"
                 },
                 "propertyName": "type"
               },
@@ -1634,31 +1630,31 @@
                   "$ref": "#/$defs/UInt64Property"
                 },
                 {
-                  "$ref": "#/$defs/DateTimeProperty"
+                  "$ref": "#/$defs/DateTimeStruct"
                 },
                 {
-                  "$ref": "#/$defs/GuidProperty"
+                  "$ref": "#/$defs/GuidStruct"
                 },
                 {
-                  "$ref": "#/$defs/TimespanProperty"
+                  "$ref": "#/$defs/TimespanStruct"
                 },
                 {
-                  "$ref": "#/$defs/IntPointProperty"
+                  "$ref": "#/$defs/IntPointStruct"
                 },
                 {
-                  "$ref": "#/$defs/LinearColorProperty"
+                  "$ref": "#/$defs/LinearColorStruct"
                 },
                 {
-                  "$ref": "#/$defs/RotatorProperty"
+                  "$ref": "#/$defs/RotatorStruct"
                 },
                 {
-                  "$ref": "#/$defs/QuatProperty"
+                  "$ref": "#/$defs/QuatStruct"
                 },
                 {
-                  "$ref": "#/$defs/VectorProperty"
+                  "$ref": "#/$defs/VectorStruct"
                 },
                 {
-                  "$ref": "#/$defs/Vector2DProperty"
+                  "$ref": "#/$defs/Vector2DStruct"
                 },
                 {
                   "$ref": "#/$defs/SetProperty"
@@ -1705,7 +1701,7 @@
               ]
             }
           ],
-          "default": "",
+          "default": null,
           "title": "Value Type"
         },
         "allocation_flags": {
@@ -1730,39 +1726,39 @@
                         "ArrayProperty": "#/$defs/ArrayProperty",
                         "BoolProperty": "#/$defs/BoolProperty",
                         "ByteProperty": "#/$defs/ByteProperty",
-                        "DateTime": "#/$defs/DateTimeProperty",
+                        "DateTime": "#/$defs/DateTimeStruct",
                         "DelegateProperty": "#/$defs/DelegateProperty",
                         "DoubleProperty": "#/$defs/DoubleProperty",
                         "EnumProperty": "#/$defs/EnumProperty",
                         "FieldPath": "#/$defs/FieldPath",
                         "FieldPathProperty": "#/$defs/FieldPathProperty",
                         "FloatProperty": "#/$defs/FloatProperty",
-                        "Guid": "#/$defs/GuidProperty",
+                        "Guid": "#/$defs/GuidStruct",
                         "Int16Property": "#/$defs/Int16Property",
                         "Int32Property": "#/$defs/Int32Property",
                         "Int64Property": "#/$defs/Int64Property",
                         "Int8Property": "#/$defs/Int8Property",
-                        "IntPoint": "#/$defs/IntPointProperty",
+                        "IntPoint": "#/$defs/IntPointStruct",
                         "IntProperty": "#/$defs/IntProperty",
-                        "LinearColor": "#/$defs/LinearColorProperty",
+                        "LinearColor": "#/$defs/LinearColorStruct",
                         "MapProperty": "#/$defs/MapProperty",
                         "MulticastInlineDelegateProperty": "#/$defs/MulticastInlineDelegateProperty",
                         "MulticastSparseDelegateProperty": "#/$defs/MulticastSparseDelegateProperty",
                         "NameProperty": "#/$defs/NameProperty",
                         "ObjectProperty": "#/$defs/ObjectProperty",
-                        "Quat": "#/$defs/QuatProperty",
-                        "Rotator": "#/$defs/RotatorProperty",
+                        "Quat": "#/$defs/QuatStruct",
+                        "Rotator": "#/$defs/RotatorStruct",
                         "SetProperty": "#/$defs/SetProperty",
                         "StrProperty": "#/$defs/StrProperty",
                         "StructProperty": "#/$defs/StructProperty",
                         "TextProperty": "#/$defs/TextProperty",
-                        "Timespan": "#/$defs/TimespanProperty",
+                        "Timespan": "#/$defs/TimespanStruct",
                         "UInt16Property": "#/$defs/UInt16Property",
                         "UInt32Property": "#/$defs/UInt32Property",
                         "UInt64Property": "#/$defs/UInt64Property",
                         "UInt8Property": "#/$defs/UInt8Property",
-                        "Vector": "#/$defs/VectorProperty",
-                        "Vector2D": "#/$defs/Vector2DProperty"
+                        "Vector": "#/$defs/VectorStruct",
+                        "Vector2D": "#/$defs/Vector2DStruct"
                       },
                       "propertyName": "type"
                     },
@@ -1807,31 +1803,31 @@
                         "$ref": "#/$defs/UInt64Property"
                       },
                       {
-                        "$ref": "#/$defs/DateTimeProperty"
+                        "$ref": "#/$defs/DateTimeStruct"
                       },
                       {
-                        "$ref": "#/$defs/GuidProperty"
+                        "$ref": "#/$defs/GuidStruct"
                       },
                       {
-                        "$ref": "#/$defs/TimespanProperty"
+                        "$ref": "#/$defs/TimespanStruct"
                       },
                       {
-                        "$ref": "#/$defs/IntPointProperty"
+                        "$ref": "#/$defs/IntPointStruct"
                       },
                       {
-                        "$ref": "#/$defs/LinearColorProperty"
+                        "$ref": "#/$defs/LinearColorStruct"
                       },
                       {
-                        "$ref": "#/$defs/RotatorProperty"
+                        "$ref": "#/$defs/RotatorStruct"
                       },
                       {
-                        "$ref": "#/$defs/QuatProperty"
+                        "$ref": "#/$defs/QuatStruct"
                       },
                       {
-                        "$ref": "#/$defs/VectorProperty"
+                        "$ref": "#/$defs/VectorStruct"
                       },
                       {
-                        "$ref": "#/$defs/Vector2DProperty"
+                        "$ref": "#/$defs/Vector2DStruct"
                       },
                       {
                         "$ref": "#/$defs/SetProperty"
@@ -1896,39 +1892,39 @@
                         "ArrayProperty": "#/$defs/ArrayProperty",
                         "BoolProperty": "#/$defs/BoolProperty",
                         "ByteProperty": "#/$defs/ByteProperty",
-                        "DateTime": "#/$defs/DateTimeProperty",
+                        "DateTime": "#/$defs/DateTimeStruct",
                         "DelegateProperty": "#/$defs/DelegateProperty",
                         "DoubleProperty": "#/$defs/DoubleProperty",
                         "EnumProperty": "#/$defs/EnumProperty",
                         "FieldPath": "#/$defs/FieldPath",
                         "FieldPathProperty": "#/$defs/FieldPathProperty",
                         "FloatProperty": "#/$defs/FloatProperty",
-                        "Guid": "#/$defs/GuidProperty",
+                        "Guid": "#/$defs/GuidStruct",
                         "Int16Property": "#/$defs/Int16Property",
                         "Int32Property": "#/$defs/Int32Property",
                         "Int64Property": "#/$defs/Int64Property",
                         "Int8Property": "#/$defs/Int8Property",
-                        "IntPoint": "#/$defs/IntPointProperty",
+                        "IntPoint": "#/$defs/IntPointStruct",
                         "IntProperty": "#/$defs/IntProperty",
-                        "LinearColor": "#/$defs/LinearColorProperty",
+                        "LinearColor": "#/$defs/LinearColorStruct",
                         "MapProperty": "#/$defs/MapProperty",
                         "MulticastInlineDelegateProperty": "#/$defs/MulticastInlineDelegateProperty",
                         "MulticastSparseDelegateProperty": "#/$defs/MulticastSparseDelegateProperty",
                         "NameProperty": "#/$defs/NameProperty",
                         "ObjectProperty": "#/$defs/ObjectProperty",
-                        "Quat": "#/$defs/QuatProperty",
-                        "Rotator": "#/$defs/RotatorProperty",
+                        "Quat": "#/$defs/QuatStruct",
+                        "Rotator": "#/$defs/RotatorStruct",
                         "SetProperty": "#/$defs/SetProperty",
                         "StrProperty": "#/$defs/StrProperty",
                         "StructProperty": "#/$defs/StructProperty",
                         "TextProperty": "#/$defs/TextProperty",
-                        "Timespan": "#/$defs/TimespanProperty",
+                        "Timespan": "#/$defs/TimespanStruct",
                         "UInt16Property": "#/$defs/UInt16Property",
                         "UInt32Property": "#/$defs/UInt32Property",
                         "UInt64Property": "#/$defs/UInt64Property",
                         "UInt8Property": "#/$defs/UInt8Property",
-                        "Vector": "#/$defs/VectorProperty",
-                        "Vector2D": "#/$defs/Vector2DProperty"
+                        "Vector": "#/$defs/VectorStruct",
+                        "Vector2D": "#/$defs/Vector2DStruct"
                       },
                       "propertyName": "type"
                     },
@@ -1973,31 +1969,31 @@
                         "$ref": "#/$defs/UInt64Property"
                       },
                       {
-                        "$ref": "#/$defs/DateTimeProperty"
+                        "$ref": "#/$defs/DateTimeStruct"
                       },
                       {
-                        "$ref": "#/$defs/GuidProperty"
+                        "$ref": "#/$defs/GuidStruct"
                       },
                       {
-                        "$ref": "#/$defs/TimespanProperty"
+                        "$ref": "#/$defs/TimespanStruct"
                       },
                       {
-                        "$ref": "#/$defs/IntPointProperty"
+                        "$ref": "#/$defs/IntPointStruct"
                       },
                       {
-                        "$ref": "#/$defs/LinearColorProperty"
+                        "$ref": "#/$defs/LinearColorStruct"
                       },
                       {
-                        "$ref": "#/$defs/RotatorProperty"
+                        "$ref": "#/$defs/RotatorStruct"
                       },
                       {
-                        "$ref": "#/$defs/QuatProperty"
+                        "$ref": "#/$defs/QuatStruct"
                       },
                       {
-                        "$ref": "#/$defs/VectorProperty"
+                        "$ref": "#/$defs/VectorStruct"
                       },
                       {
-                        "$ref": "#/$defs/Vector2DProperty"
+                        "$ref": "#/$defs/Vector2DStruct"
                       },
                       {
                         "$ref": "#/$defs/SetProperty"
@@ -2324,7 +2320,7 @@
       "title": "OrderedFormat",
       "type": "object"
     },
-    "QuatProperty": {
+    "QuatStruct": {
       "properties": {
         "type": {
           "const": "Quat",
@@ -2353,10 +2349,10 @@
           "type": "number"
         }
       },
-      "title": "QuatProperty",
+      "title": "QuatStruct",
       "type": "object"
     },
-    "RotatorProperty": {
+    "RotatorStruct": {
       "properties": {
         "type": {
           "const": "Rotator",
@@ -2380,7 +2376,7 @@
           "type": "number"
         }
       },
-      "title": "RotatorProperty",
+      "title": "RotatorStruct",
       "type": "object"
     },
     "SetProperty": {
@@ -2418,39 +2414,39 @@
                     "ArrayProperty": "#/$defs/ArrayProperty",
                     "BoolProperty": "#/$defs/BoolProperty",
                     "ByteProperty": "#/$defs/ByteProperty",
-                    "DateTime": "#/$defs/DateTimeProperty",
+                    "DateTime": "#/$defs/DateTimeStruct",
                     "DelegateProperty": "#/$defs/DelegateProperty",
                     "DoubleProperty": "#/$defs/DoubleProperty",
                     "EnumProperty": "#/$defs/EnumProperty",
                     "FieldPath": "#/$defs/FieldPath",
                     "FieldPathProperty": "#/$defs/FieldPathProperty",
                     "FloatProperty": "#/$defs/FloatProperty",
-                    "Guid": "#/$defs/GuidProperty",
+                    "Guid": "#/$defs/GuidStruct",
                     "Int16Property": "#/$defs/Int16Property",
                     "Int32Property": "#/$defs/Int32Property",
                     "Int64Property": "#/$defs/Int64Property",
                     "Int8Property": "#/$defs/Int8Property",
-                    "IntPoint": "#/$defs/IntPointProperty",
+                    "IntPoint": "#/$defs/IntPointStruct",
                     "IntProperty": "#/$defs/IntProperty",
-                    "LinearColor": "#/$defs/LinearColorProperty",
+                    "LinearColor": "#/$defs/LinearColorStruct",
                     "MapProperty": "#/$defs/MapProperty",
                     "MulticastInlineDelegateProperty": "#/$defs/MulticastInlineDelegateProperty",
                     "MulticastSparseDelegateProperty": "#/$defs/MulticastSparseDelegateProperty",
                     "NameProperty": "#/$defs/NameProperty",
                     "ObjectProperty": "#/$defs/ObjectProperty",
-                    "Quat": "#/$defs/QuatProperty",
-                    "Rotator": "#/$defs/RotatorProperty",
+                    "Quat": "#/$defs/QuatStruct",
+                    "Rotator": "#/$defs/RotatorStruct",
                     "SetProperty": "#/$defs/SetProperty",
                     "StrProperty": "#/$defs/StrProperty",
                     "StructProperty": "#/$defs/StructProperty",
                     "TextProperty": "#/$defs/TextProperty",
-                    "Timespan": "#/$defs/TimespanProperty",
+                    "Timespan": "#/$defs/TimespanStruct",
                     "UInt16Property": "#/$defs/UInt16Property",
                     "UInt32Property": "#/$defs/UInt32Property",
                     "UInt64Property": "#/$defs/UInt64Property",
                     "UInt8Property": "#/$defs/UInt8Property",
-                    "Vector": "#/$defs/VectorProperty",
-                    "Vector2D": "#/$defs/Vector2DProperty"
+                    "Vector": "#/$defs/VectorStruct",
+                    "Vector2D": "#/$defs/Vector2DStruct"
                   },
                   "propertyName": "type"
                 },
@@ -2495,31 +2491,31 @@
                     "$ref": "#/$defs/UInt64Property"
                   },
                   {
-                    "$ref": "#/$defs/DateTimeProperty"
+                    "$ref": "#/$defs/DateTimeStruct"
                   },
                   {
-                    "$ref": "#/$defs/GuidProperty"
+                    "$ref": "#/$defs/GuidStruct"
                   },
                   {
-                    "$ref": "#/$defs/TimespanProperty"
+                    "$ref": "#/$defs/TimespanStruct"
                   },
                   {
-                    "$ref": "#/$defs/IntPointProperty"
+                    "$ref": "#/$defs/IntPointStruct"
                   },
                   {
-                    "$ref": "#/$defs/LinearColorProperty"
+                    "$ref": "#/$defs/LinearColorStruct"
                   },
                   {
-                    "$ref": "#/$defs/RotatorProperty"
+                    "$ref": "#/$defs/RotatorStruct"
                   },
                   {
-                    "$ref": "#/$defs/QuatProperty"
+                    "$ref": "#/$defs/QuatStruct"
                   },
                   {
-                    "$ref": "#/$defs/VectorProperty"
+                    "$ref": "#/$defs/VectorStruct"
                   },
                   {
-                    "$ref": "#/$defs/Vector2DProperty"
+                    "$ref": "#/$defs/Vector2DStruct"
                   },
                   {
                     "$ref": "#/$defs/SetProperty"
@@ -2680,39 +2676,39 @@
                     "ArrayProperty": "#/$defs/ArrayProperty",
                     "BoolProperty": "#/$defs/BoolProperty",
                     "ByteProperty": "#/$defs/ByteProperty",
-                    "DateTime": "#/$defs/DateTimeProperty",
+                    "DateTime": "#/$defs/DateTimeStruct",
                     "DelegateProperty": "#/$defs/DelegateProperty",
                     "DoubleProperty": "#/$defs/DoubleProperty",
                     "EnumProperty": "#/$defs/EnumProperty",
                     "FieldPath": "#/$defs/FieldPath",
                     "FieldPathProperty": "#/$defs/FieldPathProperty",
                     "FloatProperty": "#/$defs/FloatProperty",
-                    "Guid": "#/$defs/GuidProperty",
+                    "Guid": "#/$defs/GuidStruct",
                     "Int16Property": "#/$defs/Int16Property",
                     "Int32Property": "#/$defs/Int32Property",
                     "Int64Property": "#/$defs/Int64Property",
                     "Int8Property": "#/$defs/Int8Property",
-                    "IntPoint": "#/$defs/IntPointProperty",
+                    "IntPoint": "#/$defs/IntPointStruct",
                     "IntProperty": "#/$defs/IntProperty",
-                    "LinearColor": "#/$defs/LinearColorProperty",
+                    "LinearColor": "#/$defs/LinearColorStruct",
                     "MapProperty": "#/$defs/MapProperty",
                     "MulticastInlineDelegateProperty": "#/$defs/MulticastInlineDelegateProperty",
                     "MulticastSparseDelegateProperty": "#/$defs/MulticastSparseDelegateProperty",
                     "NameProperty": "#/$defs/NameProperty",
                     "ObjectProperty": "#/$defs/ObjectProperty",
-                    "Quat": "#/$defs/QuatProperty",
-                    "Rotator": "#/$defs/RotatorProperty",
+                    "Quat": "#/$defs/QuatStruct",
+                    "Rotator": "#/$defs/RotatorStruct",
                     "SetProperty": "#/$defs/SetProperty",
                     "StrProperty": "#/$defs/StrProperty",
                     "StructProperty": "#/$defs/StructProperty",
                     "TextProperty": "#/$defs/TextProperty",
-                    "Timespan": "#/$defs/TimespanProperty",
+                    "Timespan": "#/$defs/TimespanStruct",
                     "UInt16Property": "#/$defs/UInt16Property",
                     "UInt32Property": "#/$defs/UInt32Property",
                     "UInt64Property": "#/$defs/UInt64Property",
                     "UInt8Property": "#/$defs/UInt8Property",
-                    "Vector": "#/$defs/VectorProperty",
-                    "Vector2D": "#/$defs/Vector2DProperty"
+                    "Vector": "#/$defs/VectorStruct",
+                    "Vector2D": "#/$defs/Vector2DStruct"
                   },
                   "propertyName": "type"
                 },
@@ -2757,31 +2753,31 @@
                     "$ref": "#/$defs/UInt64Property"
                   },
                   {
-                    "$ref": "#/$defs/DateTimeProperty"
+                    "$ref": "#/$defs/DateTimeStruct"
                   },
                   {
-                    "$ref": "#/$defs/GuidProperty"
+                    "$ref": "#/$defs/GuidStruct"
                   },
                   {
-                    "$ref": "#/$defs/TimespanProperty"
+                    "$ref": "#/$defs/TimespanStruct"
                   },
                   {
-                    "$ref": "#/$defs/IntPointProperty"
+                    "$ref": "#/$defs/IntPointStruct"
                   },
                   {
-                    "$ref": "#/$defs/LinearColorProperty"
+                    "$ref": "#/$defs/LinearColorStruct"
                   },
                   {
-                    "$ref": "#/$defs/RotatorProperty"
+                    "$ref": "#/$defs/RotatorStruct"
                   },
                   {
-                    "$ref": "#/$defs/QuatProperty"
+                    "$ref": "#/$defs/QuatStruct"
                   },
                   {
-                    "$ref": "#/$defs/VectorProperty"
+                    "$ref": "#/$defs/VectorStruct"
                   },
                   {
-                    "$ref": "#/$defs/Vector2DProperty"
+                    "$ref": "#/$defs/Vector2DStruct"
                   },
                   {
                     "$ref": "#/$defs/SetProperty"
@@ -2830,31 +2826,31 @@
               "type": "object"
             },
             {
-              "$ref": "#/$defs/DateTimeProperty"
+              "$ref": "#/$defs/DateTimeStruct"
             },
             {
-              "$ref": "#/$defs/GuidProperty"
+              "$ref": "#/$defs/GuidStruct"
             },
             {
-              "$ref": "#/$defs/TimespanProperty"
+              "$ref": "#/$defs/TimespanStruct"
             },
             {
-              "$ref": "#/$defs/IntPointProperty"
+              "$ref": "#/$defs/IntPointStruct"
             },
             {
-              "$ref": "#/$defs/LinearColorProperty"
+              "$ref": "#/$defs/LinearColorStruct"
             },
             {
-              "$ref": "#/$defs/RotatorProperty"
+              "$ref": "#/$defs/RotatorStruct"
             },
             {
-              "$ref": "#/$defs/QuatProperty"
+              "$ref": "#/$defs/QuatStruct"
             },
             {
-              "$ref": "#/$defs/VectorProperty"
+              "$ref": "#/$defs/VectorStruct"
             },
             {
-              "$ref": "#/$defs/Vector2DProperty"
+              "$ref": "#/$defs/Vector2DStruct"
             }
           ],
           "default": null,
@@ -2956,7 +2952,7 @@
       "title": "TextProperty",
       "type": "object"
     },
-    "TimespanProperty": {
+    "TimespanStruct": {
       "properties": {
         "type": {
           "const": "Timespan",
@@ -2975,7 +2971,7 @@
           "type": "string"
         }
       },
-      "title": "TimespanProperty",
+      "title": "TimespanStruct",
       "type": "object"
     },
     "Transform": {
@@ -3095,7 +3091,7 @@
       "title": "UInt8Property",
       "type": "object"
     },
-    "Vector2DProperty": {
+    "Vector2DStruct": {
       "properties": {
         "type": {
           "const": "Vector2D",
@@ -3114,10 +3110,10 @@
           "type": "number"
         }
       },
-      "title": "Vector2DProperty",
+      "title": "Vector2DStruct",
       "type": "object"
     },
-    "VectorProperty": {
+    "VectorStruct": {
       "properties": {
         "type": {
           "const": "Vector",
@@ -3141,7 +3137,7 @@
           "type": "number"
         }
       },
-      "title": "VectorProperty",
+      "title": "VectorStruct",
       "type": "object"
     }
   },
@@ -3160,39 +3156,39 @@
             "ArrayProperty": "#/$defs/ArrayProperty",
             "BoolProperty": "#/$defs/BoolProperty",
             "ByteProperty": "#/$defs/ByteProperty",
-            "DateTime": "#/$defs/DateTimeProperty",
+            "DateTime": "#/$defs/DateTimeStruct",
             "DelegateProperty": "#/$defs/DelegateProperty",
             "DoubleProperty": "#/$defs/DoubleProperty",
             "EnumProperty": "#/$defs/EnumProperty",
             "FieldPath": "#/$defs/FieldPath",
             "FieldPathProperty": "#/$defs/FieldPathProperty",
             "FloatProperty": "#/$defs/FloatProperty",
-            "Guid": "#/$defs/GuidProperty",
+            "Guid": "#/$defs/GuidStruct",
             "Int16Property": "#/$defs/Int16Property",
             "Int32Property": "#/$defs/Int32Property",
             "Int64Property": "#/$defs/Int64Property",
             "Int8Property": "#/$defs/Int8Property",
-            "IntPoint": "#/$defs/IntPointProperty",
+            "IntPoint": "#/$defs/IntPointStruct",
             "IntProperty": "#/$defs/IntProperty",
-            "LinearColor": "#/$defs/LinearColorProperty",
+            "LinearColor": "#/$defs/LinearColorStruct",
             "MapProperty": "#/$defs/MapProperty",
             "MulticastInlineDelegateProperty": "#/$defs/MulticastInlineDelegateProperty",
             "MulticastSparseDelegateProperty": "#/$defs/MulticastSparseDelegateProperty",
             "NameProperty": "#/$defs/NameProperty",
             "ObjectProperty": "#/$defs/ObjectProperty",
-            "Quat": "#/$defs/QuatProperty",
-            "Rotator": "#/$defs/RotatorProperty",
+            "Quat": "#/$defs/QuatStruct",
+            "Rotator": "#/$defs/RotatorStruct",
             "SetProperty": "#/$defs/SetProperty",
             "StrProperty": "#/$defs/StrProperty",
             "StructProperty": "#/$defs/StructProperty",
             "TextProperty": "#/$defs/TextProperty",
-            "Timespan": "#/$defs/TimespanProperty",
+            "Timespan": "#/$defs/TimespanStruct",
             "UInt16Property": "#/$defs/UInt16Property",
             "UInt32Property": "#/$defs/UInt32Property",
             "UInt64Property": "#/$defs/UInt64Property",
             "UInt8Property": "#/$defs/UInt8Property",
-            "Vector": "#/$defs/VectorProperty",
-            "Vector2D": "#/$defs/Vector2DProperty"
+            "Vector": "#/$defs/VectorStruct",
+            "Vector2D": "#/$defs/Vector2DStruct"
           },
           "propertyName": "type"
         },
@@ -3237,31 +3233,31 @@
             "$ref": "#/$defs/UInt64Property"
           },
           {
-            "$ref": "#/$defs/DateTimeProperty"
+            "$ref": "#/$defs/DateTimeStruct"
           },
           {
-            "$ref": "#/$defs/GuidProperty"
+            "$ref": "#/$defs/GuidStruct"
           },
           {
-            "$ref": "#/$defs/TimespanProperty"
+            "$ref": "#/$defs/TimespanStruct"
           },
           {
-            "$ref": "#/$defs/IntPointProperty"
+            "$ref": "#/$defs/IntPointStruct"
           },
           {
-            "$ref": "#/$defs/LinearColorProperty"
+            "$ref": "#/$defs/LinearColorStruct"
           },
           {
-            "$ref": "#/$defs/RotatorProperty"
+            "$ref": "#/$defs/RotatorStruct"
           },
           {
-            "$ref": "#/$defs/QuatProperty"
+            "$ref": "#/$defs/QuatStruct"
           },
           {
-            "$ref": "#/$defs/VectorProperty"
+            "$ref": "#/$defs/VectorStruct"
           },
           {
-            "$ref": "#/$defs/Vector2DProperty"
+            "$ref": "#/$defs/Vector2DStruct"
           },
           {
             "$ref": "#/$defs/SetProperty"
