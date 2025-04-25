@@ -14,6 +14,12 @@ def parse_arguments():
     )
     parser.add_argument("input_file", type=str, help="Path to the GVAS input file")
     parser.add_argument("output_file", type=str, help="Path to the JSON output file")
+    parser.add_argument(
+        "--hints_file",
+        type=str,
+        default=None,
+        help="Path to optional deserialization hints (JSON) file",
+    )
     return parser.parse_args()
 
 
@@ -21,13 +27,12 @@ def main():
     args = parse_arguments()
 
     try:
-        gvas_file, _decompressed_data = GVASFile.read_gvas_file(args.input_file)
+        gvas_file = GVASFile.read_gvas_file(
+            args.input_file, deserialization_hints=args.hints_file
+        )
 
-    except FileNotFoundError:
-        print(f"Error: Input file '{args.input_file}' not found.", file=sys.stderr)
-        sys.exit(1)
     except Exception as e:
-        print(f"Error reading input file: {e}", file=sys.stderr)
+        print(f"Error processing file: {e}", file=sys.stderr)
         sys.exit(1)
 
     try:

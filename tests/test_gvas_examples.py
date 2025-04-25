@@ -13,7 +13,7 @@ from pydantic import TypeAdapter
 from gvas.gvas_file import GVASFile
 from gvas.gvas_utils import ContextScopeTracker
 from tests.common.test_utils import (
-    read_gvas_file,
+    get_gvas_file_and_stream,
     get_testfile_path,
 )
 
@@ -172,7 +172,7 @@ class TestGvasExamples(unittest.TestCase):
         Read GVAS file from storage. compare the serialized version to original binary.
         """
         test_file, json_file, hints_file = get_test_file_config(test_key)
-        gvas_file, original_file_stream = read_gvas_file(
+        gvas_file, original_file_stream = get_gvas_file_and_stream(
             test_file, deserialization_hints=hints_file
         )
 
@@ -219,7 +219,7 @@ class TestGvasExamples(unittest.TestCase):
 
         # gvas_file, original_file_stream = GVASFile.read_gvas_file(test_file)
 
-        gvas_file, original_file_stream = read_gvas_file(
+        gvas_file, original_file_stream = get_gvas_file_and_stream(
             test_file, deserialization_hints=hints_file
         )
         # serialize to json

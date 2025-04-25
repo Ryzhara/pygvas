@@ -1,14 +1,39 @@
+import filecmp
+import pathlib
+import enum
+import json
+
 from pydantic import ValidationError
 from pydantic.dataclasses import dataclasses
 from pydantic import TypeAdapter
 from pydantic import BaseModel
-import enum
-import json
 
 from gvas.gvas_file import GVASFile, GameFileFormat
 from gvas.engine_tools import GameVersion, CompressionType
 from gvas.gvas_utils import *
-from test_utilities import compare_binary_files
+
+
+def compare_binary_files(
+    file1_path: Union[str, pathlib.Path],
+    file2_path: Union[str, pathlib.Path],
+    verbose: bool = False,
+) -> bool:
+    """
+    Compares two binary files and reports differences.
+
+    Args:
+        file1_path (str): Path to the first file.
+        file2_path (str): Path to the second file.
+        verbose: print success/fail message
+    """
+    if filecmp.cmp(file1_path, file2_path, shallow=False):
+        if verbose:
+            print(f"SUCCESS: Files {file1_path} and {file2_path} are identical.")
+        return True
+    else:
+        if verbose:
+            print(f"FAILED: Files {file1_path} and {file2_path} are different.")
+        return False
 
 
 # ============================================

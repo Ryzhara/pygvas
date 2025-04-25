@@ -2,13 +2,13 @@
 Common test utilities for GVAS tests
 """
 
-import json
+import pathlib
 from io import BytesIO
 from typing import Optional, Union
+import filecmp
 import pathlib
 
 from gvas.gvas_file import GVASFile, GameFileFormat
-from gvas.engine_tools import CompressionType, GameVersion
 
 # Constants for test file paths
 RESOURCES_DIR = pathlib.Path(
@@ -20,7 +20,7 @@ def get_testfile_path(testfile_name: Union[str, pathlib.Path]) -> pathlib.Path:
     return pathlib.Path(RESOURCES_DIR, testfile_name).resolve()
 
 
-def read_gvas_file(
+def get_gvas_file_and_stream(
     input_test_file: str,
     *,
     game_file_format: Optional[GameFileFormat] = None,
@@ -50,3 +50,26 @@ def read_gvas_file(
 
         # Pass the file back for optional verification
         return gvas_test_file, test_file_stream
+
+
+def compare_binary_files(
+    file1_path: Union[str, pathlib.Path],
+    file2_path: Union[str, pathlib.Path],
+    verbose: bool = False,
+) -> bool:
+    """
+    Compares two binary files and reports differences.
+
+    Args:
+        file1_path (str): Path to the first file.
+        file2_path (str): Path to the second file.
+        verbose: print success/fail message
+    """
+    if filecmp.cmp(file1_path, file2_path, shallow=False):
+        if verbose:
+            print(f"SUCCESS: Files {file1_path} and {file2_path} are identical.")
+        return True
+    else:
+        if verbose:
+            print(f"FAILED: Files {file1_path} and {file2_path} are different.")
+        return False

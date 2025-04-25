@@ -434,7 +434,7 @@ class GVASFile(BaseModel):
                 game_file_format = GameFileFormat()
                 game_file_format.deserialize_game_version(stream)
 
-            gvas_file, _original_stream = cls.read(
+            gvas_file = cls.read(
                 stream, game_file_format.game_version, game_file_format.compression_type
             )
 
