@@ -1,202 +1,144 @@
 # GVAS Utilities Documentation
 
 ## Overview
-This module provides common utility functions for working with the GVAS format, including functions for reading and writing various data types, handling strings, GUIDs, and standard headers. These utilities are essential for serialization and deserialization operations in the GVAS format.
+This document describes the utility functions and helper classes provided in `gvas_utils.py`. These utilities handle low-level binary read/write operations, context tracking during deserialization, validation, and common data conversions required for processing GVAS files.
 
-## Constants
+## Class and Function Definitions
 
-### ZERO_GUID
-- A UUID instance representing a zero GUID (all bytes set to 0)
-- Used as a default or null value for GUID fields
+### Constants
 
-## Data Type Conversion Functions
+#### `MagicConstants`
+A class holding important constant values:
+- `ZERO_GUID`: A `uuid.UUID` instance representing all zeros.
+- `GVAS_MAGIC`: The byte sequence `b"GVAS"` expected at the beginning of GVAS files.
+- `PLZ_MAGIC`: The byte sequence `b"PlZ"` associated with Palworld files.
 
-### timespan_to_str(tspan: int) -> str
-Converts a timespan value (in milliseconds) to a human-readable string format.
+### Helper Classes
 
-#### Parameters
-- `tspan`: Integer representing timespan in milliseconds
+#### `ContextScopeTracker`
+A class (used statically and as a context manager) to track the hierarchical structure being processed during deserialization (e.g., "SaveGameData.MyCharacter.Inventory.Item0.Name"). It also manages deserialization hints needed for ambiguous types (like structs within arrays).
 
-#### Returns
-- String in the format "HH:MM:SS.mmm" representing the timespan
-
-#### Example
 ```python
-timespan_to_str(3661000)  # Returns "1:01:01.000"
-```
+class ContextScopeTracker:
+    _context_stack: list[str] = []
+    _deserialization_hints: dict[str, Union[str, dict[str, Any]]] = {}
+    _hint_context: dict[str, Any] = {}
 
-### datetime_to_str
+    # --- Static Methods ---
+    @classmethod
+    def set_inside_unit_tests(cls) -> None: ...
+    @classmethod
+    def inside_unit_tests(cls) -> bool: ...
+    @classmethod
+    def push_context_step(cls, step: str) -> None: ...
+    @classmethod
+    def pop_context_step(cls) -> None: ...
+    @classmethod
+    def get_context_path(cls) -> str: ...
+    @classmethod
+    def set_deserialization_hints(cls, hints: dict) -> None: ...
+    @classmethod
+    def get_hint_for_context(cls) -> Union[str, dict, None]: ...
+    @classmethod
+    def set_hint_context(cls, context: dict) -> None: ...
+    @classmethod
+    def get_hint_context(cls) -> dict: ...
+
+    # --- Context Manager Implementation ---
+    def __init__(self, context: str): ...
+    def __enter__(self): ...
+    def __exit__(self, exc_type, exc_val, exc_tb): ...
+```
+- Used via `with ContextScopeTracker("MyProperty") as tracker:`.
+- `set_deserialization_hints` is called by the user to provide necessary type information for ambiguous structures.
+- `get_hint_for_context` is used internally (e.g., by `StructProperty`) to retrieve hints.
+
+#### `ByteCountValidator`
+A context manager used to verify that a specific number of bytes were read within its scope, raising a `DeserializeError` if the count mismatches.
+
 ```python
-def datetime_to_str(dt: int) -> str
+class ByteCountValidator:
+    def __init__(self, stream: BinaryIO, expected_byte_count: int, do_validation: bool):
+        # ...
+    def __enter__(self): ...
+    def __exit__(self, exc_type, exc_val, exc_tb): ...
 ```
-Converts a timestamp in ticks (0.1 microseconds since January 1, 0001) to a human-readable string.
-- Handles conversion from Unreal Engine's FDateTime format
-- Returns a formatted string in the format "DD/MM/YYYY HH:MM:SS.microseconds"
-- Falls back to string representation of the input if conversion fails
+- Used via `with ByteCountValidator(stream, length, validate) as validator:`.
+- Compares `stream.tell()` before and after the `with` block.
 
-## Atomic Data Reading/Writing
+### Read/Write Functions for Primitive Types
+These functions handle reading and writing specific data types from/to a `BinaryIO` stream using Python's `struct` module with little-endian format (`<`). Many include optional `assert_value` and `error_msg` parameters for validation during reads.
 
-### read_atomic_data
-```python
-def read_atomic_data(
-    stream: BinaryIO,
-    format_str: str,
-    width: int,
-    assert_value=None,
-    error_msg: str = None,
-) -> int
-```
-Base function for reading atomic data types from a binary stream.
-- Uses struct.unpack with the specified format string
-- Validates the read value against an optional expected value
-- Returns the unpacked value
-- Raises DeserializeError if the read fails or validation fails
+- `read_int8(stream, ...)` / `write_int8(stream, value)`: Signed 8-bit integer.
+- `read_uint8(stream, ...)` / `write_uint8(stream, value)`: Unsigned 8-bit integer.
+- `read_bool(stream, ...)` / `write_bool(stream, value)`: Boolean (1 byte, 0x00 or 0x01).
+- `read_bool32bit(stream)` / `write_bool32bit(stream, value)`: Boolean stored as a 32-bit integer (0 or 1).
+- `read_int16(stream, ...)` / `write_int16(stream, value)`: Signed 16-bit integer.
+- `read_uint16(stream, ...)` / `write_uint16(stream, value)`: Unsigned 16-bit integer.
+- `read_int32(stream, ...)` / `write_int32(stream, value)`: Signed 32-bit integer.
+- `read_uint32(stream, ...)` / `write_uint32(stream, value)`: Unsigned 32-bit integer.
+- `read_int64(stream, ...)` / `write_int64(stream, value)`: Signed 64-bit integer.
+- `read_uint64(stream, ...)` / `write_uint64(stream, value)`: Unsigned 64-bit integer.
+- `read_float(stream, ...)` / `write_float(stream, value)`: 32-bit float.
+- `read_double(stream, ...)` / `write_double(stream, value)`: 64-bit float (double).
+- `read_bytes(stream, byte_count)` / `write_bytes(stream, value_bytes)`: Raw byte sequences.
+- `read_guid(stream)` / `write_guid(stream, guid)`: 16-byte GUID (accepts/returns `uuid.UUID` or string).
+- `read_string(stream)` / `write_string(stream, value)`: Length-prefixed string (handles UTF-8/UTF-16 encoding based on sign of length).
 
-## Integer Reading/Writing Functions
+### Header Read/Write Functions
 
-### 8-bit Integers
-- `read_int8`: Reads a signed 8-bit integer
-- `write_int8`: Writes a signed 8-bit integer
-- `read_uint8`: Reads an unsigned 8-bit integer
-- `write_uint8`: Writes an unsigned 8-bit integer
+-   **`read_standard_header(stream, *, assert_length, assert_array_index, stream_readers)`**
+    -   Reads the common header structure preceding many property types.
+    -   Always reads Length (UInt32) and Array Index (UInt32).
+    -   Optionally reads additional fields using functions provided in `stream_readers` (e.g., type names for MapProperty).
+    -   Always reads and discards a final null byte terminator (UInt8).
+    -   Returns a list containing `[length, optional_array_index, optional_reader_results...]`.
+    -   Can assert specific values for length and array index.
 
-### 16-bit Integers
-- `read_int16`: Reads a signed 16-bit integer
-- `write_int16`: Writes a signed 16-bit integer
-- `read_uint16`: Reads an unsigned 16-bit integer
-- `write_uint16`: Writes an unsigned 16-bit integer
+-   **`write_standard_header(stream, property_type, *, length, array_index, data_to_write)`**
+    -   Writes the common header structure.
+    -   Always writes Property Type Name (String), Length (UInt32), and Array Index (UInt32).
+    -   Optionally writes additional data (strings or GUIDs) provided in `data_to_write`.
+    -   Always writes a final null byte terminator (UInt8).
+    -   Returns the total number of bytes written for the header.
 
-### 32-bit Integers
-- `read_int32`: Reads a signed 32-bit integer
-- `write_int32`: Writes a signed 32-bit integer
-- `read_uint32`: Reads an unsigned 32-bit integer
-- `write_uint32`: Writes an unsigned 32-bit integer
+### Miscellaneous Utilities
 
-### 64-bit Integers
-- `read_int64`: Reads a signed 64-bit integer
-- `write_int64`: Writes a signed 64-bit integer
-- `read_uint64`: Reads an unsigned 64-bit integer
-- `write_uint64`: Writes an unsigned 64-bit integer
+- `peek(stream, count)`: Reads `count` bytes without advancing the stream position.
+- `datetime_to_str(ticks)`: Converts UInt64 ticks (from `DateTimeStruct`) to a human-readable string (approximate).
+- `timespan_to_str(ticks)`: Converts UInt64 ticks (from `TimespanStruct`) to a human-readable timedelta string.
+- `guid_to_str(guid_uuid)` / `str_to_guid(guid_str)`: Convert between `uuid.UUID` objects and uppercase string representations.
+- `guid_from_uint32x4(...)`: Creates a `uuid.UUID` from four UInt32 values (used for custom version GUIDs).
+- `read_atomic_data(stream, format_str, width, ...)`: Internal helper for reading fixed-width primitive types using `struct.unpack`.
 
-## Floating Point Reading/Writing
+## Binary Format
 
-### Single Precision
-- `read_float`: Reads a 32-bit floating point number
-- `write_float`: Writes a 32-bit floating point number
+This module defines the functions that implement the binary formats for primitive types and standard headers.
 
-### Double Precision
-- `read_double`: Reads a 64-bit floating point number
-- `write_double`: Writes a 64-bit floating point number
+### String Format (`read_string`/`write_string`)
+1.  Length (Int32): Number of characters + 1 (for terminator). Negative if UTF-16, positive if UTF-8.
+2.  String Content (Bytes): `abs(Length)-1` characters encoded in UTF-8 or UTF-16LE.
+3.  Terminator (UInt8 or UInt16): Single null byte (0x00) for UTF-8, or two null bytes (0x0000) for UTF-16LE.
 
-## Boolean Reading/Writing
+### Standard Header Format (`read_standard_header`/`write_standard_header`)
+Structure written/read when `include_header=True` for most properties:
+1.  Property Type Name (`String`): e.g., "IntProperty"
+2.  Length (UInt32): Byte size of the property data *following* this header.
+3.  Array Index (UInt32): Index if the property is part of an array (usually 0).
+4.  Optional Data Fields (`Any...`): Depending on the property type (e.g., Key/Value types for MapProperty), additional fields (like Strings or GUIDs) might be read/written here.
+5.  Terminator (UInt8): Always 0x00.
 
-### Standard Boolean
-- `read_bool`: Reads a single byte boolean
-- `write_bool`: Writes a single byte boolean
-
-### 32-bit Boolean
-- `read_bool32bit`: Reads a 32-bit boolean (0 or 1)
-- `write_bool32bit`: Writes a 32-bit boolean (0 or 1)
-
-## String Handling
-
-### read_string
-```python
-def read_string(stream: BinaryIO) -> str | None
-```
-Reads a string from a binary stream.
-- Handles both UTF-8 and UTF-16 encoding
-- Supports ASCII and non-ASCII strings
-- Returns None for empty strings
-- Validates string length and encoding
-- Handles null terminators appropriately
-
-### write_string
-```python
-def write_string(stream: BinaryIO, value: str) -> int
-```
-Writes a string to a binary stream.
-- Automatically chooses between UTF-8 and UTF-16 encoding
-- Handles None values as empty strings
-- Adds appropriate null terminators
-- Returns the number of bytes written
-
-## GUID Handling
-
-### GUID Conversion
-- `guid_from_uint32x4`: Creates a GUID from four 32-bit integers
-- `guid_to_str`: Converts a GUID to its string representation
-- `str_to_guid`: Converts a string to a GUID
-
-### GUID Reading/Writing
-- `read_guid`: Reads a GUID from a binary stream
-- `write_guid`: Writes a GUID to a binary stream
-
-## Stream Operations
-
-### peek
-```python
-def peek(stream, count: int) -> bytes
-```
-Reads bytes from a stream without advancing the position.
-- Returns the specified number of bytes
-- Restores the stream position after reading
-
-### read_bytes
-```python
-def read_bytes(stream: BinaryIO, byte_count: int) -> bytes
-```
-Reads a specified number of bytes from a stream.
-- Returns the bytes read
-- Advances the stream position
-
-### write_bytes
-```python
-def write_bytes(stream: BinaryIO, value_bytes: bytes) -> int
-```
-Writes bytes to a stream.
-- Returns the number of bytes written
-- Advances the stream position
-
-## Header Handling
-
-### read_standard_header
-```python
-def read_standard_header(
-    stream: BinaryIO,
-    *,
-    assert_length: int = None,
-    assert_array_index: int = 0,
-    stream_readers: list[Callable[[BinaryIO], Any]] = None,
-) -> list[Any]
-```
-Reads a standard GVAS header from a stream.
-- Validates length and array index
-- Supports custom data readers
-- Handles null terminator
-- Returns a list containing length, array index, and any additional data
-
-### write_standard_header
-```python
-def write_standard_header(
-    stream: BinaryIO,
-    property_type,
-    *,
-    length: int = None,
-    array_index: int = 0,
-    data_to_write: list[Union[str, uuid.UUID]] = None,
-) -> int
-```
-Writes a standard GVAS header to a stream.
-- Writes property type, length, and array index
-- Supports additional string and GUID data
-- Adds null terminator
-- Returns the number of bytes written
+### Primitive Types
+Refer to Python's `struct` module documentation for standard sizes and formats (e.g., `<i` for little-endian signed 32-bit int, `?` for bool, `<f` for float, `<d` for double).
 
 ## Implementation Notes
-- All numeric values are read/written in little-endian format
-- String handling supports both ASCII and Unicode
-- Error handling uses custom DeserializeError and SerializeError classes
-- Stream operations maintain proper position tracking
-- Header operations follow the GVAS format specification
-- GUID operations support both binary and string representations 
+
+-   Provides the fundamental building blocks for reading and writing GVAS data structures.
+-   Uses Python's `struct` module for efficient packing/unpacking of binary data.
+-   Handles little-endian byte order consistently.
+-   String serialization handles both ASCII/UTF-8 and UTF-16LE based on content and length prefix sign.
+-   `ContextScopeTracker` is essential for debugging and handling complex deserialization scenarios requiring hints.
+-   `ByteCountValidator` helps ensure data integrity by verifying expected data lengths.
+
+> #### Note
+> This document was created with a generative AI prompt in the Cursor IDE. 

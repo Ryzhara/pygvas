@@ -1,80 +1,91 @@
-# StrProperty Binary Format Documentation
+# String Property Documentation
 
 ## Overview
-The `StrProperty` class implements a string property type in the GVAS (Game Save) format. It handles reading and writing string values to/from binary streams.
+This document covers the `StrProperty` class used in the GVAS format. This is a straightforward property type for storing standard character strings.
 
-## Binary Format Structure
+## Class and Function Definitions
 
-### With Header (include_header=True)
-When a header is included, the format consists of two parts:
+### `StrProperty` (inherits `PropertyTrait`)
+Represents a GVAS property holding a standard string value.
 
-1. **Standard Header**
-   - Property Type (String): "StrProperty" encoded as a string
-   - Length (UInt32): Total length of the string data
-   - Array Index (UInt32): Always 0 for StrProperty
-   - Terminator (UInt8): Always 0x00
+```python
+@dataclass
+class StrProperty(PropertyTrait):
 
-2. **String Data**
-   - String Length (Int32): 
-     - If positive: Length of UTF-8 string + 1 (for terminator)
-     - If negative: Length of UTF-16-LE string + 1 (for terminator)
-   - String Content:
-     - For ASCII strings: UTF-8 encoded bytes
-     - For non-ASCII strings: UTF-16-LE encoded bytes
-   - Terminator:
-     - For ASCII strings: UInt8 (0x00)
-     - For non-ASCII strings: UInt16 (0x0000)
+    type: Literal["StrProperty"] = "StrProperty"
+    value: Optional[str] = None
 
-### Without Header (include_header=False)
-When no header is included, only the String Data portion is written/read.
-
-## String Encoding Rules
-- If the string contains only ASCII characters:
-  - Encoded as UTF-8
-  - Length prefix is positive
-  - Terminated with a single null byte (0x00)
-- If the string contains non-ASCII characters:
-  - Encoded as UTF-16-LE
-  - Length prefix is negative
-  - Terminated with a null word (0x0000)
-
-## Special Cases
-- Null/None values:
-  - When writing: Treated as an empty string with length 0
-  - When reading: Returns None if length is 0
-
-## Example Binary Layout
-
-### ASCII String "Hello"
-```
-[Header]
-00 00 00 0B  "StrProperty" (11 bytes)
-00 00 00 06  Length (6 bytes)
-00 00 00 00  Array Index (0)
-00           Terminator
-
-[String Data]
-00 00 00 06  Length (6 = 5 chars + 1 terminator)
-48 65 6C 6C 6F  "Hello" in UTF-8
-00           Terminator
+    def read(self, stream: BinaryIO, include_header: bool = True) -> None: ...
+    def write(self, stream: BinaryIO, include_header: bool = True) -> int: ...
 ```
 
-### Non-ASCII String "こんにちは"
-```
-[Header]
-00 00 00 0B  "StrProperty" (11 bytes)
-00 00 00 0C  Length (12 bytes)
-00 00 00 00  Array Index (0)
-00           Terminator
+## Binary Format
 
-[String Data]
-00 00 00 F6  Length (-10 = -5 chars - 1 terminator)
-93 30 93 73 93 4B 93 6F 93 6F  "こんにちは" in UTF-16-LE
-00 00        Terminator
+All multi-byte values are **little-endian**. Strings are read/written using `read_string`/`write_string`, which handle length prefixing (Int32) and potential UTF-8/UTF-16 encoding.
+
+### `StrProperty`
+Reads/writes the following sequence:
+1.  Standard Property Header (Optional, if `include_header` is true):
+    *   Property Type Name (`String`): "StrProperty"
+    *   Length (Int64): Size in bytes of the `Value` string data.
+    *   Padding (UInt8): Typically 0.
+2.  Value (`String`): The actual string content.
+
+```
+[Standard Header (Optional)]
+  [Property Type Name: String = "StrProperty"]
+  [Length: Int64]
+  [Padding: UInt8]
+[Value: String]
+```
+
+## Examples
+
+### Example `StrProperty` Binary Data
+Let's assume `value = "Hello World!"`.
+
+```
+# Header (assuming include_header=True)
+# Property Type Name: "StrProperty" (UTF-8)
+0C 00 00 00        # Length = 12 (11 chars + null terminator)
+53 74 72 50 72 6F 70 65 72 74 79 # "StrProperty"
+00                 # Null terminator
+
+# Length: (Size of Value string data: "Hello World!" -> 13 bytes + null = 14)
+0E 00 00 00 00 00 00 00 # Length = 14
+
+# Padding
+00                 # Padding = 0
+
+# Value: "Hello World!" (UTF-8)
+0D 00 00 00        # String Length = 13
+48 65 6C 6C 6F 20 57 6F 72 6C 64 21 # "Hello World!"
+00                 # Null terminator
+```
+
+### Example `StrProperty` with Empty Value
+If `value = ""` or `value = None`:
+
+```
+# Header (assuming include_header=True)
+# Property Type Name: "StrProperty" (UTF-8)
+0C 00 00 00 53 74 72 50 72 6F 70 65 72 74 79 00
+
+# Length: (Size of Value string data: Empty String -> 1 byte null terminator)
+01 00 00 00 00 00 00 00 # Length = 1
+
+# Padding
+00                 # Padding = 0
+
+# Value: Empty String (UTF-8)
+00 00 00 00        # String Length = 0
+00                 # Null terminator
 ```
 
 ## Implementation Notes
-- The class uses a `ByteCountValidator` to ensure the correct number of bytes are read
-- When writing, it first writes to a temporary buffer to calculate the total length
-- The implementation handles both ASCII and non-ASCII strings automatically
-- The format is compatible with the original Rust implementation (str_property.rs) 
+- Handles `None` value during writing by serializing an empty string.
+- String serialization/deserialization uses `gvas.gvas_utils` functions.
+- The `ByteCountValidator` ensures correct length consumption during reading if the header is included.
+
+> #### Note
+> This document was created with a generative AI prompt in the Cursor IDE. 

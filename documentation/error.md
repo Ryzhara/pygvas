@@ -1,90 +1,102 @@
-# Error Handling Documentation
+# Error Types Documentation
 
 ## Overview
-This module provides error handling classes for the GVAS format, specifically for deserialization and serialization operations. These error classes are designed to provide detailed information about errors that occur during the reading and writing of GVAS files.
+This document describes the custom exception types used by the `pygvas` library to report errors during GVAS file processing.
 
-## Error Classes
+## Class and Function Definitions
 
-### DeserializeError
-Exception class for errors that occur during deserialization (reading) of GVAS files.
+### `DeserializeError` (inherits `Exception`)
+Represents an error that occurs during the deserialization (reading) of a GVAS file or its components.
 
-#### Constructor
 ```python
-def __init__(self, message: str, position: int = None)
+class DeserializeError(Exception):
+    """Error that occurs during deserialization"""
+
+    def __init__(self, message: str, position: int = None):
+        # ... (adds position to message if provided)
+
+    @classmethod
+    def invalid_header(cls, message: str) -> "DeserializeError":
+        # Creates error for header issues
+        ...
+
+    @classmethod
+    def invalid_property(cls, message: str, position: int) -> "DeserializeError":
+        # Creates error for property structure issues
+        ...
+
+    @classmethod
+    def invalid_value(cls, value: int, position: int, message: str) -> "DeserializeError":
+        # Creates error for unexpected values read
+        ...
+
+    @classmethod
+    def missing_hint(cls, property_type: str, property_path: str, position: int) -> "DeserializeError":
+        # Creates error when a required deserialization hint is missing
+        ...
+
+    @classmethod
+    def invalid_hint(cls, hint_type: str, property_path: str, position: int) -> "DeserializeError":
+        # Creates error when an unknown hint type is encountered
+        ...
+
+    @classmethod
+    def invalid_value_size(cls, length: int, param: int, position: int):
+        # Creates error when read size doesn't match expected size
+        ...
+
+    @classmethod
+    def invalid_read_count(cls, expected: int, found: int, position: int):
+        # Creates error for mismatches in expected vs actual bytes read (e.g., by ByteCountValidator)
+        ...
 ```
-- `message`: Error message describing the issue
-- `position`: Optional byte position in the stream where the error occurred
 
-#### Class Methods
-- `invalid_header(message: str) -> "DeserializeError"`
-  - Creates an error for invalid header data
-  - Example: `DeserializeError.invalid_header("Invalid magic number")`
+-   Includes the stream `position` in the error message when available.
+-   Provides several class methods (`invalid_header`, `invalid_property`, etc.) as constructors for specific common error scenarios.
 
-- `invalid_property(message: str, position: int) -> "DeserializeError"`
-  - Creates an error for invalid property data
-  - Example: `DeserializeError.invalid_property("Unknown property type", 0x100)`
+### `SerializeError` (inherits `BaseException`)
+Represents an error that occurs during the serialization (writing) of GVAS data.
 
-- `invalid_value(value: int, position: int, message: str) -> "DeserializeError"`
-  - Creates an error for invalid value data
-  - Example: `DeserializeError.invalid_value(0xFF, 0x200, "Value out of range")`
-
-- `missing_hint(property_type: str, property_path: str, position: int) -> "DeserializeError"`
-  - Creates an error when a required type hint is missing
-  - Example: `DeserializeError.missing_hint("StructProperty", "PlayerData.Stats", 0x300)`
-
-- `invalid_value_size(length: int, param: int, position: int) -> "DeserializeError"`
-  - Creates an error for invalid size values
-  - Example: `DeserializeError.invalid_value_size(4, 8, 0x400)`
-
-- `invalid_read_count(expected: int, found: int, position: int) -> "DeserializeError"`
-  - Creates an error when the number of bytes read doesn't match expectations
-  - Example: `DeserializeError.invalid_read_count(16, 12, 0x500)`
-
-### SerializeError
-Exception class for errors that occur during serialization (writing) of GVAS files.
-
-#### Class Methods
-- `invalid_value(message: str) -> "SerializeError"`
-  - Creates an error for invalid values during serialization
-  - Example: `SerializeError.invalid_value("Invalid enum value")`
-
-## Error Handling Patterns
-
-### Position Tracking
-- Both error classes support position tracking to help identify where in the file an error occurred
-- Positions are typically byte offsets from the start of the file
-- When a position is provided, it's automatically included in the error message
-
-### Error Context
-- Error messages are designed to be descriptive and include relevant context
-- For deserialization errors, the position is often crucial for debugging
-- Serialization errors focus on the invalid value or condition that caused the error
-
-### Usage Examples
-
-#### Deserialization Error
 ```python
+class SerializeError(BaseException):
+    """Error that occurs during serialization"""
+
+    @classmethod
+    def invalid_value(cls, message: str) -> "SerializeError":
+        """Create an invalid value error"""
+        # ... (creates error for invalid values during serialization)
+        ...
+```
+
+-   Provides a class method `invalid_value` for creating serialization errors related to invalid data.
+
+## Binary Format
+
+These are exception classes and do not have a direct binary format.
+
+## Examples
+
+```python
+# Example usage (conceptual)
 try:
-    # Attempt to read data
-    data = read_from_stream(stream)
+    # ... attempt to read GVAS data ...
+    if some_condition_fails:
+        raise DeserializeError.invalid_property("Missing terminator", stream.tell())
 except DeserializeError as e:
-    print(f"Error reading data: {e}")
-    if e.position is not None:
-        print(f"Error occurred at position: {e.position}")
-```
+    print(f"Failed to deserialize: {e}")
 
-#### Serialization Error
-```python
 try:
-    # Attempt to write data
-    write_to_stream(stream, data)
+    # ... attempt to write GVAS data ...
+    if some_value_is_bad:
+        raise SerializeError.invalid_value("Cannot serialize negative count")
 except SerializeError as e:
-    print(f"Error writing data: {e}")
+    print(f"Failed to serialize: {e}")
 ```
 
 ## Implementation Notes
-- Errors are designed to be caught and handled at appropriate levels
-- Position information is crucial for debugging deserialization issues
-- Error messages should be descriptive and include relevant context
-- The error system is designed to be compatible with Python's exception handling
-- Error classes extend from standard Python exception classes for compatibility 
+-   These classes provide more specific error types than standard Python exceptions, aiding in debugging GVAS processing issues.
+-   `DeserializeError` often includes the stream position where the error was detected.
+-   The factory class methods simplify the creation of common error types.
+
+> #### Note
+> This document was created with a generative AI prompt in the Cursor IDE. 

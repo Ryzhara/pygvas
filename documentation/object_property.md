@@ -1,81 +1,75 @@
-# ObjectProperty Binary Format Documentation
+# Object Property Documentation
 
 ## Overview
-The `ObjectProperty` class implements a property type that holds an object reference in the GVAS (Game Save) format. It handles reading and writing object references to/from binary streams.
+This document describes the `ObjectProperty` class within the GVAS format. This property type stores a reference to another Unreal Engine object, typically by its path name.
 
-## Binary Format Structure
+## Class and Function Definitions
 
-### With Header (include_header=True)
-When a header is included, the format consists of two parts:
+### `ObjectProperty` (inherits `PropertyTrait`)
+Represents a GVAS property that holds an object reference, serialized as a string containing the object's path.
 
-1. **Standard Header**
-   - Property Type (String): "ObjectProperty" encoded as a string
-   - Length (UInt32): Total length of the string data
-   - Array Index (UInt32): Always 0 for ObjectProperty
-   - Terminator (UInt8): Always 0x00
+```python
+@dataclass
+class ObjectProperty(PropertyTrait):
+    """A property that holds an object value"""
 
-2. **String Data**
-   - String Length (Int32): 
-     - If positive: Length of UTF-8 string + 1 (for terminator)
-     - If negative: Length of UTF-16-LE string + 1 (for terminator)
-   - String Content:
-     - For ASCII strings: UTF-8 encoded bytes
-     - For non-ASCII strings: UTF-16-LE encoded bytes
-   - Terminator:
-     - For ASCII strings: UInt8 (0x00)
-     - For non-ASCII strings: UInt16 (0x0000)
+    type: Literal["ObjectProperty"] = "ObjectProperty"
+    value: Optional[str] = None
 
-### Without Header (include_header=False)
-When no header is included, only the String Data portion is written/read.
-
-## String Encoding Rules
-- If the string contains only ASCII characters:
-  - Encoded as UTF-8
-  - Length prefix is positive
-  - Terminated with a single null byte (0x00)
-- If the string contains non-ASCII characters:
-  - Encoded as UTF-16-LE
-  - Length prefix is negative
-  - Terminated with a null word (0x0000)
-
-## Special Cases
-- Null/None values:
-  - When writing: Treated as an empty string with length 0
-  - When reading: Returns None if length is 0
-
-## Example Binary Layout
-
-### ASCII Object Reference "PlayerCharacter"
-```
-[Header]
-00 00 00 0E  "ObjectProperty" (14 bytes)
-00 00 00 10  Length (16 bytes)
-00 00 00 00  Array Index (0)
-00           Terminator
-
-[String Data]
-00 00 00 10  Length (16 = 15 chars + 1 terminator)
-50 6C 61 79 65 72 43 68 61 72 61 63 74 65 72  "PlayerCharacter" in UTF-8
-00           Terminator
+    def read(self, stream: BinaryIO, include_header: bool = True) -> None: ...
+    def write(self, stream: BinaryIO, include_header: bool = True) -> int: ...
 ```
 
-### Non-ASCII Object Reference "プレイヤー"
-```
-[Header]
-00 00 00 0E  "ObjectProperty" (14 bytes)
-00 00 00 0C  Length (12 bytes)
-00 00 00 00  Array Index (0)
-00           Terminator
+## Binary Format
 
-[String Data]
-00 00 00 F6  Length (-10 = -5 chars - 1 terminator)
-83 7C 83 8C 83 43 83 8B 83 45  "プレイヤー" in UTF-16-LE
-00 00        Terminator
+All multi-byte values are **little-endian**. Strings are read/written using `read_string`/`write_string`, which handle length prefixing (Int32) and potential UTF-8/UTF-16 encoding.
+
+### `ObjectProperty`
+Reads/writes the following sequence:
+1.  Standard Property Header (Optional, if `include_header` is true):
+    *   Property Type Name (`String`): "ObjectProperty"
+    *   Length (Int64): Size in bytes of the `Value` string data (the object path).
+    *   Padding (UInt8): Typically 0.
+2.  Value (`String`): The path name string identifying the referenced object (e.g., "/Game/Blueprints/MyCharacterBP.MyCharacterBP_C").
+
+```
+[Standard Header (Optional)]
+  [Property Type Name: String = "ObjectProperty"]
+  [Length: Int64]
+  [Padding: UInt8]
+[Value: String]
+```
+
+## Examples
+
+### Example `ObjectProperty` Binary Data
+Let's assume `value = "/Game/ThirdPerson/Blueprints/BP_ThirdPersonCharacter.BP_ThirdPersonCharacter_C"`.
+
+```
+# Header (assuming include_header=True)
+# Property Type Name: "ObjectProperty" (UTF-8)
+0F 00 00 00        # Length = 15 (14 chars + null terminator)
+4F 62 6A 65 63 74 50 72 6F 70 65 72 74 79 # "ObjectProperty"
+00                 # Null terminator
+
+# Length: (Size of Value string data)
+# Value string: "/Game/ThirdPerson/Blueprints/BP_ThirdPersonCharacter.BP_ThirdPersonCharacter_C"
+# Length = 83 chars + null terminator = 84
+54 00 00 00 00 00 00 00 # Length = 84 (0x54)
+
+# Padding
+00                 # Padding = 0
+
+# Value: Object Path (UTF-8)
+53 00 00 00        # String Length = 83
+2F 47 61 6D 65 2F 54 68 69 72 64 50 65 72 73 6F 6E 2F 42 6C 75 65 70 72 69 6E 74 73 2F 42 50 5F 54 68 69 72 64 50 65 72 73 6F 6E 43 68 61 72 61 63 74 65 72 2E 42 50 5F 54 68 69 72 64 50 65 72 73 6F 6E 43 68 61 72 61 63 74 65 72 5F 43 # "/Game/ThirdPerson/Blueprints/BP_ThirdPersonCharacter.BP_ThirdPersonCharacter_C"
+00                 # Null terminator
 ```
 
 ## Implementation Notes
-- The class uses a `ByteCountValidator` to ensure the correct number of bytes are read
-- When writing, it first writes to a temporary buffer to calculate the total length
-- The implementation handles both ASCII and non-ASCII strings automatically
-- The format is compatible with the original Rust implementation (object_property.rs)
-- Object references are stored as strings that identify the object in the game's object system 
+- The object reference is stored solely as its path string.
+- String handling uses `gvas.gvas_utils` functions.
+- The `ByteCountValidator` verifies the length during reading if the header is present.
+
+> #### Note
+> This document was created with a generative AI prompt in the Cursor IDE. 

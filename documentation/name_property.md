@@ -1,84 +1,80 @@
-# NameProperty Binary Format Documentation
+# Name Property Documentation
 
 ## Overview
-The `NameProperty` class implements a property type that holds a name value in the GVAS (Game Save) format. It handles reading and writing name values to/from binary streams. Unlike other string-based properties, NameProperty includes an array index in its header.
+This document details the `NameProperty` class within the GVAS format. This property type is used to store Unreal Engine's `FName` type, which is typically an optimized string often used for identifiers like object names, bone names, material parameter names, etc.
 
-## Binary Format Structure
+## Class and Function Definitions
 
-### With Header (include_header=True)
-When a header is included, the format consists of two parts:
+### `NameProperty` (inherits `PropertyTrait`)
+Represents a GVAS property holding an `FName` value, serialized simply as a string.
 
-1. **Standard Header**
-   - Property Type (String): "NameProperty" encoded as a string
-   - Length (UInt32): Total length of the string data
-   - Array Index (UInt32): Index value for the name (can be non-zero)
-   - Terminator (UInt8): Always 0x00
+```python
+@dataclass
+class NameProperty(PropertyTrait):
+    """A property that holds a name"""
 
-2. **String Data**
-   - String Length (Int32): 
-     - If positive: Length of UTF-8 string + 1 (for terminator)
-     - If negative: Length of UTF-16-LE string + 1 (for terminator)
-   - String Content:
-     - For ASCII strings: UTF-8 encoded bytes
-     - For non-ASCII strings: UTF-16-LE encoded bytes
-   - Terminator:
-     - For ASCII strings: UInt8 (0x00)
-     - For non-ASCII strings: UInt16 (0x0000)
+    type: Literal["NameProperty"] = "NameProperty"
+    array_index: int = 0
+    value: Optional[str] = None
 
-### Without Header (include_header=False)
-When no header is included, only the String Data portion is written/read.
-
-## String Encoding Rules
-- If the string contains only ASCII characters:
-  - Encoded as UTF-8
-  - Length prefix is positive
-  - Terminated with a single null byte (0x00)
-- If the string contains non-ASCII characters:
-  - Encoded as UTF-16-LE
-  - Length prefix is negative
-  - Terminated with a null word (0x0000)
-
-## Special Cases
-- Null/None values:
-  - When writing: Treated as an empty string with length 0
-  - When reading: Returns None if length is 0
-- Array Index:
-  - Unlike other properties, NameProperty can have a non-zero array index
-  - The array index is preserved during serialization/deserialization
-
-## Example Binary Layout
-
-### ASCII Name "PlayerName" with Array Index 1
-```
-[Header]
-00 00 00 0B  "NameProperty" (11 bytes)
-00 00 00 0A  Length (10 bytes)
-00 00 00 01  Array Index (1)
-00           Terminator
-
-[String Data]
-00 00 00 0A  Length (10 = 9 chars + 1 terminator)
-50 6C 61 79 65 72 4E 61 6D 65  "PlayerName" in UTF-8
-00           Terminator
+    def read(self, stream: BinaryIO, include_header: bool = True) -> None: ...
+    def write(self, stream: BinaryIO, include_header: bool = True) -> int: ...
 ```
 
-### Non-ASCII Name "プレイヤー" with Array Index 0
-```
-[Header]
-00 00 00 0B  "NameProperty" (11 bytes)
-00 00 00 0C  Length (12 bytes)
-00 00 00 00  Array Index (0)
-00           Terminator
+## Binary Format
 
-[String Data]
-00 00 00 F6  Length (-10 = -5 chars - 1 terminator)
-83 7C 83 8C 83 43 83 8B 83 45  "プレイヤー" in UTF-16-LE
-00 00        Terminator
+All multi-byte values are **little-endian**. Strings are read/written using `read_string`/`write_string`, which handle length prefixing (Int32) and potential UTF-8/UTF-16 encoding.
+
+### `NameProperty`
+Reads/writes the following sequence:
+1.  Standard Property Header (Optional, if `include_header` is true):
+    *   Property Type Name (`String`): "NameProperty"
+    *   Length (Int64): Size in bytes of the `Value` string data.
+    *   Array Index (UInt32): Index if this property is part of an array (usually 0 if not).
+    *   Padding (UInt8): Typically 0.
+2.  Value (`String`): The actual FName string content.
+
+```
+[Standard Header (Optional)]
+  [Property Type Name: String = "NameProperty"]
+  [Length: Int64]
+  [Array Index: UInt32]
+  [Padding: UInt8]
+[Value: String]
+```
+
+## Examples
+
+### Example `NameProperty` Binary Data
+Let's assume `value = "CharacterMesh0"` and `array_index = 0`.
+
+```
+# Header (assuming include_header=True)
+# Property Type Name: "NameProperty" (UTF-8)
+0D 00 00 00        # Length = 13 (12 chars + null terminator)
+4E 61 6D 65 50 72 6F 70 65 72 74 79 # "NameProperty"
+00                 # Null terminator
+
+# Length: (Size of Value string data: "CharacterMesh0" -> 15 bytes + null = 16)
+10 00 00 00 00 00 00 00 # Length = 16
+
+# Array Index
+00 00 00 00        # Array Index = 0
+
+# Padding
+00                 # Padding = 0
+
+# Value: "CharacterMesh0" (UTF-8)
+0F 00 00 00        # Length = 15 (14 chars + null terminator)
+43 68 61 72 61 63 74 65 72 4D 65 73 68 30 # "CharacterMesh0"
+00                 # Null terminator
 ```
 
 ## Implementation Notes
-- The class uses a `ByteCountValidator` to ensure the correct number of bytes are read
-- When writing, it first writes to a temporary buffer to calculate the total length
-- The implementation handles both ASCII and non-ASCII strings automatically
-- The format is compatible with the original Rust implementation (name_property.rs)
-- The array index is a distinguishing feature of NameProperty compared to other string-based properties 
+- The `array_index` is read/written as part of the standard header.
+- The `value` (the FName string) is read/written as the property's body data.
+- String handling uses `gvas.gvas_utils` functions (`read_string`, `write_string`).
+- The `ByteCountValidator` ensures the value data read matches the length specified in the header.
+
+> #### Note
+> This document was created with a generative AI prompt in the Cursor IDE. 

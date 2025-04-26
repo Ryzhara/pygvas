@@ -1,99 +1,109 @@
-# FieldPathProperty Binary Format Documentation
+# Field Path Property Documentation
 
 ## Overview
-The `FieldPathProperty` class implements a property type that holds a field path value in the GVAS (Game Save) format. It handles reading and writing field paths, which consist of a list of path elements and a resolved owner. This is used to reference specific fields or properties within the game's object system.
+This document explains the `FieldPathProperty` used in the GVAS format. This property type stores a path to a specific field or property within an Unreal Engine object structure, potentially referencing nested objects or components.
 
-## Binary Format Structure
+## Class and Function Definitions
 
-### With Header (include_header=True)
-When a header is included, the format consists of two parts:
+### `FieldPath`
+Represents the actual path data, consisting of a list of string names forming the path and the name of the resolved owner object.
 
-1. **Standard Header**
-   - Property Type (String): "FieldPathProperty" encoded as a string
-   - Length (UInt32): Total length of the field path data
-   - Array Index (UInt32): Always 0 for FieldPathProperty
-   - Terminator (UInt8): Always 0x00
+```python
+@dataclass
+class FieldPath:
+    type: Literal["FieldPath"] = "FieldPath"
+    path: Optional[list[str]] = None
+    resolved_owner: Optional[str] = None
 
-2. **Field Path Data**
-   - Path Element Count (UInt32): Number of path elements
-   - Path Elements (String[]): Array of strings, each encoded as:
-     - String Length (Int32): 
-       - If positive: Length of UTF-8 string + 1
-       - If negative: Length of UTF-16-LE string + 1
-     - String Content:
-       - For ASCII strings: UTF-8 encoded bytes
-       - For non-ASCII strings: UTF-16-LE encoded bytes
-     - Terminator:
-       - For ASCII strings: UInt8 (0x00)
-       - For non-ASCII strings: UInt16 (0x0000)
-   - Resolved Owner (String): Encoded using the same string format as path elements
+    def __post_init__(self):
+        if self.path is None:
+            self.path = []
 
-### Without Header (include_header=False)
-When no header is included, only the Field Path Data portion is written/read.
-
-## String Encoding Rules
-For each string in the path elements and resolved owner:
-- If the string contains only ASCII characters:
-  - Encoded as UTF-8
-  - Length prefix is positive
-  - Terminated with a single null byte (0x00)
-- If the string contains non-ASCII characters:
-  - Encoded as UTF-16-LE
-  - Length prefix is negative
-  - Terminated with a null word (0x0000)
-
-## Special Cases
-- Empty Path:
-  - When writing: Path element count is 0
-  - When reading: Creates an empty list
-- Null/None values:
-  - When writing: Treated as an empty path with empty resolved owner
-  - When reading: Returns empty path and resolved owner if length is 0
-
-## Example Binary Layout
-
-### Simple Field Path with ASCII Elements
-```
-[Header]
-00 00 00 0F  "FieldPathProperty" (15 bytes)
-00 00 00 1A  Length (26 bytes)
-00 00 00 00  Array Index (0)
-00           Terminator
-
-[Field Path Data]
-00 00 00 02  Path Element Count (2)
-00 00 00 05  Length (5 = 4 chars + 1 terminator)
-47 61 6D 65  "Game" in UTF-8
-00           Terminator
-00 00 00 0A  Length (10 = 9 chars + 1 terminator)
-50 6C 61 79 65 72 53 74 61 74  "PlayerStat" in UTF-8
-00           Terminator
-00 00 00 0A  Length (10 = 9 chars + 1 terminator)
-50 6C 61 79 65 72 43 68 61 72  "PlayerChar" in UTF-8
-00           Terminator
+    def read(self, stream: BinaryIO): ...
+    def write(self, stream: BinaryIO) -> int: ...
 ```
 
-### Field Path with Non-ASCII Elements
-```
-[Header]
-00 00 00 0F  "FieldPathProperty" (15 bytes)
-00 00 00 1C  Length (28 bytes)
-00 00 00 00  Array Index (0)
-00           Terminator
+### `FieldPathProperty` (inherits `PropertyTrait`)
+Represents a GVAS property holding a `FieldPath` object.
 
-[Field Path Data]
-00 00 00 01  Path Element Count (1)
-00 00 00 F6  Length (-10 = -5 chars - 1 terminator)
-83 7C 83 8C 83 43 83 8B 83 45  "プレイヤー" in UTF-16-LE
-00 00        Terminator
-00 00 00 0A  Length (10 = 9 chars + 1 terminator)
-50 6C 61 79 65 72 43 68 61 72  "PlayerChar" in UTF-8
-00           Terminator
+```python
+@dataclass
+class FieldPathProperty(PropertyTrait):
+    """A property that holds an FieldPath value"""
+
+    type: Literal["FieldPathProperty"] = "FieldPathProperty"
+    value: FieldPath = None
+
+    def read(self, stream: BinaryIO, include_header: bool = True) -> None: ...
+    def write(self, stream: BinaryIO, include_header: bool = True) -> int: ...
+```
+
+## Binary Format
+
+All multi-byte values are **little-endian**. Strings are read/written using `read_string`/`write_string`, which handle length prefixing (Int32) and potential UTF-8/UTF-16 encoding.
+
+### `FieldPath`
+Reads/writes the following sequence:
+1.  Path Element Count (UInt32): Number of string elements in the `Path` list.
+2.  Path Elements (Array of `String`): `Path Element Count` instances of string data, representing each step in the path.
+3.  Resolved Owner (`String`): The name of the object ultimately owning the field targeted by the path.
+
+```
+[Path Element Count: UInt32]
+[Path Element 1: String]
+[Path Element 2: String]
+...
+[Path Element N: String]
+[Resolved Owner: String]
+```
+
+### `FieldPathProperty`
+Reads/writes the standard property header followed by the `FieldPath` data if `include_header` is true. Otherwise, reads/writes only the `FieldPath` data.
+1.  Standard Property Header (Optional):
+    *   Property Type Name (`String`): "FieldPathProperty"
+    *   Length (Int64): Size in bytes of the `FieldPath` data.
+    *   Padding (UInt8): Typically 0.
+2.  `FieldPath` Data: (See `FieldPath` binary format above)
+
+```
+[Standard Header (Optional)]
+[FieldPath Data]
+```
+
+## Examples
+
+### Example `FieldPath` Binary Data
+Let's assume `path = ["MyComponent", "NestedObject", "TargetField"]` and `resolved_owner = "OwningActor"`.
+
+```
+# Path Element Count
+03 00 00 00        # Count = 3
+
+# Path Element 1: "MyComponent" (UTF-8)
+0C 00 00 00        # Length = 12 (11 chars + null terminator)
+4D 79 43 6F 6D 70 6F 6E 65 6E 74 # "MyComponent"
+00                 # Null terminator
+
+# Path Element 2: "NestedObject" (UTF-8)
+0D 00 00 00        # Length = 13 (12 chars + null terminator)
+4E 65 73 74 65 64 4F 62 6A 65 63 74 # "NestedObject"
+00                 # Null terminator
+
+# Path Element 3: "TargetField" (UTF-8)
+0C 00 00 00        # Length = 12 (11 chars + null terminator)
+54 61 72 67 65 74 46 69 65 6C 64 # "TargetField"
+00                 # Null terminator
+
+# Resolved Owner: "OwningActor" (UTF-8)
+0C 00 00 00        # Length = 12 (11 chars + null terminator)
+4F 77 6E 69 6E 67 41 63 74 6F 72 # "OwningActor"
+00                 # Null terminator
 ```
 
 ## Implementation Notes
-- The class uses a `ByteCountValidator` to ensure the correct number of bytes are read
-- When writing, it first writes to a temporary buffer to calculate the total length
-- The implementation handles both ASCII and non-ASCII strings automatically
-- The format is compatible with the original Rust implementation (field_path_property.rs)
-- Field paths are used to reference specific properties or fields within the game's object hierarchy 
+- The `FieldPath` structure is read/written as the body of the `FieldPathProperty`.
+- String handling relies on `gvas.gvas_utils`.
+- The `ByteCountValidator` ensures the data read matches the length specified in the optional header.
+
+> #### Note
+> This document was created with a generative AI prompt in the Cursor IDE. 
