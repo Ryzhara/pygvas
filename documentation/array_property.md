@@ -198,14 +198,16 @@ Values: `[Vector(x=1,y=2,z=3), Vector(x=4,y=5,z=6)]`, Field Name: "Positions"
 00
 
 # Struct Body 1 (Vector(1,2,3) - No Header)
-00 00 80 3F # X=1.0f
-00 00 00 40 # Y=2.0f
-00 00 40 40 # Z=3.0f
+# Little-Endian Hex Editor View:
+3F 80 00 00 # X=1.0f (0x3F800000)
+40 00 00 00 # Y=2.0f (0x40000000)
+40 40 00 00 # Z=3.0f (0x40400000)
 
 # Struct Body 2 (Vector(4,5,6) - No Header)
-00 00 80 40 # X=4.0f
-00 00 A0 40 # Y=5.0f
-00 00 C0 40 # Z=6.0f
+# Little-Endian Hex Editor View:
+40 80 00 00 # X=4.0f (0x40800000)
+40 A0 00 00 # Y=5.0f (0x40A00000)
+40 C0 00 00 # Z=6.0f (0x40C00000)
 ```
 
 ## Implementation Notes

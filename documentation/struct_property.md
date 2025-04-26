@@ -123,9 +123,10 @@ Value: `VectorStruct(x=1.0, y=2.0, z=3.0)`
 
 # -- Struct Data Body Starts --
 # VectorStruct Data (x=1.0, y=2.0, z=3.0)
-00 00 80 3F  # X = 1.0f
-00 00 00 40  # Y = 2.0f
-00 00 40 40  # Z = 3.0f
+# Little-Endian Hex Editor View:
+3F 80 00 00  # X = 1.0f (0x3F800000)
+40 00 00 00  # Y = 2.0f (0x40000000)
+40 40 00 00  # Z = 3.0f (0x40400000)
 ```
 
 ### Example: Custom Struct
@@ -169,7 +170,7 @@ Value: `{"Health": FloatProperty(value=100.0), "Ammo": Int32Property(value=30)}`
 0E 00 00 00 46 6C 6F 61 74 50 72 6F 70 65 72 74 79 00 # Header Name
 04 00 00 00 00 00 00 00 # Header Length = 4
 00                      # Header Padding
-00 00 C8 42             # Body Value = 100.0f
+42 C8 00 00             # Body Value = 100.0f (0x42C80000) Little-Endian
 
 # Property 2 Name: "Ammo" (UTF-8)
 05 00 00 00 41 6D 6D 6F 00
