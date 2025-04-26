@@ -307,7 +307,7 @@ def test_gvas_file(test_file: str):
 dump_model = False
 if dump_model:
     model_json_schema = GVASFile.model_json_schema()
-    with open("gvas_file_schema_dump.json", "w") as f:
+    with open("gvas_file_schema.json", "w") as f:
         json_string = json.dumps(model_json_schema, indent=2)
         f.write(json_string)
     exit(0)
