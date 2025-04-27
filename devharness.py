@@ -3,6 +3,7 @@ import pathlib
 import enum
 import json
 import sys
+import zipfile
 
 from pydantic import ValidationError
 from pydantic.dataclasses import dataclasses
@@ -183,6 +184,7 @@ test_file_list: list[tuple[str, Any]] = [
 
 def test_gvas_file(test_file: str, hints: str) -> None:
     # Open and read a .sav file
+    ContextScopeTracker.set_inside_unit_tests()
     gvas_file = None
     try:
         gvas_file: GVASFile
@@ -238,6 +240,21 @@ def test_gvas_file(test_file: str, hints: str) -> None:
     #     f.write(pydantic_json_content)
 
     json_old_and_new = compare_binary_files(json_file, pydantic_json_file)
+
+    # create JSON zip if large
+    # we store output of PYDANTIC specific serialzation but without 'pydantic' file name components
+    is_it_zip_worthy = pathlib.Path(pydantic_json_file)
+    if is_it_zip_worthy.exists():
+        file_stat = is_it_zip_worthy.stat()
+        if file_stat.st_size > 8_000_000:
+            try:
+                with zipfile.ZipFile(f"{json_file}.zip", "w") as zipf:
+                    zipf.write(json_file, arcname=pathlib.Path(json_file).name)
+                print(f"File '{json_file}' zipped successfully to '{json_file}.zip'")
+            except FileNotFoundError:
+                print(f"Error: File not found: '{json_file}'")
+            except Exception as e:
+                print(f"An error occurred: {e}")
 
     # Re-load and deserialize that JSON
     with open(pydantic_json_file, "r") as f:

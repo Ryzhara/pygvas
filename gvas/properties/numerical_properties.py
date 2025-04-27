@@ -270,14 +270,17 @@ class FloatProperty(PropertyTrait):
     type: Literal["FloatProperty"] = "FloatProperty"
     value: float = 0
 
-    @field_serializer("value")
-    def best_guess_serializer(self, value: float):
-        # can we get the quotes removed from this in JSON?
-        return f"{value:.9g}"
+    # # This doesn't apply when not using BaseModel inheritance
+    # class Config:
+    #     json_encoders = {
+    #         float: lambda x: f"{x:.2f}"  # Limit to max 32-bit decimal places with one extra for rounding
+    #     }
 
-    @field_validator("value")
-    def best_guess_deserializer(cls, value: str):
-        return float(value)
+    # # This version creates a string, which is gross.
+    # @field_serializer("value")
+    # def best_guess_serializer(self, value: float):
+    #     # can we get the quotes removed from this in JSON?
+    #     return f"{value:.9g}"
 
     def read(self, stream: BinaryIO, include_header: bool = True) -> None:
         if include_header:

@@ -107,7 +107,7 @@
             "value": {
               "AsFloat": {
                 "type": "FloatProperty",
-                "value": "0"
+                "value": 0.0
               },
               "AsString": {
                 "type": "StrProperty"
@@ -126,7 +126,7 @@
             "value": {
               "AsFloat": {
                 "type": "FloatProperty",
-                "value": "1"
+                "value": 1.0
               },
               "AsString": {
                 "type": "StrProperty"
@@ -145,7 +145,7 @@
             "value": {
               "AsFloat": {
                 "type": "FloatProperty",
-                "value": "1"
+                "value": 1.0
               },
               "AsString": {
                 "type": "StrProperty"
@@ -164,7 +164,7 @@
             "value": {
               "AsFloat": {
                 "type": "FloatProperty",
-                "value": "1"
+                "value": 1.0
               },
               "AsString": {
                 "type": "StrProperty"
@@ -183,7 +183,7 @@
             "value": {
               "AsFloat": {
                 "type": "FloatProperty",
-                "value": "1"
+                "value": 1.0
               },
               "AsString": {
                 "type": "StrProperty"
@@ -225,7 +225,7 @@
           },
           {
             "type": "FloatProperty",
-            "value": "0"
+            "value": 0.0
           }
         ],
         [
@@ -254,7 +254,7 @@
           },
           {
             "type": "FloatProperty",
-            "value": "0"
+            "value": 0.0
           }
         ]
       ]

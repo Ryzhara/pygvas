@@ -1358,15 +1358,15 @@
     },
     "TimeOfDay": {
       "type": "FloatProperty",
-      "value": "915.33252"
+      "value": 915.33251953125
     },
     "DayLength": {
       "type": "FloatProperty",
-      "value": "100"
+      "value": 100.0
     },
     "NightLength": {
       "type": "FloatProperty",
-      "value": "5"
+      "value": 5.0
     }
   }
 }

@@ -493,15 +493,15 @@
       "value": {
         "MasterLevel": {
           "type": "FloatProperty",
-          "value": "0.20348908"
+          "value": 0.20348908007144928
         },
         "MusicLevel": {
           "type": "FloatProperty",
-          "value": "0.151163504"
+          "value": 0.1511635035276413
         },
         "SFXLevel": {
           "type": "FloatProperty",
-          "value": "0.543605387"
+          "value": 0.543605387210846
         }
       }
     },

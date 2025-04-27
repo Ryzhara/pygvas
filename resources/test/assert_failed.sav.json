@@ -100,7 +100,7 @@
       "value": {
         "GammaValue_11_B19701C44B2715B65ACE029A88D15C4F": {
           "type": "FloatProperty",
-          "value": "0.400000006"
+          "value": 0.4000000059604645
         },
         "Language_77_80BF4E304912ECD8C1EAEB8C6A07EC36": {
           "type": "StrProperty",

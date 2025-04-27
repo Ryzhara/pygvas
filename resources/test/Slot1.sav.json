@@ -111,7 +111,7 @@
     },
     "f_property": {
       "type": "FloatProperty",
-      "value": "3.14159012"
+      "value": 3.141590118408203
     },
     "d_property": {
       "type": "DoubleProperty",

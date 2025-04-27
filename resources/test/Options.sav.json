@@ -71,11 +71,11 @@
   "properties": {
     "Slider1": {
       "type": "FloatProperty",
-      "value": "0.166106716"
+      "value": 0.166106715798378
     },
     "Slider2": {
       "type": "FloatProperty",
-      "value": "0.282516152"
+      "value": 0.28251615166664124
     }
   }
 }
