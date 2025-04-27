@@ -71,67 +71,67 @@
     },
     "CamLensSenNoneSniper": {
       "type": "FloatProperty",
-      "value": 0.800000011920929
+      "value": "0.800000012"
     },
     "CamLensSenRedDotSniper": {
       "type": "FloatProperty",
-      "value": 0.4000000059604645
+      "value": "0.400000006"
     },
     "CamLensSen2XSniper": {
       "type": "FloatProperty",
-      "value": 0.23999999463558197
+      "value": "0.239999995"
     },
     "CamLensSen4XSniper": {
       "type": "FloatProperty",
-      "value": 0.10999999940395355
+      "value": "0.109999999"
     },
     "CamLensSen8XSniper": {
       "type": "FloatProperty",
-      "value": 0.07999999821186066
+      "value": "0.0799999982"
     },
     "FireCamLensSenNoneSniper": {
       "type": "FloatProperty",
-      "value": 0.800000011920929
+      "value": "0.800000012"
     },
     "FireCamLensSenRedDotSniper": {
       "type": "FloatProperty",
-      "value": 0.4000000059604645
+      "value": "0.400000006"
     },
     "FireCamLensSen2XSniper": {
       "type": "FloatProperty",
-      "value": 0.23999999463558197
+      "value": "0.239999995"
     },
     "FireCamLensSen4XSniper": {
       "type": "FloatProperty",
-      "value": 0.10999999940395355
+      "value": "0.109999999"
     },
     "FireCamLensSen8XSniper": {
       "type": "FloatProperty",
-      "value": 0.07999999821186066
+      "value": "0.0799999982"
     },
     "GyroscopeSenNoneSniper": {
       "type": "FloatProperty",
-      "value": 0.800000011920929
+      "value": "0.800000012"
     },
     "GyroscopeSenRedDotSniper": {
       "type": "FloatProperty",
-      "value": 0.7200000286102295
+      "value": "0.720000029"
     },
     "GyroscopeSen2XSniper": {
       "type": "FloatProperty",
-      "value": 0.6000000238418579
+      "value": "0.600000024"
     },
     "GyroscopeSen4XSniper": {
       "type": "FloatProperty",
-      "value": 0.4000000059604645
+      "value": "0.400000006"
     },
     "GyroscopeSen8XSniper": {
       "type": "FloatProperty",
-      "value": 0.2800000011920929
+      "value": "0.280000001"
     },
     "MainVolumValue": {
       "type": "FloatProperty",
-      "value": 1.0
+      "value": "1"
     },
     "FPSLevel": {
       "type": "IntProperty",
@@ -139,11 +139,11 @@
     },
     "VehicleEye": {
       "type": "FloatProperty",
-      "value": 0.800000011920929
+      "value": "0.800000012"
     },
     "ParachuteEye": {
       "type": "FloatProperty",
-      "value": 0.800000011920929
+      "value": "0.800000012"
     },
     "FpViewValue": {
       "type": "IntProperty",
@@ -151,47 +151,47 @@
     },
     "CamFpFreeEye": {
       "type": "FloatProperty",
-      "value": 0.5600000023841858
+      "value": "0.560000002"
     },
     "CamLensSenNoneSniperFP": {
       "type": "FloatProperty",
-      "value": 0.699999988079071
+      "value": "0.699999988"
     },
     "FireCamLensSenNoneSniperFP": {
       "type": "FloatProperty",
-      "value": 0.699999988079071
+      "value": "0.699999988"
     },
     "GyroscopeSenNoneSniperFP": {
       "type": "FloatProperty",
-      "value": 0.7599999904632568
+      "value": "0.75999999"
     },
     "CamLensSen3XSniper": {
       "type": "FloatProperty",
-      "value": 0.17000000178813934
+      "value": "0.170000002"
     },
     "CamLensSen6XSniper": {
       "type": "FloatProperty",
-      "value": 0.09000000357627869
+      "value": "0.0900000036"
     },
     "FireCamLensSen3XSniper": {
       "type": "FloatProperty",
-      "value": 0.17000000178813934
+      "value": "0.170000002"
     },
     "FireCamLensSen6XSniper": {
       "type": "FloatProperty",
-      "value": 0.09000000357627869
+      "value": "0.0900000036"
     },
     "GyroscopeSen3XSniper": {
       "type": "FloatProperty",
-      "value": 0.5
+      "value": "0.5"
     },
     "GyroscopeSen6XSniper": {
       "type": "FloatProperty",
-      "value": 0.3400000035762787
+      "value": "0.340000004"
     },
     "ScreenLightness": {
       "type": "FloatProperty",
-      "value": 1.5
+      "value": "1.5"
     },
     "DeathPlaybackSwitch": {
       "type": "BoolProperty",
@@ -325,43 +325,43 @@
     },
     "FireGyroscopeSenNoneSniper": {
       "type": "FloatProperty",
-      "value": 0.800000011920929
+      "value": "0.800000012"
     },
     "FireGyroscopeSenRedDotSniper": {
       "type": "FloatProperty",
-      "value": 0.7200000286102295
+      "value": "0.720000029"
     },
     "FireGyroscopeSen2XSniper": {
       "type": "FloatProperty",
-      "value": 0.6000000238418579
+      "value": "0.600000024"
     },
     "FireGyroscopeSen4XSniper": {
       "type": "FloatProperty",
-      "value": 0.4000000059604645
+      "value": "0.400000006"
     },
     "FireGyroscopeSen8XSniper": {
       "type": "FloatProperty",
-      "value": 0.2800000011920929
+      "value": "0.280000001"
     },
     "FireGyroscopeSen3XSniper": {
       "type": "FloatProperty",
-      "value": 0.5
+      "value": "0.5"
     },
     "FireGyroscopeSen6XSniper": {
       "type": "FloatProperty",
-      "value": 0.3400000035762787
+      "value": "0.340000004"
     },
     "FireGyroscopeSenNoneSniperFp": {
       "type": "FloatProperty",
-      "value": 0.7599999904632568
+      "value": "0.75999999"
     },
     "FireGyroscopeSenShoulderTPP": {
       "type": "FloatProperty",
-      "value": 0.800000011920929
+      "value": "0.800000012"
     },
     "FireGyroscopeSenShoulderFPP": {
       "type": "FloatProperty",
-      "value": 0.800000011920929
+      "value": "0.800000012"
     },
     "bLbsNear": {
       "type": "BoolProperty",

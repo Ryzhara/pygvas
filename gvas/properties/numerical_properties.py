@@ -5,6 +5,7 @@ Python port of int_property.rs
 
 from typing import Literal
 
+from pydantic import field_serializer, field_validator
 from pydantic.dataclasses import dataclass
 
 from gvas.properties.property_base import PropertyTrait
@@ -268,6 +269,15 @@ class UInt64Property(PropertyTrait):
 class FloatProperty(PropertyTrait):
     type: Literal["FloatProperty"] = "FloatProperty"
     value: float = 0
+
+    @field_serializer("value")
+    def best_guess_serializer(self, value: float):
+        # can we get the quotes removed from this in JSON?
+        return f"{value:.9g}"
+
+    @field_validator("value")
+    def best_guess_deserializer(cls, value: str):
+        return float(value)
 
     def read(self, stream: BinaryIO, include_header: bool = True) -> None:
         if include_header:

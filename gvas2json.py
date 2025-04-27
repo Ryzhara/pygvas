@@ -1,8 +1,5 @@
 import argparse
-import json
 import sys
-
-from pydantic import TypeAdapter
 
 from gvas.gvas_file import GVASFile
 

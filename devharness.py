@@ -2,6 +2,7 @@ import filecmp
 import pathlib
 import enum
 import json
+import sys
 
 from pydantic import ValidationError
 from pydantic.dataclasses import dataclasses
@@ -104,26 +105,30 @@ class EnhancedJSONEncoder(json.JSONEncoder):
         return obj
 
 
-test_file_list = [
-    "resources/test/islands_of_insight.sav",
-    "resources/test/assert_failed.sav",
-    "resources/test/component8.sav",
-    "resources/test/Delegate.sav",
-    "resources/test/Options.sav",
-    "resources/test/Profile_0.sav",
-    "resources/test/enum_array.sav",
-    "resources/test/package_version_525.sav",
-    "resources/test/package_version_524.sav",
-    "resources/test/Slot1.sav",
-    "resources/test/Slot2.sav",
-    "resources/test/Slot3.sav",
-    "resources/test/transform.sav",
-    "resources/test/ro_64bit_fav.sav",
-    "resources/test/SaveSlot_03.sav",
-    "resources/test/vector2d.sav",
-    "resources/test/regression_01.bin",
-    #   regression_01.bin once had an error but now is working without hings?
-    #   -- custom struct @ FSDEventRewardsSave.StructProperty.EventsSeen.SetProperty.StructProperty
+test_file_list: list[tuple[str, Any]] = [
+    ("resources/test/islands_of_insight.sav", None),
+    ("resources/test/assert_failed.sav", None),
+    ("resources/test/component8.sav", None),
+    ("resources/test/Delegate.sav", None),
+    ("resources/test/Options.sav", None),
+    ("resources/test/Profile_0.sav", None),
+    ("resources/test/enum_array.sav", None),
+    ("resources/test/package_version_525.sav", None),
+    ("resources/test/package_version_524.sav", None),
+    ("resources/test/Slot1.sav", None),
+    ("resources/test/Slot2.sav", None),
+    ("resources/test/Slot3.sav", None),
+    ("resources/test/transform.sav", None),
+    ("resources/test/ro_64bit_fav.sav", None),
+    ("resources/test/SaveSlot_03.sav", None),
+    ("resources/test/vector2d.sav", None),
+    ("resources/test/regression_01.bin", None),
+    ("resources/test/features_01.bin", "resources/test/features_01.hints.json"),
+    ("resources/test/palworld_zlib.sav", None),
+    (
+        "resources/test/palworld_zlib_twice.sav",
+        "resources/test/palworld_zlib_twice.hints.json",
+    ),
 ]
 
 
@@ -144,73 +149,57 @@ test_file_list = [
 # StructProperty["TrackedQuestsNames"] = NameProperty(value="QU91_InvestigateTower_B2")
 
 
-# test_file_list = ["resources/test/palworld_zlib_twice.sav"]  # working!
-# # game_version = GameVersion.PALWORLD
-# # compression = CompressionType.ZLIB_TWICE
-# ContextScopeTracker.set_hints({
-#     "worldSaveData.StructProperty.MapObjectSpawnerInStageSaveData.MapProperty.Value.StructProperty.SpawnerDataMapByLevelObjectInstanceId.MapProperty.Key.StructProperty": "Guid",
-#     "worldSaveData.StructProperty.BaseCampSaveData.MapProperty.Key.StructProperty": "Guid",
-#     "worldSaveData.StructProperty.GroupSaveDataMap.MapProperty.Key.StructProperty": "Guid",
-# })
-
 # there are some "BIN" files:
 #   features_01.bin, -- custom struct @ FSDEventRewardsSave.StructProperty.EventsSeen.SetProperty.StructProperty
-test_file_list = ["resources/test/features_01.bin"]
-ContextScopeTracker.set_deserialization_hints(
-    {
-        "SeasonSave.StructProperty.Seasons.MapProperty.Key.StructProperty": "Guid",
-        "SeasonSave.StructProperty.Seasons.MapProperty.Value.StructProperty.CompletedSpecialChallenges.MapProperty.Key.StructProperty": "Guid",
-        "UnLockedMissionParameters.MapProperty.Key.StructProperty": "Guid",
-        "ItemUpgradeSelections.MapProperty.Key.StructProperty": "Guid",
-        "ItemUpgradeLoadouts.ArrayProperty.Loadout.MapProperty.Key.StructProperty": "Guid",
-        "EnemiesKilled.MapProperty.Key.StructProperty": "Guid",
-        "UnlockedItemSkins.MapProperty.Key.StructProperty": "Guid",
-        "Resources.StructProperty.OwnedResources.MapProperty.Key.StructProperty": "Guid",
-        "FSDEventRewardsSave.StructProperty.EventsSeen.SetProperty.StructProperty": "Guid",
-        "GameDLCSave.StructProperty.AnnouncedIDs.SetProperty.StructProperty": "Guid",
-        "Drinks.StructProperty.UnlockedDrinks.SetProperty.StructProperty": "Guid",
-        "UnlockedItemSkins.MapProperty.Value.StructProperty.Skins.SetProperty.StructProperty": "Guid",
-        "UnlockedPickaxeParts.SetProperty.StructProperty": "Guid",
-        "MinersManualKnownObjects.SetProperty.StructProperty": "Guid",
-    }
-)
 
 
 # always a quick retest
-# test_file_list = ["resources/test/assert_failed.sav"]
-# test_file_list = ["resources/test/Options.sav"]
-# test_file_list = ["resources/test/Delegate.sav"]
-# test_file_list = ["resources/test/Slot1.sav"]
-# test_file_list = ["resources/test/vector2d.sav"]
-# test_file_list = ["resources/test/package_version_525.sav"]
-# test_file_list = ["resources/test/islands_of_insight.sav"]
-# test_file_list = ["resources/test/SaveSlot_03.sav"]
-# test_file_list = ["resources/test/Profile_0.sav"]
-# test_file_list = ["resources/test/Slot2.sav"]
-# test_file_list = ["resources/test/component8.sav"]
-# test_file_list = ["resources/test/enum_array.sav"]
-# test_file_list = ["resources/test/package_version_524.sav"]
-# test_file_list = ["resources/test/Slot3.sav"]
-# test_file_list = ["resources/test/transform.sav"]
-# test_file_list = ["resources/test/ro_64bit_fav.sav"]
-# ABOVE WORKS
+# test_file_list = [("resources/test/assert_failed.sav", None)]
+# test_file_list = [("resources/test/Options.sav", None)]
+# test_file_list = [("resources/test/Delegate.sav", None)]
+# test_file_list = [("resources/test/Slot1.sav", None)]
+# test_file_list = [("resources/test/vector2d.sav", None)]
+# test_file_list = [("resources/test/package_version_525.sav", None)]
+# test_file_list = [("resources/test/islands_of_insight.sav", None)]
+# test_file_list = [("resources/test/SaveSlot_03.sav", None)]
+# test_file_list = [("resources/test/Profile_0.sav", None)]
+# test_file_list = [("resources/test/Slot2.sav", None)]
+# test_file_list = [("resources/test/component8.sav", None)]
+# test_file_list = [("resources/test/enum_array.sav", None)]
+# test_file_list = [("resources/test/package_version_524.sav", None)]
+# test_file_list = [("resources/test/Slot3.sav", None)]
+# test_file_list = [("resources/test/transform.sav", None)]
+# test_file_list = [("resources/test/ro_64bit_fav.sav", None)]
+# test_file_list = [
+#     (
+#         "resources/test/palworld_zlib_twice.sav",
+#         "resources/test/palworld_zlib_twice.hints.json",
+#     )
+# ]
+# test_file_list = [
+#     ("resources/test/features_01.bin", "resources/test/features_01.hints.json")
+# ]
 
 
-def test_gvas_file(test_file: str):
+def test_gvas_file(test_file: str, hints: str) -> None:
     # Open and read a .sav file
     gvas_file = None
     try:
         gvas_file: GVASFile
-        gvas_file, decompressed_data = GVASFile.deserialize_gvas_file(test_file)
+        gvas_file = GVASFile.deserialize_gvas_file(
+            test_file, deserialization_hints=hints
+        )
     except Exception as e:
         print(f"Failed to load {test_file}: {e}")
         raise e
 
     if gvas_file.game_file_format.compression_type != CompressionType.NONE:
         decompressed_data_file = f"{test_file}.decompressed"
+        with open(test_file, "rb") as f:
+            decompressed_data = f.read()
         # print(f"Saving decompressed data {decompressed_data_file}")
         with open(decompressed_data_file, "wb") as f:
-            f.write(decompressed_data.getvalue())
+            f.write(decompressed_data)
 
     # dump binary to work toward idempotence for read, write, rinse and repeat
     output_file = f"{test_file}.idempotent"
@@ -272,18 +261,6 @@ def test_gvas_file(test_file: str):
 
     reread_and_rewrite = compare_binary_files(output_file_too, output_file)
 
-    # assert new_gvas == gvas_file
-    # def compare_pydantic_objects(obj1: GVASFile, obj2: GVASFile):
-    #     obj1_adaptor = TypeAdapter(GVASFile)
-    #     obj2_adaptor = TypeAdapter(GVASFile)
-    #
-    #     dict1 = obj1_adaptor.dump_python(obj1, exclude_none=False)
-    #     dict2 = obj2_adaptor.dump_python(obj2, exclude_none=False)
-    #
-    #     # print(f"\tGVas objects are{' NOT ' if dict1 != dict2 else ' '}identical")
-    #
-    # pydantic_object_commpare = compare_pydantic_objects(gvas_file, new_gvas)
-
     if idempotent and json_old_and_new and reread_and_rewrite:
         print(f"SUCCESS testing {test_file}")
         return
@@ -312,5 +289,113 @@ if dump_model:
         f.write(json_string)
     exit(0)
 
-for test_file in test_file_list:
-    test_gvas_file(test_file)
+
+class FloatHandler:
+    """
+    IEEE-754 32-bit format (single precision)
+        1 bit = sign (0 = positive, 1 = negative)
+        8 bits = exponent (bias = 127)
+        23 bits = mantissa (fractional part)
+
+    For normal numbers:
+        Value = (-1)^sign * 2^(exponent-127) * (1.fraction_bits)
+
+    For special cases:
+        Exponent 255 (all ones)
+
+    If mantissa == 0 ➔ infinity
+        If mantissa ≠ 0 ➔ NaN
+    """
+
+    @staticmethod
+    def unpack_float(float_value):
+        """
+        Unpacks a 32-bit IEEE 754 float into its sign, exponent, and mantissa.
+
+        Args:
+            float_value: The float value to unpack.
+
+        Returns:
+            A tuple containing the sign (0 or 1), exponent (integer), and mantissa (float).
+        """
+
+        # GVAS is little endian
+        packed_value = struct.pack("<f", float_value)
+        int_value = struct.unpack("<I", packed_value)[0]
+
+        sign = (int_value >> 31) & 1
+        exponent = (int_value >> 23) & 0xFF
+        mantissa = int_value & 0x7FFFFF
+
+        if exponent == 0:
+            exponent_unbiased = 1 - 127
+        elif exponent == 255:
+            exponent_unbiased = float("inf")
+        else:
+            exponent_unbiased = exponent - 127
+
+        if exponent == 0:
+            mantissa_normalized = mantissa / (2**23)
+        else:
+            mantissa_normalized = 1 + mantissa / (2**23)
+
+        return (
+            sign,
+            exponent,
+            exponent_unbiased,
+            mantissa,
+            mantissa_normalized,
+            int_value,
+        )
+
+    @staticmethod
+    def build_ieee_float(sign: int, exponent: int, mantissa: Union[int, str]):
+        # Start by setting the sign bit
+        sign = (1 if sign < 0 else 0) << 31
+
+        if mantissa == "inf":
+            exponent = 0xFF << 23
+            mantissa = 0x000000
+        elif mantissa == "nan":
+            exponent = 0xFF << 23
+            # Quiet NaN (just needs nonzero mantissa, 1st bit set often)
+            mantissa = 0x400000
+        else:
+            # Regular number
+            exponent = (exponent & 0xFF) << 23
+            mantissa = mantissa & 0x7FFFFF  # Only 23 bits
+
+        # Combine the parts
+        integer_bits = sign | exponent | mantissa
+
+        # Pack into 4 bytes (little-endian if needed)
+        gvas_integer_bytes = struct.pack(
+            "<I", integer_bits
+        )  # '>I' = big-endian unsigned int (network byte order)
+
+        return integer_bits, gvas_integer_bytes
+
+
+test_floats = False
+if test_floats:
+    for float_value in [31415.9, 3.141592653]:
+        # Example usage
+        sign, exponent, exponent_unbiased, mantissa, mantissa_normalized, int_value = (
+            FloatHandler.unpack_float(float_value)
+        )
+
+        float_value_back = float("nan")
+        integer_bits = 0xDEADBEEF
+        integer_bits, gvas_integer_bytes = FloatHandler.build_ieee_float(
+            sign, exponent, mantissa
+        )
+        float_value_back = struct.unpack("<f", gvas_integer_bytes)[0]
+
+        print(
+            f"{float_value=}, {float_value_back=}, {sign=}, {exponent=}, {mantissa=}, {mantissa_normalized=}, {int_value=}, {integer_bits=}"
+        )
+
+    sys.exit(0)
+
+for test_file, hints in test_file_list:
+    test_gvas_file(test_file, hints)

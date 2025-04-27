@@ -121,7 +121,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 1539387.75
+                  "value": "1539387.75"
                 }
               }
             },
@@ -146,7 +146,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 551684608.0
+                  "value": "551684608"
                 }
               }
             },
@@ -171,7 +171,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 95064.7109375
+                  "value": "95064.7109"
                 }
               }
             },
@@ -196,7 +196,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 1000098624.0
+                  "value": "1.00009862e+09"
                 }
               }
             },
@@ -221,7 +221,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 4.0
+                  "value": "4"
                 }
               }
             },
@@ -246,7 +246,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 140.0
+                  "value": "140"
                 }
               }
             },
@@ -271,7 +271,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 274.0
+                  "value": "274"
                 }
               }
             },
@@ -296,7 +296,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 584.0
+                  "value": "584"
                 }
               }
             },
@@ -321,7 +321,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 178.0
+                  "value": "178"
                 }
               }
             },
@@ -346,7 +346,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 155.0
+                  "value": "155"
                 }
               }
             },
@@ -371,7 +371,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 208.0
+                  "value": "208"
                 }
               }
             },
@@ -396,7 +396,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 461.0
+                  "value": "461"
                 }
               }
             },
@@ -421,7 +421,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 149.0
+                  "value": "149"
                 }
               }
             },
@@ -446,7 +446,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 180544800.0
+                  "value": "180544800"
                 }
               }
             },
@@ -471,7 +471,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 1107775.5
+                  "value": "1107775.5"
                 }
               }
             },
@@ -496,7 +496,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 3647860.5
+                  "value": "3647860.5"
                 }
               }
             },
@@ -521,7 +521,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 237.0
+                  "value": "237"
                 }
               }
             },
@@ -546,7 +546,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 99771.0
+                  "value": "99771"
                 }
               }
             },
@@ -571,7 +571,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 549.0
+                  "value": "549"
                 }
               }
             },
@@ -596,7 +596,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 100.0
+                  "value": "100"
                 }
               }
             },
@@ -621,7 +621,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 212.0
+                  "value": "212"
                 }
               }
             },
@@ -646,7 +646,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 116.0
+                  "value": "116"
                 }
               }
             },
@@ -671,7 +671,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 467.0
+                  "value": "467"
                 }
               }
             },
@@ -696,7 +696,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 101.0
+                  "value": "101"
                 }
               }
             },
@@ -721,7 +721,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 161.0
+                  "value": "161"
                 }
               }
             },
@@ -746,7 +746,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 106.0
+                  "value": "106"
                 }
               }
             },
@@ -771,7 +771,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 330.0
+                  "value": "330"
                 }
               }
             },
@@ -796,7 +796,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 109.0
+                  "value": "109"
                 }
               }
             },
@@ -821,7 +821,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 109.0
+                  "value": "109"
                 }
               }
             },
@@ -846,7 +846,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 43.0
+                  "value": "43"
                 }
               }
             },
@@ -871,7 +871,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 55.0
+                  "value": "55"
                 }
               }
             },
@@ -896,7 +896,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 70.0
+                  "value": "70"
                 }
               }
             },
@@ -921,7 +921,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 120.0
+                  "value": "120"
                 }
               }
             },
@@ -946,7 +946,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 531.0
+                  "value": "531"
                 }
               }
             },
@@ -971,7 +971,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 507.0
+                  "value": "507"
                 }
               }
             },
@@ -996,7 +996,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 51.0
+                  "value": "51"
                 }
               }
             },
@@ -1021,7 +1021,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 107.0
+                  "value": "107"
                 }
               }
             },
@@ -1046,7 +1046,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 65.0
+                  "value": "65"
                 }
               }
             },
@@ -1071,7 +1071,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 112.0
+                  "value": "112"
                 }
               }
             },
@@ -1096,7 +1096,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 77.0
+                  "value": "77"
                 }
               }
             },
@@ -1121,7 +1121,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 92.0
+                  "value": "92"
                 }
               }
             },
@@ -1146,7 +1146,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 61.0
+                  "value": "61"
                 }
               }
             },
@@ -1171,7 +1171,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 415.0
+                  "value": "415"
                 }
               }
             },
@@ -1196,7 +1196,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 46.0
+                  "value": "46"
                 }
               }
             },
@@ -1221,7 +1221,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 60.0
+                  "value": "60"
                 }
               }
             },
@@ -1246,7 +1246,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 560.0
+                  "value": "560"
                 }
               }
             },
@@ -1271,7 +1271,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 532.0
+                  "value": "532"
                 }
               }
             },
@@ -1296,7 +1296,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 78.0
+                  "value": "78"
                 }
               }
             },
@@ -1321,7 +1321,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 8.0
+                  "value": "8"
                 }
               }
             },
@@ -1346,7 +1346,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 12.0
+                  "value": "12"
                 }
               }
             },
@@ -1371,7 +1371,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 93.0
+                  "value": "93"
                 }
               }
             },
@@ -1396,7 +1396,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 105.0
+                  "value": "105"
                 }
               }
             },
@@ -1421,7 +1421,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 659.0
+                  "value": "659"
                 }
               }
             },
@@ -1446,7 +1446,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 608.0
+                  "value": "608"
                 }
               }
             },
@@ -1471,7 +1471,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 145.0
+                  "value": "145"
                 }
               }
             },
@@ -1496,7 +1496,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 107.0
+                  "value": "107"
                 }
               }
             },
@@ -1521,7 +1521,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 63.0
+                  "value": "63"
                 }
               }
             },
@@ -1546,7 +1546,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 163.0
+                  "value": "163"
                 }
               }
             },
@@ -1571,7 +1571,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 125.0
+                  "value": "125"
                 }
               }
             },
@@ -1596,7 +1596,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 82.0
+                  "value": "82"
                 }
               }
             },
@@ -1621,7 +1621,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 130.0
+                  "value": "130"
                 }
               }
             },
@@ -1646,7 +1646,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 150.0
+                  "value": "150"
                 }
               }
             },
@@ -1671,7 +1671,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 102.0
+                  "value": "102"
                 }
               }
             },
@@ -1696,7 +1696,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 140.0
+                  "value": "140"
                 }
               }
             },
@@ -1721,7 +1721,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 131.0
+                  "value": "131"
                 }
               }
             },
@@ -1746,7 +1746,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 104.0
+                  "value": "104"
                 }
               }
             },
@@ -1771,7 +1771,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 75.0
+                  "value": "75"
                 }
               }
             },
@@ -1796,7 +1796,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 87.0
+                  "value": "87"
                 }
               }
             },
@@ -1821,7 +1821,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 73.0
+                  "value": "73"
                 }
               }
             },
@@ -1846,7 +1846,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 49.0
+                  "value": "49"
                 }
               }
             },
@@ -1871,7 +1871,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 63.0
+                  "value": "63"
                 }
               }
             },
@@ -1896,7 +1896,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 213850096.0
+                  "value": "213850096"
                 }
               }
             },
@@ -1921,7 +1921,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 1457362.5
+                  "value": "1457362.5"
                 }
               }
             },
@@ -1946,7 +1946,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 142452.734375
+                  "value": "142452.734"
                 }
               }
             },
@@ -1971,7 +1971,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 220.0
+                  "value": "220"
                 }
               }
             },
@@ -1996,7 +1996,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 1000071296.0
+                  "value": "1.0000713e+09"
                 }
               }
             },
@@ -2021,7 +2021,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 711.0
+                  "value": "711"
                 }
               }
             },
@@ -2046,7 +2046,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 108.0
+                  "value": "108"
                 }
               }
             },
@@ -2071,7 +2071,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 289.0
+                  "value": "289"
                 }
               }
             },
@@ -2096,7 +2096,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 76.0
+                  "value": "76"
                 }
               }
             },
@@ -2121,7 +2121,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 3.0
+                  "value": "3"
                 }
               }
             },
@@ -2146,7 +2146,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 243.0
+                  "value": "243"
                 }
               }
             },
@@ -2171,7 +2171,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 496.0
+                  "value": "496"
                 }
               }
             },
@@ -2196,7 +2196,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 116.0
+                  "value": "116"
                 }
               }
             },
@@ -2221,7 +2221,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 810131.5
+                  "value": "810131.5"
                 }
               }
             },
@@ -2246,7 +2246,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 104357144.0
+                  "value": "104357144"
                 }
               }
             },
@@ -2271,7 +2271,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 1337982.125
+                  "value": "1337982.12"
                 }
               }
             },
@@ -2296,7 +2296,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 220.0
+                  "value": "220"
                 }
               }
             },
@@ -2321,7 +2321,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 76834.0
+                  "value": "76834"
                 }
               }
             },
@@ -2346,7 +2346,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 389.0
+                  "value": "389"
                 }
               }
             },
@@ -2371,7 +2371,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 41.0
+                  "value": "41"
                 }
               }
             },
@@ -2396,7 +2396,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 147.0
+                  "value": "147"
                 }
               }
             },
@@ -2421,7 +2421,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 294.0
+                  "value": "294"
                 }
               }
             },
@@ -2446,7 +2446,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 63.0
+                  "value": "63"
                 }
               }
             },
@@ -2471,7 +2471,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 289.0
+                  "value": "289"
                 }
               }
             },
@@ -2496,7 +2496,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 293.0
+                  "value": "293"
                 }
               }
             },
@@ -2521,7 +2521,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 68.0
+                  "value": "68"
                 }
               }
             },
@@ -2546,7 +2546,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 546.0
+                  "value": "546"
                 }
               }
             },
@@ -2571,7 +2571,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 68.0
+                  "value": "68"
                 }
               }
             },
@@ -2596,7 +2596,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 58.0
+                  "value": "58"
                 }
               }
             },
@@ -2621,7 +2621,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 85.0
+                  "value": "85"
                 }
               }
             },
@@ -2646,7 +2646,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 39.0
+                  "value": "39"
                 }
               }
             },
@@ -2671,7 +2671,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 94.0
+                  "value": "94"
                 }
               }
             },
@@ -2696,7 +2696,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 52.0
+                  "value": "52"
                 }
               }
             },
@@ -2721,7 +2721,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 63.0
+                  "value": "63"
                 }
               }
             },
@@ -2746,7 +2746,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 40.0
+                  "value": "40"
                 }
               }
             },
@@ -2771,7 +2771,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 109.0
+                  "value": "109"
                 }
               }
             },
@@ -2796,7 +2796,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 60.0
+                  "value": "60"
                 }
               }
             },
@@ -2821,7 +2821,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 306.0
+                  "value": "306"
                 }
               }
             },
@@ -2846,7 +2846,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 77.0
+                  "value": "77"
                 }
               }
             },
@@ -2871,7 +2871,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 59.0
+                  "value": "59"
                 }
               }
             },
@@ -2896,7 +2896,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 58.0
+                  "value": "58"
                 }
               }
             },
@@ -2921,7 +2921,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 106.0
+                  "value": "106"
                 }
               }
             },
@@ -2946,7 +2946,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 129.0
+                  "value": "129"
                 }
               }
             },
@@ -2971,7 +2971,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 72.0
+                  "value": "72"
                 }
               }
             },
@@ -2996,7 +2996,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 68.0
+                  "value": "68"
                 }
               }
             },
@@ -3021,7 +3021,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 440.0
+                  "value": "440"
                 }
               }
             },
@@ -3046,7 +3046,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 134.0
+                  "value": "134"
                 }
               }
             },
@@ -3071,7 +3071,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 107.0
+                  "value": "107"
                 }
               }
             },
@@ -3096,7 +3096,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 95.0
+                  "value": "95"
                 }
               }
             },
@@ -3121,7 +3121,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 142.0
+                  "value": "142"
                 }
               }
             },
@@ -3146,7 +3146,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 107.0
+                  "value": "107"
                 }
               }
             },
@@ -3171,7 +3171,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 127.0
+                  "value": "127"
                 }
               }
             },
@@ -3196,7 +3196,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 113.0
+                  "value": "113"
                 }
               }
             },
@@ -3221,7 +3221,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 84.0
+                  "value": "84"
                 }
               }
             },
@@ -3246,7 +3246,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 32.0
+                  "value": "32"
                 }
               }
             },
@@ -3271,7 +3271,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 11.0
+                  "value": "11"
                 }
               }
             },
@@ -3296,7 +3296,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 466.0
+                  "value": "466"
                 }
               }
             },
@@ -3321,7 +3321,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 56.0
+                  "value": "56"
                 }
               }
             },
@@ -3346,7 +3346,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 16.0
+                  "value": "16"
                 }
               }
             },
@@ -3371,7 +3371,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 32.0
+                  "value": "32"
                 }
               }
             },
@@ -3396,7 +3396,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 25.0
+                  "value": "25"
                 }
               }
             },
@@ -3421,7 +3421,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 43.0
+                  "value": "43"
                 }
               }
             },
@@ -3446,7 +3446,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 37.0
+                  "value": "37"
                 }
               }
             },
@@ -3471,7 +3471,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 1115.0
+                  "value": "1115"
                 }
               }
             },
@@ -3496,7 +3496,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 894.0
+                  "value": "894"
                 }
               }
             },
@@ -3521,7 +3521,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 1164.0
+                  "value": "1164"
                 }
               }
             },
@@ -3546,7 +3546,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 1068.0
+                  "value": "1068"
                 }
               }
             },
@@ -3571,7 +3571,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 56.0
+                  "value": "56"
                 }
               }
             },
@@ -3596,7 +3596,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 56.0
+                  "value": "56"
                 }
               }
             },
@@ -3621,7 +3621,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 30.0
+                  "value": "30"
                 }
               }
             },
@@ -3646,7 +3646,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 12.0
+                  "value": "12"
                 }
               }
             },
@@ -3671,7 +3671,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 44.0
+                  "value": "44"
                 }
               }
             },
@@ -3696,7 +3696,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 21.0
+                  "value": "21"
                 }
               }
             },
@@ -3721,7 +3721,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 162.0
+                  "value": "162"
                 }
               }
             },
@@ -3746,7 +3746,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 249.0
+                  "value": "249"
                 }
               }
             },
@@ -3771,7 +3771,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 24.0
+                  "value": "24"
                 }
               }
             },
@@ -3796,7 +3796,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 31.0
+                  "value": "31"
                 }
               }
             },
@@ -3821,7 +3821,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 32.0
+                  "value": "32"
                 }
               }
             },
@@ -3846,7 +3846,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 104.0
+                  "value": "104"
                 }
               }
             },
@@ -3871,7 +3871,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 10.0
+                  "value": "10"
                 }
               }
             },
@@ -3896,7 +3896,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 17.0
+                  "value": "17"
                 }
               }
             },
@@ -3921,7 +3921,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 17.0
+                  "value": "17"
                 }
               }
             },
@@ -3946,7 +3946,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 22.0
+                  "value": "22"
                 }
               }
             },
@@ -3971,7 +3971,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 212.0
+                  "value": "212"
                 }
               }
             },
@@ -3996,7 +3996,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 7.0
+                  "value": "7"
                 }
               }
             },
@@ -4021,7 +4021,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 8.0
+                  "value": "8"
                 }
               }
             },
@@ -4046,7 +4046,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 37.0
+                  "value": "37"
                 }
               }
             },
@@ -4071,7 +4071,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 48.0
+                  "value": "48"
                 }
               }
             },
@@ -4096,7 +4096,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 8.0
+                  "value": "8"
                 }
               }
             },
@@ -4121,7 +4121,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 66.0
+                  "value": "66"
                 }
               }
             },
@@ -4146,7 +4146,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 60.0
+                  "value": "60"
                 }
               }
             },
@@ -4171,7 +4171,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 2.0
+                  "value": "2"
                 }
               }
             },
@@ -4196,7 +4196,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 108.0
+                  "value": "108"
                 }
               }
             },
@@ -4221,7 +4221,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 51.0
+                  "value": "51"
                 }
               }
             },
@@ -4246,7 +4246,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 1.0
+                  "value": "1"
                 }
               }
             },
@@ -4271,7 +4271,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 140.0
+                  "value": "140"
                 }
               }
             },
@@ -4296,7 +4296,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 227.0
+                  "value": "227"
                 }
               }
             },
@@ -4321,7 +4321,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 4.0
+                  "value": "4"
                 }
               }
             },
@@ -4346,7 +4346,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 47.0
+                  "value": "47"
                 }
               }
             },
@@ -4371,7 +4371,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 47.0
+                  "value": "47"
                 }
               }
             },
@@ -4396,7 +4396,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 22.0
+                  "value": "22"
                 }
               }
             },
@@ -4421,7 +4421,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 34.0
+                  "value": "34"
                 }
               }
             },
@@ -4446,7 +4446,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 5.0
+                  "value": "5"
                 }
               }
             },
@@ -4471,7 +4471,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 19.0
+                  "value": "19"
                 }
               }
             },
@@ -4496,7 +4496,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 12.0
+                  "value": "12"
                 }
               }
             },
@@ -4521,7 +4521,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 2.0
+                  "value": "2"
                 }
               }
             },
@@ -4546,7 +4546,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 5.0
+                  "value": "5"
                 }
               }
             },
@@ -4571,7 +4571,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 43.0
+                  "value": "43"
                 }
               }
             },
@@ -4596,7 +4596,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 68.0
+                  "value": "68"
                 }
               }
             },
@@ -4621,7 +4621,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 50.0
+                  "value": "50"
                 }
               }
             },
@@ -4646,7 +4646,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 2617.0
+                  "value": "2617"
                 }
               }
             },
@@ -4671,7 +4671,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 1951.0
+                  "value": "1951"
                 }
               }
             },
@@ -4696,7 +4696,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 1372.0
+                  "value": "1372"
                 }
               }
             },
@@ -4721,7 +4721,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 13.0
+                  "value": "13"
                 }
               }
             },
@@ -4746,7 +4746,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 1830.0
+                  "value": "1830"
                 }
               }
             },
@@ -4771,7 +4771,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 8.0
+                  "value": "8"
                 }
               }
             },
@@ -4796,7 +4796,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 13.0
+                  "value": "13"
                 }
               }
             },
@@ -4821,7 +4821,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 15.0
+                  "value": "15"
                 }
               }
             },
@@ -4846,7 +4846,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 24.0
+                  "value": "24"
                 }
               }
             },
@@ -4871,7 +4871,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 6.0
+                  "value": "6"
                 }
               }
             },
@@ -4896,7 +4896,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 57.0
+                  "value": "57"
                 }
               }
             },
@@ -4921,7 +4921,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 7.0
+                  "value": "7"
                 }
               }
             },
@@ -4946,7 +4946,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 12.0
+                  "value": "12"
                 }
               }
             },
@@ -4971,7 +4971,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 62.0
+                  "value": "62"
                 }
               }
             },
@@ -4996,7 +4996,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 9.0
+                  "value": "9"
                 }
               }
             },
@@ -5021,7 +5021,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 3.0
+                  "value": "3"
                 }
               }
             },
@@ -5046,7 +5046,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 6.0
+                  "value": "6"
                 }
               }
             },
@@ -5071,7 +5071,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 10.0
+                  "value": "10"
                 }
               }
             },
@@ -5096,7 +5096,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 13.0
+                  "value": "13"
                 }
               }
             },
@@ -5121,7 +5121,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 51.0
+                  "value": "51"
                 }
               }
             },
@@ -5146,7 +5146,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 591.0
+                  "value": "591"
                 }
               }
             },
@@ -5171,7 +5171,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 7.0
+                  "value": "7"
                 }
               }
             },
@@ -5196,7 +5196,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 63.0
+                  "value": "63"
                 }
               }
             },
@@ -5221,7 +5221,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 68.0
+                  "value": "68"
                 }
               }
             },
@@ -5246,7 +5246,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 2.0
+                  "value": "2"
                 }
               }
             },
@@ -5271,7 +5271,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 14.0
+                  "value": "14"
                 }
               }
             },
@@ -5296,7 +5296,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 60.0
+                  "value": "60"
                 }
               }
             },
@@ -5321,7 +5321,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 54.0
+                  "value": "54"
                 }
               }
             },
@@ -5346,7 +5346,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 127.0
+                  "value": "127"
                 }
               }
             },
@@ -5371,7 +5371,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 2.0
+                  "value": "2"
                 }
               }
             },
@@ -5396,7 +5396,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 46.0
+                  "value": "46"
                 }
               }
             },
@@ -5421,7 +5421,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 41.0
+                  "value": "41"
                 }
               }
             },
@@ -5446,7 +5446,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 41.0
+                  "value": "41"
                 }
               }
             },
@@ -5471,7 +5471,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 41.0
+                  "value": "41"
                 }
               }
             },
@@ -5496,7 +5496,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 18.0
+                  "value": "18"
                 }
               }
             },
@@ -5521,7 +5521,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 18.0
+                  "value": "18"
                 }
               }
             },
@@ -5546,7 +5546,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 18.0
+                  "value": "18"
                 }
               }
             },
@@ -5571,7 +5571,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 1.0
+                  "value": "1"
                 }
               }
             },
@@ -5596,7 +5596,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 6.0
+                  "value": "6"
                 }
               }
             },
@@ -5621,7 +5621,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 1.0
+                  "value": "1"
                 }
               }
             },
@@ -5646,7 +5646,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 1.0
+                  "value": "1"
                 }
               }
             },
@@ -5671,7 +5671,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 1.0
+                  "value": "1"
                 }
               }
             },
@@ -5696,7 +5696,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 6.0
+                  "value": "6"
                 }
               }
             },
@@ -5721,7 +5721,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 5.0
+                  "value": "5"
                 }
               }
             },
@@ -5746,7 +5746,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 36.0
+                  "value": "36"
                 }
               }
             },
@@ -5771,7 +5771,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 2.0
+                  "value": "2"
                 }
               }
             },
@@ -5796,7 +5796,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 40.0
+                  "value": "40"
                 }
               }
             },
@@ -5821,7 +5821,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 41.0
+                  "value": "41"
                 }
               }
             },
@@ -5846,7 +5846,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 6.0
+                  "value": "6"
                 }
               }
             },
@@ -5871,7 +5871,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 4.0
+                  "value": "4"
                 }
               }
             },
@@ -5896,7 +5896,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 7.0
+                  "value": "7"
                 }
               }
             },
@@ -5921,7 +5921,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 4.0
+                  "value": "4"
                 }
               }
             },
@@ -5946,7 +5946,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 2.0
+                  "value": "2"
                 }
               }
             },
@@ -5971,7 +5971,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 10.0
+                  "value": "10"
                 }
               }
             },
@@ -5996,7 +5996,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 13.0
+                  "value": "13"
                 }
               }
             },
@@ -6021,7 +6021,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 1.0
+                  "value": "1"
                 }
               }
             },
@@ -6046,7 +6046,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 13.0
+                  "value": "13"
                 }
               }
             },
@@ -6071,7 +6071,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 4.0
+                  "value": "4"
                 }
               }
             },
@@ -6096,7 +6096,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 4.0
+                  "value": "4"
                 }
               }
             },
@@ -6121,7 +6121,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 12.0
+                  "value": "12"
                 }
               }
             },
@@ -6146,7 +6146,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 6.0
+                  "value": "6"
                 }
               }
             },
@@ -6171,7 +6171,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 3.0
+                  "value": "3"
                 }
               }
             },
@@ -6196,7 +6196,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 2.0
+                  "value": "2"
                 }
               }
             },
@@ -6221,7 +6221,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 105.0
+                  "value": "105"
                 }
               }
             },
@@ -6246,7 +6246,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 1.0
+                  "value": "1"
                 }
               }
             },
@@ -6271,7 +6271,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 1.0
+                  "value": "1"
                 }
               }
             },
@@ -6296,7 +6296,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 5.0
+                  "value": "5"
                 }
               }
             },
@@ -6321,7 +6321,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 4.0
+                  "value": "4"
                 }
               }
             },
@@ -6346,7 +6346,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 5.0
+                  "value": "5"
                 }
               }
             },
@@ -6371,7 +6371,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 23.0
+                  "value": "23"
                 }
               }
             },
@@ -6396,7 +6396,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 31.0
+                  "value": "31"
                 }
               }
             },
@@ -6421,7 +6421,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 1.0
+                  "value": "1"
                 }
               }
             },
@@ -6446,7 +6446,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 5.0
+                  "value": "5"
                 }
               }
             },
@@ -6471,7 +6471,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 7.0
+                  "value": "7"
                 }
               }
             },
@@ -6496,7 +6496,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 60.0
+                  "value": "60"
                 }
               }
             },
@@ -6521,7 +6521,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 1.0
+                  "value": "1"
                 }
               }
             },
@@ -6546,7 +6546,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 1.0
+                  "value": "1"
                 }
               }
             },
@@ -6571,7 +6571,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 7.0
+                  "value": "7"
                 }
               }
             },
@@ -6596,7 +6596,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 23.0
+                  "value": "23"
                 }
               }
             },
@@ -6621,7 +6621,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 3.0
+                  "value": "3"
                 }
               }
             },
@@ -6646,7 +6646,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 2.0
+                  "value": "2"
                 }
               }
             },
@@ -6671,7 +6671,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 1.0
+                  "value": "1"
                 }
               }
             },
@@ -6696,7 +6696,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 1.0
+                  "value": "1"
                 }
               }
             },
@@ -6721,7 +6721,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 3.0
+                  "value": "3"
                 }
               }
             },
@@ -6746,7 +6746,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 1.0
+                  "value": "1"
                 }
               }
             },
@@ -6771,7 +6771,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 2.0
+                  "value": "2"
                 }
               }
             },
@@ -6796,7 +6796,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 1.0
+                  "value": "1"
                 }
               }
             },
@@ -6821,7 +6821,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 1.0
+                  "value": "1"
                 }
               }
             },
@@ -6846,7 +6846,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 2.0
+                  "value": "2"
                 }
               }
             },
@@ -6871,7 +6871,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 2.0
+                  "value": "2"
                 }
               }
             },
@@ -6896,7 +6896,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 35.0
+                  "value": "35"
                 }
               }
             },
@@ -6921,7 +6921,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 35.0
+                  "value": "35"
                 }
               }
             },
@@ -6946,7 +6946,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 35.0
+                  "value": "35"
                 }
               }
             },
@@ -6971,7 +6971,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 35.0
+                  "value": "35"
                 }
               }
             },
@@ -6996,7 +6996,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 1.0
+                  "value": "1"
                 }
               }
             },
@@ -7021,7 +7021,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 10.0
+                  "value": "10"
                 }
               }
             },
@@ -7046,7 +7046,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 1.0
+                  "value": "1"
                 }
               }
             },
@@ -7071,7 +7071,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 1.0
+                  "value": "1"
                 }
               }
             },
@@ -7096,7 +7096,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 1.0
+                  "value": "1"
                 }
               }
             },
@@ -7121,7 +7121,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 1.0
+                  "value": "1"
                 }
               }
             },
@@ -7146,7 +7146,7 @@
                 },
                 "Value": {
                   "type": "FloatProperty",
-                  "value": 1.0
+                  "value": "1"
                 }
               }
             }
@@ -14627,11 +14627,11 @@
                   },
                   "TimePlayedAtSeasonStart": {
                     "type": "FloatProperty",
-                    "value": 4206545.0
+                    "value": "4206545"
                   },
                   "ChallengesCompletedAtSeasonStart": {
                     "type": "FloatProperty",
-                    "value": 0.0
+                    "value": "0"
                   }
                 }
               }
@@ -17078,11 +17078,11 @@
                   },
                   "TimePlayedAtSeasonStart": {
                     "type": "FloatProperty",
-                    "value": 4678804.0
+                    "value": "4678804"
                   },
                   "ChallengesCompletedAtSeasonStart": {
                     "type": "FloatProperty",
-                    "value": 11.0
+                    "value": "11"
                   }
                 }
               }
@@ -73310,7 +73310,7 @@
               },
               {
                 "type": "FloatProperty",
-                "value": 198847.0
+                "value": "198847"
               }
             ],
             [
@@ -73323,7 +73323,7 @@
               },
               {
                 "type": "FloatProperty",
-                "value": 202881.0
+                "value": "202881"
               }
             ],
             [
@@ -73336,7 +73336,7 @@
               },
               {
                 "type": "FloatProperty",
-                "value": 215705.0
+                "value": "215705"
               }
             ],
             [
@@ -73349,7 +73349,7 @@
               },
               {
                 "type": "FloatProperty",
-                "value": 200301.0
+                "value": "200301"
               }
             ],
             [
@@ -73362,7 +73362,7 @@
               },
               {
                 "type": "FloatProperty",
-                "value": 198601.0
+                "value": "198601"
               }
             ],
             [
@@ -73375,7 +73375,7 @@
               },
               {
                 "type": "FloatProperty",
-                "value": 216111.0
+                "value": "216111"
               }
             ],
             [
@@ -73388,7 +73388,7 @@
               },
               {
                 "type": "FloatProperty",
-                "value": 99966.0
+                "value": "99966"
               }
             ],
             [
@@ -73401,7 +73401,7 @@
               },
               {
                 "type": "FloatProperty",
-                "value": -85.0
+                "value": "-85"
               }
             ],
             [
@@ -73414,7 +73414,7 @@
               },
               {
                 "type": "FloatProperty",
-                "value": 100695.0
+                "value": "100695"
               }
             ],
             [
@@ -73427,7 +73427,7 @@
               },
               {
                 "type": "FloatProperty",
-                "value": 318110.0
+                "value": "318110"
               }
             ],
             [
@@ -73440,7 +73440,7 @@
               },
               {
                 "type": "FloatProperty",
-                "value": 318110.0
+                "value": "318110"
               }
             ],
             [
@@ -73453,7 +73453,7 @@
               },
               {
                 "type": "FloatProperty",
-                "value": 318110.0
+                "value": "318110"
               }
             ],
             [
@@ -73466,7 +73466,7 @@
               },
               {
                 "type": "FloatProperty",
-                "value": 318110.0
+                "value": "318110"
               }
             ],
             [
@@ -73479,7 +73479,7 @@
               },
               {
                 "type": "FloatProperty",
-                "value": 318110.0
+                "value": "318110"
               }
             ],
             [
@@ -73492,7 +73492,7 @@
               },
               {
                 "type": "FloatProperty",
-                "value": 318110.0
+                "value": "318110"
               }
             ],
             [
@@ -73505,7 +73505,7 @@
               },
               {
                 "type": "FloatProperty",
-                "value": 328210.0
+                "value": "328210"
               }
             ],
             [
@@ -73518,7 +73518,7 @@
               },
               {
                 "type": "FloatProperty",
-                "value": 318115.0
+                "value": "318115"
               }
             ],
             [
@@ -73531,7 +73531,7 @@
               },
               {
                 "type": "FloatProperty",
-                "value": 318110.0
+                "value": "318110"
               }
             ],
             [
@@ -73544,7 +73544,7 @@
               },
               {
                 "type": "FloatProperty",
-                "value": 200091.0
+                "value": "200091"
               }
             ],
             [
@@ -73557,7 +73557,7 @@
               },
               {
                 "type": "FloatProperty",
-                "value": 200011.0
+                "value": "200011"
               }
             ],
             [
@@ -73570,7 +73570,7 @@
               },
               {
                 "type": "FloatProperty",
-                "value": 200128.0
+                "value": "200128"
               }
             ],
             [
@@ -73583,7 +73583,7 @@
               },
               {
                 "type": "FloatProperty",
-                "value": 200094.0
+                "value": "200094"
               }
             ],
             [
@@ -73596,7 +73596,7 @@
               },
               {
                 "type": "FloatProperty",
-                "value": 100776.0
+                "value": "100776"
               }
             ],
             [
@@ -73609,7 +73609,7 @@
               },
               {
                 "type": "FloatProperty",
-                "value": 4.0
+                "value": "4"
               }
             ],
             [
@@ -73622,7 +73622,7 @@
               },
               {
                 "type": "FloatProperty",
-                "value": 104462.0
+                "value": "104462"
               }
             ],
             [
@@ -73635,7 +73635,7 @@
               },
               {
                 "type": "FloatProperty",
-                "value": 100020.0
+                "value": "100020"
               }
             ]
           ]
@@ -74045,7 +74045,7 @@
     },
     "TotalPlayTimeSeconds": {
       "type": "FloatProperty",
-      "value": 55555904.0
+      "value": "55555904"
     },
     "SaveToDiskCounter": {
       "type": "UInt32Property",

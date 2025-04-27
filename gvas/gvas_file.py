@@ -452,12 +452,12 @@ class GVASFile(BaseModel):
 
     # This function does not close the file when done.
     @classmethod
-    def read(
+    def decmopress_stream(
         cls,
         stream: BinaryIO,
         game_version: GameVersion,
         compression_type: CompressionType,
-    ) -> "GVASFile":
+    ) -> BytesIO:
 
         decompressed_size = 0
         compressed_size = 0
@@ -497,7 +497,7 @@ class GVASFile(BaseModel):
             ), f"{decompressed_size=} != {len(decompressed_data)=}"
 
             # Create new stream from decompressed data
-            stream = BytesIO(decompressed_data)
+            decompressed_data = BytesIO(decompressed_data)
 
         elif compression_type == CompressionType.ZLIB:
             compressed_data = stream.read()
@@ -508,13 +508,27 @@ class GVASFile(BaseModel):
             ), f"{decompressed_size=} != {len(decompressed_data)=}"
 
             # Create new stream from decompressed data
-            stream = BytesIO(decompressed_data)
+            decompressed_data = BytesIO(decompressed_data)
 
         elif compression_type == CompressionType.NONE:
-            pass
+            decompressed_data = stream
 
         else:
             raise ValueError("Unknown compression type")
+
+        return decompressed_data
+
+    @classmethod
+    def read(
+        cls,
+        stream: BinaryIO,
+        game_version: GameVersion,
+        compression_type: CompressionType,
+    ) -> "GVASFile":
+
+        stream: BinaryIO = GVASFile.decmopress_stream(
+            stream, game_version, compression_type
+        )
 
         # Read header
         header = GvasHeader.read(stream)

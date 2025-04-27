@@ -32034,7 +32034,7 @@
     },
     "TimeOfDay": {
       "type": "FloatProperty",
-      "value": 1278.80908203125
+      "value": "1278.80908"
     }
   }
 }

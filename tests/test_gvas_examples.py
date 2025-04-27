@@ -3,6 +3,7 @@ Main test file for GVAS functionality
 """
 
 import json
+import pathlib
 import unittest
 import zipfile
 from io import BytesIO
@@ -231,6 +232,15 @@ class TestGvasExamples(unittest.TestCase):
 
         # normalize spacing, just in case
         expected_json_str = json.dumps(expected_json)
+
+        if serialized_json_str != expected_json_str:
+            with open(f"{test_file}.bad.json", "w") as f:
+                f.write(json.dumps(gvas_file_dict, indent=2))
+            with open(f"{json_file}.good.json", "w") as f:
+                f.write(json.dumps(expected_json, indent=2))
+        else:
+            pathlib.Path(f"{test_file}.bad.json").unlink(missing_ok=True)
+            pathlib.Path(f"{json_file}.good.json").unlink(missing_ok=True)
 
         self.assertEqual(
             serialized_json_str,

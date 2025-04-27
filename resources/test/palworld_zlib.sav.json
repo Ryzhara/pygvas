@@ -184,7 +184,7 @@
             },
             "TorsoVolume": {
               "type": "FloatProperty",
-              "value": 0.0029234886169433594
+              "value": "0.00292348862"
             },
             "HairColor": {
               "type": "StructProperty",

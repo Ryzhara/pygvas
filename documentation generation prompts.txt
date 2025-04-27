@@ -1,14 +1,6 @@
 Cursor documentation generation prompts
 
-----
-
-The gvas/properties directory contains python files that collect class and function definitions that go together and which can be contained in a GVAS file.
-
-Create documentation for each file in the gvas/properties directory, and for each file in the gvas directory.
-
-
-----
-Do this task for the file: gvas/properties/str_property.py.
+Change the destination directory if you want fresh docs unaffected by past docs.
 
 -----
 Your task is to create MD formatted documentation and save it to the doctemp4 directory. Do not repeatedly generate the same documentation file.
