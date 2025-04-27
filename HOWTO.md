@@ -30,54 +30,10 @@ for reading.
 * json2gvas.py
 * detect_gvas_format.py
 
-## Example code
-```python
-from gvas.gvas_file import GVASFile
+# Detailed Overview
+See the [GVAS OVERVIEW](documentation/gvas_overview.md) file for a detailed overview of the library.
 
-# Open and read a save file
-gvas_file: GVASFile = GVASFile.deserialize_gvas_file("save.sav")
-```
-
-Example with type hints for struct properties:
-
-```python
-from gvas.gvas_file import GVASFile
-
-# Read with deserialization_hints inline
-hints = {
-    "UnLockedMissionParameters.MapProperty.Key.StructProperty": "Guid"
-}
-
-gvas_file: GVASFile = GVASFile.deserialize_gvas_file(
-    "save.sav", deserialization_hints=hints
-)
-
-# or
-
-# Read with deserialization_hints file
-gvas_file: GVASFile = GVASFile.deserialize_gvas_file(
-    "save.sav", deserialization_hints="save.hints.json"
-)
-```
-
-If you want to go lower level, then functions to look at include:
-```python
-    def read(
-        cls,
-        stream: BinaryIO,
-        game_version: GameVersion,
-        compression_type: CompressionType,
-    ) -> "GVASFile":
-```
-and
-```python
-    def write(
-        self,
-        stream: BinaryIO,
-        uncompressed_file_name: str = None,
-    ) -> None:
-```
-where the optional uncompressed file name is used for development debugging.
+See any of the very detailed files in the [DOCUMENTATION](documentation) directory for information overload.
 
 # Requirements
 

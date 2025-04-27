@@ -9,43 +9,39 @@ This Python library implements:
 5. Matches all capabilities existing in https://github.com/localcc/gvas at the
    time of writing
 
-Conversions to JSON are LOSSLESS, with one exception. Python only has
-64-bit (double) floating point values, so 32-bit floating point values can have
-minor
-modifications in a round-trip path from GVAS to JSON to GVAS. Their value
-representation
-is converted to 64-bit format, which differs in the 32-bit LSB and beyond.
+Conversions to JSON are LOSSLESS but there is a caveat. Python only has 64-bit (
+double) floating point values, so 32-bit values can have additional digits
+when written to JSON. However, once converted back there should be not data changes.
 
-One strategy to avoid this would be storing 32-bit float values as strings in
-JSON.
-However, but I'll go there only if it becomes an issue.
+One strategy to avoid any ambiguity would be storing 32-bit float values as
+strings in JSON. I've got some commented out code for this process but I'll only
+enable that if it becomes an issue.
 
-> FYI: The internet says that GVAS stands forGame Variable and Attribute System.
+> FYI: The internet says that GVAS stands for Game Variable and Attribute System.
 
 ## Credits
 
-This library was inspired by two other projects. I wanted to edit the save file
-of an offline game built in Unreal Engine 4. After minor success and major
+This library was inspired by two other projects I found when wanting edit the save file
+of an offline game, ***Islands of Insight***. After minor success and major
 failure using a HEX editor, I went looking for tools. I found a few that could
 convert GVAS to JSON but none were exactly what I wished for.
 
-The most complete one (on which this library is based) was based on RUST, and
-the tools were executables.
+The most complete one (on which this library is based) was based on RUST, but
+the command line tools were executables.
 
 I don't really like running arbitrary code on my machine, and I got tired of
-using virtual environments.
+using virtual environments to isolate them.
 
-This is the elaborate and extensive RUST project that I used a template:
+This is the elaborate and extensive RUST project that I used as a template:
 
 * https://github.com/localcc/gvas
-    * Uses an MIT license (identical the text below).
+    * Uses an MIT license.
 
 The depth and completeness of this current project is due to the depth and
 completeness of the RUST gvas package.
 
-However, this project provided the roadmap for me to fully understand the RUST
-code base, because it implemented the necessary bones, but in Python. It
-provided a roadmap.
+However, the project titled "Python-GVAS-JSON-Converter" provided a great roadmap 
+to fully understand the RUST code base. It implemented the necessary bones, but in Python. 
 
 * https://github.com/afkaf/Python-GVAS-JSON-Converter
     * Uses <https://unlicense.org>
@@ -80,12 +76,11 @@ provided a roadmap.
     - Summary: JSON from the RUST code is slightly smaller.
 
 6. **Deserialization Hints Content**
-    - There are cases where there is insufficient context in the GVAS binary to
-      deserialize the next bytes.
-    - This implementation needs fewer of those hints (purely by accident)
-      because it makes the assumption that the next thing should be a custom
-      StructProperty.
-    - So, only GUID type hints are needed for this implementation.
+    - There are cases where insufficient context exists in the GVAS binary to
+      define the type of the next portion of the byte stream.
+    - This implementation needs fewer of those hints for the known cases
+      by defaulting missing type information to custom StructProperty.
+    - ATM only GUID type hints are needed for this implementation for the known examples.
     - You can find example hints files (in JSON format) in the resources/test
       directory.
 
