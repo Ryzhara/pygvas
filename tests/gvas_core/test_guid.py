@@ -7,7 +7,13 @@ from io import BytesIO
 import uuid
 from typing import override
 
-from gvas.gvas_utils import MagicConstants, write_guid, read_guid, ContextScopeTracker
+from gvas.gvas_utils import (
+    MagicConstants,
+    write_guid,
+    read_guid,
+    ContextScopeTracker,
+    UnitTestGlobals,
+)
 
 
 class TestGuid(unittest.TestCase):
@@ -16,7 +22,7 @@ class TestGuid(unittest.TestCase):
     @classmethod
     @override
     def setUpClass(cls) -> None:
-        ContextScopeTracker.set_inside_unit_tests()
+        UnitTestGlobals.set_inside_unit_tests()
         ContextScopeTracker.set_deserialization_hints({})
 
     def test_10_guid_creation(self):

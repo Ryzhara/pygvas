@@ -107,7 +107,7 @@ class PropertyFactory:
             property_instance = type_map[property_type]()
             return property_instance
         # else:
-        if not ContextScopeTracker.inside_unit_tests():
+        if not UnitTestGlobals.inside_unit_tests():
             print(f"Unknown property type: {property_type}")
         raise DeserializeError(f"Unknown property type: {property_type}")
 

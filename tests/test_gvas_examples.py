@@ -12,7 +12,7 @@ from typing import override
 from pydantic import TypeAdapter
 
 from gvas.gvas_file import GVASFile
-from gvas.gvas_utils import ContextScopeTracker
+from gvas.gvas_utils import ContextScopeTracker, UnitTestGlobals
 from tests.common.test_utils import (
     get_gvas_file_and_stream,
     get_testfile_path,
@@ -48,6 +48,11 @@ TEST_FILE_CONFIG = {
         "file": "features_01.bin",
         "json": "features_01.bin.json",
         "hints": "features_01.hints.json",
+    },
+    "FEATURES_01_NO_HINTS": {
+        "file": "features_01.bin",
+        "json": "features_01.bin.json",
+        "hints": None,
     },
     "OPTIONS": {
         "file": "options.sav",
@@ -157,13 +162,13 @@ class TestGvasExamples(unittest.TestCase):
     @classmethod
     @override
     def setUpClass(cls) -> None:
-        ContextScopeTracker.set_inside_unit_tests()
+        UnitTestGlobals.set_inside_unit_tests()
         ContextScopeTracker.set_deserialization_hints({})
 
     @classmethod
     @override
     def setUp(self):
-        ContextScopeTracker.set_inside_unit_tests()
+        UnitTestGlobals.set_inside_unit_tests()
         ContextScopeTracker.set_deserialization_hints({})
 
     def perform_gvas_deserialization_test(
@@ -343,6 +348,10 @@ class TestGvasExamples(unittest.TestCase):
     def test_220_features_01(self):
         """This is a BIN file that needs deserialization_hints."""
         self.do_all_tests("FEATURES_01")
+
+    def test_221_features_01_no_hints(self):
+        """This is a BIN file that needs deserialization_hints."""
+        self.do_all_tests("FEATURES_01_NO_HINTS")
 
     def test_300_palworld_zlib(self):
         self.do_all_tests("PALWORLD_ZLIB")

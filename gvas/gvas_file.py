@@ -471,7 +471,7 @@ class GVASFile(BaseModel):
 
             magic_bytes = stream.read(3)
             if magic_bytes == MagicConstants.PLZ_MAGIC:
-                if not ContextScopeTracker.inside_unit_tests():
+                if not UnitTestGlobals.inside_unit_tests():
                     print(
                         f"Found PalWorld file with {decompressed_size=} and {compressed_size=}"
                     )
@@ -622,7 +622,7 @@ class GVASFile(BaseModel):
         # ====================================
         # Handle PalWorld special prefix
         if self.game_file_format.game_version == GameVersion.PALWORLD:
-            if not ContextScopeTracker.inside_unit_tests():
+            if not UnitTestGlobals.inside_unit_tests():
                 print(
                     f"Writing PalWorld file with {decompressed_size=} and {compressed_size=}"
                 )
