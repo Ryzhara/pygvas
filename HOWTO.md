@@ -23,15 +23,15 @@ pip install -r requirements.txt
 # Usage
 
 If you just need to convert back and forth so you can inspect/modify the JSON,
-then use the included utility files. The utilities also include examples of code
-for reading.
+then use the included utility files. See the [UTILITIES](documentation/utilities.md) documentation for more.
 
 * gvas2json.py
 * json2gvas.py
 * detect_gvas_format.py
 
 # Detailed Overview
-See the [GVAS OVERVIEW](documentation/gvas_overview.md) file for a detailed overview of the library.
+The utilities also include examples of code for de/serialization. 
+See the [OVERVIEW](documentation/gvas_overview.md) documentation for a detailed overview of the library.
 
 See any of the very detailed files in the [DOCUMENTATION](documentation) directory for information overload.
 
