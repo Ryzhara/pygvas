@@ -21,41 +21,48 @@ enable that if it becomes an issue because seeing something like
 ["x": 2497.000000000003] is as confusing ast seeing 
 ["x": "2497"] in the JSON file.
 
+## License
+
+This library is distributed under the terms of the Creative Commons CC BY-NC-SA 4.0. 
+Also known as Attribution-NonCommercial-ShareAlike 4.0 International. See the
+[LICENSE](LICENSE) file for details.
+
+## Contributing
+
+Please see the [CONTRIBUTING](CONTRIBUTING.md) document for guidelines on how
+to contribute to this project.
+
 ## Credits
 
-This library was inspired by two other projects I found when wanting to edit the
-save file of an offline game, ***Islands of Insight***. After minor success and major
+This library was inspired by two other projects I found when working to modify
+GVAS files of an offline game, ***Islands of Insight***. After minor success and major
 failure using a HEX editor, I went looking for tools. I found a few that could
 convert GVAS to JSON but none were exactly what I wished for.
 
-The most complete one (which this library used as a template) was based on RUST, but
-the command line tools were binary executables.
+The most complete one (which this library followed as a template) was written in
+Rust, but the command line tools were binary executables.
 
 I don't really like running arbitrary code on my machine, and I got tired of
 using virtual environments to isolate them.
 
-This is the elaborate and extensive RUST project that I used as a template:
+The Rust project titled "gvas" (and sibling projects gvas2json and json2gvas) that 
+I used as a template is here:
 
 * https://github.com/localcc/gvas
     * Uses an [MIT license.](https://github.com/localcc/gvas/blob/main/LICENSE)
 
-The depth and completeness of the pygvas project is due to the depth and
-completeness of the RUST gvas project.
-
-Although I've delivered production code in a number of languages (K&R C, ANSI C, 
-C++, PHP, C#, XSLT/XML/JavaScript, Unreal Engine C++), I knew nothing about RUST 
-as a langauge when I started.
-
-And I didn't really want to. 
+Although I've delivered production code in a number of languages (Prolog, K&R C, 
+ANSI C, C++, PHP, C#, XSLT/XML/JavaScript, Unreal Engine C++), I knew very little 
+about Rust syntax when I started.
 
 Looking harder led me to the project titled "Python-GVAS-JSON-Converter", which
-provided a great roadmap to fully understand the RUST code base. 
+provided a great roadmap to understand the Rust code base. 
 It implemented the necessary bones, but in Python. 
 
 * https://github.com/afkaf/Python-GVAS-JSON-Converter
     * Uses <https://unlicense.org>
 
-The full journey is described below, but first, a comparison.
+The full journey is described below, but first, a comparison summary.
 
 ## Key Differences from Rust Version
 
@@ -96,45 +103,35 @@ The full journey is described below, but first, a comparison.
     - You can find example hints files (in JSON format) in the resources/test
       directory.
 
-## Contributing
-
-Please see the [CONTRIBUTING](CONTRIBUTING.md) document for guidelines on how
-to contribute to this project.
-
-## License
-
-This library is distributed under the terms of the MIT license. See the
-[LICENSE](LICENSE) file for details.
-
 ## The Journey
 
 I had originally used the GVAS rust code to generate JSON that I was then able
 to modify for my goals (visually mark puzzles in the game world as "completed",
 forcibly complete puzzles, and give myself unlimited amounts of currency).
 
-But before sharing that work (TBD) I didn't want to ask people to install RUST,
-install the RUST tool, etc. I wanted a one-stop shop. I also wanted code that
-that cybersecurity-aware people could easily inspect. Python is much more 
-widely used than RUST.
+I will share that work (TBD) but I didn't want to anyone to install Rust,
+install the Rust CLI tools, etc. I wanted a one-stop shop. I also wanted code
+that cybersecurity-aware people could easily inspect. Python is a natural
+choice.
 
 Choosing Python lead me to Python-GVAS-JSON-Converter.
 
-My first attempt was to modify Python-GVAS-JSON-Converter so its JSON output was closer
-to that of the RUST project. However, there were puzzling areas in the Python
-deserialization code that just needed to understand.
+My first attempt was to modify Python-GVAS-JSON-Converter to make the JSON output closer
+to that of the Rust. However, there were puzzling areas in the Python
+deserialization code that just begged to be understand.
 
-The next step was looking at the RUST code, and boy was I intimidated. Rather
-than try to learn yet-another-language-from-scratch I installed the Cursor IDE
-and asked Sonnet to translate RUST to Python.
+That made the next step looking at the Rust code, and boy was I intimidated. In an 
+attempt to avoid learning Rust, I installed the Cursor IDE
+and asked Sonnet to translate Rust to Python.
 
 That wasn't an abject failure, but after several days I gave that up and started
-reading both the Python and RUST code side-by-side. And then refactored all the
+reading both the Python and Rust code side-by-side. And then refactored all the
 Cursor-generated code.
 
-I got reached sufficient capability for my Islands of Insight project, but
-there was so much more in the RUST library. My desire for completeness
-resulted in implementing everything in the RUST library. 
+I failed in my mission to not learn much about Rust syntax.
 
-That would have been much harder without all the test/example GVAS files in
-the RUST project. 
+On the other hand, here is a pure Python library for working with Unreal Engine
+GVAS files.
 
+> #### Note
+> This document was created in part with a generative AI prompt in the Cursor IDE. 
