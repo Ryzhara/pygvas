@@ -1,0 +1,3316 @@
+{
+  "$defs": {
+    "ArgumentFormat": {
+      "properties": {
+        "type": {
+          "const": "ArgumentFormat",
+          "default": "ArgumentFormat",
+          "title": "Type",
+          "type": "string"
+        },
+        "source_format": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FText"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "arguments": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "$ref": "#/$defs/FormatArgument"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Arguments"
+        }
+      },
+      "title": "ArgumentFormat",
+      "type": "object"
+    },
+    "ArrayProperty": {
+      "description": "A property that holds an array of values",
+      "properties": {
+        "type": {
+          "const": "ArrayProperty",
+          "default": "ArrayProperty",
+          "title": "Type",
+          "type": "string"
+        },
+        "field_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Field Name"
+        },
+        "type_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Type Name"
+        },
+        "property_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Property Type"
+        },
+        "guid": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Guid"
+        },
+        "values": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "discriminator": {
+                      "mapping": {
+                        "ArrayProperty": "#/$defs/ArrayProperty",
+                        "BoolProperty": "#/$defs/BoolProperty",
+                        "ByteProperty": "#/$defs/ByteProperty",
+                        "DateTime": "#/$defs/DateTimeStruct",
+                        "DelegateProperty": "#/$defs/DelegateProperty",
+                        "DoubleProperty": "#/$defs/DoubleProperty",
+                        "EnumProperty": "#/$defs/EnumProperty",
+                        "FieldPath": "#/$defs/FieldPath",
+                        "FieldPathProperty": "#/$defs/FieldPathProperty",
+                        "FloatProperty": "#/$defs/FloatProperty",
+                        "Guid": "#/$defs/GuidStruct",
+                        "Int16Property": "#/$defs/Int16Property",
+                        "Int32Property": "#/$defs/Int32Property",
+                        "Int64Property": "#/$defs/Int64Property",
+                        "Int8Property": "#/$defs/Int8Property",
+                        "IntPoint": "#/$defs/IntPointStruct",
+                        "IntProperty": "#/$defs/IntProperty",
+                        "LinearColor": "#/$defs/LinearColorStruct",
+                        "MapProperty": "#/$defs/MapProperty",
+                        "MulticastInlineDelegateProperty": "#/$defs/MulticastInlineDelegateProperty",
+                        "MulticastSparseDelegateProperty": "#/$defs/MulticastSparseDelegateProperty",
+                        "NameProperty": "#/$defs/NameProperty",
+                        "ObjectProperty": "#/$defs/ObjectProperty",
+                        "Quat": "#/$defs/QuatStruct",
+                        "Rotator": "#/$defs/RotatorStruct",
+                        "SetProperty": "#/$defs/SetProperty",
+                        "StrProperty": "#/$defs/StrProperty",
+                        "StructProperty": "#/$defs/StructProperty",
+                        "TextProperty": "#/$defs/TextProperty",
+                        "Timespan": "#/$defs/TimespanStruct",
+                        "UInt16Property": "#/$defs/UInt16Property",
+                        "UInt32Property": "#/$defs/UInt32Property",
+                        "UInt64Property": "#/$defs/UInt64Property",
+                        "UInt8Property": "#/$defs/UInt8Property",
+                        "Vector": "#/$defs/VectorStruct",
+                        "Vector2D": "#/$defs/Vector2DStruct"
+                      },
+                      "propertyName": "type"
+                    },
+                    "oneOf": [
+                      {
+                        "$ref": "#/$defs/BoolProperty"
+                      },
+                      {
+                        "$ref": "#/$defs/ByteProperty"
+                      },
+                      {
+                        "$ref": "#/$defs/FloatProperty"
+                      },
+                      {
+                        "$ref": "#/$defs/DoubleProperty"
+                      },
+                      {
+                        "$ref": "#/$defs/IntProperty"
+                      },
+                      {
+                        "$ref": "#/$defs/Int8Property"
+                      },
+                      {
+                        "$ref": "#/$defs/UInt8Property"
+                      },
+                      {
+                        "$ref": "#/$defs/Int16Property"
+                      },
+                      {
+                        "$ref": "#/$defs/UInt16Property"
+                      },
+                      {
+                        "$ref": "#/$defs/Int32Property"
+                      },
+                      {
+                        "$ref": "#/$defs/UInt32Property"
+                      },
+                      {
+                        "$ref": "#/$defs/Int64Property"
+                      },
+                      {
+                        "$ref": "#/$defs/UInt64Property"
+                      },
+                      {
+                        "$ref": "#/$defs/DateTimeStruct"
+                      },
+                      {
+                        "$ref": "#/$defs/GuidStruct"
+                      },
+                      {
+                        "$ref": "#/$defs/TimespanStruct"
+                      },
+                      {
+                        "$ref": "#/$defs/IntPointStruct"
+                      },
+                      {
+                        "$ref": "#/$defs/LinearColorStruct"
+                      },
+                      {
+                        "$ref": "#/$defs/RotatorStruct"
+                      },
+                      {
+                        "$ref": "#/$defs/QuatStruct"
+                      },
+                      {
+                        "$ref": "#/$defs/VectorStruct"
+                      },
+                      {
+                        "$ref": "#/$defs/Vector2DStruct"
+                      },
+                      {
+                        "$ref": "#/$defs/SetProperty"
+                      },
+                      {
+                        "$ref": "#/$defs/MapProperty"
+                      },
+                      {
+                        "$ref": "#/$defs/StructProperty"
+                      },
+                      {
+                        "$ref": "#/$defs/ArrayProperty"
+                      },
+                      {
+                        "$ref": "#/$defs/EnumProperty"
+                      },
+                      {
+                        "$ref": "#/$defs/TextProperty"
+                      },
+                      {
+                        "$ref": "#/$defs/NameProperty"
+                      },
+                      {
+                        "$ref": "#/$defs/StrProperty"
+                      },
+                      {
+                        "$ref": "#/$defs/ObjectProperty"
+                      },
+                      {
+                        "$ref": "#/$defs/FieldPath"
+                      },
+                      {
+                        "$ref": "#/$defs/FieldPathProperty"
+                      },
+                      {
+                        "$ref": "#/$defs/MulticastInlineDelegateProperty"
+                      },
+                      {
+                        "$ref": "#/$defs/MulticastSparseDelegateProperty"
+                      },
+                      {
+                        "$ref": "#/$defs/DelegateProperty"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "number"
+                  },
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "format": "binary",
+                    "type": "string"
+                  },
+                  {
+                    "format": "uuid",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "type": "array"
+            }
+          ],
+          "default": null,
+          "title": "Values"
+        }
+      },
+      "title": "ArrayProperty",
+      "type": "object"
+    },
+    "AsCurrency": {
+      "properties": {
+        "type": {
+          "const": "AsCurrency",
+          "default": "AsCurrency",
+          "title": "Type",
+          "type": "string"
+        },
+        "currency_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Currency Code"
+        },
+        "source_value": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FormatArgument"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "format_options": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/NumberFormattingOptions"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "target_culture": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target Culture"
+        }
+      },
+      "title": "AsCurrency",
+      "type": "object"
+    },
+    "AsDate": {
+      "properties": {
+        "type": {
+          "const": "AsDate",
+          "default": "AsDate",
+          "title": "Type",
+          "type": "string"
+        },
+        "date_time": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/LightWeightDateTime"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "date_style": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DateTimeStyle"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "target_culture": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target Culture"
+        }
+      },
+      "title": "AsDate",
+      "type": "object"
+    },
+    "AsDateTime": {
+      "properties": {
+        "type": {
+          "const": "AsDateTime",
+          "default": "AsDateTime",
+          "title": "Type",
+          "type": "string"
+        },
+        "source_date_time": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/LightWeightDateTime"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "date_style": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DateTimeStyle"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "time_style": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DateTimeStyle"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "time_zone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Time Zone"
+        },
+        "target_culture": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target Culture"
+        }
+      },
+      "title": "AsDateTime",
+      "type": "object"
+    },
+    "AsNumber": {
+      "properties": {
+        "type": {
+          "const": "AsNumber",
+          "default": "AsNumber",
+          "title": "Type",
+          "type": "string"
+        },
+        "source_value": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FormatArgument"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "format_options": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/NumberFormattingOptions"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "target_culture": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target Culture"
+        }
+      },
+      "title": "AsNumber",
+      "type": "object"
+    },
+    "AsPercent": {
+      "properties": {
+        "type": {
+          "const": "AsPercent",
+          "default": "AsPercent",
+          "title": "Type",
+          "type": "string"
+        },
+        "source_value": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FormatArgument"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "format_options": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/NumberFormattingOptions"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "target_culture": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target Culture"
+        }
+      },
+      "title": "AsPercent",
+      "type": "object"
+    },
+    "AsTime": {
+      "properties": {
+        "type": {
+          "const": "AsTime",
+          "default": "AsTime",
+          "title": "Type",
+          "type": "string"
+        },
+        "source_date_time": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/LightWeightDateTime"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "time_style": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/DateTimeStyle"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "time_zone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Time Zone"
+        },
+        "target_culture": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Target Culture"
+        }
+      },
+      "title": "AsTime",
+      "type": "object"
+    },
+    "Base": {
+      "properties": {
+        "type": {
+          "const": "Base",
+          "default": "Base",
+          "title": "Type",
+          "type": "string"
+        },
+        "namespace": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Namespace"
+        },
+        "key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Key"
+        },
+        "source_string": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Source String"
+        }
+      },
+      "title": "Base",
+      "type": "object"
+    },
+    "BoolProperty": {
+      "description": "A property that holds a boolean value",
+      "properties": {
+        "type": {
+          "const": "BoolProperty",
+          "default": "BoolProperty",
+          "title": "Type",
+          "type": "string"
+        },
+        "value": {
+          "default": false,
+          "title": "Value",
+          "type": "boolean"
+        }
+      },
+      "title": "BoolProperty",
+      "type": "object"
+    },
+    "ByteProperty": {
+      "description": "A property that holds a byte value or type_name",
+      "properties": {
+        "type": {
+          "const": "ByteProperty",
+          "default": "ByteProperty",
+          "title": "Type",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "",
+          "title": "Name"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            }
+          ],
+          "default": 0,
+          "title": "Value"
+        }
+      },
+      "title": "ByteProperty",
+      "type": "object"
+    },
+    "CompressionType": {
+      "enum": [
+        0,
+        48,
+        49,
+        50,
+        255
+      ],
+      "title": "CompressionType",
+      "type": "integer"
+    },
+    "DateTimeStruct": {
+      "properties": {
+        "type": {
+          "const": "DateTime",
+          "default": "DateTime",
+          "title": "Type",
+          "type": "string"
+        },
+        "datetime": {
+          "default": 0,
+          "title": "Datetime",
+          "type": "integer"
+        },
+        "comment": {
+          "default": null,
+          "title": "Comment",
+          "type": "string"
+        }
+      },
+      "title": "DateTimeStruct",
+      "type": "object"
+    },
+    "DateTimeStyle": {
+      "enum": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "title": "DateTimeStyle",
+      "type": "integer"
+    },
+    "Delegate": {
+      "properties": {
+        "type": {
+          "const": "Delegate",
+          "default": "Delegate",
+          "title": "Type",
+          "type": "string"
+        },
+        "object": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Object"
+        },
+        "function_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Function Name"
+        }
+      },
+      "title": "Delegate",
+      "type": "object"
+    },
+    "DelegateProperty": {
+      "properties": {
+        "type": {
+          "const": "DelegateProperty",
+          "default": "DelegateProperty",
+          "title": "Type",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Delegate"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "title": "DelegateProperty",
+      "type": "object"
+    },
+    "DoubleProperty": {
+      "properties": {
+        "type": {
+          "const": "DoubleProperty",
+          "default": "DoubleProperty",
+          "title": "Type",
+          "type": "string"
+        },
+        "value": {
+          "default": 0,
+          "title": "Value",
+          "type": "number"
+        }
+      },
+      "title": "DoubleProperty",
+      "type": "object"
+    },
+    "Empty": {
+      "properties": {
+        "type": {
+          "const": "Empty",
+          "default": "Empty",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "title": "Empty",
+      "type": "object"
+    },
+    "EnumProperty": {
+      "description": "A property that holds an enumeration value",
+      "properties": {
+        "type": {
+          "const": "EnumProperty",
+          "default": "EnumProperty",
+          "title": "Type",
+          "type": "string"
+        },
+        "enum_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Enum Type"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Value"
+        }
+      },
+      "title": "EnumProperty",
+      "type": "object"
+    },
+    "FEngineVersion": {
+      "properties": {
+        "major": {
+          "default": 0,
+          "title": "Major",
+          "type": "integer"
+        },
+        "minor": {
+          "default": 0,
+          "title": "Minor",
+          "type": "integer"
+        },
+        "patch": {
+          "default": 0,
+          "title": "Patch",
+          "type": "integer"
+        },
+        "change_list": {
+          "default": 0,
+          "title": "Change List",
+          "type": "integer"
+        },
+        "branch": {
+          "default": "un.known",
+          "title": "Branch",
+          "type": "string"
+        }
+      },
+      "title": "FEngineVersion",
+      "type": "object"
+    },
+    "FText": {
+      "properties": {
+        "flags": {
+          "default": 0,
+          "title": "Flags",
+          "type": "integer"
+        },
+        "history": {
+          "anyOf": [
+            {
+              "discriminator": {
+                "mapping": {
+                  "ArgumentFormat": "#/$defs/ArgumentFormat",
+                  "AsCurrency": "#/$defs/AsCurrency",
+                  "AsDate": "#/$defs/AsDate",
+                  "AsDateTime": "#/$defs/AsDateTime",
+                  "AsNumber": "#/$defs/AsNumber",
+                  "AsPercent": "#/$defs/AsPercent",
+                  "AsTime": "#/$defs/AsTime",
+                  "Base": "#/$defs/Base",
+                  "Empty": "#/$defs/Empty",
+                  "NamedFormat": "#/$defs/NamedFormat",
+                  "NoType": "#/$defs/NoType",
+                  "OrderedFormat": "#/$defs/OrderedFormat",
+                  "StringTableEntry": "#/$defs/StringTableEntry",
+                  "Transform": "#/$defs/Transform"
+                },
+                "propertyName": "type"
+              },
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/Empty"
+                },
+                {
+                  "$ref": "#/$defs/NoType"
+                },
+                {
+                  "$ref": "#/$defs/Base"
+                },
+                {
+                  "$ref": "#/$defs/NamedFormat"
+                },
+                {
+                  "$ref": "#/$defs/OrderedFormat"
+                },
+                {
+                  "$ref": "#/$defs/ArgumentFormat"
+                },
+                {
+                  "$ref": "#/$defs/AsNumber"
+                },
+                {
+                  "$ref": "#/$defs/AsPercent"
+                },
+                {
+                  "$ref": "#/$defs/AsCurrency"
+                },
+                {
+                  "$ref": "#/$defs/AsDate"
+                },
+                {
+                  "$ref": "#/$defs/AsTime"
+                },
+                {
+                  "$ref": "#/$defs/AsDateTime"
+                },
+                {
+                  "$ref": "#/$defs/Transform"
+                },
+                {
+                  "$ref": "#/$defs/StringTableEntry"
+                }
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "History"
+        }
+      },
+      "title": "FText",
+      "type": "object"
+    },
+    "FieldPath": {
+      "properties": {
+        "type": {
+          "const": "FieldPath",
+          "default": "FieldPath",
+          "title": "Type",
+          "type": "string"
+        },
+        "path": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Path"
+        },
+        "resolved_owner": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Resolved Owner"
+        }
+      },
+      "title": "FieldPath",
+      "type": "object"
+    },
+    "FieldPathProperty": {
+      "description": "A property that holds an FieldPath value",
+      "properties": {
+        "type": {
+          "const": "FieldPathProperty",
+          "default": "FieldPathProperty",
+          "title": "Type",
+          "type": "string"
+        },
+        "value": {
+          "$ref": "#/$defs/FieldPath",
+          "default": null
+        }
+      },
+      "title": "FieldPathProperty",
+      "type": "object"
+    },
+    "FloatProperty": {
+      "properties": {
+        "type": {
+          "const": "FloatProperty",
+          "default": "FloatProperty",
+          "title": "Type",
+          "type": "string"
+        },
+        "value": {
+          "default": 0,
+          "title": "Value",
+          "type": "number"
+        }
+      },
+      "title": "FloatProperty",
+      "type": "object"
+    },
+    "FormatArgument": {
+      "properties": {
+        "type": {
+          "default": "Unknown",
+          "title": "Type",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "$ref": "#/$defs/FText"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Value"
+        }
+      },
+      "title": "FormatArgument",
+      "type": "object"
+    },
+    "GameFileFormat": {
+      "description": "Holds information about the deserialized game version\n\nThis is used to track what game version was used during deserialization,\nwhich may affect how the file is handled.",
+      "properties": {
+        "game_version": {
+          "$ref": "#/$defs/GameVersion",
+          "default": 0
+        },
+        "compression_type": {
+          "$ref": "#/$defs/CompressionType",
+          "default": 0
+        }
+      },
+      "title": "GameFileFormat",
+      "type": "object"
+    },
+    "GameVersion": {
+      "enum": [
+        0,
+        1,
+        2
+      ],
+      "title": "GameVersion",
+      "type": "integer"
+    },
+    "GuidStruct": {
+      "properties": {
+        "type": {
+          "const": "Guid",
+          "default": "Guid",
+          "title": "Type",
+          "type": "string"
+        },
+        "guid": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Guid"
+        }
+      },
+      "title": "GuidStruct",
+      "type": "object"
+    },
+    "GvasHeader": {
+      "properties": {
+        "type": {
+          "default": "Unknown",
+          "title": "Type",
+          "type": "string"
+        },
+        "package_file_version": {
+          "default": null,
+          "title": "Package File Version",
+          "type": "integer"
+        },
+        "package_file_version_ue5": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Package File Version Ue5"
+        },
+        "engine_version": {
+          "$ref": "#/$defs/FEngineVersion",
+          "default": null
+        },
+        "custom_version_format": {
+          "default": null,
+          "title": "Custom Version Format",
+          "type": "integer"
+        },
+        "custom_versions": {
+          "additionalProperties": {
+            "type": "integer"
+          },
+          "default": null,
+          "title": "Custom Versions",
+          "type": "object"
+        },
+        "save_game_class_name": {
+          "default": null,
+          "title": "Save Game Class Name",
+          "type": "string"
+        }
+      },
+      "title": "GvasHeader",
+      "type": "object"
+    },
+    "Int16Property": {
+      "properties": {
+        "type": {
+          "const": "Int16Property",
+          "default": "Int16Property",
+          "title": "Type",
+          "type": "string"
+        },
+        "value": {
+          "default": 0,
+          "title": "Value",
+          "type": "integer"
+        }
+      },
+      "title": "Int16Property",
+      "type": "object"
+    },
+    "Int32Property": {
+      "properties": {
+        "type": {
+          "const": "Int32Property",
+          "default": "Int32Property",
+          "title": "Type",
+          "type": "string"
+        },
+        "value": {
+          "default": 0,
+          "title": "Value",
+          "type": "integer"
+        }
+      },
+      "title": "Int32Property",
+      "type": "object"
+    },
+    "Int64Property": {
+      "properties": {
+        "type": {
+          "const": "Int64Property",
+          "default": "Int64Property",
+          "title": "Type",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "default": 0,
+          "title": "Value"
+        }
+      },
+      "title": "Int64Property",
+      "type": "object"
+    },
+    "Int8Property": {
+      "properties": {
+        "type": {
+          "const": "Int8Property",
+          "default": "Int8Property",
+          "title": "Type",
+          "type": "string"
+        },
+        "value": {
+          "default": 0,
+          "title": "Value",
+          "type": "integer"
+        }
+      },
+      "title": "Int8Property",
+      "type": "object"
+    },
+    "IntPointStruct": {
+      "properties": {
+        "type": {
+          "const": "IntPoint",
+          "default": "IntPoint",
+          "title": "Type",
+          "type": "string"
+        },
+        "x": {
+          "default": 0,
+          "title": "X",
+          "type": "integer"
+        },
+        "y": {
+          "default": 0,
+          "title": "Y",
+          "type": "integer"
+        }
+      },
+      "title": "IntPointStruct",
+      "type": "object"
+    },
+    "IntProperty": {
+      "properties": {
+        "type": {
+          "const": "IntProperty",
+          "default": "IntProperty",
+          "title": "Type",
+          "type": "string"
+        },
+        "value": {
+          "default": 0,
+          "title": "Value",
+          "type": "integer"
+        }
+      },
+      "title": "IntProperty",
+      "type": "object"
+    },
+    "LightWeightDateTime": {
+      "properties": {
+        "ticks": {
+          "default": 0,
+          "title": "Ticks",
+          "type": "integer"
+        },
+        "comment": {
+          "default": null,
+          "title": "Comment",
+          "type": "string"
+        }
+      },
+      "title": "LightWeightDateTime",
+      "type": "object"
+    },
+    "LinearColorStruct": {
+      "properties": {
+        "type": {
+          "const": "LinearColor",
+          "default": "LinearColor",
+          "title": "Type",
+          "type": "string"
+        },
+        "a": {
+          "default": 0,
+          "title": "A",
+          "type": "number"
+        },
+        "b": {
+          "default": 0,
+          "title": "B",
+          "type": "number"
+        },
+        "g": {
+          "default": 0,
+          "title": "G",
+          "type": "number"
+        },
+        "r": {
+          "default": 0,
+          "title": "R",
+          "type": "number"
+        }
+      },
+      "title": "LinearColorStruct",
+      "type": "object"
+    },
+    "MapProperty": {
+      "description": "A property that holds a key-value mapping\nFor MapProperty, we store tuples of (key, value) to avoid complexity of\ntrying to boil things down to immutable types and then reverse that.\nThat DOES mean the end user can encounter collisions if they do it wrong.\n\nAnd the tuples get serialized as a list of two items: [key, value]",
+      "properties": {
+        "type": {
+          "const": "MapProperty",
+          "default": "MapProperty",
+          "title": "Type",
+          "type": "string"
+        },
+        "key_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "discriminator": {
+                "mapping": {
+                  "ArrayProperty": "#/$defs/ArrayProperty",
+                  "BoolProperty": "#/$defs/BoolProperty",
+                  "ByteProperty": "#/$defs/ByteProperty",
+                  "DateTime": "#/$defs/DateTimeStruct",
+                  "DelegateProperty": "#/$defs/DelegateProperty",
+                  "DoubleProperty": "#/$defs/DoubleProperty",
+                  "EnumProperty": "#/$defs/EnumProperty",
+                  "FieldPath": "#/$defs/FieldPath",
+                  "FieldPathProperty": "#/$defs/FieldPathProperty",
+                  "FloatProperty": "#/$defs/FloatProperty",
+                  "Guid": "#/$defs/GuidStruct",
+                  "Int16Property": "#/$defs/Int16Property",
+                  "Int32Property": "#/$defs/Int32Property",
+                  "Int64Property": "#/$defs/Int64Property",
+                  "Int8Property": "#/$defs/Int8Property",
+                  "IntPoint": "#/$defs/IntPointStruct",
+                  "IntProperty": "#/$defs/IntProperty",
+                  "LinearColor": "#/$defs/LinearColorStruct",
+                  "MapProperty": "#/$defs/MapProperty",
+                  "MulticastInlineDelegateProperty": "#/$defs/MulticastInlineDelegateProperty",
+                  "MulticastSparseDelegateProperty": "#/$defs/MulticastSparseDelegateProperty",
+                  "NameProperty": "#/$defs/NameProperty",
+                  "ObjectProperty": "#/$defs/ObjectProperty",
+                  "Quat": "#/$defs/QuatStruct",
+                  "Rotator": "#/$defs/RotatorStruct",
+                  "SetProperty": "#/$defs/SetProperty",
+                  "StrProperty": "#/$defs/StrProperty",
+                  "StructProperty": "#/$defs/StructProperty",
+                  "TextProperty": "#/$defs/TextProperty",
+                  "Timespan": "#/$defs/TimespanStruct",
+                  "UInt16Property": "#/$defs/UInt16Property",
+                  "UInt32Property": "#/$defs/UInt32Property",
+                  "UInt64Property": "#/$defs/UInt64Property",
+                  "UInt8Property": "#/$defs/UInt8Property",
+                  "Vector": "#/$defs/VectorStruct",
+                  "Vector2D": "#/$defs/Vector2DStruct"
+                },
+                "propertyName": "type"
+              },
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/BoolProperty"
+                },
+                {
+                  "$ref": "#/$defs/ByteProperty"
+                },
+                {
+                  "$ref": "#/$defs/FloatProperty"
+                },
+                {
+                  "$ref": "#/$defs/DoubleProperty"
+                },
+                {
+                  "$ref": "#/$defs/IntProperty"
+                },
+                {
+                  "$ref": "#/$defs/Int8Property"
+                },
+                {
+                  "$ref": "#/$defs/UInt8Property"
+                },
+                {
+                  "$ref": "#/$defs/Int16Property"
+                },
+                {
+                  "$ref": "#/$defs/UInt16Property"
+                },
+                {
+                  "$ref": "#/$defs/Int32Property"
+                },
+                {
+                  "$ref": "#/$defs/UInt32Property"
+                },
+                {
+                  "$ref": "#/$defs/Int64Property"
+                },
+                {
+                  "$ref": "#/$defs/UInt64Property"
+                },
+                {
+                  "$ref": "#/$defs/DateTimeStruct"
+                },
+                {
+                  "$ref": "#/$defs/GuidStruct"
+                },
+                {
+                  "$ref": "#/$defs/TimespanStruct"
+                },
+                {
+                  "$ref": "#/$defs/IntPointStruct"
+                },
+                {
+                  "$ref": "#/$defs/LinearColorStruct"
+                },
+                {
+                  "$ref": "#/$defs/RotatorStruct"
+                },
+                {
+                  "$ref": "#/$defs/QuatStruct"
+                },
+                {
+                  "$ref": "#/$defs/VectorStruct"
+                },
+                {
+                  "$ref": "#/$defs/Vector2DStruct"
+                },
+                {
+                  "$ref": "#/$defs/SetProperty"
+                },
+                {
+                  "$ref": "#/$defs/MapProperty"
+                },
+                {
+                  "$ref": "#/$defs/StructProperty"
+                },
+                {
+                  "$ref": "#/$defs/ArrayProperty"
+                },
+                {
+                  "$ref": "#/$defs/EnumProperty"
+                },
+                {
+                  "$ref": "#/$defs/TextProperty"
+                },
+                {
+                  "$ref": "#/$defs/NameProperty"
+                },
+                {
+                  "$ref": "#/$defs/StrProperty"
+                },
+                {
+                  "$ref": "#/$defs/ObjectProperty"
+                },
+                {
+                  "$ref": "#/$defs/FieldPath"
+                },
+                {
+                  "$ref": "#/$defs/FieldPathProperty"
+                },
+                {
+                  "$ref": "#/$defs/MulticastInlineDelegateProperty"
+                },
+                {
+                  "$ref": "#/$defs/MulticastSparseDelegateProperty"
+                },
+                {
+                  "$ref": "#/$defs/DelegateProperty"
+                }
+              ]
+            }
+          ],
+          "default": null,
+          "title": "Key Type"
+        },
+        "value_type": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "discriminator": {
+                "mapping": {
+                  "ArrayProperty": "#/$defs/ArrayProperty",
+                  "BoolProperty": "#/$defs/BoolProperty",
+                  "ByteProperty": "#/$defs/ByteProperty",
+                  "DateTime": "#/$defs/DateTimeStruct",
+                  "DelegateProperty": "#/$defs/DelegateProperty",
+                  "DoubleProperty": "#/$defs/DoubleProperty",
+                  "EnumProperty": "#/$defs/EnumProperty",
+                  "FieldPath": "#/$defs/FieldPath",
+                  "FieldPathProperty": "#/$defs/FieldPathProperty",
+                  "FloatProperty": "#/$defs/FloatProperty",
+                  "Guid": "#/$defs/GuidStruct",
+                  "Int16Property": "#/$defs/Int16Property",
+                  "Int32Property": "#/$defs/Int32Property",
+                  "Int64Property": "#/$defs/Int64Property",
+                  "Int8Property": "#/$defs/Int8Property",
+                  "IntPoint": "#/$defs/IntPointStruct",
+                  "IntProperty": "#/$defs/IntProperty",
+                  "LinearColor": "#/$defs/LinearColorStruct",
+                  "MapProperty": "#/$defs/MapProperty",
+                  "MulticastInlineDelegateProperty": "#/$defs/MulticastInlineDelegateProperty",
+                  "MulticastSparseDelegateProperty": "#/$defs/MulticastSparseDelegateProperty",
+                  "NameProperty": "#/$defs/NameProperty",
+                  "ObjectProperty": "#/$defs/ObjectProperty",
+                  "Quat": "#/$defs/QuatStruct",
+                  "Rotator": "#/$defs/RotatorStruct",
+                  "SetProperty": "#/$defs/SetProperty",
+                  "StrProperty": "#/$defs/StrProperty",
+                  "StructProperty": "#/$defs/StructProperty",
+                  "TextProperty": "#/$defs/TextProperty",
+                  "Timespan": "#/$defs/TimespanStruct",
+                  "UInt16Property": "#/$defs/UInt16Property",
+                  "UInt32Property": "#/$defs/UInt32Property",
+                  "UInt64Property": "#/$defs/UInt64Property",
+                  "UInt8Property": "#/$defs/UInt8Property",
+                  "Vector": "#/$defs/VectorStruct",
+                  "Vector2D": "#/$defs/Vector2DStruct"
+                },
+                "propertyName": "type"
+              },
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/BoolProperty"
+                },
+                {
+                  "$ref": "#/$defs/ByteProperty"
+                },
+                {
+                  "$ref": "#/$defs/FloatProperty"
+                },
+                {
+                  "$ref": "#/$defs/DoubleProperty"
+                },
+                {
+                  "$ref": "#/$defs/IntProperty"
+                },
+                {
+                  "$ref": "#/$defs/Int8Property"
+                },
+                {
+                  "$ref": "#/$defs/UInt8Property"
+                },
+                {
+                  "$ref": "#/$defs/Int16Property"
+                },
+                {
+                  "$ref": "#/$defs/UInt16Property"
+                },
+                {
+                  "$ref": "#/$defs/Int32Property"
+                },
+                {
+                  "$ref": "#/$defs/UInt32Property"
+                },
+                {
+                  "$ref": "#/$defs/Int64Property"
+                },
+                {
+                  "$ref": "#/$defs/UInt64Property"
+                },
+                {
+                  "$ref": "#/$defs/DateTimeStruct"
+                },
+                {
+                  "$ref": "#/$defs/GuidStruct"
+                },
+                {
+                  "$ref": "#/$defs/TimespanStruct"
+                },
+                {
+                  "$ref": "#/$defs/IntPointStruct"
+                },
+                {
+                  "$ref": "#/$defs/LinearColorStruct"
+                },
+                {
+                  "$ref": "#/$defs/RotatorStruct"
+                },
+                {
+                  "$ref": "#/$defs/QuatStruct"
+                },
+                {
+                  "$ref": "#/$defs/VectorStruct"
+                },
+                {
+                  "$ref": "#/$defs/Vector2DStruct"
+                },
+                {
+                  "$ref": "#/$defs/SetProperty"
+                },
+                {
+                  "$ref": "#/$defs/MapProperty"
+                },
+                {
+                  "$ref": "#/$defs/StructProperty"
+                },
+                {
+                  "$ref": "#/$defs/ArrayProperty"
+                },
+                {
+                  "$ref": "#/$defs/EnumProperty"
+                },
+                {
+                  "$ref": "#/$defs/TextProperty"
+                },
+                {
+                  "$ref": "#/$defs/NameProperty"
+                },
+                {
+                  "$ref": "#/$defs/StrProperty"
+                },
+                {
+                  "$ref": "#/$defs/ObjectProperty"
+                },
+                {
+                  "$ref": "#/$defs/FieldPath"
+                },
+                {
+                  "$ref": "#/$defs/FieldPathProperty"
+                },
+                {
+                  "$ref": "#/$defs/MulticastInlineDelegateProperty"
+                },
+                {
+                  "$ref": "#/$defs/MulticastSparseDelegateProperty"
+                },
+                {
+                  "$ref": "#/$defs/DelegateProperty"
+                }
+              ]
+            }
+          ],
+          "default": null,
+          "title": "Value Type"
+        },
+        "allocation_flags": {
+          "default": 0,
+          "title": "Allocation Flags",
+          "type": "integer"
+        },
+        "values": {
+          "default": null,
+          "items": {
+            "maxItems": 2,
+            "minItems": 2,
+            "prefixItems": [
+              {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "discriminator": {
+                      "mapping": {
+                        "ArrayProperty": "#/$defs/ArrayProperty",
+                        "BoolProperty": "#/$defs/BoolProperty",
+                        "ByteProperty": "#/$defs/ByteProperty",
+                        "DateTime": "#/$defs/DateTimeStruct",
+                        "DelegateProperty": "#/$defs/DelegateProperty",
+                        "DoubleProperty": "#/$defs/DoubleProperty",
+                        "EnumProperty": "#/$defs/EnumProperty",
+                        "FieldPath": "#/$defs/FieldPath",
+                        "FieldPathProperty": "#/$defs/FieldPathProperty",
+                        "FloatProperty": "#/$defs/FloatProperty",
+                        "Guid": "#/$defs/GuidStruct",
+                        "Int16Property": "#/$defs/Int16Property",
+                        "Int32Property": "#/$defs/Int32Property",
+                        "Int64Property": "#/$defs/Int64Property",
+                        "Int8Property": "#/$defs/Int8Property",
+                        "IntPoint": "#/$defs/IntPointStruct",
+                        "IntProperty": "#/$defs/IntProperty",
+                        "LinearColor": "#/$defs/LinearColorStruct",
+                        "MapProperty": "#/$defs/MapProperty",
+                        "MulticastInlineDelegateProperty": "#/$defs/MulticastInlineDelegateProperty",
+                        "MulticastSparseDelegateProperty": "#/$defs/MulticastSparseDelegateProperty",
+                        "NameProperty": "#/$defs/NameProperty",
+                        "ObjectProperty": "#/$defs/ObjectProperty",
+                        "Quat": "#/$defs/QuatStruct",
+                        "Rotator": "#/$defs/RotatorStruct",
+                        "SetProperty": "#/$defs/SetProperty",
+                        "StrProperty": "#/$defs/StrProperty",
+                        "StructProperty": "#/$defs/StructProperty",
+                        "TextProperty": "#/$defs/TextProperty",
+                        "Timespan": "#/$defs/TimespanStruct",
+                        "UInt16Property": "#/$defs/UInt16Property",
+                        "UInt32Property": "#/$defs/UInt32Property",
+                        "UInt64Property": "#/$defs/UInt64Property",
+                        "UInt8Property": "#/$defs/UInt8Property",
+                        "Vector": "#/$defs/VectorStruct",
+                        "Vector2D": "#/$defs/Vector2DStruct"
+                      },
+                      "propertyName": "type"
+                    },
+                    "oneOf": [
+                      {
+                        "$ref": "#/$defs/BoolProperty"
+                      },
+                      {
+                        "$ref": "#/$defs/ByteProperty"
+                      },
+                      {
+                        "$ref": "#/$defs/FloatProperty"
+                      },
+                      {
+                        "$ref": "#/$defs/DoubleProperty"
+                      },
+                      {
+                        "$ref": "#/$defs/IntProperty"
+                      },
+                      {
+                        "$ref": "#/$defs/Int8Property"
+                      },
+                      {
+                        "$ref": "#/$defs/UInt8Property"
+                      },
+                      {
+                        "$ref": "#/$defs/Int16Property"
+                      },
+                      {
+                        "$ref": "#/$defs/UInt16Property"
+                      },
+                      {
+                        "$ref": "#/$defs/Int32Property"
+                      },
+                      {
+                        "$ref": "#/$defs/UInt32Property"
+                      },
+                      {
+                        "$ref": "#/$defs/Int64Property"
+                      },
+                      {
+                        "$ref": "#/$defs/UInt64Property"
+                      },
+                      {
+                        "$ref": "#/$defs/DateTimeStruct"
+                      },
+                      {
+                        "$ref": "#/$defs/GuidStruct"
+                      },
+                      {
+                        "$ref": "#/$defs/TimespanStruct"
+                      },
+                      {
+                        "$ref": "#/$defs/IntPointStruct"
+                      },
+                      {
+                        "$ref": "#/$defs/LinearColorStruct"
+                      },
+                      {
+                        "$ref": "#/$defs/RotatorStruct"
+                      },
+                      {
+                        "$ref": "#/$defs/QuatStruct"
+                      },
+                      {
+                        "$ref": "#/$defs/VectorStruct"
+                      },
+                      {
+                        "$ref": "#/$defs/Vector2DStruct"
+                      },
+                      {
+                        "$ref": "#/$defs/SetProperty"
+                      },
+                      {
+                        "$ref": "#/$defs/MapProperty"
+                      },
+                      {
+                        "$ref": "#/$defs/StructProperty"
+                      },
+                      {
+                        "$ref": "#/$defs/ArrayProperty"
+                      },
+                      {
+                        "$ref": "#/$defs/EnumProperty"
+                      },
+                      {
+                        "$ref": "#/$defs/TextProperty"
+                      },
+                      {
+                        "$ref": "#/$defs/NameProperty"
+                      },
+                      {
+                        "$ref": "#/$defs/StrProperty"
+                      },
+                      {
+                        "$ref": "#/$defs/ObjectProperty"
+                      },
+                      {
+                        "$ref": "#/$defs/FieldPath"
+                      },
+                      {
+                        "$ref": "#/$defs/FieldPathProperty"
+                      },
+                      {
+                        "$ref": "#/$defs/MulticastInlineDelegateProperty"
+                      },
+                      {
+                        "$ref": "#/$defs/MulticastSparseDelegateProperty"
+                      },
+                      {
+                        "$ref": "#/$defs/DelegateProperty"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "anyOf": [
+                  {
+                    "type": "boolean"
+                  },
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "discriminator": {
+                      "mapping": {
+                        "ArrayProperty": "#/$defs/ArrayProperty",
+                        "BoolProperty": "#/$defs/BoolProperty",
+                        "ByteProperty": "#/$defs/ByteProperty",
+                        "DateTime": "#/$defs/DateTimeStruct",
+                        "DelegateProperty": "#/$defs/DelegateProperty",
+                        "DoubleProperty": "#/$defs/DoubleProperty",
+                        "EnumProperty": "#/$defs/EnumProperty",
+                        "FieldPath": "#/$defs/FieldPath",
+                        "FieldPathProperty": "#/$defs/FieldPathProperty",
+                        "FloatProperty": "#/$defs/FloatProperty",
+                        "Guid": "#/$defs/GuidStruct",
+                        "Int16Property": "#/$defs/Int16Property",
+                        "Int32Property": "#/$defs/Int32Property",
+                        "Int64Property": "#/$defs/Int64Property",
+                        "Int8Property": "#/$defs/Int8Property",
+                        "IntPoint": "#/$defs/IntPointStruct",
+                        "IntProperty": "#/$defs/IntProperty",
+                        "LinearColor": "#/$defs/LinearColorStruct",
+                        "MapProperty": "#/$defs/MapProperty",
+                        "MulticastInlineDelegateProperty": "#/$defs/MulticastInlineDelegateProperty",
+                        "MulticastSparseDelegateProperty": "#/$defs/MulticastSparseDelegateProperty",
+                        "NameProperty": "#/$defs/NameProperty",
+                        "ObjectProperty": "#/$defs/ObjectProperty",
+                        "Quat": "#/$defs/QuatStruct",
+                        "Rotator": "#/$defs/RotatorStruct",
+                        "SetProperty": "#/$defs/SetProperty",
+                        "StrProperty": "#/$defs/StrProperty",
+                        "StructProperty": "#/$defs/StructProperty",
+                        "TextProperty": "#/$defs/TextProperty",
+                        "Timespan": "#/$defs/TimespanStruct",
+                        "UInt16Property": "#/$defs/UInt16Property",
+                        "UInt32Property": "#/$defs/UInt32Property",
+                        "UInt64Property": "#/$defs/UInt64Property",
+                        "UInt8Property": "#/$defs/UInt8Property",
+                        "Vector": "#/$defs/VectorStruct",
+                        "Vector2D": "#/$defs/Vector2DStruct"
+                      },
+                      "propertyName": "type"
+                    },
+                    "oneOf": [
+                      {
+                        "$ref": "#/$defs/BoolProperty"
+                      },
+                      {
+                        "$ref": "#/$defs/ByteProperty"
+                      },
+                      {
+                        "$ref": "#/$defs/FloatProperty"
+                      },
+                      {
+                        "$ref": "#/$defs/DoubleProperty"
+                      },
+                      {
+                        "$ref": "#/$defs/IntProperty"
+                      },
+                      {
+                        "$ref": "#/$defs/Int8Property"
+                      },
+                      {
+                        "$ref": "#/$defs/UInt8Property"
+                      },
+                      {
+                        "$ref": "#/$defs/Int16Property"
+                      },
+                      {
+                        "$ref": "#/$defs/UInt16Property"
+                      },
+                      {
+                        "$ref": "#/$defs/Int32Property"
+                      },
+                      {
+                        "$ref": "#/$defs/UInt32Property"
+                      },
+                      {
+                        "$ref": "#/$defs/Int64Property"
+                      },
+                      {
+                        "$ref": "#/$defs/UInt64Property"
+                      },
+                      {
+                        "$ref": "#/$defs/DateTimeStruct"
+                      },
+                      {
+                        "$ref": "#/$defs/GuidStruct"
+                      },
+                      {
+                        "$ref": "#/$defs/TimespanStruct"
+                      },
+                      {
+                        "$ref": "#/$defs/IntPointStruct"
+                      },
+                      {
+                        "$ref": "#/$defs/LinearColorStruct"
+                      },
+                      {
+                        "$ref": "#/$defs/RotatorStruct"
+                      },
+                      {
+                        "$ref": "#/$defs/QuatStruct"
+                      },
+                      {
+                        "$ref": "#/$defs/VectorStruct"
+                      },
+                      {
+                        "$ref": "#/$defs/Vector2DStruct"
+                      },
+                      {
+                        "$ref": "#/$defs/SetProperty"
+                      },
+                      {
+                        "$ref": "#/$defs/MapProperty"
+                      },
+                      {
+                        "$ref": "#/$defs/StructProperty"
+                      },
+                      {
+                        "$ref": "#/$defs/ArrayProperty"
+                      },
+                      {
+                        "$ref": "#/$defs/EnumProperty"
+                      },
+                      {
+                        "$ref": "#/$defs/TextProperty"
+                      },
+                      {
+                        "$ref": "#/$defs/NameProperty"
+                      },
+                      {
+                        "$ref": "#/$defs/StrProperty"
+                      },
+                      {
+                        "$ref": "#/$defs/ObjectProperty"
+                      },
+                      {
+                        "$ref": "#/$defs/FieldPath"
+                      },
+                      {
+                        "$ref": "#/$defs/FieldPathProperty"
+                      },
+                      {
+                        "$ref": "#/$defs/MulticastInlineDelegateProperty"
+                      },
+                      {
+                        "$ref": "#/$defs/MulticastSparseDelegateProperty"
+                      },
+                      {
+                        "$ref": "#/$defs/DelegateProperty"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "type": "array"
+          },
+          "title": "Values",
+          "type": "array"
+        }
+      },
+      "title": "MapProperty",
+      "type": "object"
+    },
+    "MulticastInlineDelegateProperty": {
+      "properties": {
+        "type": {
+          "const": "MulticastInlineDelegateProperty",
+          "default": "MulticastInlineDelegateProperty",
+          "title": "Type",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/MulticastScriptDelegate"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "title": "MulticastInlineDelegateProperty",
+      "type": "object"
+    },
+    "MulticastScriptDelegate": {
+      "properties": {
+        "type": {
+          "const": "MulticastScriptDelegate",
+          "default": "MulticastScriptDelegate",
+          "title": "Type",
+          "type": "string"
+        },
+        "delegates": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/Delegate"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Delegates"
+        }
+      },
+      "title": "MulticastScriptDelegate",
+      "type": "object"
+    },
+    "MulticastSparseDelegateProperty": {
+      "properties": {
+        "type": {
+          "const": "MulticastSparseDelegateProperty",
+          "default": "MulticastSparseDelegateProperty",
+          "title": "Type",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/MulticastScriptDelegate"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "title": "MulticastSparseDelegateProperty",
+      "type": "object"
+    },
+    "NameProperty": {
+      "description": "A property that holds a name",
+      "properties": {
+        "type": {
+          "const": "NameProperty",
+          "default": "NameProperty",
+          "title": "Type",
+          "type": "string"
+        },
+        "array_index": {
+          "default": 0,
+          "title": "Array Index",
+          "type": "integer"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Value"
+        }
+      },
+      "title": "NameProperty",
+      "type": "object"
+    },
+    "NamedFormat": {
+      "properties": {
+        "type": {
+          "const": "NamedFormat",
+          "default": "NamedFormat",
+          "title": "Type",
+          "type": "string"
+        },
+        "source_format": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FText"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "arguments": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "$ref": "#/$defs/FormatArgument"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Arguments"
+        }
+      },
+      "title": "NamedFormat",
+      "type": "object"
+    },
+    "NoType": {
+      "properties": {
+        "type": {
+          "const": "NoType",
+          "default": "NoType",
+          "title": "Type",
+          "type": "string"
+        },
+        "culture_invariant_string": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Culture Invariant String"
+        }
+      },
+      "title": "NoType",
+      "type": "object"
+    },
+    "NumberFormattingOptions": {
+      "properties": {
+        "always_include_sign": {
+          "default": false,
+          "title": "Always Include Sign",
+          "type": "boolean"
+        },
+        "use_grouping": {
+          "default": false,
+          "title": "Use Grouping",
+          "type": "boolean"
+        },
+        "rounding_mode": {
+          "default": "HalfToEven",
+          "title": "Rounding Mode",
+          "type": "string"
+        },
+        "minimum_integral_digits": {
+          "default": 1,
+          "title": "Minimum Integral Digits",
+          "type": "integer"
+        },
+        "maximum_integral_digits": {
+          "default": 324,
+          "title": "Maximum Integral Digits",
+          "type": "integer"
+        },
+        "minimum_fractional_digits": {
+          "default": 0,
+          "title": "Minimum Fractional Digits",
+          "type": "integer"
+        },
+        "maximum_fractional_digits": {
+          "default": 3,
+          "title": "Maximum Fractional Digits",
+          "type": "integer"
+        }
+      },
+      "title": "NumberFormattingOptions",
+      "type": "object"
+    },
+    "ObjectProperty": {
+      "description": "A property that holds an object value",
+      "properties": {
+        "type": {
+          "const": "ObjectProperty",
+          "default": "ObjectProperty",
+          "title": "Type",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Value"
+        }
+      },
+      "title": "ObjectProperty",
+      "type": "object"
+    },
+    "OrderedFormat": {
+      "properties": {
+        "type": {
+          "const": "OrderedFormat",
+          "default": "OrderedFormat",
+          "title": "Type",
+          "type": "string"
+        },
+        "source_format": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FText"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "arguments": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/FormatArgument"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Arguments"
+        }
+      },
+      "title": "OrderedFormat",
+      "type": "object"
+    },
+    "QuatStruct": {
+      "properties": {
+        "type": {
+          "const": "Quat",
+          "default": "Quat",
+          "title": "Type",
+          "type": "string"
+        },
+        "x": {
+          "default": 0,
+          "title": "X",
+          "type": "number"
+        },
+        "y": {
+          "default": 0,
+          "title": "Y",
+          "type": "number"
+        },
+        "z": {
+          "default": 0,
+          "title": "Z",
+          "type": "number"
+        },
+        "w": {
+          "default": 0,
+          "title": "W",
+          "type": "number"
+        }
+      },
+      "title": "QuatStruct",
+      "type": "object"
+    },
+    "RotatorStruct": {
+      "properties": {
+        "type": {
+          "const": "Rotator",
+          "default": "Rotator",
+          "title": "Type",
+          "type": "string"
+        },
+        "pitch": {
+          "default": 0,
+          "title": "Pitch",
+          "type": "number"
+        },
+        "yaw": {
+          "default": 0,
+          "title": "Yaw",
+          "type": "number"
+        },
+        "roll": {
+          "default": 0,
+          "title": "Roll",
+          "type": "number"
+        }
+      },
+      "title": "RotatorStruct",
+      "type": "object"
+    },
+    "SetProperty": {
+      "description": "A property that stores a set of properties",
+      "properties": {
+        "type": {
+          "const": "SetProperty",
+          "default": "SetProperty",
+          "title": "Type",
+          "type": "string"
+        },
+        "property_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Property Type"
+        },
+        "allocation_flags": {
+          "default": 0,
+          "title": "Allocation Flags",
+          "type": "integer"
+        },
+        "properties": {
+          "anyOf": [
+            {
+              "items": {
+                "discriminator": {
+                  "mapping": {
+                    "ArrayProperty": "#/$defs/ArrayProperty",
+                    "BoolProperty": "#/$defs/BoolProperty",
+                    "ByteProperty": "#/$defs/ByteProperty",
+                    "DateTime": "#/$defs/DateTimeStruct",
+                    "DelegateProperty": "#/$defs/DelegateProperty",
+                    "DoubleProperty": "#/$defs/DoubleProperty",
+                    "EnumProperty": "#/$defs/EnumProperty",
+                    "FieldPath": "#/$defs/FieldPath",
+                    "FieldPathProperty": "#/$defs/FieldPathProperty",
+                    "FloatProperty": "#/$defs/FloatProperty",
+                    "Guid": "#/$defs/GuidStruct",
+                    "Int16Property": "#/$defs/Int16Property",
+                    "Int32Property": "#/$defs/Int32Property",
+                    "Int64Property": "#/$defs/Int64Property",
+                    "Int8Property": "#/$defs/Int8Property",
+                    "IntPoint": "#/$defs/IntPointStruct",
+                    "IntProperty": "#/$defs/IntProperty",
+                    "LinearColor": "#/$defs/LinearColorStruct",
+                    "MapProperty": "#/$defs/MapProperty",
+                    "MulticastInlineDelegateProperty": "#/$defs/MulticastInlineDelegateProperty",
+                    "MulticastSparseDelegateProperty": "#/$defs/MulticastSparseDelegateProperty",
+                    "NameProperty": "#/$defs/NameProperty",
+                    "ObjectProperty": "#/$defs/ObjectProperty",
+                    "Quat": "#/$defs/QuatStruct",
+                    "Rotator": "#/$defs/RotatorStruct",
+                    "SetProperty": "#/$defs/SetProperty",
+                    "StrProperty": "#/$defs/StrProperty",
+                    "StructProperty": "#/$defs/StructProperty",
+                    "TextProperty": "#/$defs/TextProperty",
+                    "Timespan": "#/$defs/TimespanStruct",
+                    "UInt16Property": "#/$defs/UInt16Property",
+                    "UInt32Property": "#/$defs/UInt32Property",
+                    "UInt64Property": "#/$defs/UInt64Property",
+                    "UInt8Property": "#/$defs/UInt8Property",
+                    "Vector": "#/$defs/VectorStruct",
+                    "Vector2D": "#/$defs/Vector2DStruct"
+                  },
+                  "propertyName": "type"
+                },
+                "oneOf": [
+                  {
+                    "$ref": "#/$defs/BoolProperty"
+                  },
+                  {
+                    "$ref": "#/$defs/ByteProperty"
+                  },
+                  {
+                    "$ref": "#/$defs/FloatProperty"
+                  },
+                  {
+                    "$ref": "#/$defs/DoubleProperty"
+                  },
+                  {
+                    "$ref": "#/$defs/IntProperty"
+                  },
+                  {
+                    "$ref": "#/$defs/Int8Property"
+                  },
+                  {
+                    "$ref": "#/$defs/UInt8Property"
+                  },
+                  {
+                    "$ref": "#/$defs/Int16Property"
+                  },
+                  {
+                    "$ref": "#/$defs/UInt16Property"
+                  },
+                  {
+                    "$ref": "#/$defs/Int32Property"
+                  },
+                  {
+                    "$ref": "#/$defs/UInt32Property"
+                  },
+                  {
+                    "$ref": "#/$defs/Int64Property"
+                  },
+                  {
+                    "$ref": "#/$defs/UInt64Property"
+                  },
+                  {
+                    "$ref": "#/$defs/DateTimeStruct"
+                  },
+                  {
+                    "$ref": "#/$defs/GuidStruct"
+                  },
+                  {
+                    "$ref": "#/$defs/TimespanStruct"
+                  },
+                  {
+                    "$ref": "#/$defs/IntPointStruct"
+                  },
+                  {
+                    "$ref": "#/$defs/LinearColorStruct"
+                  },
+                  {
+                    "$ref": "#/$defs/RotatorStruct"
+                  },
+                  {
+                    "$ref": "#/$defs/QuatStruct"
+                  },
+                  {
+                    "$ref": "#/$defs/VectorStruct"
+                  },
+                  {
+                    "$ref": "#/$defs/Vector2DStruct"
+                  },
+                  {
+                    "$ref": "#/$defs/SetProperty"
+                  },
+                  {
+                    "$ref": "#/$defs/MapProperty"
+                  },
+                  {
+                    "$ref": "#/$defs/StructProperty"
+                  },
+                  {
+                    "$ref": "#/$defs/ArrayProperty"
+                  },
+                  {
+                    "$ref": "#/$defs/EnumProperty"
+                  },
+                  {
+                    "$ref": "#/$defs/TextProperty"
+                  },
+                  {
+                    "$ref": "#/$defs/NameProperty"
+                  },
+                  {
+                    "$ref": "#/$defs/StrProperty"
+                  },
+                  {
+                    "$ref": "#/$defs/ObjectProperty"
+                  },
+                  {
+                    "$ref": "#/$defs/FieldPath"
+                  },
+                  {
+                    "$ref": "#/$defs/FieldPathProperty"
+                  },
+                  {
+                    "$ref": "#/$defs/MulticastInlineDelegateProperty"
+                  },
+                  {
+                    "$ref": "#/$defs/MulticastSparseDelegateProperty"
+                  },
+                  {
+                    "$ref": "#/$defs/DelegateProperty"
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Properties"
+        }
+      },
+      "title": "SetProperty",
+      "type": "object"
+    },
+    "StrProperty": {
+      "properties": {
+        "type": {
+          "const": "StrProperty",
+          "default": "StrProperty",
+          "title": "Type",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Value"
+        }
+      },
+      "title": "StrProperty",
+      "type": "object"
+    },
+    "StringTableEntry": {
+      "properties": {
+        "type": {
+          "const": "StringTableEntry",
+          "default": "StringTableEntry",
+          "title": "Type",
+          "type": "string"
+        },
+        "table_id": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FText"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Key"
+        }
+      },
+      "title": "StringTableEntry",
+      "type": "object"
+    },
+    "StructProperty": {
+      "description": "A property that holds structured data",
+      "properties": {
+        "type": {
+          "const": "StructProperty",
+          "default": "StructProperty",
+          "title": "Type",
+          "type": "string"
+        },
+        "guid": {
+          "anyOf": [
+            {
+              "format": "uuid",
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Guid"
+        },
+        "type_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Type Name"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "discriminator": {
+                  "mapping": {
+                    "ArrayProperty": "#/$defs/ArrayProperty",
+                    "BoolProperty": "#/$defs/BoolProperty",
+                    "ByteProperty": "#/$defs/ByteProperty",
+                    "DateTime": "#/$defs/DateTimeStruct",
+                    "DelegateProperty": "#/$defs/DelegateProperty",
+                    "DoubleProperty": "#/$defs/DoubleProperty",
+                    "EnumProperty": "#/$defs/EnumProperty",
+                    "FieldPath": "#/$defs/FieldPath",
+                    "FieldPathProperty": "#/$defs/FieldPathProperty",
+                    "FloatProperty": "#/$defs/FloatProperty",
+                    "Guid": "#/$defs/GuidStruct",
+                    "Int16Property": "#/$defs/Int16Property",
+                    "Int32Property": "#/$defs/Int32Property",
+                    "Int64Property": "#/$defs/Int64Property",
+                    "Int8Property": "#/$defs/Int8Property",
+                    "IntPoint": "#/$defs/IntPointStruct",
+                    "IntProperty": "#/$defs/IntProperty",
+                    "LinearColor": "#/$defs/LinearColorStruct",
+                    "MapProperty": "#/$defs/MapProperty",
+                    "MulticastInlineDelegateProperty": "#/$defs/MulticastInlineDelegateProperty",
+                    "MulticastSparseDelegateProperty": "#/$defs/MulticastSparseDelegateProperty",
+                    "NameProperty": "#/$defs/NameProperty",
+                    "ObjectProperty": "#/$defs/ObjectProperty",
+                    "Quat": "#/$defs/QuatStruct",
+                    "Rotator": "#/$defs/RotatorStruct",
+                    "SetProperty": "#/$defs/SetProperty",
+                    "StrProperty": "#/$defs/StrProperty",
+                    "StructProperty": "#/$defs/StructProperty",
+                    "TextProperty": "#/$defs/TextProperty",
+                    "Timespan": "#/$defs/TimespanStruct",
+                    "UInt16Property": "#/$defs/UInt16Property",
+                    "UInt32Property": "#/$defs/UInt32Property",
+                    "UInt64Property": "#/$defs/UInt64Property",
+                    "UInt8Property": "#/$defs/UInt8Property",
+                    "Vector": "#/$defs/VectorStruct",
+                    "Vector2D": "#/$defs/Vector2DStruct"
+                  },
+                  "propertyName": "type"
+                },
+                "oneOf": [
+                  {
+                    "$ref": "#/$defs/BoolProperty"
+                  },
+                  {
+                    "$ref": "#/$defs/ByteProperty"
+                  },
+                  {
+                    "$ref": "#/$defs/FloatProperty"
+                  },
+                  {
+                    "$ref": "#/$defs/DoubleProperty"
+                  },
+                  {
+                    "$ref": "#/$defs/IntProperty"
+                  },
+                  {
+                    "$ref": "#/$defs/Int8Property"
+                  },
+                  {
+                    "$ref": "#/$defs/UInt8Property"
+                  },
+                  {
+                    "$ref": "#/$defs/Int16Property"
+                  },
+                  {
+                    "$ref": "#/$defs/UInt16Property"
+                  },
+                  {
+                    "$ref": "#/$defs/Int32Property"
+                  },
+                  {
+                    "$ref": "#/$defs/UInt32Property"
+                  },
+                  {
+                    "$ref": "#/$defs/Int64Property"
+                  },
+                  {
+                    "$ref": "#/$defs/UInt64Property"
+                  },
+                  {
+                    "$ref": "#/$defs/DateTimeStruct"
+                  },
+                  {
+                    "$ref": "#/$defs/GuidStruct"
+                  },
+                  {
+                    "$ref": "#/$defs/TimespanStruct"
+                  },
+                  {
+                    "$ref": "#/$defs/IntPointStruct"
+                  },
+                  {
+                    "$ref": "#/$defs/LinearColorStruct"
+                  },
+                  {
+                    "$ref": "#/$defs/RotatorStruct"
+                  },
+                  {
+                    "$ref": "#/$defs/QuatStruct"
+                  },
+                  {
+                    "$ref": "#/$defs/VectorStruct"
+                  },
+                  {
+                    "$ref": "#/$defs/Vector2DStruct"
+                  },
+                  {
+                    "$ref": "#/$defs/SetProperty"
+                  },
+                  {
+                    "$ref": "#/$defs/MapProperty"
+                  },
+                  {
+                    "$ref": "#/$defs/StructProperty"
+                  },
+                  {
+                    "$ref": "#/$defs/ArrayProperty"
+                  },
+                  {
+                    "$ref": "#/$defs/EnumProperty"
+                  },
+                  {
+                    "$ref": "#/$defs/TextProperty"
+                  },
+                  {
+                    "$ref": "#/$defs/NameProperty"
+                  },
+                  {
+                    "$ref": "#/$defs/StrProperty"
+                  },
+                  {
+                    "$ref": "#/$defs/ObjectProperty"
+                  },
+                  {
+                    "$ref": "#/$defs/FieldPath"
+                  },
+                  {
+                    "$ref": "#/$defs/FieldPathProperty"
+                  },
+                  {
+                    "$ref": "#/$defs/MulticastInlineDelegateProperty"
+                  },
+                  {
+                    "$ref": "#/$defs/MulticastSparseDelegateProperty"
+                  },
+                  {
+                    "$ref": "#/$defs/DelegateProperty"
+                  }
+                ]
+              },
+              "type": "object"
+            },
+            {
+              "$ref": "#/$defs/DateTimeStruct"
+            },
+            {
+              "$ref": "#/$defs/GuidStruct"
+            },
+            {
+              "$ref": "#/$defs/TimespanStruct"
+            },
+            {
+              "$ref": "#/$defs/IntPointStruct"
+            },
+            {
+              "$ref": "#/$defs/LinearColorStruct"
+            },
+            {
+              "$ref": "#/$defs/RotatorStruct"
+            },
+            {
+              "$ref": "#/$defs/QuatStruct"
+            },
+            {
+              "$ref": "#/$defs/VectorStruct"
+            },
+            {
+              "$ref": "#/$defs/Vector2DStruct"
+            }
+          ],
+          "default": null,
+          "title": "Value"
+        }
+      },
+      "title": "StructProperty",
+      "type": "object"
+    },
+    "TextProperty": {
+      "description": "A property that holds FText data",
+      "properties": {
+        "type": {
+          "const": "TextProperty",
+          "default": "TextProperty",
+          "title": "Type",
+          "type": "string"
+        },
+        "flags": {
+          "default": 0,
+          "title": "Flags",
+          "type": "integer"
+        },
+        "history": {
+          "anyOf": [
+            {
+              "discriminator": {
+                "mapping": {
+                  "ArgumentFormat": "#/$defs/ArgumentFormat",
+                  "AsCurrency": "#/$defs/AsCurrency",
+                  "AsDate": "#/$defs/AsDate",
+                  "AsDateTime": "#/$defs/AsDateTime",
+                  "AsNumber": "#/$defs/AsNumber",
+                  "AsPercent": "#/$defs/AsPercent",
+                  "AsTime": "#/$defs/AsTime",
+                  "Base": "#/$defs/Base",
+                  "Empty": "#/$defs/Empty",
+                  "NamedFormat": "#/$defs/NamedFormat",
+                  "NoType": "#/$defs/NoType",
+                  "OrderedFormat": "#/$defs/OrderedFormat",
+                  "StringTableEntry": "#/$defs/StringTableEntry",
+                  "Transform": "#/$defs/Transform"
+                },
+                "propertyName": "type"
+              },
+              "oneOf": [
+                {
+                  "$ref": "#/$defs/Empty"
+                },
+                {
+                  "$ref": "#/$defs/NoType"
+                },
+                {
+                  "$ref": "#/$defs/Base"
+                },
+                {
+                  "$ref": "#/$defs/NamedFormat"
+                },
+                {
+                  "$ref": "#/$defs/OrderedFormat"
+                },
+                {
+                  "$ref": "#/$defs/ArgumentFormat"
+                },
+                {
+                  "$ref": "#/$defs/AsNumber"
+                },
+                {
+                  "$ref": "#/$defs/AsPercent"
+                },
+                {
+                  "$ref": "#/$defs/AsCurrency"
+                },
+                {
+                  "$ref": "#/$defs/AsDate"
+                },
+                {
+                  "$ref": "#/$defs/AsTime"
+                },
+                {
+                  "$ref": "#/$defs/AsDateTime"
+                },
+                {
+                  "$ref": "#/$defs/Transform"
+                },
+                {
+                  "$ref": "#/$defs/StringTableEntry"
+                }
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "History"
+        }
+      },
+      "title": "TextProperty",
+      "type": "object"
+    },
+    "TimespanStruct": {
+      "properties": {
+        "type": {
+          "const": "Timespan",
+          "default": "Timespan",
+          "title": "Type",
+          "type": "string"
+        },
+        "timespan": {
+          "default": 0,
+          "title": "Timespan",
+          "type": "integer"
+        },
+        "comment": {
+          "default": null,
+          "title": "Comment",
+          "type": "string"
+        }
+      },
+      "title": "TimespanStruct",
+      "type": "object"
+    },
+    "Transform": {
+      "properties": {
+        "type": {
+          "const": "Transform",
+          "default": "Transform",
+          "title": "Type",
+          "type": "string"
+        },
+        "source_text": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FText"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "transform_type": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/TransformType"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        }
+      },
+      "title": "Transform",
+      "type": "object"
+    },
+    "TransformType": {
+      "enum": [
+        0,
+        1
+      ],
+      "title": "TransformType",
+      "type": "integer"
+    },
+    "UInt16Property": {
+      "properties": {
+        "type": {
+          "const": "UInt16Property",
+          "default": "UInt16Property",
+          "title": "Type",
+          "type": "string"
+        },
+        "value": {
+          "default": 0,
+          "title": "Value",
+          "type": "integer"
+        }
+      },
+      "title": "UInt16Property",
+      "type": "object"
+    },
+    "UInt32Property": {
+      "properties": {
+        "type": {
+          "const": "UInt32Property",
+          "default": "UInt32Property",
+          "title": "Type",
+          "type": "string"
+        },
+        "value": {
+          "default": 0,
+          "title": "Value",
+          "type": "integer"
+        }
+      },
+      "title": "UInt32Property",
+      "type": "object"
+    },
+    "UInt64Property": {
+      "properties": {
+        "type": {
+          "const": "UInt64Property",
+          "default": "UInt64Property",
+          "title": "Type",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "default": 0,
+          "title": "Value"
+        }
+      },
+      "title": "UInt64Property",
+      "type": "object"
+    },
+    "UInt8Property": {
+      "properties": {
+        "type": {
+          "const": "UInt8Property",
+          "default": "UInt8Property",
+          "title": "Type",
+          "type": "string"
+        },
+        "value": {
+          "default": 0,
+          "title": "Value",
+          "type": "integer"
+        }
+      },
+      "title": "UInt8Property",
+      "type": "object"
+    },
+    "Vector2DStruct": {
+      "properties": {
+        "type": {
+          "const": "Vector2D",
+          "default": "Vector2D",
+          "title": "Type",
+          "type": "string"
+        },
+        "x": {
+          "default": 0,
+          "title": "X",
+          "type": "number"
+        },
+        "y": {
+          "default": 0,
+          "title": "Y",
+          "type": "number"
+        }
+      },
+      "title": "Vector2DStruct",
+      "type": "object"
+    },
+    "VectorStruct": {
+      "properties": {
+        "type": {
+          "const": "Vector",
+          "default": "Vector",
+          "title": "Type",
+          "type": "string"
+        },
+        "x": {
+          "default": 0,
+          "title": "X",
+          "type": "number"
+        },
+        "y": {
+          "default": 0,
+          "title": "Y",
+          "type": "number"
+        },
+        "z": {
+          "default": 0,
+          "title": "Z",
+          "type": "number"
+        }
+      },
+      "title": "VectorStruct",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "game_file_format": {
+      "$ref": "#/$defs/GameFileFormat"
+    },
+    "header": {
+      "$ref": "#/$defs/GvasHeader"
+    },
+    "properties": {
+      "type": "object",
+      "additionalProperties": {
+        "discriminator": {
+          "mapping": {
+            "ArrayProperty": "#/$defs/ArrayProperty",
+            "BoolProperty": "#/$defs/BoolProperty",
+            "ByteProperty": "#/$defs/ByteProperty",
+            "DateTime": "#/$defs/DateTimeStruct",
+            "DelegateProperty": "#/$defs/DelegateProperty",
+            "DoubleProperty": "#/$defs/DoubleProperty",
+            "EnumProperty": "#/$defs/EnumProperty",
+            "FieldPath": "#/$defs/FieldPath",
+            "FieldPathProperty": "#/$defs/FieldPathProperty",
+            "FloatProperty": "#/$defs/FloatProperty",
+            "Guid": "#/$defs/GuidStruct",
+            "Int16Property": "#/$defs/Int16Property",
+            "Int32Property": "#/$defs/Int32Property",
+            "Int64Property": "#/$defs/Int64Property",
+            "Int8Property": "#/$defs/Int8Property",
+            "IntPoint": "#/$defs/IntPointStruct",
+            "IntProperty": "#/$defs/IntProperty",
+            "LinearColor": "#/$defs/LinearColorStruct",
+            "MapProperty": "#/$defs/MapProperty",
+            "MulticastInlineDelegateProperty": "#/$defs/MulticastInlineDelegateProperty",
+            "MulticastSparseDelegateProperty": "#/$defs/MulticastSparseDelegateProperty",
+            "NameProperty": "#/$defs/NameProperty",
+            "ObjectProperty": "#/$defs/ObjectProperty",
+            "Quat": "#/$defs/QuatStruct",
+            "Rotator": "#/$defs/RotatorStruct",
+            "SetProperty": "#/$defs/SetProperty",
+            "StrProperty": "#/$defs/StrProperty",
+            "StructProperty": "#/$defs/StructProperty",
+            "TextProperty": "#/$defs/TextProperty",
+            "Timespan": "#/$defs/TimespanStruct",
+            "UInt16Property": "#/$defs/UInt16Property",
+            "UInt32Property": "#/$defs/UInt32Property",
+            "UInt64Property": "#/$defs/UInt64Property",
+            "UInt8Property": "#/$defs/UInt8Property",
+            "Vector": "#/$defs/VectorStruct",
+            "Vector2D": "#/$defs/Vector2DStruct"
+          },
+          "propertyName": "type"
+        },
+        "oneOf": [
+          {
+            "$ref": "#/$defs/BoolProperty"
+          },
+          {
+            "$ref": "#/$defs/ByteProperty"
+          },
+          {
+            "$ref": "#/$defs/FloatProperty"
+          },
+          {
+            "$ref": "#/$defs/DoubleProperty"
+          },
+          {
+            "$ref": "#/$defs/IntProperty"
+          },
+          {
+            "$ref": "#/$defs/Int8Property"
+          },
+          {
+            "$ref": "#/$defs/UInt8Property"
+          },
+          {
+            "$ref": "#/$defs/Int16Property"
+          },
+          {
+            "$ref": "#/$defs/UInt16Property"
+          },
+          {
+            "$ref": "#/$defs/Int32Property"
+          },
+          {
+            "$ref": "#/$defs/UInt32Property"
+          },
+          {
+            "$ref": "#/$defs/Int64Property"
+          },
+          {
+            "$ref": "#/$defs/UInt64Property"
+          },
+          {
+            "$ref": "#/$defs/DateTimeStruct"
+          },
+          {
+            "$ref": "#/$defs/GuidStruct"
+          },
+          {
+            "$ref": "#/$defs/TimespanStruct"
+          },
+          {
+            "$ref": "#/$defs/IntPointStruct"
+          },
+          {
+            "$ref": "#/$defs/LinearColorStruct"
+          },
+          {
+            "$ref": "#/$defs/RotatorStruct"
+          },
+          {
+            "$ref": "#/$defs/QuatStruct"
+          },
+          {
+            "$ref": "#/$defs/VectorStruct"
+          },
+          {
+            "$ref": "#/$defs/Vector2DStruct"
+          },
+          {
+            "$ref": "#/$defs/SetProperty"
+          },
+          {
+            "$ref": "#/$defs/MapProperty"
+          },
+          {
+            "$ref": "#/$defs/StructProperty"
+          },
+          {
+            "$ref": "#/$defs/ArrayProperty"
+          },
+          {
+            "$ref": "#/$defs/EnumProperty"
+          },
+          {
+            "$ref": "#/$defs/TextProperty"
+          },
+          {
+            "$ref": "#/$defs/NameProperty"
+          },
+          {
+            "$ref": "#/$defs/StrProperty"
+          },
+          {
+            "$ref": "#/$defs/ObjectProperty"
+          },
+          {
+            "$ref": "#/$defs/FieldPath"
+          },
+          {
+            "$ref": "#/$defs/FieldPathProperty"
+          },
+          {
+            "$ref": "#/$defs/MulticastInlineDelegateProperty"
+          },
+          {
+            "$ref": "#/$defs/MulticastSparseDelegateProperty"
+          },
+          {
+            "$ref": "#/$defs/DelegateProperty"
+          }
+        ]
+      },
+      "title": "Properties"
+    }
+  },
+  "required": [
+    "game_file_format",
+    "header",
+    "properties"
+  ],
+  "title": "GVASFile",
+  "type": "object"
+}

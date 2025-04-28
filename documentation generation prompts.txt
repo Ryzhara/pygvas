@@ -1,0 +1,114 @@
+Cursor documentation generation prompts
+
+Change the destination directory if you want fresh docs unaffected by past docs.
+
+-----
+Your task is to create MD formatted documentation and save it to the doctemp4 directory. Do not repeatedly generate the same documentation file.
+
+Do this task for each of the following python files. Remember that all binary examples are little-endian. Remember that all string reads with the read_string function may be either utf-8 or utf-16.
+	gvas/properties/delegate_property.py
+	gvas/properties/enum_property.py
+	gvas/properties/field_path_property.py
+	gvas/properties/name_property.py
+	gvas/properties/object_property.py
+	gvas/properties/str_property.py
+	
+The following files contain multiple classes. Ensure that the documentation for every class is created. Keep all documentation within one file, making an entry in the file for each class. Remember that all binary examples are little-endian. Remember that all string reads with the read_string function may be either utf-8 or utf-16.
+	gvas/properties/text_property.py
+	gvas/properties/numerical_properties.py
+	gvas/properties/standard_structs.py
+
+The following file contains multiple classes: SetProperty, MapProperty, ArrayProperty, StructProperty. Split documentation for each class into a separate file named for the class.  Remember that all binary examples are little-endian. Remember that all string reads with the read_string function may be either utf-8 or utf-16.
+	gvas/properties/aggregator_properties.py
+	
+The following file is primarily a factor function. Keep all documentation within one file, making an entry in the file for each class. Include a class definition for all "History Type" classes. Remember that all binary examples are little-endian. Remember that all string reads with the read_string function may be either utf-8 or utf-16.
+	gvas/properties/property_base.py
+
+The following files are higher level. Keep all documentation within one file, making an entry in the file for each class. Remember that all binary examples are little-endian. Remember that all string reads with the read_string function may be either utf-8 or utf-16.
+	gvas/engine_tools.py
+	gvas/error.py
+	gvas/gvas_utils.py
+	
+The following file includes python class definitions that are the primary interface for users. Keep all documentation within one file.	
+	gvas/gvas_file.py
+
+You can skip this file because it is obsolete:
+	gvas/gvas_types.py
+
+The following top-level functions are for unit testing and example implementations. Create one MD file that contains documentation for all of these files together.
+	do_unit_tests.bat
+	do_utility_tests.bat
+	gvas2json.py
+	json2gvas.py
+	detect_gvas_format.py
+	
+This file is special in that it describes in JSON schema the Python and JSON type structures. Create an MD document file for it.
+	gvas_file_schema_dump.json
+
+For every class or function that deserializes python objects from a stream, document the dequence of data that is deserialized from the stream. 
+
+For every class that inherits from another class, include the exact inherited class name in the class definition. This is especially important for StandardStructTrait and PropertyTrait.
+
+For every class decorated with @dataclass, @staticmethod, @classmethod, or other decorators, include those decorators in the class definition.
+
+If the class or function reads other class objects from the stream, document those object types.
+
+Include binary format documentation examples. 
+
+All data is in LITTLE ENDIAN format so use that format in the examples.
+
+Here is an example of that binary format from your previous documentation output:
+
+## Binary Format
+- Object Name (String):
+  - String Length (Int32)
+  - String Content (UTF-8 or UTF-16-LE)
+  - Terminator (UInt8 or UInt16)
+- Function Name (String):
+  - String Length (Int32)
+  - String Content (UTF-8 or UTF-16-LE)
+  - Terminator (UInt8 or UInt16)
+
+## Example
+```
+[Object Name]
+0A 00 00 00  Length (10 = 9 chars + 1 terminator)
+50 6C 61 79 65 72 43 68 61 72  "PlayerChar" in UTF-8
+00           Terminator
+
+[Function Name]
+0C 00 00 00  Length (12 = 11 chars + 1 terminator)
+4F 6E 44 61 6D 61 67 65 54 61 6B 65  "OnDamageTake" in UTF-8
+00           Terminator
+```
+
+Here is the general for mat for documentaiotn. When appropriate, include the following sections:
+
+	# <title>
+	## Overview
+	## Class and Function Definitions
+	### <class 1>
+	### <class 2>
+	### <function 1>
+	### <function 2>
+	## Binary Format
+	### <class 1>
+	### <class 2>
+	### <function 1>
+	### <function 2>
+	## Examples
+	Include sections for
+	# <title>
+	## Class and Function Definitions
+	### <class 1>
+	### <class 2>
+	### <function 1>
+	### <function 2>
+	## Binary Format
+	### <class 1>
+	### <class 2>
+	### <function 1>
+	### <function 2>
+	## Implementation Notes
+	> #### Note
+	> This document was created with a generative AI prompt in the Cursor IDE.

@@ -1,0 +1,1108 @@
+{
+  "game_file_format": {
+    "game_version": "PALWORLD",
+    "compression_type": "ZLIB"
+  },
+  "header": {
+    "type": "Version3",
+    "package_file_version": 522,
+    "package_file_version_ue5": 1008,
+    "engine_version": {
+      "major": 5,
+      "minor": 1,
+      "patch": 1,
+      "change_list": 0,
+      "branch": "++UE5+Release-5.1"
+    },
+    "custom_version_format": 3,
+    "custom_versions": {
+      "A7FBD240-E54C-484B-755A-38B09E494E88": 7,
+      "FA7AF5FC-8342-7650-58E6-A9B9322DA0FF": 76,
+      "7B472509-0140-3D76-73D6-919D11B4750B": 1,
+      "1B218842-C616-4845-B267-761A002A7A50": 1,
+      "CCCEB91A-1369-0000-7548-0000FB513D20": 100,
+      "2192EF4C-3AD4-0E47-8C3D-607E26579916": 1,
+      "7E7C71E2-D344-F552-4053-0C955E0315B3": 7,
+      "ED0A3111-614D-552E-A39A-67AF2C08A1C5": 17,
+      "FB0C82A7-5943-A720-142C-548C50CF2396": 21,
+      "78BBDFF6-E4A0-50BB-4DB8-184023AFCB60": 2,
+      "F37ABB24-834F-4656-C22D-2F1FFF96AD49": 5,
+      "2923A576-B545-2309-41D8-AE98D86A2FCF": 5,
+      "0769BC5F-AE40-C855-84F1-678E3FF1FF5E": 1,
+      "4E7CE782-A543-2333-C513-6BB4F30D3197": 0,
+      "6CF6FC0F-9948-9011-F89C-60B15E47464A": 1,
+      "22D5549C-BE4F-26A8-4607-2194D082B461": 44,
+      "E432D8B0-0D4F-891F-B77E-CFACA24AFD36": 10,
+      "2843C6E1-534D-2CA2-868E-6CA38CBD1764": 0,
+      "3CC15E37-FB48-E406-F084-00B57E712A26": 4,
+      "ED68B0E4-E942-94F4-0BDA-31A241BB462E": 40,
+      "3F74FCCF-8044-B043-DF14-919373201D17": 37,
+      "B5492BB0-E944-20BB-B732-04A36003E452": 3,
+      "5C10E4A4-B549-A159-C440-C5A7EEDF7E54": 0,
+      "C931C839-DC47-E65A-179C-449A7C8E1C3E": 0,
+      "331BF078-984F-EAEB-EA84-B4B9A25AB9CC": 20,
+      "0F383166-E043-4D2D-27CF-09805AA95669": 0,
+      "9F8BF812-FC4A-7588-0CD9-7CA629BD3A38": 45,
+      "4CE75A7B-104C-70D2-9857-58A95A2A210B": 13,
+      "186929D7-DD4B-D61D-A864-E29D8438C13C": 3,
+      "7852A1C2-FE4A-E7BF-FF90-176C55F71D53": 1,
+      "D4A3AC6E-C14C-EC40-ED8B-86B7C58F4209": 3,
+      "DD75E529-2746-A3E0-76D2-109DEADC2C23": 17,
+      "5DA643AF-4749-D37F-8E3E-739805BBC1D9": 15,
+      "EC6C266B-8F4B-C71E-D9E4-0BA307FC4209": 1,
+      "613DF70D-EA47-3FA2-E989-27B79A49410C": 1,
+      "86181D60-844F-64AC-DED3-16AAD6C7EA0D": 80,
+      "B7064C5B-F84A-6324-70BF-5B80DDD0F5CD": 10,
+      "686308E7-584C-236B-701B-3984915E2616": 4,
+      "D6BCFF9D-5801-4F49-8212-21E288A8923C": 10,
+      "ACD0AEF2-6F41-FE9A-7FAA-6486FCD626FA": 1,
+      "0B1F4F17-A545-C6B4-E82E-3FB17D91FBD0": 10,
+      "834AF935-6C40-58E2-F509-18A37C241096": 41,
+      "6EC18FB6-E242-1B8B-5C21-53B4FE448805": 1,
+      "0685E1B2-C2CF-7342-BBF4-4EA507BA8B75": 1,
+      "3689F564-BA42-1BFD-8972-96BA4EFAD0D5": 1,
+      "81D57D69-AB41-4FE6-EC51-4AAA28B6B7BE": 88,
+      "425E9BD8-464D-BD24-A8AC-1284791764DF": 41,
+      "525DDA59-4849-3212-7859-78B88BE9B870": 8,
+      "325A0726-0847-0F73-328C-E988059D59F1": 0,
+      "27D80E6F-9548-09A6-8D99-919CA40E1890": 2,
+      "E38BD530-8242-EA95-59B1-E3A66AB0EBD8": 1,
+      "E79E7F71-3A49-B0E9-3291-B3880781381B": 16,
+      "194D0C43-7049-5471-699B-6987E5B090DF": 15,
+      "BD32FEAA-144C-9553-255E-6AB6DDD13210": 1,
+      "8EE1AF23-584E-E14C-52C2-618DB7BE53B9": 11,
+      "EAB762A4-3A4E-99F4-1FEC-C199B2E12482": 4,
+      "BDFDB52E-104D-AC01-8FF3-3681DAA59333": 5,
+      "4F359D50-2F49-E6F6-B285-49A71C633C07": 0,
+      "1C1BE3B6-EC11-9FD2-859F-7E85E270996F": 1,
+      "40EB564A-DC11-F510-7E34-D392E76AC9B2": 2,
+      "004A8AD7-9746-58E8-B519-A8BAB4467D48": 18,
+      "86F87955-1F4C-3A93-7B08-BA832FB96163": 2,
+      "52BE2F61-0B40-53DA-914F-0D917C85B19F": 1,
+      "367A23A4-C941-EACA-F818-A28FF31B6858": 5,
+      "753F4E80-494B-8870-068C-D6A4DCB67E3C": 5,
+      "F448D01E-684C-2E2F-A453-D0892D108FF1": 1,
+      "F20A68FB-A34B-EF59-B519-A8BA3D44C873": 2,
+      "0EB75099-174E-1AB4-0DFA-CCBBD67F8157": 1,
+      "965196AB-FC08-D845-8D22-D7B79E56AD78": 1
+    },
+    "save_game_class_name": "/Script/Pal.PalWorldPlayerSaveGame"
+  },
+  "properties": {
+    "Version": {
+      "type": "IntProperty",
+      "value": 100
+    },
+    "Timestamp": {
+      "type": "StructProperty",
+      "type_name": "DateTime",
+      "value": {
+        "type": "DateTime",
+        "datetime": 638413790134860000,
+        "comment": "20/01/2024 20:23:33.486000"
+      }
+    },
+    "SaveData": {
+      "type": "StructProperty",
+      "type_name": "PalWorldPlayerSaveData",
+      "value": {
+        "PlayerUId": {
+          "type": "StructProperty",
+          "type_name": "Guid",
+          "value": {
+            "type": "Guid",
+            "guid": "00000000-0000-0000-0000-000001000000"
+          }
+        },
+        "IndividualId": {
+          "type": "StructProperty",
+          "type_name": "PalInstanceID",
+          "value": {
+            "PlayerUId": {
+              "type": "StructProperty",
+              "type_name": "Guid",
+              "value": {
+                "type": "Guid",
+                "guid": "00000000-0000-0000-0000-000001000000"
+              }
+            },
+            "InstanceId": {
+              "type": "StructProperty",
+              "type_name": "Guid",
+              "value": {
+                "type": "Guid",
+                "guid": "483CC5BD-9C2B-764F-8FCD-94899BE1B495"
+              }
+            }
+          }
+        },
+        "LastTransform": {
+          "type": "StructProperty",
+          "type_name": "Transform",
+          "value": {
+            "Rotation": {
+              "type": "StructProperty",
+              "type_name": "Quat",
+              "value": {
+                "type": "Quat",
+                "x": 0.0,
+                "y": -0.0,
+                "z": 0.7122995838326626,
+                "w": 0.7018755608167419
+              }
+            },
+            "Translation": {
+              "type": "StructProperty",
+              "type_name": "Vector",
+              "value": {
+                "type": "Vector",
+                "x": -346885.8958710417,
+                "y": 262952.62055793736,
+                "z": 4095.4127513287012
+              }
+            }
+          }
+        },
+        "PlayerCharacterMakeData": {
+          "type": "StructProperty",
+          "type_name": "PalPlayerDataCharacterMakeInfo",
+          "value": {
+            "BodyMeshName": {
+              "type": "NameProperty",
+              "array_index": 0,
+              "value": "TypeA"
+            },
+            "HeadMeshName": {
+              "type": "NameProperty",
+              "array_index": 0,
+              "value": "type1"
+            },
+            "HairMeshName": {
+              "type": "NameProperty",
+              "array_index": 0,
+              "value": "Type7"
+            },
+            "TorsoVolume": {
+              "type": "FloatProperty",
+              "value": 0.0029234886169433594
+            },
+            "HairColor": {
+              "type": "StructProperty",
+              "type_name": "LinearColor",
+              "value": {
+                "type": "LinearColor",
+                "a": -0.6475692391395569,
+                "b": 0.6094614267349243,
+                "g": 0.42795097827911377,
+                "r": 1.0
+              }
+            },
+            "BrowColor": {
+              "type": "StructProperty",
+              "type_name": "LinearColor",
+              "value": {
+                "type": "LinearColor",
+                "a": -0.04996948316693306,
+                "b": 0.858857274055481,
+                "g": 0.29218751192092896,
+                "r": 1.0
+              }
+            },
+            "BodyColor": {
+              "type": "StructProperty",
+              "type_name": "LinearColor",
+              "value": {
+                "type": "LinearColor",
+                "a": 0.00573806744068861,
+                "b": 0.6891489028930664,
+                "g": 1.5671875476837158,
+                "r": 1.0
+              }
+            },
+            "BodySubsurfaceColor": {
+              "type": "StructProperty",
+              "type_name": "LinearColor",
+              "value": {
+                "type": "LinearColor",
+                "a": 1.3000518083572388,
+                "b": 0.23669680953025818,
+                "g": 0.16252261400222778,
+                "r": 1.0
+              }
+            },
+            "EyeColor": {
+              "type": "StructProperty",
+              "type_name": "LinearColor",
+              "value": {
+                "type": "LinearColor",
+                "a": 0.42583760619163513,
+                "b": 0.5209197402000427,
+                "g": 0.17560726404190063,
+                "r": 1.0
+              }
+            },
+            "EyeMaterialName": {
+              "type": "NameProperty",
+              "array_index": 0,
+              "value": "Type001"
+            },
+            "VoiceID": {
+              "type": "IntProperty",
+              "value": 2
+            }
+          }
+        },
+        "OtomoCharacterContainerId": {
+          "type": "StructProperty",
+          "type_name": "PalContainerId",
+          "value": {
+            "ID": {
+              "type": "StructProperty",
+              "type_name": "Guid",
+              "value": {
+                "type": "Guid",
+                "guid": "8139FA64-D786-F947-BAA0-35ED9D38D0C9"
+              }
+            }
+          }
+        },
+        "OtomoOrder": {
+          "type": "EnumProperty",
+          "enum_type": "EPalOtomoPalOrderType",
+          "value": "EPalOtomoPalOrderType::NotCombat"
+        },
+        "inventoryInfo": {
+          "type": "StructProperty",
+          "type_name": "PalPlayerDataInventoryInfo",
+          "value": {
+            "CommonContainerId": {
+              "type": "StructProperty",
+              "type_name": "PalContainerId",
+              "value": {
+                "ID": {
+                  "type": "StructProperty",
+                  "type_name": "Guid",
+                  "value": {
+                    "type": "Guid",
+                    "guid": "91509760-9C00-8A43-828D-FA303791B848"
+                  }
+                }
+              }
+            },
+            "DropSlotContainerId": {
+              "type": "StructProperty",
+              "type_name": "PalContainerId",
+              "value": {
+                "ID": {
+                  "type": "StructProperty",
+                  "type_name": "Guid",
+                  "value": {
+                    "type": "Guid",
+                    "guid": "A889ACEF-76CF-BA43-B194-2AED3066CCF8"
+                  }
+                }
+              }
+            },
+            "EssentialContainerId": {
+              "type": "StructProperty",
+              "type_name": "PalContainerId",
+              "value": {
+                "ID": {
+                  "type": "StructProperty",
+                  "type_name": "Guid",
+                  "value": {
+                    "type": "Guid",
+                    "guid": "88A83D07-F012-0741-AFDA-55D51C448EB6"
+                  }
+                }
+              }
+            },
+            "WeaponLoadOutContainerId": {
+              "type": "StructProperty",
+              "type_name": "PalContainerId",
+              "value": {
+                "ID": {
+                  "type": "StructProperty",
+                  "type_name": "Guid",
+                  "value": {
+                    "type": "Guid",
+                    "guid": "0348ECAF-5BB1-4F47-9277-AA25ADB0BB81"
+                  }
+                }
+              }
+            },
+            "PlayerEquipArmorContainerId": {
+              "type": "StructProperty",
+              "type_name": "PalContainerId",
+              "value": {
+                "ID": {
+                  "type": "StructProperty",
+                  "type_name": "Guid",
+                  "value": {
+                    "type": "Guid",
+                    "guid": "EB418499-E61D-614F-B0FD-D4BB659B450C"
+                  }
+                }
+              }
+            },
+            "FoodEquipContainerId": {
+              "type": "StructProperty",
+              "type_name": "PalContainerId",
+              "value": {
+                "ID": {
+                  "type": "StructProperty",
+                  "type_name": "Guid",
+                  "value": {
+                    "type": "Guid",
+                    "guid": "C34C9224-1B22-D949-AC41-C84686111931"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "TechnologyPoint": {
+          "type": "IntProperty",
+          "value": 21
+        },
+        "bossTechnologyPoint": {
+          "type": "IntProperty",
+          "value": 5
+        },
+        "UnlockedRecipeTechnologyNames": {
+          "type": "ArrayProperty",
+          "property_type": "NameProperty",
+          "values": [
+            "Workbench",
+            "Product_Axe_Grade_01",
+            "Product_Pickaxe_Grade_01",
+            "HandTorch",
+            "Battle_MeleeWeapon_Bat",
+            "PalBox",
+            "Special_PalSphere_Grade_01",
+            "Product_Cooking_Grade_01",
+            "Infra_ItemChest_Grade_01",
+            "RepairBench",
+            "Wooden_houseset",
+            "Battle_RangeWeapon_Bow1",
+            "Arrow",
+            "Infra_PlayerBed_Grade_01",
+            "Infra_PalBed_Grade_01",
+            "Battle_Cloth",
+            "Spear",
+            "Battle_Armor_Grade_01_Cloth",
+            "PalFoodBox",
+            "Product_Farm_Berries",
+            "Battle_Glider_Grade_01",
+            "Battle_RangeWeapon_Bow_Fire",
+            "Product_WorkBench_SkillUnlock",
+            "BuildableGoddessStatue",
+            "SkillUnlock_Kitsunebi",
+            "Product_StationDeforest",
+            "Product_StonePit",
+            "Battle_MeleeWeapon_Bat2",
+            "Special_HatchingPalEgg",
+            "Crusher",
+            "SkillUnlock_DreamDemon",
+            "Spa",
+            "Battle_RangeWeapon_Bow3",
+            "FurnitureSet_3"
+          ]
+        },
+        "PalStorageContainerId": {
+          "type": "StructProperty",
+          "type_name": "PalContainerId",
+          "value": {
+            "ID": {
+              "type": "StructProperty",
+              "type_name": "Guid",
+              "value": {
+                "type": "Guid",
+                "guid": "24FA6630-D5BB-6940-8709-6C28C7AFFBFD"
+              }
+            }
+          }
+        },
+        "RecordData": {
+          "type": "StructProperty",
+          "type_name": "PalLoggedinPlayerSaveDataRecordData",
+          "value": {
+            "TowerBossDefeatFlag": {
+              "type": "MapProperty",
+              "key_type": "NameProperty",
+              "value_type": "BoolProperty",
+              "allocation_flags": 0,
+              "values": [
+                [
+                  {
+                    "type": "NameProperty",
+                    "array_index": 0,
+                    "value": "BOSS_BATTLE_NAME_GrassBoss"
+                  },
+                  {
+                    "type": "BoolProperty",
+                    "value": true
+                  }
+                ]
+              ]
+            },
+            "NormalBossDefeatFlag": {
+              "type": "MapProperty",
+              "key_type": "NameProperty",
+              "value_type": "BoolProperty",
+              "allocation_flags": 0,
+              "values": [
+                [
+                  {
+                    "type": "NameProperty",
+                    "array_index": 0,
+                    "value": "1_10_plain_F_Boss_FairyDragon"
+                  },
+                  {
+                    "type": "BoolProperty",
+                    "value": true
+                  }
+                ]
+              ]
+            },
+            "TribeCaptureCount": {
+              "type": "IntProperty",
+              "value": 20
+            },
+            "PalCaptureCount": {
+              "type": "MapProperty",
+              "key_type": "NameProperty",
+              "value_type": "IntProperty",
+              "allocation_flags": 0,
+              "values": [
+                [
+                  {
+                    "type": "NameProperty",
+                    "array_index": 0,
+                    "value": "Sheepball"
+                  },
+                  {
+                    "type": "IntProperty",
+                    "value": 1
+                  }
+                ],
+                [
+                  {
+                    "type": "NameProperty",
+                    "array_index": 0,
+                    "value": "PinkCat"
+                  },
+                  {
+                    "type": "IntProperty",
+                    "value": 2
+                  }
+                ],
+                [
+                  {
+                    "type": "NameProperty",
+                    "array_index": 0,
+                    "value": "WoolFox"
+                  },
+                  {
+                    "type": "IntProperty",
+                    "value": 2
+                  }
+                ],
+                [
+                  {
+                    "type": "NameProperty",
+                    "array_index": 0,
+                    "value": "ChickenPal"
+                  },
+                  {
+                    "type": "IntProperty",
+                    "value": 1
+                  }
+                ],
+                [
+                  {
+                    "type": "NameProperty",
+                    "array_index": 0,
+                    "value": "PlantSlime"
+                  },
+                  {
+                    "type": "IntProperty",
+                    "value": 2
+                  }
+                ],
+                [
+                  {
+                    "type": "NameProperty",
+                    "array_index": 0,
+                    "value": "Kitsunebi"
+                  },
+                  {
+                    "type": "IntProperty",
+                    "value": 3
+                  }
+                ],
+                [
+                  {
+                    "type": "NameProperty",
+                    "array_index": 0,
+                    "value": "Penguin"
+                  },
+                  {
+                    "type": "IntProperty",
+                    "value": 2
+                  }
+                ],
+                [
+                  {
+                    "type": "NameProperty",
+                    "array_index": 0,
+                    "value": "BluePlatypus"
+                  },
+                  {
+                    "type": "IntProperty",
+                    "value": 1
+                  }
+                ],
+                [
+                  {
+                    "type": "NameProperty",
+                    "array_index": 0,
+                    "value": "CuteFox"
+                  },
+                  {
+                    "type": "IntProperty",
+                    "value": 1
+                  }
+                ],
+                [
+                  {
+                    "type": "NameProperty",
+                    "array_index": 0,
+                    "value": "WizardOwl"
+                  },
+                  {
+                    "type": "IntProperty",
+                    "value": 2
+                  }
+                ],
+                [
+                  {
+                    "type": "NameProperty",
+                    "array_index": 0,
+                    "value": "CuteMole"
+                  },
+                  {
+                    "type": "IntProperty",
+                    "value": 1
+                  }
+                ],
+                [
+                  {
+                    "type": "NameProperty",
+                    "array_index": 0,
+                    "value": "DreamDemon"
+                  },
+                  {
+                    "type": "IntProperty",
+                    "value": 1
+                  }
+                ],
+                [
+                  {
+                    "type": "NameProperty",
+                    "array_index": 0,
+                    "value": "ElecCat"
+                  },
+                  {
+                    "type": "IntProperty",
+                    "value": 2
+                  }
+                ],
+                [
+                  {
+                    "type": "NameProperty",
+                    "array_index": 0,
+                    "value": "Carbunclo"
+                  },
+                  {
+                    "type": "IntProperty",
+                    "value": 2
+                  }
+                ],
+                [
+                  {
+                    "type": "NameProperty",
+                    "array_index": 0,
+                    "value": "Ganesha"
+                  },
+                  {
+                    "type": "IntProperty",
+                    "value": 1
+                  }
+                ],
+                [
+                  {
+                    "type": "NameProperty",
+                    "array_index": 0,
+                    "value": "Monkey"
+                  },
+                  {
+                    "type": "IntProperty",
+                    "value": 1
+                  }
+                ],
+                [
+                  {
+                    "type": "NameProperty",
+                    "array_index": 0,
+                    "value": "BerryGoat"
+                  },
+                  {
+                    "type": "IntProperty",
+                    "value": 1
+                  }
+                ],
+                [
+                  {
+                    "type": "NameProperty",
+                    "array_index": 0,
+                    "value": "HawkBird"
+                  },
+                  {
+                    "type": "IntProperty",
+                    "value": 2
+                  }
+                ],
+                [
+                  {
+                    "type": "NameProperty",
+                    "array_index": 0,
+                    "value": "FlyingManta"
+                  },
+                  {
+                    "type": "IntProperty",
+                    "value": 1
+                  }
+                ],
+                [
+                  {
+                    "type": "NameProperty",
+                    "array_index": 0,
+                    "value": "FlowerDinosaur"
+                  },
+                  {
+                    "type": "IntProperty",
+                    "value": 1
+                  }
+                ]
+              ]
+            },
+            "PaldeckUnlockFlag": {
+              "type": "MapProperty",
+              "key_type": "NameProperty",
+              "value_type": "BoolProperty",
+              "allocation_flags": 0,
+              "values": [
+                [
+                  {
+                    "type": "NameProperty",
+                    "array_index": 0,
+                    "value": "Sheepball"
+                  },
+                  {
+                    "type": "BoolProperty",
+                    "value": true
+                  }
+                ],
+                [
+                  {
+                    "type": "NameProperty",
+                    "array_index": 0,
+                    "value": "PinkCat"
+                  },
+                  {
+                    "type": "BoolProperty",
+                    "value": true
+                  }
+                ],
+                [
+                  {
+                    "type": "NameProperty",
+                    "array_index": 0,
+                    "value": "WoolFox"
+                  },
+                  {
+                    "type": "BoolProperty",
+                    "value": true
+                  }
+                ],
+                [
+                  {
+                    "type": "NameProperty",
+                    "array_index": 0,
+                    "value": "ChickenPal"
+                  },
+                  {
+                    "type": "BoolProperty",
+                    "value": true
+                  }
+                ],
+                [
+                  {
+                    "type": "NameProperty",
+                    "array_index": 0,
+                    "value": "PlantSlime"
+                  },
+                  {
+                    "type": "BoolProperty",
+                    "value": true
+                  }
+                ],
+                [
+                  {
+                    "type": "NameProperty",
+                    "array_index": 0,
+                    "value": "Kitsunebi"
+                  },
+                  {
+                    "type": "BoolProperty",
+                    "value": true
+                  }
+                ],
+                [
+                  {
+                    "type": "NameProperty",
+                    "array_index": 0,
+                    "value": "Penguin"
+                  },
+                  {
+                    "type": "BoolProperty",
+                    "value": true
+                  }
+                ],
+                [
+                  {
+                    "type": "NameProperty",
+                    "array_index": 0,
+                    "value": "BluePlatypus"
+                  },
+                  {
+                    "type": "BoolProperty",
+                    "value": true
+                  }
+                ],
+                [
+                  {
+                    "type": "NameProperty",
+                    "array_index": 0,
+                    "value": "CuteFox"
+                  },
+                  {
+                    "type": "BoolProperty",
+                    "value": true
+                  }
+                ],
+                [
+                  {
+                    "type": "NameProperty",
+                    "array_index": 0,
+                    "value": "WizardOwl"
+                  },
+                  {
+                    "type": "BoolProperty",
+                    "value": true
+                  }
+                ],
+                [
+                  {
+                    "type": "NameProperty",
+                    "array_index": 0,
+                    "value": "CuteMole"
+                  },
+                  {
+                    "type": "BoolProperty",
+                    "value": true
+                  }
+                ],
+                [
+                  {
+                    "type": "NameProperty",
+                    "array_index": 0,
+                    "value": "DreamDemon"
+                  },
+                  {
+                    "type": "BoolProperty",
+                    "value": true
+                  }
+                ],
+                [
+                  {
+                    "type": "NameProperty",
+                    "array_index": 0,
+                    "value": "ElecCat"
+                  },
+                  {
+                    "type": "BoolProperty",
+                    "value": true
+                  }
+                ],
+                [
+                  {
+                    "type": "NameProperty",
+                    "array_index": 0,
+                    "value": "Carbunclo"
+                  },
+                  {
+                    "type": "BoolProperty",
+                    "value": true
+                  }
+                ],
+                [
+                  {
+                    "type": "NameProperty",
+                    "array_index": 0,
+                    "value": "Ganesha"
+                  },
+                  {
+                    "type": "BoolProperty",
+                    "value": true
+                  }
+                ],
+                [
+                  {
+                    "type": "NameProperty",
+                    "array_index": 0,
+                    "value": "Monkey"
+                  },
+                  {
+                    "type": "BoolProperty",
+                    "value": true
+                  }
+                ],
+                [
+                  {
+                    "type": "NameProperty",
+                    "array_index": 0,
+                    "value": "BerryGoat"
+                  },
+                  {
+                    "type": "BoolProperty",
+                    "value": true
+                  }
+                ],
+                [
+                  {
+                    "type": "NameProperty",
+                    "array_index": 0,
+                    "value": "HawkBird"
+                  },
+                  {
+                    "type": "BoolProperty",
+                    "value": true
+                  }
+                ],
+                [
+                  {
+                    "type": "NameProperty",
+                    "array_index": 0,
+                    "value": "FlyingManta"
+                  },
+                  {
+                    "type": "BoolProperty",
+                    "value": true
+                  }
+                ],
+                [
+                  {
+                    "type": "NameProperty",
+                    "array_index": 0,
+                    "value": "FlowerDinosaur"
+                  },
+                  {
+                    "type": "BoolProperty",
+                    "value": true
+                  }
+                ]
+              ]
+            },
+            "PalCaptureCountBonusCount_Tier1": {
+              "type": "IntProperty",
+              "value": 30
+            },
+            "RelicObtainForInstanceFlag": {
+              "type": "MapProperty",
+              "key_type": "NameProperty",
+              "value_type": "BoolProperty",
+              "allocation_flags": 0,
+              "values": [
+                [
+                  {
+                    "type": "NameProperty",
+                    "array_index": 0,
+                    "value": "F6974F26465A10C0BFC891962D02BE0D"
+                  },
+                  {
+                    "type": "BoolProperty",
+                    "value": true
+                  }
+                ],
+                [
+                  {
+                    "type": "NameProperty",
+                    "array_index": 0,
+                    "value": "A360858E448AF927AF914D8E9D74E416"
+                  },
+                  {
+                    "type": "BoolProperty",
+                    "value": true
+                  }
+                ],
+                [
+                  {
+                    "type": "NameProperty",
+                    "array_index": 0,
+                    "value": "2D2B0E174E5D7B24F0C3EE802D1B86E0"
+                  },
+                  {
+                    "type": "BoolProperty",
+                    "value": true
+                  }
+                ],
+                [
+                  {
+                    "type": "NameProperty",
+                    "array_index": 0,
+                    "value": "F7E049A14647DEDE492569A8CBFB3AEB"
+                  },
+                  {
+                    "type": "BoolProperty",
+                    "value": true
+                  }
+                ],
+                [
+                  {
+                    "type": "NameProperty",
+                    "array_index": 0,
+                    "value": "6A2AE93641023E6406DB1CA5D354E604"
+                  },
+                  {
+                    "type": "BoolProperty",
+                    "value": true
+                  }
+                ],
+                [
+                  {
+                    "type": "NameProperty",
+                    "array_index": 0,
+                    "value": "7D3A585F4CEFCAFE7C262394D6DEA845"
+                  },
+                  {
+                    "type": "BoolProperty",
+                    "value": true
+                  }
+                ]
+              ]
+            },
+            "RelicPossessNum": {
+              "type": "IntProperty",
+              "value": 1
+            },
+            "NoteObtainForInstanceFlag": {
+              "type": "MapProperty",
+              "key_type": "NameProperty",
+              "value_type": "BoolProperty",
+              "allocation_flags": 0,
+              "values": [
+                [
+                  {
+                    "type": "NameProperty",
+                    "array_index": 0,
+                    "value": "Day-xx"
+                  },
+                  {
+                    "type": "BoolProperty",
+                    "value": true
+                  }
+                ],
+                [
+                  {
+                    "type": "NameProperty",
+                    "array_index": 0,
+                    "value": "Day3"
+                  },
+                  {
+                    "type": "BoolProperty",
+                    "value": true
+                  }
+                ]
+              ]
+            },
+            "FastTravelPointUnlockFlag": {
+              "type": "MapProperty",
+              "key_type": "NameProperty",
+              "value_type": "BoolProperty",
+              "allocation_flags": 0,
+              "values": [
+                [
+                  {
+                    "type": "NameProperty",
+                    "array_index": 0,
+                    "value": "6E03F8464BAD9E458B843AA30BE1CC8F"
+                  },
+                  {
+                    "type": "BoolProperty",
+                    "value": true
+                  }
+                ],
+                [
+                  {
+                    "type": "NameProperty",
+                    "array_index": 0,
+                    "value": "DDBBFFAF43D9219AE68DF98744DF0831"
+                  },
+                  {
+                    "type": "BoolProperty",
+                    "value": true
+                  }
+                ],
+                [
+                  {
+                    "type": "NameProperty",
+                    "array_index": 0,
+                    "value": "979BF2044C8E8FE559B598A95A83EDE3"
+                  },
+                  {
+                    "type": "BoolProperty",
+                    "value": true
+                  }
+                ],
+                [
+                  {
+                    "type": "NameProperty",
+                    "array_index": 0,
+                    "value": "41727100495D21DC905D309C53989914"
+                  },
+                  {
+                    "type": "BoolProperty",
+                    "value": true
+                  }
+                ],
+                [
+                  {
+                    "type": "NameProperty",
+                    "array_index": 0,
+                    "value": "D27AFCAD472164F000D33A8D8B61FE8B"
+                  },
+                  {
+                    "type": "BoolProperty",
+                    "value": true
+                  }
+                ]
+              ]
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{	"_COMMENT": "This code assumes a thing is a custom struct_property by default. That means we don't need to specify that for the value part of map key:value pairs.",
+    "SeasonSave.StructProperty.Seasons.MapProperty.Key.StructProperty": "Guid",
+    "SeasonSave.StructProperty.Seasons.MapProperty.Value.StructProperty.CompletedSpecialChallenges.MapProperty.Key.StructProperty": "Guid",
+    "UnLockedMissionParameters.MapProperty.Key.StructProperty": "Guid",
+    "ItemUpgradeSelections.MapProperty.Key.StructProperty": "Guid",
+    "ItemUpgradeLoadouts.ArrayProperty.Loadout.MapProperty.Key.StructProperty": "Guid",
+    "EnemiesKilled.MapProperty.Key.StructProperty": "Guid",
+    "UnlockedItemSkins.MapProperty.Key.StructProperty": "Guid",
+    "Resources.StructProperty.OwnedResources.MapProperty.Key.StructProperty": "Guid",
+    "FSDEventRewardsSave.StructProperty.EventsSeen.SetProperty.StructProperty": "Guid",
+    "GameDLCSave.StructProperty.AnnouncedIDs.SetProperty.StructProperty": "Guid",
+    "Drinks.StructProperty.UnlockedDrinks.SetProperty.StructProperty": "Guid",
+    "UnlockedItemSkins.MapProperty.Value.StructProperty.Skins.SetProperty.StructProperty": "Guid",
+    "UnlockedPickaxeParts.SetProperty.StructProperty": "Guid",
+    "MinersManualKnownObjects.SetProperty.StructProperty": "Guid"
+}
