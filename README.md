@@ -45,7 +45,8 @@ Rust, but the command line tools were binary executables.
 I don't really like running arbitrary code on my machine, and I got tired of
 using virtual environments to isolate them.
 
-The Rust project titled "gvas" (and sibling projects gvas2json and json2gvas) that 
+The Rust project titled "gvas" (also see the sibling project 
+[gvas2json](https://github.com/scottanderson/gvas2json)) that 
 I used as a template is here:
 
 * https://github.com/localcc/gvas
@@ -55,9 +56,11 @@ Although I've delivered production code in a number of languages (Prolog, K&R C,
 ANSI C, C++, PHP, C#, XSLT/XML/JavaScript, Unreal Engine C++), I knew very little 
 about Rust syntax when I started.
 
-Looking harder led me to the project titled "Python-GVAS-JSON-Converter", which
-provided a great roadmap to understand the Rust code base. 
-It implemented the necessary bones, but in Python. 
+And I didn't really want to.
+
+Looking harder led me to the project titled "Python-GVAS-JSON-Converter", 
+which provided a great roadmap to understand the Rust code -- it implemented \
+the necessary bones, but in Python. 
 
 * https://github.com/afkaf/Python-GVAS-JSON-Converter
     * Uses <https://unlicense.org>
