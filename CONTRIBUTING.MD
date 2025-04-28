@@ -1,6 +1,6 @@
 # Contributing
 
-We welcome all kinds of contributions, including bug reports, feature requests,
+We welcome contributions, including bug reports, feature requests,
 documentation improvements, and code contributions.
 
 ## Creating Issues
@@ -31,3 +31,6 @@ When creating a pull request, be sure to include a clear and concise
 description of the changes you made and why they are necessary. The maintainers
 will review your changes and provide feedback, which you should incorporate
 into your code as needed.
+
+> #### Note
+> This document was created in part with a generative AI prompt in the Cursor IDE. 
