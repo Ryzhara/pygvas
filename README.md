@@ -17,8 +17,8 @@ when written to JSON. However, once converted back there should be no data chang
 
 One strategy to avoid potential ambiguity is storing 32-bit floats as
 strings in JSON. I've got some commented out code for this process but I'll only
-enable that if it becomes an issue because strings are at least as confusing as
-seeing something like ["x": 2497.000000000003] is just as confusing ast seeing 
+enable that if it becomes an issue because seeing something like 
+["x": 2497.000000000003] is as confusing ast seeing 
 ["x": "2497"] in the JSON file.
 
 ## Credits
