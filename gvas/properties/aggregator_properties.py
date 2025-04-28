@@ -296,13 +296,9 @@ class StructProperty(PropertyTrait):
         if self.guid == MagicConstants.ZERO_GUID:
             self.guid = None
 
-        # # see if we have to override the type name
-        # hint_context_path = ContextScopeTracker.get_context_path()
-        # hint_type_override: Union[str, dict] = ContextScopeTracker.deserialization_hints.get(
-        #     hint_context_path, None
-        # )
-
-        hint_type_override = ContextScopeTracker.get_hint_for_context()
+        hint_type_override: Union[str, Union[str, dict[str, Any]]] = (
+            ContextScopeTracker.get_hint_for_context()
+        )
 
         # either we test for self.type_name or we use the override
         deserialize_type = hint_type_override or self.type_name
@@ -317,18 +313,17 @@ class StructProperty(PropertyTrait):
         standard_struct_override = None
         if is_standard_struct(deserialize_type):
             standard_struct_override = get_standard_struct_instance(deserialize_type)
-
-        # It turns out that we almost always want to default to a custom struct, here.
-        # I leave this commentary here for future reference, in case we wish to change
-        # this choice.
-        # if deserialize_type is None:
-        #     deserialize_type = "StructProperty"
-        #           or maybe
-        #     self.type_name = "CustomStruct"
-        #           or just
-        #     raise DeserializeError.missing_hint(
-        #         self.type, ContextScopeTracker.get_context_path(), stream.tell()
-        #     )
+        else:
+            # A custom struct, past the header, requires two strings: (name, type)
+            # So lets look for a valid string. If not, then guess GUID.
+            if not peek_valid_string(stream):
+                standard_struct_override = get_standard_struct_instance("Guid")
+                ContextScopeTracker.add_deserialization_hint_for_current_context("Guid")
+                current_context_path = ContextScopeTracker.get_context_path()
+                if not UnitTestGlobals.inside_unit_tests():
+                    print(
+                        f'Dynamically adding hint: {{ "{current_context_path}": "Guid" }}'
+                    )
 
         with ByteCountValidator(
             stream, length, do_validation=include_header

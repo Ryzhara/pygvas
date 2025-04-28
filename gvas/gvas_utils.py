@@ -15,6 +15,23 @@ class MagicConstants:
     GVAS_MAGIC = b"GVAS"
     # Magic number for Palworld files. Not sure why RUST uses a null byte terminator on this constant
     PLZ_MAGIC = b"PlZ"
+    MIN_STRING_LENGTH = -131072  # 0x020000
+    MAX_STRING_LENGTH = 131072  # 0xFE0000
+
+
+# ============================================
+# Do NOT make this @dataclass because then our class variable syntax is wrong. ;)
+class UnitTestGlobals:
+    _unit_tests_running: bool = False
+
+    # ============= UNIT TESTING HELPER ====================
+    @classmethod
+    def set_inside_unit_tests(cls) -> None:
+        cls._unit_tests_running = True
+
+    @classmethod
+    def inside_unit_tests(cls) -> bool:
+        return cls._unit_tests_running
 
 
 # ============================================
@@ -25,20 +42,10 @@ class MagicConstants:
 # When a struct is stored inside ArrayProperty/SetProperty/MapProperty in GvasFile it does not contain type annotations.
 # This means that a library parsing the file must know the type beforehand. That's why you need deserialization_hints.
 class ContextScopeTracker:
-    _unit_tests_running: bool = False
     _context_stack: list[str] = []
     _deserialization_hints: dict[str, Union[str, dict[str, Any]]] = {}
     # this one is for the remote case when you want the ByteBlobStruct or similar.
     _hint_context: dict[str, Any] = {}
-
-    # ============= UNIT TESTING HELPER ====================
-    @classmethod
-    def set_inside_unit_tests(cls) -> None:
-        cls._unit_tests_running = True
-
-    @classmethod
-    def inside_unit_tests(cls) -> bool:
-        return cls._unit_tests_running
 
     # ============= CONTEXT TRACKING ====================
     @classmethod
@@ -61,6 +68,11 @@ class ContextScopeTracker:
     ):
         """For those files that need deserialization_hints for successful deserialization."""
         cls._deserialization_hints = deserialization_hints
+
+    @classmethod
+    def add_deserialization_hint_for_current_context(cls, hint_type):
+        current_context_path = cls.get_context_path()
+        cls._deserialization_hints[current_context_path] = hint_type
 
     @classmethod
     def get_hint_for_context(cls) -> Union[str, Union[str, dict[str, Any]]]:
@@ -89,7 +101,7 @@ class ContextScopeTracker:
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         if exc_type is not None:
-            if not ContextScopeTracker.inside_unit_tests():
+            if not UnitTestGlobals.inside_unit_tests():
                 print(
                     f"An exception of type {exc_type} occurred: {exc_val} with context\n\t{ContextScopeTracker.get_context_path()}"
                 )
@@ -122,7 +134,7 @@ class ByteCountValidator:
 
     def __exit__(self, exc_type, exc_val, exc_tb):
         if exc_type is not None:
-            if not ContextScopeTracker.inside_unit_tests():
+            if not UnitTestGlobals.inside_unit_tests():
                 print(
                     f"An exception of type {exc_type} was caught in ByteCountValidator: {exc_val}\n\t{self.start_byte=} {self.expected_byte_count=} {self.do_validation=}\n\t{exc_tb}"
                 )
@@ -395,6 +407,19 @@ def write_bytes(stream: BinaryIO, value_bytes: bytes) -> int:
 
 # ============================================
 #
+def peek_valid_string(stream: BinaryIO) -> bool:
+    start_position = stream.tell()
+    try:
+        _valid_string = read_string(stream)
+        return True
+    except Exception as e:
+        return False
+    finally:
+        stream.seek(start_position)
+
+
+# ============================================
+#
 def read_string(stream: BinaryIO) -> str | None:
     """Read a string from the stream
     prefix is uint32: length, followed by UTF-8 byte encoded string
@@ -403,10 +428,14 @@ def read_string(stream: BinaryIO) -> str | None:
     if (length := read_int32(stream)) == 0:
         return None  # ""
 
-    if not -131072 <= length <= 131072:
+    if (
+        not MagicConstants.MIN_STRING_LENGTH
+        <= length
+        <= MagicConstants.MAX_STRING_LENGTH
+    ):
         position = stream.tell() - 4
         raise SerializeError.invalid_value(
-            f"String length {length} is out of range -131072 <= length <= 131072 around {position=} with context {ContextScopeTracker.get_context_path()}"
+            f"String length is out of range {MagicConstants.MIN_STRING_LENGTH} <= {length} <= {MagicConstants.MAX_STRING_LENGTH} around {position=} with context {ContextScopeTracker.get_context_path()}"
         )
 
     # UTF 16
@@ -420,7 +449,7 @@ def read_string(stream: BinaryIO) -> str | None:
         )
         if value_bytes.isascii():
             raise ValueError(
-                f"Suspicous UTF-16 bytes are really ascii: {value_bytes} at {position=}"
+                f"Suspicious UTF-16 bytes are really ascii: {value_bytes} at {position=}"
             )
     else:
         encoding = "utf-8"

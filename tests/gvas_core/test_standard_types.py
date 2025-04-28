@@ -11,6 +11,7 @@ from gvas.gvas_utils import (
     datetime_to_str,
     timespan_to_str,
     ContextScopeTracker,
+    UnitTestGlobals,
 )
 
 from gvas.properties.standard_structs import (
@@ -35,7 +36,7 @@ class TestTextPropertyTypes(unittest.TestCase):
     @classmethod
     @override
     def setUpClass(cls) -> None:
-        ContextScopeTracker.set_inside_unit_tests()
+        UnitTestGlobals.set_inside_unit_tests()
         ContextScopeTracker.set_deserialization_hints({})
 
     def write_and_read_standard_type(

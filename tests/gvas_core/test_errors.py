@@ -12,7 +12,7 @@ from typing_extensions import override
 from gvas.error import DeserializeError
 from gvas.gvas_file import GVASFile
 from gvas.engine_tools import GameVersion, CompressionType
-from gvas.gvas_utils import ContextScopeTracker, MagicConstants
+from gvas.gvas_utils import ContextScopeTracker, MagicConstants, UnitTestGlobals
 from gvas.properties.property_base import PropertyFactory
 
 
@@ -22,7 +22,7 @@ class TestErrors(unittest.TestCase):
     @classmethod
     @override
     def setUpClass(cls) -> None:
-        ContextScopeTracker.set_inside_unit_tests()
+        UnitTestGlobals.set_inside_unit_tests()
         ContextScopeTracker.set_deserialization_hints({})
 
     def test_10_invalid_magic(self):

@@ -12,8 +12,23 @@ A class holding important constant values:
 - `ZERO_GUID`: A `uuid.UUID` instance representing all zeros.
 - `GVAS_MAGIC`: The byte sequence `b"GVAS"` expected at the beginning of GVAS files.
 - `PLZ_MAGIC`: The byte sequence `b"PlZ"` associated with Palworld files.
+- `MIN_STRING_LENGTH`: The (negated) maximum number of bytes for UTF-16 strings.
+- `MAX_STRING_LENGTH`: The maximum number of bytes for UTF-8 strings.
 
 ### Helper Classes
+
+#### `UnitTestGlobals`
+A class to manage/suppress verbose messages during unit testing.
+
+```python
+class UnitTestGlobals:
+    _unit_tests_running: bool = False
+
+    @classmethod
+    def set_inside_unit_tests(cls) -> None: ...
+    @classmethod
+    def inside_unit_tests(cls) -> bool: ...
+```
 
 #### `ContextScopeTracker`
 A class (used statically and as a context manager) to track the hierarchical structure being processed during deserialization (e.g., "SaveGameData.MyCharacter.Inventory.Item0.Name"). It also manages deserialization hints needed for ambiguous types (like structs within arrays).
@@ -25,10 +40,6 @@ class ContextScopeTracker:
     _hint_context: dict[str, Any] = {}
 
     # --- Static Methods ---
-    @classmethod
-    def set_inside_unit_tests(cls) -> None: ...
-    @classmethod
-    def inside_unit_tests(cls) -> bool: ...
     @classmethod
     def push_context_step(cls, step: str) -> None: ...
     @classmethod
@@ -105,6 +116,7 @@ These functions handle reading and writing specific data types from/to a `Binary
 ### Miscellaneous Utilities
 
 - `peek(stream, count)`: Reads `count` bytes without advancing the stream position.
+- `peek_valid_string(stream: BinaryIO)`: Used internally to detect that guessing custom struct will fail.
 - `datetime_to_str(ticks)`: Converts UInt64 ticks (from `DateTimeStruct`) to a human-readable string (approximate).
 - `timespan_to_str(ticks)`: Converts UInt64 ticks (from `TimespanStruct`) to a human-readable timedelta string.
 - `guid_to_str(guid_uuid)` / `str_to_guid(guid_str)`: Convert between `uuid.UUID` objects and uppercase string representations.

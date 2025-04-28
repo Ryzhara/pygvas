@@ -8,7 +8,12 @@ from io import BytesIO
 from time import sleep
 from typing import override
 
-from gvas.gvas_utils import MagicConstants, read_string, ContextScopeTracker
+from gvas.gvas_utils import (
+    MagicConstants,
+    read_string,
+    ContextScopeTracker,
+    UnitTestGlobals,
+)
 from gvas.properties.aggregator_properties import StructProperty
 from gvas.properties.numerical_properties import Int32Property, BoolProperty
 from gvas.properties.str_property import StrProperty
@@ -20,13 +25,13 @@ class TestStructProperty(unittest.TestCase):
     @classmethod
     @override
     def setUpClass(cls) -> None:
-        ContextScopeTracker.set_inside_unit_tests()
+        UnitTestGlobals.set_inside_unit_tests()
         ContextScopeTracker.set_deserialization_hints({})
 
     @classmethod
     @override
     def setUp(cls) -> None:
-        ContextScopeTracker.set_inside_unit_tests()
+        UnitTestGlobals.set_inside_unit_tests()
         ContextScopeTracker.set_deserialization_hints({})
 
     def test_10_create_struct_property(self):

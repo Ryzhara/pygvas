@@ -54,7 +54,7 @@ class DeserializeError(Exception):
         )
 
 
-class SerializeError(BaseException):
+class SerializeError(Exception):
     """Error that occurs during serialization"""
 
     @classmethod

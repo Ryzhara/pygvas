@@ -6,7 +6,7 @@ import unittest
 from io import BytesIO
 from typing import override
 
-from gvas.gvas_utils import read_string, ContextScopeTracker
+from gvas.gvas_utils import read_string, ContextScopeTracker, UnitTestGlobals
 from gvas.properties.enum_property import EnumProperty
 from gvas.properties.numerical_properties import (
     BoolProperty,
@@ -33,7 +33,7 @@ class TestProperty(unittest.TestCase):
     @classmethod
     @override
     def setUpClass(cls) -> None:
-        ContextScopeTracker.set_inside_unit_tests()
+        UnitTestGlobals.set_inside_unit_tests()
         ContextScopeTracker.set_deserialization_hints({})
 
     def perform_property_roundtrip_test(

@@ -12,7 +12,7 @@ from gvas.engine_tools import (
     GameVersion,
 )
 from gvas.gvas_file import GVASFile, GvasHeader, GameFileFormat
-from gvas.gvas_utils import ContextScopeTracker
+from gvas.gvas_utils import ContextScopeTracker, UnitTestGlobals
 from gvas.properties.property_base import PropertyFactory, PropertyTrait
 from gvas.properties.numerical_properties import (
     Int32Property,
@@ -29,7 +29,7 @@ class TestGvasFile(unittest.TestCase):
     @classmethod
     @override
     def setUpClass(cls) -> None:
-        ContextScopeTracker.set_inside_unit_tests()
+        UnitTestGlobals.set_inside_unit_tests()
         ContextScopeTracker.set_deserialization_hints({})
 
     def test_10_create_file(self):

@@ -184,7 +184,7 @@ test_file_list: list[tuple[str, Any]] = [
 
 def test_gvas_file(test_file: str, hints: str) -> None:
     # Open and read a .sav file
-    ContextScopeTracker.set_inside_unit_tests()
+    UnitTestGlobals.set_inside_unit_tests()
     gvas_file = None
     try:
         gvas_file: GVASFile

@@ -6,7 +6,7 @@ from typing_extensions import override
 
 from gvas.engine_tools import EngineVersionTool
 from gvas.error import SerializeError
-from gvas.gvas_utils import datetime_to_str, ContextScopeTracker
+from gvas.gvas_utils import datetime_to_str, ContextScopeTracker, UnitTestGlobals
 from gvas.properties.text_property import (
     FText,
     ArgumentFormat,
@@ -56,7 +56,7 @@ class TestTextPropertyTypes(unittest.TestCase):
     @classmethod
     @override
     def setUpClass(cls) -> None:
-        ContextScopeTracker.set_inside_unit_tests()
+        UnitTestGlobals.set_inside_unit_tests()
         ContextScopeTracker.set_deserialization_hints({})
 
     def perform_text_format_argument_roundtrip_test(
