@@ -7,7 +7,7 @@ import enum
 
 from pydantic.dataclasses import dataclass
 
-from .gvas_utils import *
+from pygvas.gvas_utils import *
 
 
 class CompressionType(enum.Enum):

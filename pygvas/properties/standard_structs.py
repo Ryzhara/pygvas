@@ -3,8 +3,8 @@ from typing import Literal
 
 from pydantic.dataclasses import dataclass
 
-from gvas.engine_tools import FUE5ReleaseStreamObjectVersion, EngineVersionTool
-from gvas.gvas_utils import *
+from pygvas.engine_tools import FUE5ReleaseStreamObjectVersion, EngineVersionTool
+from pygvas.gvas_utils import *
 
 
 # ============================================

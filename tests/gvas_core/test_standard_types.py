@@ -4,8 +4,8 @@ from typing import Union, Callable
 
 from typing_extensions import override
 
-from gvas.engine_tools import EngineVersionTool
-from gvas.gvas_utils import (
+from pygvas.engine_tools import EngineVersionTool
+from pygvas.gvas_utils import (
     MagicConstants,
     guid_to_str,
     datetime_to_str,
@@ -14,7 +14,7 @@ from gvas.gvas_utils import (
     UnitTestGlobals,
 )
 
-from gvas.properties.standard_structs import (
+from pygvas.properties.standard_structs import (
     DateTimeStruct,
     GuidStruct,
     IntPointStruct,

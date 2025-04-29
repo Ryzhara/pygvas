@@ -8,7 +8,7 @@ from typing import Optional, Union
 import filecmp
 import pathlib
 
-from gvas.gvas_file import GVASFile, GameFileFormat
+from pygvas.gvas_file import GVASFile, GameFileFormat
 
 # Constants for test file paths
 RESOURCES_DIR = pathlib.Path(

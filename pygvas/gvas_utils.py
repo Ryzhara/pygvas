@@ -3,7 +3,7 @@ import struct
 import uuid
 from typing import BinaryIO, Any, Callable, Union, Optional
 
-from gvas.error import DeserializeError, SerializeError
+from pygvas.error import DeserializeError, SerializeError
 
 
 # ============================================

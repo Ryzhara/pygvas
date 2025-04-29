@@ -1,0 +1,54 @@
+[build-system]
+requires = ["setuptools>=77.0.3", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pygvas"
+#dynamic=["version"]
+version = "2025.4.29"
+dependencies = [
+  "pydantic >= 2.11.3",
+]
+requires-python = ">= 3.9"
+authors = [
+  { name = "Robin Fredericksen", email = "refredericksen@gmail.com" }
+]
+description = "GVAS<->JSON De/Serializer in Python"
+readme = "README.md"
+license = "CC-BY-NC-SA-4.0"
+#license_files = ["LICENSE", "CONTRIBUTING.md"]
+keywords = ["ue4", "ue5", "pygvas", "gvas", "json", "sav"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Programming Language :: Python",
+]
+
+[project.urls]
+Repository = "https://github.com/Ryzhara/pygvas.git"
+
+[project.scripts]
+gvas2json = "pygvas.gvas2json:main"
+json2gvas = "pygvas.json2gvas:main"
+detect_format = "pygvas.detect_gvas_format:main"
+
+[tool.setuptools.packages.find]
+include = ["pygvas"]
+exclude = ["tests", "docs"]
+# where = ["."]
+
+[tool.setuptools]
+#packages=["pygvas"]
+#package-dir = { "pygvas": "pygvas",  "utilities": "utitlities" }
+
+
+#[tool.setuptools.package-data]
+#"pygvas" = ["utilities/*"]
+
+## Optional: include extra files like markdowns, config files, etc.
+#include-package-data = true
+#
+[tool.setuptools.package-data]
+## This example includes all .md files and .py utility files at the top level of src
+# "*" = ["*.md", "*.py"]
+
+

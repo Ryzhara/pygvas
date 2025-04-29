@@ -1,11 +1,6 @@
 """
 Main GVAS file implementation
 Python port of lib.rs
-
-Key differences from Rust version:
-- Uses Python's IO system
-- Simplified compression handling
-- Uses dataclasses for structured data
 """
 
 import json
@@ -18,28 +13,28 @@ from pydantic import BaseModel, TypeAdapter
 from pydantic import field_serializer, field_validator, Discriminator
 from pydantic.dataclasses import dataclass
 
-from gvas.engine_tools import (
+from pygvas.engine_tools import (
     FEngineVersion,
     GameVersion,
     CompressionType,
     EngineVersionTool,
 )
-from gvas.gvas_utils import *
-from gvas.properties.aggregator_properties import (
+from pygvas.gvas_utils import *
+from pygvas.properties.aggregator_properties import (
     SetProperty,
     MapProperty,
     ArrayProperty,
     StructProperty,
 )
-from gvas.properties.delegate_property import (
+from pygvas.properties.delegate_property import (
     MulticastInlineDelegateProperty,
     MulticastSparseDelegateProperty,
     DelegateProperty,
 )
-from gvas.properties.enum_property import EnumProperty
-from gvas.properties.field_path_property import FieldPathProperty, FieldPath
-from gvas.properties.name_property import NameProperty
-from gvas.properties.numerical_properties import (
+from pygvas.properties.enum_property import EnumProperty
+from pygvas.properties.field_path_property import FieldPathProperty, FieldPath
+from pygvas.properties.name_property import NameProperty
+from pygvas.properties.numerical_properties import (
     BoolProperty,
     ByteProperty,
     Int8Property,
@@ -54,9 +49,9 @@ from gvas.properties.numerical_properties import (
     FloatProperty,
     DoubleProperty,
 )
-from gvas.properties.object_property import ObjectProperty
-from gvas.properties.property_base import PropertyFactory
-from gvas.properties.standard_structs import (
+from pygvas.properties.object_property import ObjectProperty
+from pygvas.properties.property_base import PropertyFactory
+from pygvas.properties.standard_structs import (
     DateTimeStruct,
     GuidStruct,
     TimespanStruct,
@@ -67,8 +62,8 @@ from gvas.properties.standard_structs import (
     VectorStruct,
     Vector2DStruct,
 )
-from gvas.properties.str_property import StrProperty
-from gvas.properties.text_property import TextProperty
+from pygvas.properties.str_property import StrProperty
+from pygvas.properties.text_property import TextProperty
 
 UNREAL_ENGINE_PROPERTIES = Annotated[
     Union[

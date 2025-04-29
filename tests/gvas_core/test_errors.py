@@ -9,11 +9,11 @@ import zlib
 
 from typing_extensions import override
 
-from gvas.error import DeserializeError
-from gvas.gvas_file import GVASFile
-from gvas.engine_tools import GameVersion, CompressionType
-from gvas.gvas_utils import ContextScopeTracker, MagicConstants, UnitTestGlobals
-from gvas.properties.property_base import PropertyFactory
+from pygvas.error import DeserializeError
+from pygvas.gvas_file import GVASFile
+from pygvas.engine_tools import GameVersion, CompressionType
+from pygvas.gvas_utils import ContextScopeTracker, MagicConstants, UnitTestGlobals
+from pygvas.properties.property_base import PropertyFactory
 
 
 class TestErrors(unittest.TestCase):

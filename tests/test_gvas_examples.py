@@ -11,8 +11,8 @@ from pathlib import Path
 from typing import override
 from pydantic import TypeAdapter
 
-from gvas.gvas_file import GVASFile
-from gvas.gvas_utils import ContextScopeTracker, UnitTestGlobals
+from pygvas.gvas_file import GVASFile
+from pygvas.gvas_utils import ContextScopeTracker, UnitTestGlobals
 from tests.common.test_utils import (
     get_gvas_file_and_stream,
     get_testfile_path,
