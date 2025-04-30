@@ -1,10 +1,3 @@
-"""
-Main GVAS file implementation
-Python port of lib.rs
-"""
-
-import json
-import pathlib
 import zlib
 from io import BytesIO
 from typing import Annotated
@@ -387,34 +380,45 @@ class GVASFile(BaseModel):
 
     def serialize_to_json_file(self, file_path: str) -> None:
         serialized_json: dict = self.serialize_to_json()
-        with open(file_path, "w") as f:
-            f.write(json.dumps(serialized_json, indent=2))
+        write_json_to_file_as_string(serialized_json, file_path)
 
     @classmethod
     def deserialize_from_json_file(cls, json_file_path: str) -> "GVASFile":
-
-        with open(json_file_path, "r") as f:
-            json_content = json.load(f)
-            return GVASFile.deserialize_json(json_content)
+        json_content: dict = load_json_from_file(json_file_path)
+        return GVASFile.deserialize_json(json_content)
 
     @classmethod
     def set_up_gvas_deserialization_hints(
-        cls, deserialization: dict[str, Union[str, dict[str, Any]]]
+        cls,
+        deserialization: dict[str, Union[str, dict[str, Any]]],
+        update_hints: bool = False,
     ):
 
         assert isinstance(
             deserialization, Union[dict, str, pathlib.Path, None]
         ), f"Hints must be either a dict or a str/Path object to a file."
 
+        hints_dictionary = {
+            "__COMMENT": "We detect custom StructProperty instances and then guess GUID otherwise. That means we don't need to specify key:value hints for either."
+        }
         if deserialization is None:
-            deserialization = {}
+            deserialization = hints_dictionary
+
         elif isinstance(deserialization, Union[str, pathlib.Path]):
-            deserialization_hints_file = deserialization
-            with open(deserialization_hints_file, "r") as f:
-                deserialization = json.load(f)
+            if not pathlib.Path(deserialization).parent.exists():
+                raise ValueError(f"[{deserialization}] is not a valid path.")
+
+            # create an empty hints dictionary
+            if not pathlib.Path(deserialization).exists():
+                write_json_to_file_as_string(hints_dictionary, deserialization)
+                deserialization = hints_dictionary
+            else:
+                # should be an existing file of JSON
+                deserialization = load_json_from_file(deserialization)
         else:
             assert isinstance(deserialization, dict)
 
+        deserialization.update(hints_dictionary)
         ContextScopeTracker.set_deserialization_hints(deserialization)
 
     # This function does not return the original file stream.
@@ -427,9 +431,12 @@ class GVASFile(BaseModel):
         deserialization_hints: Optional[
             Union[dict[str, str], str, pathlib.Path]
         ] = None,
+        update_hints: bool = False,
     ) -> "GVASFile":
 
-        GVASFile.set_up_gvas_deserialization_hints(deserialization_hints)
+        GVASFile.set_up_gvas_deserialization_hints(
+            deserialization_hints, update_hints=update_hints
+        )
 
         assert isinstance(game_file_format, Union[GameFileFormat, None])
 
@@ -442,6 +449,14 @@ class GVASFile(BaseModel):
             gvas_file = cls.read(
                 stream, game_file_format.game_version, game_file_format.compression_type
             )
+
+            if update_hints:
+                hints_file_content = load_json_from_file(deserialization_hints)
+                # deserialization_hints may have been updated
+                hints_file_content.update(
+                    ContextScopeTracker.get_deserialization_hints()
+                )
+                write_json_to_file_as_string(hints_file_content, deserialization_hints)
 
             return gvas_file
 

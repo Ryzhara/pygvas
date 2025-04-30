@@ -1,6 +1,5 @@
 """
-String property implementations for GVAS
-Python port of set_property.rs, map_property.rs, struct_property.rs, array_property.rs
+Collection of aggregator types that need to reference each other.
 """
 
 from io import BytesIO

@@ -1,8 +1,3 @@
-"""
-FieldPath property implementation for GVAS
-Python port of field_path_property.rs
-"""
-
 from io import BytesIO
 from typing import Literal
 

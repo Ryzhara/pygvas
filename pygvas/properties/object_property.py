@@ -1,8 +1,3 @@
-"""
-Object property implementation for GVAS
-Python port of object_property.rs
-"""
-
 from io import BytesIO
 from typing import Literal
 

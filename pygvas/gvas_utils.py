@@ -1,4 +1,6 @@
 import datetime
+import json
+import pathlib
 import struct
 import uuid
 from typing import BinaryIO, Any, Callable, Union, Optional
@@ -42,23 +44,23 @@ class UnitTestGlobals:
 # When a struct is stored inside ArrayProperty/SetProperty/MapProperty in GvasFile it does not contain type annotations.
 # This means that a library parsing the file must know the type beforehand. That's why you need deserialization_hints.
 class ContextScopeTracker:
-    _context_stack: list[str] = []
-    _deserialization_hints: dict[str, Union[str, dict[str, Any]]] = {}
+    __context_stack: list[str] = []
+    __deserialization_hints: dict[str, Union[str, dict[str, Any]]] = {}
     # this one is for the remote case when you want the ByteBlobStruct or similar.
-    _hint_context: dict[str, Any] = {}
+    __hint_context: dict[str, Any] = {}
 
     # ============= CONTEXT TRACKING ====================
     @classmethod
     def push_context_step(cls, step: str) -> None:
-        cls._context_stack.append(step)
+        cls.__context_stack.append(step)
 
     @classmethod
     def pop_context_step(cls) -> None:
-        cls._context_stack.pop()
+        cls.__context_stack.pop()
 
     @classmethod
     def get_context_path(cls) -> str:
-        return ".".join(cls._context_stack)
+        return ".".join(cls.__context_stack)
 
     # ============= PROCESSING HINTS ====================
 
@@ -67,28 +69,32 @@ class ContextScopeTracker:
         cls, deserialization_hints: dict[str, Union[str, dict[str, Any]]]
     ):
         """For those files that need deserialization_hints for successful deserialization."""
-        cls._deserialization_hints = deserialization_hints
+        cls.__deserialization_hints = deserialization_hints
+
+    @classmethod
+    def get_deserialization_hints(cls) -> dict[str, Union[str, dict[str, Any]]]:
+        return cls.__deserialization_hints
 
     @classmethod
     def add_deserialization_hint_for_current_context(cls, hint_type):
         current_context_path = cls.get_context_path()
-        cls._deserialization_hints[current_context_path] = hint_type
+        cls.__deserialization_hints[current_context_path] = hint_type
 
     @classmethod
     def get_hint_for_context(cls) -> Union[str, Union[str, dict[str, Any]]]:
         hint_context_path = cls.get_context_path()
-        hint_type_override = cls._deserialization_hints.get(hint_context_path, None)
+        hint_type_override = cls.__deserialization_hints.get(hint_context_path, None)
         return hint_type_override
 
     # ============= MOST UNUSUAL CASE HANDLING ====================
     @classmethod
     def set_hint_context(cls, context: dict[str, Any]):
         """Some deserialization_hints are more than just a type name. ByteBlobStruct requires a length, for example."""
-        cls._hint_context = context
+        cls.__hint_context = context
 
     @classmethod
     def get_hint_context(cls) -> dict[str, Any]:
-        return cls._hint_context
+        return cls.__hint_context
 
     # ============= IMPLEMENTATION FOR PYTHON CONTEXT MANAGER ====================
     def __init__(self, context: str):
@@ -151,6 +157,36 @@ class ByteCountValidator:
                 self.expected_byte_count, read_byte_count, self.start_byte
             )
         return None
+
+
+# ===========================================================
+def load_json_from_file(filepath, encoding="utf-8") -> Optional[dict[str, Any]]:
+    try:
+        if pathlib.Path(filepath or "").is_file():
+            with open(filepath, "r", encoding=encoding) as infile:
+                file_content = json.load(infile)
+                infile.close()
+            return file_content
+    except Exception as e:
+        raise
+    return None  # was not a file
+
+
+# ===========================================================
+def write_json_to_file_as_string(
+    json_dict: dict, filepath: str, single_line: bool = False
+):
+    try:
+        with open(filepath, "w") as outfile:
+            if single_line:
+                json_formatted_str = json.dumps(json_dict, separators=(",", ":"))
+            else:
+                # WARNING - THIS PRETTY PRINTS BUT CONVERTS UNICODE TO ESCAPED CHARACTERS! ALSO, FILE SIZE INCREASE
+                json_formatted_str = json.dumps(json_dict, indent=2)
+            outfile.write(json_formatted_str)
+            outfile.close()
+    except Exception as e:
+        raise
 
 
 def datetime_to_str(dt: int) -> str:

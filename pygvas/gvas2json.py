@@ -17,6 +17,11 @@ def parse_arguments():
         default=None,
         help="Path to optional deserialization hints (JSON) file",
     )
+    parser.add_argument(
+        "--update_hints",
+        action="store_true",
+        help="If --hints_file is specified, then update the existing or create a new hints file",
+    )
     return parser.parse_args()
 
 
@@ -25,7 +30,9 @@ def main():
 
     try:
         gvas_file: GVASFile = GVASFile.deserialize_gvas_file(
-            args.input_file, deserialization_hints=args.hints_file
+            args.input_file,
+            deserialization_hints=args.hints_file,
+            update_hints=args.update_hints,
         )
     except Exception as e:
         print(f"Error processing input_file: {e}", file=sys.stderr)

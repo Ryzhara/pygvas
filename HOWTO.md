@@ -37,5 +37,5 @@ See any of the very detailed files in the [DOCUMENTATION](docs) directory for in
 
 # Requirements
 
-- Python 3.7+
+- Python 3.9+
 - See requirements.txt for package dependencies

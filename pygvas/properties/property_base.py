@@ -1,8 +1,3 @@
-"""
-Base PropertyFactory implementation for GVAS
-Python port of properties/mod.rs
-"""
-
 from abc import ABC, abstractmethod
 
 from pydantic.dataclasses import dataclass

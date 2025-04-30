@@ -1,8 +1,3 @@
-"""
-Enum property implementation for GVAS
-Python port of enum_property.rs
-"""
-
 from io import BytesIO
 from typing import Literal
 

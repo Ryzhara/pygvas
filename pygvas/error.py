@@ -1,11 +1,5 @@
-"""
-Error types for GVAS
-Python port of error.rs
-"""
-
-
 class DeserializeError(Exception):
-    """Error that occurs during deserialization"""
+    """Errors that occur during deserialization"""
 
     def __init__(self, message: str, position: int = None):
         self.position = position
@@ -55,7 +49,7 @@ class DeserializeError(Exception):
 
 
 class SerializeError(Exception):
-    """Error that occurs during serialization"""
+    """Errors that occur during serialization"""
 
     @classmethod
     def invalid_value(cls, message: str) -> "SerializeError":

@@ -1,8 +1,3 @@
-"""
-String property implementations for GVAS
-Python port of str_property.rs
-"""
-
 from io import BytesIO
 from typing import Literal
 

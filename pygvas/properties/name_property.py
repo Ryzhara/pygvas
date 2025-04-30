@@ -1,8 +1,3 @@
-"""
-Name property implementation for GVAS
-Python port of name_property.rs
-"""
-
 from io import BytesIO
 from typing import Literal
 
