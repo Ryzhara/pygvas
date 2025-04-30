@@ -62,8 +62,8 @@ class UtilityTester:
         print(f"Checking if {self.PACKAGE_NAME} is installed...")
 
         try:
-            importlib.metadata.version(self.PACKAGE_NAME)
-            print(Fore.GREEN + f"{self.PACKAGE_NAME} is already installed.")
+            version = importlib.metadata.version(self.PACKAGE_NAME)
+            print(Fore.GREEN + f"{self.PACKAGE_NAME} {version} is already installed.")
         except importlib.metadata.PackageNotFoundError:
             print(
                 Fore.YELLOW
