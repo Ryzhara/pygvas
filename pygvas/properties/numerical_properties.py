@@ -1,15 +1,10 @@
-"""
-Numeric property implementations for GVAS
-Python port of int_property.rs
-"""
-
 from typing import Literal
 
 from pydantic import field_serializer, field_validator
 from pydantic.dataclasses import dataclass
 
-from gvas.properties.property_base import PropertyTrait
-from gvas.gvas_utils import *
+from pygvas.properties.property_base import PropertyTrait
+from pygvas.gvas_utils import *
 
 
 @dataclass

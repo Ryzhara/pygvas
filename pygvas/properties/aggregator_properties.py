@@ -1,6 +1,5 @@
 """
-String property implementations for GVAS
-Python port of set_property.rs, map_property.rs, struct_property.rs, array_property.rs
+Collection of aggregator types that need to reference each other.
 """
 
 from io import BytesIO
@@ -9,16 +8,16 @@ from typing import ClassVar, Annotated, Literal
 from pydantic import field_serializer, Discriminator
 from pydantic.dataclasses import dataclass
 
-from gvas.gvas_utils import *
-from gvas.properties.delegate_property import (
+from pygvas.gvas_utils import *
+from pygvas.properties.delegate_property import (
     MulticastInlineDelegateProperty,
     MulticastSparseDelegateProperty,
     DelegateProperty,
 )
-from gvas.properties.enum_property import EnumProperty
-from gvas.properties.field_path_property import FieldPath, FieldPathProperty
-from gvas.properties.name_property import NameProperty
-from gvas.properties.numerical_properties import (
+from pygvas.properties.enum_property import EnumProperty
+from pygvas.properties.field_path_property import FieldPath, FieldPathProperty
+from pygvas.properties.name_property import NameProperty
+from pygvas.properties.numerical_properties import (
     BoolProperty,
     ByteProperty,
     FloatProperty,
@@ -33,9 +32,9 @@ from gvas.properties.numerical_properties import (
     Int64Property,
     UInt64Property,
 )
-from gvas.properties.object_property import ObjectProperty
-from gvas.properties.property_base import PropertyFactory, PropertyTrait
-from gvas.properties.standard_structs import (
+from pygvas.properties.object_property import ObjectProperty
+from pygvas.properties.property_base import PropertyFactory, PropertyTrait
+from pygvas.properties.standard_structs import (
     is_standard_struct,
     get_standard_struct_instance,
     StandardStructTrait,
@@ -49,8 +48,8 @@ from gvas.properties.standard_structs import (
     VectorStruct,
     Vector2DStruct,
 )
-from gvas.properties.str_property import StrProperty
-from gvas.properties.text_property import TextProperty
+from pygvas.properties.str_property import StrProperty
+from pygvas.properties.text_property import TextProperty
 
 UNREAL_ENGINE_PROPERTIES = Annotated[
     Union[

@@ -1,15 +1,10 @@
-"""
-FieldPath property implementation for GVAS
-Python port of field_path_property.rs
-"""
-
 from io import BytesIO
 from typing import Literal
 
 from pydantic.dataclasses import dataclass
 
-from gvas.gvas_utils import *
-from gvas.properties.property_base import PropertyTrait
+from pygvas.gvas_utils import *
+from pygvas.properties.property_base import PropertyTrait
 
 
 @dataclass

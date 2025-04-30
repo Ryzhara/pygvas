@@ -1,13 +1,8 @@
-"""
-String property implementations for GVAS
-Python port of engine_version.rs
-"""
-
 import enum
 
 from pydantic.dataclasses import dataclass
 
-from .gvas_utils import *
+from pygvas.gvas_utils import *
 
 
 class CompressionType(enum.Enum):

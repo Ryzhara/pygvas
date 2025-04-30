@@ -6,9 +6,9 @@ import unittest
 from io import BytesIO
 from typing import override
 
-from gvas.gvas_utils import read_string, ContextScopeTracker, UnitTestGlobals
-from gvas.properties.enum_property import EnumProperty
-from gvas.properties.numerical_properties import (
+from pygvas.gvas_utils import read_string, ContextScopeTracker, UnitTestGlobals
+from pygvas.properties.enum_property import EnumProperty
+from pygvas.properties.numerical_properties import (
     BoolProperty,
     ByteProperty,
     Int8Property,
@@ -23,8 +23,8 @@ from gvas.properties.numerical_properties import (
     FloatProperty,
     DoubleProperty,
 )
-from gvas.properties.property_base import PropertyFactory, PropertyTrait
-from gvas.properties.str_property import StrProperty
+from pygvas.properties.property_base import PropertyFactory, PropertyTrait
+from pygvas.properties.str_property import StrProperty
 
 
 class TestProperty(unittest.TestCase):

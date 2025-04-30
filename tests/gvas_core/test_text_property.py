@@ -4,10 +4,10 @@ from typing import Union, Callable
 
 from typing_extensions import override
 
-from gvas.engine_tools import EngineVersionTool
-from gvas.error import SerializeError
-from gvas.gvas_utils import datetime_to_str, ContextScopeTracker, UnitTestGlobals
-from gvas.properties.text_property import (
+from pygvas.engine_tools import EngineVersionTool
+from pygvas.error import SerializeError
+from pygvas.gvas_utils import datetime_to_str, ContextScopeTracker, UnitTestGlobals
+from pygvas.properties.text_property import (
     FText,
     ArgumentFormat,
     FormatArgument,

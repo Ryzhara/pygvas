@@ -69,7 +69,7 @@ class PropertyFactory:
 These classes represent the different formats (`TextHistoryType`) an `FText` property can take. They are defined in `gvas.properties.text_property` but are included here as they are fundamental to understanding `TextProperty` deserialization handled via the factory.
 
 ```python
-# NOTE: These are simplified definitions for documentation purposes.
+# NOTE: These are simplified definitions for docs purposes.
 # See text_property.py for full implementation details.
 
 @dataclass

@@ -1,13 +1,8 @@
-"""
-Base PropertyFactory implementation for GVAS
-Python port of properties/mod.rs
-"""
-
 from abc import ABC, abstractmethod
 
 from pydantic.dataclasses import dataclass
 
-from gvas.gvas_utils import *
+from pygvas.gvas_utils import *
 
 
 # ============================================
@@ -38,25 +33,25 @@ class PropertyFactory:
     @staticmethod
     def property_class_from_type(property_type: str) -> PropertyTrait:
 
-        from gvas.properties.enum_property import EnumProperty
-        from gvas.properties.str_property import StrProperty
-        from gvas.properties.name_property import NameProperty
-        from gvas.properties.text_property import TextProperty
-        from gvas.properties.object_property import ObjectProperty
-        from gvas.properties.field_path_property import FieldPathProperty
-        from gvas.properties.delegate_property import (
+        from pygvas.properties.enum_property import EnumProperty
+        from pygvas.properties.str_property import StrProperty
+        from pygvas.properties.name_property import NameProperty
+        from pygvas.properties.text_property import TextProperty
+        from pygvas.properties.object_property import ObjectProperty
+        from pygvas.properties.field_path_property import FieldPathProperty
+        from pygvas.properties.delegate_property import (
             MulticastInlineDelegateProperty,
             MulticastSparseDelegateProperty,
             DelegateProperty,
         )
 
-        from gvas.properties.aggregator_properties import (
+        from pygvas.properties.aggregator_properties import (
             SetProperty,
             MapProperty,
             StructProperty,
             ArrayProperty,
         )
-        from gvas.properties.numerical_properties import (
+        from pygvas.properties.numerical_properties import (
             BoolProperty,
             ByteProperty,
             Int8Property,

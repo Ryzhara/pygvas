@@ -69,42 +69,42 @@ The full journey is described below, but first, a comparison summary.
 
 ## Key Differences from Rust Version
 
-1. **Error Handling**
+1. **Deserialization Hints Content**
+    - There are cases where insufficient context exists in the GVAS binary to
+      define the type of the next portion of the byte stream.
+    - This implementation detects the most common hints for you: custom
+      StructProperty and GUId.
+    - Example JSON hints files are in the resources/test directory.
+    - When GUID guesses are made they are printed in the console.
+    - You can save those detected hints to a specified file for future use.
+   
+2. **Error Handling**
     - Uses Python's exception system instead of Rust's Result types
     - Simplified error hierarchy with custom exception classes
 
-2. **Type System**
+3. **Type System**
     - Uses Python's type hints and dataclasses
     - Replaces Rust enums with Python Enum classes
     - Uses Python's built-in types where appropriate, such as uuid
 
-3. **Memory Management**
+4. **Memory Management**
     - Relies on Python's garbage collection instead of Rust's ownership system
     - Simplified memory handling patterns
 
-4. **Performance Considerations**
+5. **Performance Considerations**
     - May be slower than Rust version due to Python's interpreted nature and 
       the use of Pydantic for JSON serialization
     - Uses Python's struct module for binary data handling
     - Maintains similar algorithmic complexity
 
-5. **JSON Format**
-    - The JSON format is close but not identical to the RUST output
+6. **JSON Format**
+    - The JSON file format is not identical to the RUST output
     - A layer of wrapping is removed so the depth is shallower
     - There are no type-specific JSON property names (e.g., "ints", "bools", "
-      structs" in ArrayProperty). I chose uniformity, instead.
+      structs" in ArrayProperty), erring on the side of uniformity.
     - Data types are indicated by a sibling "type" property rather than the name
-      of the property
-    - Summary: RUST JSON has slightly fewer characters
+      of the property. This also makes Pydantic deserialization work well.
 
-6. **Deserialization Hints Content**
-    - There are cases where insufficient context exists in the GVAS binary to
-      define the type of the next portion of the byte stream.
-    - This implementation needs fewer of those hints for the known cases
-      by defaulting missing type information to custom StructProperty.
-    - Only GUID type hints are needed at this time for the example file/test library.
-    - You can find example hints files (in JSON format) in the resources/test
-      directory.
 
 ## The Journey
 

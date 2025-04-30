@@ -8,15 +8,15 @@ from io import BytesIO
 from time import sleep
 from typing import override
 
-from gvas.gvas_utils import (
+from pygvas.gvas_utils import (
     MagicConstants,
     read_string,
     ContextScopeTracker,
     UnitTestGlobals,
 )
-from gvas.properties.aggregator_properties import StructProperty
-from gvas.properties.numerical_properties import Int32Property, BoolProperty
-from gvas.properties.str_property import StrProperty
+from pygvas.properties.aggregator_properties import StructProperty
+from pygvas.properties.numerical_properties import Int32Property, BoolProperty
+from pygvas.properties.str_property import StrProperty
 
 
 class TestStructProperty(unittest.TestCase):

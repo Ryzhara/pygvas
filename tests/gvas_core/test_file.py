@@ -6,21 +6,21 @@ import unittest
 from io import BytesIO
 from typing import Union, override
 
-from gvas.engine_tools import (
+from pygvas.engine_tools import (
     FEngineVersion,
     CompressionType,
     GameVersion,
 )
-from gvas.gvas_file import GVASFile, GvasHeader, GameFileFormat
-from gvas.gvas_utils import ContextScopeTracker, UnitTestGlobals
-from gvas.properties.property_base import PropertyFactory, PropertyTrait
-from gvas.properties.numerical_properties import (
+from pygvas.gvas_file import GVASFile, GvasHeader, GameFileFormat
+from pygvas.gvas_utils import ContextScopeTracker, UnitTestGlobals
+from pygvas.properties.property_base import PropertyFactory, PropertyTrait
+from pygvas.properties.numerical_properties import (
     Int32Property,
     BoolProperty,
     IntProperty,
     DoubleProperty,
 )
-from gvas.properties.str_property import StrProperty
+from pygvas.properties.str_property import StrProperty
 
 
 class TestGvasFile(unittest.TestCase):

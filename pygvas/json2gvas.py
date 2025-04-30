@@ -1,7 +1,7 @@
 import argparse
 import sys
 
-from gvas.gvas_file import GVASFile
+from pygvas.gvas_file import GVASFile
 
 
 # python gvas2json.py input.txt output.txt

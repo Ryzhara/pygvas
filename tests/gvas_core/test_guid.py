@@ -7,7 +7,7 @@ from io import BytesIO
 import uuid
 from typing import override
 
-from gvas.gvas_utils import (
+from pygvas.gvas_utils import (
     MagicConstants,
     write_guid,
     read_guid,
