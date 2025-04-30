@@ -19,6 +19,10 @@ or if more dependencies are added in the future:
 ```bash
 pip install -r requirements.txt
 ```
+And as a wheel
+```bash
+pip install pygvas
+```
 
 # Usage
 
@@ -28,6 +32,9 @@ then use the included utility files. See the [UTILITIES](docs/utilities.md) docu
 * gvas2json.py
 * json2gvas.py
 * detect_gvas_format.py
+
+The pypi install will have these as standalone tools that can be run from the 
+commandline.  On windows, these use .exe wrappers.
 
 # Detailed Overview
 The utilities also include examples of code for de/serialization. 
