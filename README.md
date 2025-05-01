@@ -73,7 +73,7 @@ The full journey is described below, but first, a comparison summary.
     - There are cases where insufficient context exists in the GVAS binary to
       define the type of the next portion of the byte stream.
     - This implementation detects the most common hints for you: custom
-      StructProperty and GUId.
+      StructProperty and GUID.
     - Example JSON hints files are in the resources/test directory.
     - When GUID guesses are made they are printed in the console.
     - You can save those detected hints to a specified file for future use.
@@ -112,20 +112,19 @@ I had originally used the GVAS rust code to generate JSON that I was then able
 to modify for my goals (visually mark puzzles in the game world as "completed",
 forcibly complete puzzles, and give myself unlimited amounts of currency).
 
-I will share that work (TBD) but I didn't want to anyone to install Rust,
-install the Rust CLI tools, etc. I wanted a one-stop shop. I also wanted code
-that cybersecurity-aware people could easily inspect. Python is a natural
-choice.
+I will share that work (TBD) but I didn't want to require installing the Rust
+CLI tools, etc. I wanted a one-stop shop. I also wanted code that
+cybersecurity-aware people could easily inspect. Python is a natural choice.
 
 Choosing Python lead me to Python-GVAS-JSON-Converter.
 
 My first attempt was to modify Python-GVAS-JSON-Converter to make the JSON output closer
-to that of the Rust. However, there were puzzling areas in the Python
-deserialization code that just begged to be understand.
+to that of the Rust project. However, there were puzzling areas in the Python
+deserialization code that just begged to be understood.
 
-That made the next step looking at the Rust code, and boy was I intimidated. In an 
-attempt to avoid learning Rust, I installed the Cursor IDE
-and asked Sonnet to translate Rust to Python.
+That made the next step looking at the Rust code, and boy was I intimidated. In
+an attempt to avoid learning Rust, I installed the Cursor IDE and asked Sonnet
+to translate Rust to Python.
 
 That wasn't an abject failure, but after several days I gave that up and started
 reading both the Python and Rust code side-by-side. And then refactored all the
@@ -134,7 +133,7 @@ Cursor-generated code.
 I failed in my mission to not learn much about Rust syntax.
 
 On the other hand, here is a pure Python library for working with Unreal Engine
-GVAS files.
+4 and 5 GVAS files.
 
 > #### Note
 > This document was created in part with a generative AI prompt in the Cursor IDE. 
