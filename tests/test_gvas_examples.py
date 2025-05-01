@@ -81,7 +81,7 @@ TEST_FILE_CONFIG = {
     },
     "RO_64BIT_FAV": {
         "file": "ro_64bit_fav.sav",
-        "json": "ro_64bit_fav.sav.json",
+        "json": "ro_64bit_fav.sav.json.zip",
         "hints": None,
     },
     "SAVESLOT_03": {
@@ -111,7 +111,7 @@ TEST_FILE_CONFIG = {
     },
     "TRANSFORM": {
         "file": "transform.sav",
-        "json": "transform.sav.json",
+        "json": "transform.sav.json.zip",
         "hints": None,
     },
     "VECTOR2D": {
