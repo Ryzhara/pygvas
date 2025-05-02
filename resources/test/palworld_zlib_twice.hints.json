@@ -1,0 +1,5 @@
+{
+    "worldSaveData.StructProperty.MapObjectSpawnerInStageSaveData.MapProperty.Value.StructProperty.SpawnerDataMapByLevelObjectInstanceId.MapProperty.Key.StructProperty": "Guid",
+    "worldSaveData.StructProperty.BaseCampSaveData.MapProperty.Key.StructProperty": "Guid",
+    "worldSaveData.StructProperty.GroupSaveDataMap.MapProperty.Key.StructProperty": "Guid"
+}

@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "pygvas"
 #dynamic=["version"]
-version = "2025.4.30"
+version = "0.9.4"
 dependencies = [
   "pydantic >= 2.11.3",
 ]
@@ -23,7 +23,10 @@ classifiers = [
 ]
 
 [project.urls]
+Homepage = "https://github.com/Ryzhara/pygvas"
 Repository = "https://github.com/Ryzhara/pygvas.git"
+Overview = "https://github.com/Ryzhara/pygvas/blob/main/docs/gvas_overview.md"
+Tracker = "https://github.com/Ryzhara/pygvas/issues"
 
 [project.scripts]
 gvas2json = "pygvas.gvas2json:main"
@@ -33,21 +36,11 @@ detect_format = "pygvas.detect_gvas_format:main"
 [tool.setuptools.packages.find]
 include = ["pygvas"]
 exclude = ["tests", "docs"]
-# where = ["."]
 
-#[tool.setuptools]
-##packages=["pygvas"]
-##package-dir = { "pygvas": "pygvas",  "utilities": "utitlities" }
-#
-#
-##[tool.setuptools.package-data]
-##"pygvas" = ["utilities/*"]
-#
-### Optional: include extra files like markdowns, config files, etc.
-##include-package-data = true
-##
 #[tool.setuptools.package-data]
-### This example includes all .md files and .py utility files at the top level of src
-## "*" = ["*.md", "*.py"]
+## Include additional files in package directories
+#"*" = ["*.bat", "*.py"]
 
-
+[tool.setuptools.data-files]
+# Include non-package files at root
+"" = ["do_unit_tests.bat", "do_unit_tests.py", "do_utility_tests.bat", "do_utility_tests.py", "HOWTO.md"]

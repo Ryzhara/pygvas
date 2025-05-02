@@ -125,7 +125,7 @@ player_name = save_data.properties["PlayerName"].value
 save_data.properties["PlayerLevel"].value = 50
 
 # Save the modified file
-save_data.serialize_to_gvas_file("modified_save.sav")
+save_data.serialize_to_gvas_file_with_uncompressed("modified_save.sav")
 ```
 
 ### JSON Conversion
