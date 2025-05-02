@@ -27,7 +27,7 @@ def main():
         sys.exit(1)
 
     try:
-        gvas_file.serialize_to_gvas_file(args.output_file, None)
+        gvas_file.serialize_to_gvas_file(args.output_file)
     except Exception as e:
         print(f"Error writing to output file: {e}", file=sys.stderr)
         sys.exit(1)

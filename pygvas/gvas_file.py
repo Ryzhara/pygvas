@@ -571,9 +571,15 @@ class GVASFile(BaseModel):
             properties=properties,
         )
 
-    def serialize_to_gvas_file(self, output_file, uncompressed_output_file) -> None:
+    def serialize_to_gvas_file_with_uncompressed(
+        self, output_file, uncompressed_output_file
+    ) -> None:
         with open(output_file, "wb") as f:
             self.write(f, uncompressed_output_file)
+
+    def serialize_to_gvas_file(self, output_file) -> None:
+        with open(output_file, "wb") as f:
+            self.write(f, None)
 
     def write(
         self,

@@ -1,5 +1,5 @@
 """
-GVAS - Game Version Agnostic Save File Parser
+pygvas -- GVAS (Game Version Agnostic Save) file parser
 """
 
-__version__ = "0.8.0"
+from pygvas.gvas_file import GVASFile, GameFileFormat, GvasHeader

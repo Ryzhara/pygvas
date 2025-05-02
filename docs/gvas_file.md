@@ -196,15 +196,17 @@ from gvas.gvas_file import GVASFile
 
 # --- Deserializing from a .sav file ---
 hints = {
-    "SaveGameData.StructArrayExample": "Vector", # Hint: Elements are Vector structs
-    "SaveGameData.ByteBlobbedStruct": { # Hint: Treat as raw bytes
+    "SaveGameData.StructArrayExample": "Vector",
+    # Hint: Elements are Vector structs
+    "SaveGameData.ByteBlobbedStruct": {  # Hint: Treat as raw bytes
         "type": "ByteBlobStruct",
         "context": {"byte_count": 12}
     }
 }
 
 try:
-    gvas_data = GVASFile.deserialize_gvas_file("MySave.sav", deserialization_hints=hints)
+    gvas_data = GVASFile.deserialize_gvas_file("MySave.sav",
+                                               deserialization_hints=hints)
 
     # Access properties
     player_name = gvas_data.properties["SaveGameData"].value["PlayerName"].value
@@ -214,7 +216,7 @@ try:
     gvas_data.properties["SaveGameData"].value["Health"].value = 95.5
 
     # --- Serializing back to a .sav file ---
-    gvas_data.serialize_to_gvas_file("MySave_Modified.sav")
+    gvas_data.serialize_to_gvas_file_with_uncompressed("MySave_Modified.sav")
 
     # --- Serializing to JSON ---
     gvas_data.serialize_to_json_file("MySave.json")
