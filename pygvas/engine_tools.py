@@ -67,6 +67,57 @@ class EngineVersion(enum.Enum):
     # Version plus one
     VER_UE4_AUTOMATIC_VERSION_PLUS_ONE = (4, 28)
 
+class SaveGameVersion(enum.IntEnum):
+    # Initial version.
+    InitialVersion = 1
+    # serializing custom versions into the savegame data to handle that type of versioning
+    AddedCustomVersions = 2
+    # added a new UE5 version number to FPackageFileSummary
+    PackageFileSummaryVersionChange = 3
+
+# Additional version information defining what is supported
+class UnrealEngineObjectUE5Version(enum.IntEnum):
+    # The original UE5 version, at the time this was added the UE4 version was 522, so UE5 will start from 1000 to show a clear difference
+    InitialVersion = 1000
+
+    # Support stripping names that are not referenced from export data
+    NamesReferencedFromExportData = enum.auto()
+
+    # Added a payload table of contents to the package summary
+    PayloadToc = enum.auto()
+
+    # Added data to identify references from and to optional package
+    OptionalResources = enum.auto()
+
+    # Large world coordinates converts a number of core types to double components by default.
+    LargeWorldCoordinates = enum.auto()
+
+    # Remove package GUID from FObjectExport
+    RemoveObjectExportPackageGuid = enum.auto()
+
+    # Add IsInherited to the FObjectExport entry
+    TrackObjectExportIsInherited = enum.auto()
+
+    # Replace FName asset path in FSoftObjectPath with (package name, asset name) pair FTopLevelAssetPath
+    FsoftobjectpathRemoveAssetPathFnames = enum.auto()
+
+    # Add a soft object path list to the package summary for fast remap
+    AddSoftobjectpathList = enum.auto()
+
+    # Added bulk/data resource table
+    DataResources = enum.auto()
+
+    # Added script property serialization offset to export table entries for saved, versioned packages
+    ScriptSerializationOffset = enum.auto()
+
+    # Adding property tag extension,
+    # Support for overridable serialization on UObject,
+    # Support for overridable logic in containers
+    PropertyTagExtensionAndOverridableSerialization = enum.auto()
+
+    # Added property tag complete type name and serialization type
+    PropertyTagCompleteTypeName = enum.auto()
+
 
 # Stores UE4 version in which the GVAS file was saved
 @dataclass
