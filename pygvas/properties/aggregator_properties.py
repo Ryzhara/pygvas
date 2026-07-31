@@ -33,6 +33,7 @@ from pygvas.properties.numerical_properties import (
     UInt64Property,
 )
 from pygvas.properties.object_property import ObjectProperty
+from pygvas.properties.soft_object_property import SoftObjectProperty
 from pygvas.properties.property_base import PropertyFactory, PropertyTrait
 from pygvas.properties.standard_structs import (
     is_standard_struct,
@@ -86,6 +87,7 @@ UNREAL_ENGINE_PROPERTIES = Annotated[
         NameProperty,
         StrProperty,
         ObjectProperty,
+        SoftObjectProperty,
         FieldPath,
         FieldPathProperty,
         MulticastInlineDelegateProperty,

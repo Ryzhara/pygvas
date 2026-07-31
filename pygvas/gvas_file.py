@@ -45,6 +45,7 @@ from pygvas.properties.numerical_properties import (
     DoubleProperty,
 )
 from pygvas.properties.object_property import ObjectProperty
+from pygvas.properties.soft_object_property import SoftObjectProperty
 from pygvas.properties.property_base import PropertyFactory
 from pygvas.properties.standard_structs import (
     DateTimeStruct,
@@ -99,6 +100,7 @@ UNREAL_ENGINE_PROPERTIES = Annotated[
         NameProperty,
         StrProperty,
         ObjectProperty,
+        SoftObjectProperty,
         FieldPath,
         FieldPathProperty,
         MulticastInlineDelegateProperty,
