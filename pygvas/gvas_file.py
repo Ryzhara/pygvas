@@ -11,6 +11,8 @@ from pygvas.engine_tools import (
     GameVersion,
     CompressionType,
     EngineVersionTool,
+    UnrealEngineObjectUE5Version,
+    SaveGameVersion,
 )
 from pygvas.gvas_utils import *
 from pygvas.properties.aggregator_properties import (
@@ -43,6 +45,7 @@ from pygvas.properties.numerical_properties import (
     DoubleProperty,
 )
 from pygvas.properties.object_property import ObjectProperty
+from pygvas.properties.soft_object_property import SoftObjectProperty
 from pygvas.properties.property_base import PropertyFactory
 from pygvas.properties.standard_structs import (
     DateTimeStruct,
@@ -97,6 +100,7 @@ UNREAL_ENGINE_PROPERTIES = Annotated[
         NameProperty,
         StrProperty,
         ObjectProperty,
+        SoftObjectProperty,
         FieldPath,
         FieldPathProperty,
         MulticastInlineDelegateProperty,
@@ -148,16 +152,35 @@ class GvasHeader:
 
         # Read versions
         save_game_version = read_uint32(stream)
-        if not 2 <= save_game_version <= 3:
-            raise DeserializeError.invalid_header("Invalid save_game_version")
+        if (
+            not SaveGameVersion.AddedCustomVersions
+            <= save_game_version
+            <= SaveGameVersion.PackageFileSummaryVersionChange
+        ):
+            raise DeserializeError.invalid_header(
+                f"GVAS version {save_game_version=} not supported"
+            )
 
         package_file_version = read_uint32(stream)
+        # magic numbers related to implementation :}
+        if not 0x205 <= package_file_version <= 0x20D:
+            raise DeserializeError.invalid_header(
+                f"Package file version {package_file_version} not supported"
+            )
 
         # Read UE5 version if present
         package_file_version_ue5 = None
         format_version = "Version2"
         if save_game_version >= 3:  # SaveGameVersion::PackageFileSummaryVersionChange
             package_file_version_ue5 = read_uint32(stream)
+            if (
+                not UnrealEngineObjectUE5Version.InitialVersion
+                <= package_file_version_ue5
+                <= UnrealEngineObjectUE5Version.DataResources
+            ):
+                raise DeserializeError.invalid_header(
+                    f"Unsupported UE5 package_file_version {package_file_version_ue5}"
+                )
             format_version = "Version3"
 
         # Read engine version
@@ -176,6 +199,10 @@ class GvasHeader:
 
         # Read save game class type_name
         save_game_class_name = read_string(stream)
+
+        # hack test: read one byte; for Kalponic
+        # must_be_zero = read_uint8(stream)
+        # assert must_be_zero == 0
 
         return cls(
             type=format_version,

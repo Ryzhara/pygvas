@@ -119,7 +119,7 @@ class TestGvasFile(unittest.TestCase):
 
         # Create a header with custom values
         header = GvasHeader(
-            package_file_version=123,
+            package_file_version=0x205,
             package_file_version_ue5=None,
             engine_version=FEngineVersion(
                 major=4, minor=27, patch=2, change_list=12345, branch="UE4"

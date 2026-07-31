@@ -38,6 +38,7 @@ class PropertyFactory:
         from pygvas.properties.name_property import NameProperty
         from pygvas.properties.text_property import TextProperty
         from pygvas.properties.object_property import ObjectProperty
+        from pygvas.properties.soft_object_property import SoftObjectProperty
         from pygvas.properties.field_path_property import FieldPathProperty
         from pygvas.properties.delegate_property import (
             MulticastInlineDelegateProperty,
@@ -79,6 +80,7 @@ class PropertyFactory:
             "TextProperty": TextProperty,
             "ByteProperty": ByteProperty,
             "ObjectProperty": ObjectProperty,
+            "SoftObjectProperty": SoftObjectProperty,
             "FieldPathProperty": FieldPathProperty,
             "MulticastInlineDelegateProperty": MulticastInlineDelegateProperty,
             "MulticastSparseDelegateProperty": MulticastSparseDelegateProperty,
