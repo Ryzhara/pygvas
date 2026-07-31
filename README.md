@@ -105,6 +105,9 @@ The full journey is described below, but first, a comparison summary.
     - Data types are indicated by a sibling "type" property rather than the name
       of the property. This also makes Pydantic deserialization work well.
 
+## Fun Documentation
+Deep Wiki does a good job!
+https://deepwiki.com/Ryzhara/pygvas
 
 ## The Journey
 
