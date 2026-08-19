@@ -34,7 +34,7 @@ json2gvas = "pygvas.json2gvas:main"
 detect_format = "pygvas.detect_gvas_format:main"
 
 [tool.setuptools.packages.find]
-include = ["pygvas"]
+include = ["pygvas*"]
 exclude = ["tests", "docs"]
 
 #[tool.setuptools.package-data]
